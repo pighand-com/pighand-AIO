@@ -1,0 +1,81 @@
+Manifest-Version: 1.0
+Main-Class: com.pighand.aio.Application
+Class-Path: reactor-core-3.5.4.jar spring-web-6.0.7.jar mybatis-3.5.13.j
+ ar reactor-netty-1.1.5.jar swagger-ui-4.18.1.jar log4j-jul-2.19.0.jar g
+ oogle-http-client-1.41.0.jar reactor-netty-http-1.1.5.jar webjars-locat
+ or-core-0.52.jar reactive-streams-1.0.4.jar mybatis-flex-spring-1.7.3.j
+ ar netty-transport-native-epoll-4.1.90.Final-linux-aarch_64.jar proto-g
+ oogle-common-protos-2.9.0.jar swagger-models-jakarta-2.2.7.jar grpc-cor
+ e-1.54.0.jar netty-codec-haproxy-4.1.90.Final.jar netty-transport-nativ
+ e-kqueue-4.1.90.Final-osx-aarch_64.jar checker-qual-3.12.0.jar mybatis-
+ flex-processor-1.7.3.jar grpc-rls-1.54.0.jar netty-codec-smtp-4.1.90.Fi
+ nal.jar gson-2.9.1.jar netty-transport-sctp-4.1.90.Final.jar tomcat-emb
+ ed-core-10.1.7.jar listenablefuture-9999.0-empty-to-avoid-conflict-with
+ -guava.jar jakarta.xml.bind-api-4.0.0.jar spring-boot-autoconfigure-3.0
+ .5.jar netty-transport-rxtx-4.1.90.Final.jar jackson-module-parameter-n
+ ames-2.14.2.jar spring-boot-devtools-3.0.5.jar protobuf-java-util-3.21.
+ 7.jar springdoc-openapi-starter-webmvc-api-2.0.4.jar log4j-slf4j2-impl-
+ 2.19.0.jar spring-security-core-6.0.2.jar netty-transport-native-epoll-
+ 4.1.90.Final-linux-x86_64.jar spring-oxm-6.0.7.jar grpc-services-1.54.0
+ .jar jakarta.validation-api-3.0.2.jar springdoc-openapi-starter-webmvc-
+ ui-2.0.4.jar netty-resolver-4.1.90.Final.jar ehcache-2.10.9.2.jar grpc-
+ stub-1.54.0.jar google-http-client-gson-1.41.0.jar netty-common-4.1.93.
+ Final.jar spring-jdbc-6.0.7.jar spring-tx-6.0.7.jar opencensus-proto-0.
+ 2.0.jar netty-incubator-codec-classes-quic-0.0.38.Final.jar jackson-ann
+ otations-2.14.2.jar netty-codec-stomp-4.1.90.Final.jar spring-webflux-6
+ .0.7.jar mybatis-flex-annotation-1.7.3.jar jackson-dataformat-yaml-2.14
+ .2.jar reactor-netty-incubator-quic-0.1.5.jar annotations-4.1.1.4.jar m
+ ybatis-flex-spring-boot-starter-1.7.5.jar netty-codec-xml-4.1.90.Final.
+ jar tomcat-embed-websocket-10.1.7.jar grpc-protobuf-1.54.0.jar perfmark
+ -api-0.25.0.jar spring-boot-starter-3.0.5.jar druid-spring-boot-starter
+ -1.2.16.jar google-auth-library-oauth2-http-1.4.0.jar netty-resolver-dn
+ s-classes-macos-4.1.90.Final.jar grpc-servlet-1.54.0.jar netty-buffer-4
+ .1.90.Final.jar spring-boot-starter-tomcat-3.0.5.jar netty-transport-cl
+ asses-kqueue-4.1.90.Final.jar mybatis-flex-core-1.7.3.jar spring-data-k
+ eyvalue-3.0.4.jar netty-resolver-dns-native-macos-4.1.90.Final-osx-aarc
+ h_64.jar jackson-core-2.14.2.jar grpc-grpclb-1.54.0.jar snakeyaml-1.33.
+ jar grpc-alts-1.54.0.jar google-auth-library-credentials-1.4.0.jar auto
+ -value-annotations-1.9.jar spring-webmvc-6.0.7.jar opencensus-api-0.28.
+ 0.jar spring-data-redis-3.0.4.jar failureaccess-1.0.1.jar guava-31.1-jr
+ e.jar spring-context-6.0.7.jar hamcrest-2.2.jar grpc-protobuf-lite-1.54
+ .0.jar opencensus-contrib-http-util-0.28.0.jar spring-beans-6.0.7.jar r
+ e2j-1.6.jar netty-codec-4.1.90.Final.jar grpc-servlet-jakarta-1.54.0.ja
+ r conscrypt-openjdk-uber-2.5.2.jar druid-1.2.16.jar mybatis-ehcache-1.2
+ .3.jar grpc-all-1.54.0.jar grpc-okhttp-1.54.0.jar commons-lang3-3.12.0.
+ jar netty-transport-native-kqueue-4.1.90.Final-osx-x86_64.jar spring-bo
+ ot-starter-jdbc-3.0.5.jar grpc-context-1.54.0.jar spring-data-commons-3
+ .0.4.jar log4j-slf4j-impl-2.20.0.jar spring-boot-starter-web-3.0.5.jar 
+ jsr305-3.0.2.jar netty-handler-proxy-4.1.90.Final.jar java-jwt-4.3.0.ja
+ r spring-security-crypto-6.0.2.jar commons-pool2-2.11.1.jar okio-1.17.5
+ .jar hibernate-validator-8.0.0.Final.jar jboss-logging-3.5.0.Final.jar 
+ jakarta.annotation-api-2.1.1.jar spring-core-6.0.7.jar spring-expressio
+ n-6.0.7.jar netty-resolver-dns-native-macos-4.1.90.Final-osx-x86_64.jar
+  netty-codec-redis-4.1.90.Final.jar grpc-api-1.54.0.jar spring-boot-sta
+ rter-json-3.0.5.jar tomcat-embed-el-10.1.7.jar httpcore-4.4.16.jar nett
+ y-codec-http-4.1.90.Final.jar j2objc-annotations-1.3.jar netty-codec-me
+ mcache-4.1.90.Final.jar log4j-core-2.19.0.jar httpclient-4.5.14.jar kni
+ fe4j-openapi3-ui-4.0.0.jar spring-boot-starter-data-redis-3.0.5.jar net
+ ty-codec-http2-4.1.90.Final.jar springdoc-openapi-starter-webflux-ui-2.
+ 0.0.jar spring-aop-6.0.7.jar netty-resolver-dns-4.1.90.Final.jar spring
+ -boot-3.0.5.jar spring-context-support-6.0.7.jar knife4j-core-4.0.0.jar
+  mybatis-spring-2.1.0.jar hamcrest-core-2.2.jar mysql-connector-j-8.0.3
+ 2.jar spring-boot-starter-log4j2-3.0.5.jar netty-transport-classes-epol
+ l-4.1.90.Final.jar netty-transport-udt-4.1.90.Final.jar springdoc-opena
+ pi-starter-webflux-api-2.0.0.jar grpc-testing-1.54.0.jar animal-sniffer
+ -annotations-1.21.jar netty-codec-socks-4.1.90.Final.jar lettuce-core-6
+ .2.3.RELEASE.jar commons-codec-1.15.jar jackson-datatype-jsr310-2.14.2.
+ jar HikariCP-5.0.1.jar classgraph-4.8.149.jar netty-handler-ssl-ocsp-4.
+ 1.90.Final.jar grpc-auth-1.54.0.jar springdoc-openapi-starter-common-2.
+ 0.4.jar spring-jcl-6.0.7.jar micrometer-observation-1.10.5.jar jackson-
+ databind-2.14.2.jar swagger-annotations-jakarta-2.2.7.jar netty-codec-d
+ ns-4.1.90.Final.jar mapstruct-1.5.5.Final.jar jakarta.activation-api-2.
+ 1.1.jar reactor-netty-core-1.1.5.jar netty-incubator-codec-native-quic-
+ 0.0.38.Final-linux-x86_64.jar classmate-1.5.1.jar knife4j-openapi3-jaka
+ rta-spring-boot-starter-4.0.0.jar jackson-datatype-jdk8-2.14.2.jar nett
+ y-all-4.1.90.Final.jar netty-codec-mqtt-4.1.90.Final.jar slf4j-api-2.0.
+ 7.jar netty-transport-native-unix-common-4.1.90.Final.jar log4j-api-2.1
+ 9.0.jar netty-handler-4.1.90.Final.jar swagger-core-jakarta-2.2.8.jar e
+ rror_prone_annotations-2.11.0.jar protobuf-java-3.22.2.jar grpc-xds-1.5
+ 4.0.jar netty-transport-4.1.90.Final.jar junit-4.13.2.jar grpc-netty-1.
+ 54.0.jar micrometer-commons-1.10.5.jar grpc-netty-shaded-1.54.0.jar
+

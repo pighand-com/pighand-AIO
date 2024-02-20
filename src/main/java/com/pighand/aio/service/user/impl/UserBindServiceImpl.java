@@ -1,16 +1,19 @@
 package com.pighand.aio.service.user.impl;
 
+import com.mybatisflex.core.query.QueryWrapper;
+import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.user.UserBindDomain;
 import com.pighand.aio.mapper.user.UserBindMapper;
 import com.pighand.aio.service.user.UserBindService;
-import com.pighand.aio.vo.user.UserBindVO;
+import com.pighand.aio.vo.user.LoginUser;
 import com.pighand.framework.spring.base.BaseServiceImpl;
-import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.exception.ThrowPrompt;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Date;
 
-import static com.pighand.aio.domain.user.table.UserTableDef.USER;
+import static com.pighand.aio.domain.user.table.UserBindTableDef.USER_BIND;
 
 /**
  * 用户 - 绑定信息
@@ -18,65 +21,68 @@ import static com.pighand.aio.domain.user.table.UserTableDef.USER;
  * @author wangshuli
  * @createDate 2023-12-04 16:37:26
  */
+@AllArgsConstructor
 @Service
 public class UserBindServiceImpl extends BaseServiceImpl<UserBindMapper, UserBindDomain> implements UserBindService {
 
     /**
-     * 创建
+     * 判断是否绑定
      *
-     * @param userBindVO
-     * @return
+     * @return true: 已绑定；false: 未绑定
      */
     @Override
-    public UserBindVO create(UserBindVO userBindVO) {
-        super.mapper.insert(userBindVO);
+    public boolean isBind() {
+        Long projectId = Context.getProjectId();
+        LoginUser loginUser = Context.getLoginUser();
 
-        return userBindVO;
+        UserBindDomain userBindDomain = this.queryChain().select(UserBindDomain::getId)
+            .where(USER_BIND.PROJECT_ID.eq(projectId).and(USER_BIND.USER_ID.eq(loginUser.getId()))).one();
+
+        return userBindDomain == null;
     }
 
     /**
-     * 详情
+     * 绑定用户
      *
-     * @param id
-     * @return
+     * @param bindUserId
      */
     @Override
-    public UserBindDomain find(Long id) {
-        List<String> joinTables = List.of("user", "user");
+    public void bind(Long bindUserId) {
+        Long projectId = Context.getProjectId();
+        LoginUser loginUser = Context.getLoginUser();
 
-        return super.mapper.find(id, joinTables);
+        if (loginUser.getId().equals(bindUserId)) {
+            throw new ThrowPrompt("不能绑定自己");
+        }
+
+        boolean isBind = this.isBind();
+        if (isBind) {
+            throw new ThrowPrompt("已绑定");
+        }
+
+        UserBindDomain userBindDomain = new UserBindDomain();
+        userBindDomain.setProjectId(projectId);
+        userBindDomain.setUserId(loginUser.getId());
+        userBindDomain.setUpperId(bindUserId);
+        userBindDomain.setCreatedAt(new Date());
+
+        this.save(userBindDomain);
     }
 
     /**
-     * 分页或列表
+     * 解绑用户
      *
-     * @param userBindVO
-     * @return PageOrList<UserBindVO>
+     * @param bindUserId
      */
     @Override
-    public PageOrList<UserBindVO> query(UserBindVO userBindVO) {
-        userBindVO.setJoinTables(List.of(USER.getTableName()));
+    public void unbind(Long bindUserId) {
+        Long projectId = Context.getProjectId();
+        LoginUser loginUser = Context.getLoginUser();
 
-        return super.mapper.query(userBindVO);
+        QueryWrapper queryWrapper = QueryWrapper.create().and(
+            USER_BIND.PROJECT_ID.eq(projectId).and(USER_BIND.USER_ID.eq(loginUser.getId()))
+                .and(USER_BIND.UPPER_ID.eq(bindUserId)));
+        super.mapper.deleteByQuery(queryWrapper);
     }
 
-    /**
-     * 修改
-     *
-     * @param userBindVO
-     */
-    @Override
-    public void update(UserBindVO userBindVO) {
-        super.mapper.update(userBindVO);
-    }
-
-    /**
-     * 删除
-     *
-     * @param id
-     */
-    @Override
-    public void delete(Long id) {
-        super.mapper.deleteById(id);
-    }
 }

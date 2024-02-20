@@ -10,6 +10,7 @@ import com.pighand.aio.common.enums.UserStatusEnum;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.user.UserDomain;
 import com.pighand.aio.mapper.user.UserMapper;
+import com.pighand.aio.service.user.UserBindService;
 import com.pighand.aio.service.user.UserExtensionService;
 import com.pighand.aio.service.user.UserService;
 import com.pighand.aio.vo.user.CheckUserExist;
@@ -40,6 +41,7 @@ import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> implements UserService {
 
     private final UserExtensionService userExtensionService;
+    private final UserBindService userBindService;
 
     /**
      * 判断是否是手机号

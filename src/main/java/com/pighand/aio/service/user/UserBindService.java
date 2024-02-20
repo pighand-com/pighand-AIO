@@ -1,9 +1,7 @@
 package com.pighand.aio.service.user;
 
-import com.pighand.framework.spring.base.BaseService;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.domain.user.UserBindDomain;
-import com.pighand.aio.vo.user.UserBindVO;
+import com.pighand.framework.spring.base.BaseService;
 
 /**
  * 用户 - 绑定信息
@@ -14,40 +12,23 @@ import com.pighand.aio.vo.user.UserBindVO;
 public interface UserBindService extends BaseService<UserBindDomain> {
 
     /**
-     * 创建
+     * 判断是否绑定
      *
-     * @param userBindVO
-     * @return
+     * @return true: 已绑定；false: 未绑定
      */
-    UserBindVO create(UserBindVO userBindVO);
+    boolean isBind();
 
     /**
-     * 详情
+     * 绑定用户
      *
-     * @param id
-     * @return
+     * @param bindUserId
      */
-    UserBindDomain find(Long id);
+    void bind(Long bindUserId);
 
     /**
-     * 分页或列表
+     * 解绑用户
      *
-     * @param userBindVO
-     * @return PageOrList<UserBindVO>
+     * @param bindUserId
      */
-    PageOrList<UserBindVO> query(UserBindVO userBindVO);
-
-    /**
-     * 修改
-     *
-     * @param userBindVO
-     */
-    void update(UserBindVO userBindVO);
-
-    /**
-     * 删除
-     *
-     * @param id
-     */
-    void delete(Long id);
+    void unbind(Long bindUserId);
 }

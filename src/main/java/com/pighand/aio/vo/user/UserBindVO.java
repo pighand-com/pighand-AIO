@@ -1,6 +1,5 @@
 package com.pighand.aio.vo.user;
 
-import com.mybatisflex.annotation.Column;
 import com.pighand.aio.domain.user.UserBindDomain;
 import lombok.Data;
 
@@ -12,6 +11,7 @@ import lombok.Data;
  */
 @Data
 public class UserBindVO extends UserBindDomain {
-    @Column(ignore = true)
     private UserVO user;
+
+    private Long bindUserId;
 }

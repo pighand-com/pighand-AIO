@@ -2,8 +2,6 @@ package com.pighand.aio.mapper.eCommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.eCommerce.SessionDomain;
-import com.pighand.aio.domain.eCommerce.table.SessionTableDef;
-import com.pighand.aio.domain.eCommerce.table.SessionTemplateGourpTableDef;
 import com.pighand.aio.vo.eCommerce.SessionVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
@@ -12,6 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.pighand.aio.domain.eCommerce.table.SessionTableDef.SESSION;
 import static com.pighand.aio.domain.eCommerce.table.SessionTemplateTableDef.SESSION_TEMPLATE;
 
 /**
@@ -22,10 +21,6 @@ import static com.pighand.aio.domain.eCommerce.table.SessionTemplateTableDef.SES
  */
 @Mapper
 public interface SessionMapper extends BaseMapper<SessionDomain> {
-
-    SessionTableDef SESSION = SessionTableDef.SESSION;
-
-    SessionTemplateGourpTableDef SESSION_TEMPLATE_GOURP = SessionTemplateGourpTableDef.SESSION_TEMPLATE_GOURP;
 
     /**
      * 基础查询条件

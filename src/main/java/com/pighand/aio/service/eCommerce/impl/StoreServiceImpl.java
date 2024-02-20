@@ -1,15 +1,16 @@
 package com.pighand.aio.service.eCommerce.impl;
 
-import com.pighand.framework.spring.base.BaseServiceImpl;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.domain.eCommerce.StoreDomain;
-import com.pighand.aio.domain.eCommerce.table.CouponTableDef;
 import com.pighand.aio.mapper.eCommerce.StoreMapper;
 import com.pighand.aio.service.eCommerce.StoreService;
 import com.pighand.aio.vo.eCommerce.StoreVO;
+import com.pighand.framework.spring.base.BaseServiceImpl;
+import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.pighand.aio.domain.eCommerce.table.CouponTableDef.COUPON;
 
 /**
  * 电商 - 门店
@@ -54,7 +55,7 @@ public class StoreServiceImpl extends BaseServiceImpl<StoreMapper, StoreDomain> 
      */
     @Override
     public PageOrList<StoreVO> query(StoreVO storeVO) {
-        storeVO.setJoinTables(List.of(CouponTableDef.COUPON.getTableName()));
+        storeVO.setJoinTables(List.of(COUPON.getTableName()));
 
         return super.mapper.query(storeVO);
     }

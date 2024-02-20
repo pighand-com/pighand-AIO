@@ -9,7 +9,6 @@ import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.common.enums.UserStatusEnum;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.user.UserDomain;
-import com.pighand.aio.domain.user.table.UserTableDef;
 import com.pighand.aio.mapper.user.UserMapper;
 import com.pighand.aio.service.user.UserExtensionService;
 import com.pighand.aio.service.user.UserService;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.pighand.aio.domain.user.table.UserExtensionTableDef.USER_EXTENSION;
+import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 
 /**
  * 用户关键信息表，主要保存登录所用信息
@@ -40,8 +40,6 @@ import static com.pighand.aio.domain.user.table.UserExtensionTableDef.USER_EXTEN
 public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> implements UserService {
 
     private final UserExtensionService userExtensionService;
-
-    private final UserTableDef userTableDef = UserTableDef.USER;
 
     /**
      * 判断是否是手机号
@@ -77,21 +75,21 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
         boolean hasPhone = VerifyUtils.isNotEmpty(phone);
         boolean hasEmail = VerifyUtils.isNotEmpty(email);
 
-        QueryChain query = this.queryChain().select(userTableDef.USERNAME, userTableDef.PHONE, userTableDef.EMAIL)
-            .where(userTableDef.PROJECT_ID.eq(Context.getProjectId()));
+        QueryChain query = this.queryChain().select(USER.USERNAME, USER.PHONE, USER.EMAIL)
+            .where(USER.PROJECT_ID.eq(Context.getProjectId()));
 
         if (userId != null) {
-            query.and(userTableDef.ID.ne(userId));
+            query.and(USER.ID.ne(userId));
         }
 
         if (hasUsername) {
-            query.or(userTableDef.USERNAME.eq(username));
+            query.or(USER.USERNAME.eq(username));
         }
         if (hasPhone) {
-            query.or(userTableDef.PHONE.eq(phone));
+            query.or(USER.PHONE.eq(phone));
         }
         if (hasEmail) {
-            query.or(userTableDef.EMAIL.eq(email));
+            query.or(USER.EMAIL.eq(email));
         }
         List<UserDomain> users = query.list();
 
@@ -184,9 +182,9 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
     @Override
     public UserVO find(Long id) {
         return this.queryChain()
-            .select(userTableDef.ID, userTableDef.USERNAME, userTableDef.PHONE, userTableDef.EMAIL, userTableDef.STATUS,
-                USER_EXTENSION.PROFILE).leftJoin(USER_EXTENSION).on(USER_EXTENSION.ID.eq(userTableDef.ID))
-            .where(userTableDef.PROJECT_ID.eq(Context.getProjectId())).and(userTableDef.ID.eq(id)).oneAs(UserVO.class);
+            .select(USER.ID, USER.USERNAME, USER.PHONE, USER.EMAIL, USER.STATUS, USER_EXTENSION.PROFILE)
+            .leftJoin(USER_EXTENSION).on(USER_EXTENSION.ID.eq(USER.ID))
+            .where(USER.PROJECT_ID.eq(Context.getProjectId())).and(USER.ID.eq(id)).oneAs(UserVO.class);
     }
 
     /**
@@ -202,23 +200,23 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
 
         // like
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.where(userTableDef.PROJECT_ID.eq(userVO.getProjectId()));
+        queryWrapper.where(USER.PROJECT_ID.eq(userVO.getProjectId()));
         if (VerifyUtils.isNotEmpty(userVO.getUsername())) {
-            queryWrapper.and(userTableDef.USERNAME.like(userVO.getUsername()));
+            queryWrapper.and(USER.USERNAME.like(userVO.getUsername()));
         }
         if (VerifyUtils.isNotEmpty(userVO.getPhone())) {
-            queryWrapper.and(userTableDef.PHONE.like(userVO.getPhone()));
+            queryWrapper.and(USER.PHONE.like(userVO.getPhone()));
         }
         if (VerifyUtils.isNotEmpty(userVO.getEmail())) {
-            queryWrapper.and(userTableDef.EMAIL.like(userVO.getEmail()));
+            queryWrapper.and(USER.EMAIL.like(userVO.getEmail()));
         }
 
         // equal
         if (VerifyUtils.isNotEmpty(userVO.getStatus())) {
-            queryWrapper.and(userTableDef.STATUS.eq(userVO.getStatus()));
+            queryWrapper.and(USER.STATUS.eq(userVO.getStatus()));
         }
         if (VerifyUtils.isNotEmpty(userVO.getRoleId())) {
-            queryWrapper.and(userTableDef.ROLE_ID.eq(userVO.getRoleId()));
+            queryWrapper.and(USER.ROLE_ID.eq(userVO.getRoleId()));
         }
 
         return this.mapper.query(userVO, queryWrapper);

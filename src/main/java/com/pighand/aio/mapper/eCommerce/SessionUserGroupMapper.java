@@ -2,7 +2,6 @@ package com.pighand.aio.mapper.eCommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.eCommerce.SessionUserGroupDomain;
-import com.pighand.aio.domain.eCommerce.table.SessionUserGroupTableDef;
 import com.pighand.aio.vo.eCommerce.SessionUserGroupVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
@@ -10,6 +9,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.pighand.aio.domain.eCommerce.table.SessionUserGroupTableDef.SESSION_USER_GROUP;
 
 /**
  * 电商 - 场次 - 用户分组
@@ -19,8 +20,6 @@ import java.util.List;
  */
 @Mapper
 public interface SessionUserGroupMapper extends BaseMapper<SessionUserGroupDomain> {
-
-    SessionUserGroupTableDef SESSION_USER_GROUP = SessionUserGroupTableDef.SESSION_USER_GROUP;
 
     /**
      * 基础查询条件

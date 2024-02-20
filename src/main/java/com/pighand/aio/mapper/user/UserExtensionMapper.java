@@ -1,8 +1,8 @@
 package com.pighand.aio.mapper.user;
 
-import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.aio.domain.user.UserExtensionDomain;
 import com.pighand.aio.vo.user.UserExtensionVO;
+import com.pighand.framework.spring.base.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,7 +18,6 @@ public interface UserExtensionMapper extends BaseMapper<UserExtensionDomain> {
     /**
      * 分页或列表
      *
-     * @param pageInfo
      * @param userExtensionVO
      * @return
      */

@@ -2,15 +2,16 @@ package com.pighand.aio.mapper.eCommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.update.UpdateChain;
+import com.pighand.aio.domain.eCommerce.WalletDomain;
+import com.pighand.aio.vo.eCommerce.WalletVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.aio.domain.eCommerce.WalletDomain;
-import com.pighand.aio.domain.eCommerce.table.WalletTableDef;
-import com.pighand.aio.vo.eCommerce.WalletVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.pighand.aio.domain.eCommerce.table.WalletTableDef.WALLET;
 
 /**
  * 电商 - 钱包
@@ -20,8 +21,6 @@ import java.util.List;
  */
 @Mapper
 public interface WalletMapper extends BaseMapper<WalletDomain> {
-
-    WalletTableDef WALLET = WalletTableDef.WALLET;
 
     /**
      * 基础查询条件

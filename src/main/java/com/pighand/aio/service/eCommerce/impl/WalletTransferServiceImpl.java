@@ -1,16 +1,17 @@
 package com.pighand.aio.service.eCommerce.impl;
 
-import com.pighand.framework.spring.base.BaseServiceImpl;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.domain.eCommerce.WalletTransferDomain;
-import com.pighand.aio.domain.eCommerce.table.WalletBillTableDef;
 import com.pighand.aio.mapper.eCommerce.WalletTransferMapper;
 import com.pighand.aio.service.eCommerce.WalletTransferService;
 import com.pighand.aio.vo.eCommerce.WalletTransferVO;
+import com.pighand.framework.spring.base.BaseServiceImpl;
+import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.pighand.aio.domain.eCommerce.table.WalletBillTableDef.WALLET_BILL;
 
 /**
  * 电商 - 转账记录
@@ -57,7 +58,7 @@ public class WalletTransferServiceImpl extends BaseServiceImpl<WalletTransferMap
      */
     @Override
     public PageOrList<WalletTransferVO> query(WalletTransferVO walletTransferVO) {
-        walletTransferVO.setJoinTables(List.of(WalletBillTableDef.WALLET_BILL.getTableName()));
+        walletTransferVO.setJoinTables(List.of(WALLET_BILL.getTableName()));
 
         return super.mapper.query(walletTransferVO);
     }

@@ -1,15 +1,16 @@
 package com.pighand.aio.service.user.impl;
 
-import com.pighand.framework.spring.base.BaseServiceImpl;
-import com.pighand.framework.spring.exception.ThrowPrompt;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.common.enums.PlatformEnum;
 import com.pighand.aio.domain.project.ProjectPlatformKeyDomain;
-import com.pighand.aio.domain.project.table.ProjectPlatformKeyTableDef;
 import com.pighand.aio.mapper.project.ProjectPlatformKeyMapper;
 import com.pighand.aio.service.project.ProjectPlatformKeyService;
 import com.pighand.aio.vo.project.ProjectPlatformKeyVO;
+import com.pighand.framework.spring.base.BaseServiceImpl;
+import com.pighand.framework.spring.exception.ThrowPrompt;
+import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
+
+import static com.pighand.aio.domain.project.table.ProjectPlatformKeyTableDef.PROJECT_PLATFORM_KEY;
 
 /**
  * 三方平台key
@@ -88,8 +89,8 @@ public class ProjectPlatformKeyServiceImpl extends BaseServiceImpl<ProjectPlatfo
     @Override
     public ProjectPlatformKeyDomain findByPlatform(Long projectId, PlatformEnum platform) {
         ProjectPlatformKeyDomain projectPlatformKeyDomain =
-            this.queryChain().where(ProjectPlatformKeyTableDef.PROJECT_PLATFORM_KEY.PROJECT_ID.eq(projectId))
-                .and(ProjectPlatformKeyTableDef.PROJECT_PLATFORM_KEY.PLATFORM.eq(platform.value)).one();
+            this.queryChain().where(PROJECT_PLATFORM_KEY.PROJECT_ID.eq(projectId))
+                .and(PROJECT_PLATFORM_KEY.PLATFORM.eq(platform.value)).one();
 
         if (projectPlatformKeyDomain == null) {
             throw new ThrowPrompt("未配置三方平台key");

@@ -1,15 +1,16 @@
 package com.pighand.aio.service.user.impl;
 
-import com.pighand.framework.spring.base.BaseServiceImpl;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.domain.user.UserBindDomain;
-import com.pighand.aio.domain.user.table.UserTableDef;
 import com.pighand.aio.mapper.user.UserBindMapper;
 import com.pighand.aio.service.user.UserBindService;
 import com.pighand.aio.vo.user.UserBindVO;
+import com.pighand.framework.spring.base.BaseServiceImpl;
+import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 
 /**
  * 用户 - 绑定信息
@@ -54,7 +55,7 @@ public class UserBindServiceImpl extends BaseServiceImpl<UserBindMapper, UserBin
      */
     @Override
     public PageOrList<UserBindVO> query(UserBindVO userBindVO) {
-        userBindVO.setJoinTables(List.of(UserTableDef.USER.getTableName()));
+        userBindVO.setJoinTables(List.of(USER.getTableName()));
 
         return super.mapper.query(userBindVO);
     }

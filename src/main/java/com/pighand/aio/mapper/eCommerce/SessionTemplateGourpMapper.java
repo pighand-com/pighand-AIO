@@ -2,7 +2,6 @@ package com.pighand.aio.mapper.eCommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.eCommerce.SessionTemplateGourpDomain;
-import com.pighand.aio.domain.eCommerce.table.SessionTemplateGourpTableDef;
 import com.pighand.aio.vo.eCommerce.SessionTemplateGourpVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
@@ -10,6 +9,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.pighand.aio.domain.eCommerce.table.SessionTemplateGourpTableDef.SESSION_TEMPLATE_GOURP;
 
 /**
  * 电商 - 场次模板 - 分组
@@ -19,8 +20,6 @@ import java.util.List;
  */
 @Mapper
 public interface SessionTemplateGourpMapper extends BaseMapper<SessionTemplateGourpDomain> {
-
-    SessionTemplateGourpTableDef SESSION_TEMPLATE_GOURP = SessionTemplateGourpTableDef.SESSION_TEMPLATE_GOURP;
 
     /**
      * 基础查询条件

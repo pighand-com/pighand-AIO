@@ -2,9 +2,6 @@ package com.pighand.aio.mapper.eCommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.eCommerce.CouponDomain;
-import com.pighand.aio.domain.eCommerce.table.CouponTableDef;
-import com.pighand.aio.domain.eCommerce.table.CouponUserTableDef;
-import com.pighand.aio.domain.eCommerce.table.StoreTableDef;
 import com.pighand.aio.vo.eCommerce.CouponVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
@@ -14,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mybatisflex.core.query.QueryMethods.count;
+import static com.pighand.aio.domain.eCommerce.table.CouponTableDef.COUPON;
+import static com.pighand.aio.domain.eCommerce.table.CouponUserTableDef.COUPON_USER;
+import static com.pighand.aio.domain.eCommerce.table.StoreTableDef.STORE;
 
 /**
  * 电商 - 优惠券
@@ -23,11 +23,6 @@ import static com.mybatisflex.core.query.QueryMethods.count;
  */
 @Mapper
 public interface CouponMapper extends BaseMapper<CouponDomain> {
-
-    CouponTableDef COUPON = CouponTableDef.COUPON;
-
-    StoreTableDef STORE = StoreTableDef.STORE;
-    CouponUserTableDef COUPON_USER = CouponUserTableDef.COUPON_USER;
 
     /**
      * 基础查询条件

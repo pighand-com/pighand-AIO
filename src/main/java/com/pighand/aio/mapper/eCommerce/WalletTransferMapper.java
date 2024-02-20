@@ -1,16 +1,17 @@
 package com.pighand.aio.mapper.eCommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
+import com.pighand.aio.domain.eCommerce.WalletTransferDomain;
+import com.pighand.aio.vo.eCommerce.WalletTransferVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.aio.domain.eCommerce.WalletTransferDomain;
-import com.pighand.aio.domain.eCommerce.table.WalletBillTableDef;
-import com.pighand.aio.domain.eCommerce.table.WalletTransferTableDef;
-import com.pighand.aio.vo.eCommerce.WalletTransferVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.pighand.aio.domain.eCommerce.table.WalletBillTableDef.WALLET_BILL;
+import static com.pighand.aio.domain.eCommerce.table.WalletTransferTableDef.WALLET_TRANSFER;
 
 /**
  * 电商 - 转账记录
@@ -20,10 +21,6 @@ import java.util.List;
  */
 @Mapper
 public interface WalletTransferMapper extends BaseMapper<WalletTransferDomain> {
-
-    WalletTransferTableDef WALLET_TRANSFER = WalletTransferTableDef.WALLET_TRANSFER;
-
-    WalletBillTableDef WALLET_BILL = WalletBillTableDef.WALLET_BILL;
 
     /**
      * 基础查询条件

@@ -1,16 +1,17 @@
 package com.pighand.aio.mapper.eCommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
+import com.pighand.aio.domain.eCommerce.StoreDomain;
+import com.pighand.aio.vo.eCommerce.StoreVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.aio.domain.eCommerce.StoreDomain;
-import com.pighand.aio.domain.eCommerce.table.CouponTableDef;
-import com.pighand.aio.domain.eCommerce.table.StoreTableDef;
-import com.pighand.aio.vo.eCommerce.StoreVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.pighand.aio.domain.eCommerce.table.CouponTableDef.COUPON;
+import static com.pighand.aio.domain.eCommerce.table.StoreTableDef.STORE;
 
 /**
  * 电商 - 门店
@@ -20,10 +21,6 @@ import java.util.List;
  */
 @Mapper
 public interface StoreMapper extends BaseMapper<StoreDomain> {
-
-    StoreTableDef STORE = StoreTableDef.STORE;
-
-    CouponTableDef COUPON = CouponTableDef.COUPON;
 
     /**
      * 基础查询条件

@@ -1,16 +1,17 @@
 package com.pighand.aio.mapper.user;
 
 import com.mybatisflex.core.query.QueryWrapper;
+import com.pighand.aio.domain.user.UserBindDomain;
+import com.pighand.aio.vo.user.UserBindVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.aio.domain.user.UserBindDomain;
-import com.pighand.aio.domain.user.table.UserBindTableDef;
-import com.pighand.aio.domain.user.table.UserTableDef;
-import com.pighand.aio.vo.user.UserBindVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.pighand.aio.domain.user.table.UserBindTableDef.USER_BIND;
+import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 
 /**
  * 用户 - 绑定信息
@@ -20,10 +21,6 @@ import java.util.List;
  */
 @Mapper
 public interface UserBindMapper extends BaseMapper<UserBindDomain> {
-
-    UserBindTableDef USER_BIND = UserBindTableDef.USER_BIND;
-
-    UserTableDef USER = UserTableDef.USER;
 
     /**
      * 基础查询条件

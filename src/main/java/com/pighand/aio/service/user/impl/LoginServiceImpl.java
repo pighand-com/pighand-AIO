@@ -2,7 +2,6 @@ package com.pighand.aio.service.user.impl;
 
 import com.pighand.aio.common.enums.UserStatusEnum;
 import com.pighand.aio.common.interceptor.Context;
-import com.pighand.aio.domain.user.table.UserTableDef;
 import com.pighand.aio.entityMapper.user.UserEntityMapper;
 import com.pighand.aio.service.user.AuthorizationService;
 import com.pighand.aio.service.user.LoginService;
@@ -13,6 +12,8 @@ import com.pighand.framework.spring.util.VerifyUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 
 /**
  * 登录相关接口
@@ -28,12 +29,10 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public UserVO byPassword(String username, String password) {
-        UserTableDef userTableDef = UserTableDef.USER;
         Long projectId = Context.getProjectId();
-        UserVO user =
-            userService.queryChain().select(userTableDef.ID, userTableDef.PASSWORD).select(userTableDef.STATUS)
-                .where(userTableDef.PROJECT_ID.eq(projectId)).and(userTableDef.USERNAME.eq(username))
-                .or(userTableDef.EMAIL.eq(username)).or(userTableDef.PHONE.eq(username)).oneAs(UserVO.class);
+        UserVO user = userService.queryChain().select(USER.ID, USER.PASSWORD).select(USER.STATUS)
+            .where(USER.PROJECT_ID.eq(projectId)).and(USER.USERNAME.eq(username)).or(USER.EMAIL.eq(username))
+            .or(USER.PHONE.eq(username)).oneAs(UserVO.class);
 
         if (user == null) {
             throw new ThrowPrompt("用户或密码错误");

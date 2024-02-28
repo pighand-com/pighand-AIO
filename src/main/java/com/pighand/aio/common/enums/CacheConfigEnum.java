@@ -5,13 +5,20 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public enum CacheConfigEnum {
-    CLIENT(CacheConfigEnum.CLIENT_CACHE_NAME, 10, 60 * 60),
+    // 其他平台client缓存
+    CLIENT(CacheConfigEnum.CLIENT_CACHE, 10, 60 * 60),
 
-    CAPTCHA(CacheConfigEnum.CAPTCHA_CACHE_NAME, null, 60 * 5);
+    // 验证码缓存是否需要验证
+    CAPTCHA_REQUIRE(CacheConfigEnum.CAPTCHA_REQUIRE_CACHE, null, 60 * 30),
 
-    public static final String CLIENT_CACHE_NAME = "client";
+    // 验证码缓存
+    CAPTCHA(CacheConfigEnum.CAPTCHA_CACHE, null, 60 * 5);
 
-    public static final String CAPTCHA_CACHE_NAME = "CAPTCHA";
+    public static final String CLIENT_CACHE = "client";
+
+    public static final String CAPTCHA_REQUIRE_CACHE = "CAPTCHA_REQUIRE";
+
+    public static final String CAPTCHA_CACHE = "CAPTCHA";
 
     @Getter
     private String name;

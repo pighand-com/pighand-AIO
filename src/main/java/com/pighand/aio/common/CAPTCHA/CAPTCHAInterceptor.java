@@ -7,10 +7,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.io.IOException;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 验证码拦截器
@@ -25,38 +30,44 @@ public class CAPTCHAInterceptor implements HandlerInterceptor {
     /**
      * 校验验证码
      *
-     * @param mode
+     * @param mode      重试模式验证码第二次需要验证，其他模式验证码必填
      * @param projectId
-     * @param ip
+     * @param captchaId
      * @param code
      */
-    private void checkCode(ModeEnum mode, String projectId, String ip, String code) {
+    private void checkCode(ModeEnum mode, String projectId, String captchaId, String code) {
         if (mode == null) {
             return;
         }
 
+        // 重试模式，如果不需要验证，直接返回
         if (mode.equals(ModeEnum.RETRY)) {
-            boolean needVerification = verificationCache.needVerification(projectId, ip);
+            boolean needVerification = verificationCache.needVerification(projectId, captchaId);
 
             if (VerifyUtils.isNotEmpty(code) && !needVerification) {
                 return;
             }
         }
 
-        CodeData codedata = verificationCache.getCode(projectId, ip);
-
+        // 其他模式验证码必填
         if (VerifyUtils.isEmpty(code)) {
-            throw new ThrowPrompt("请填写验证码", 40310, codedata.getByteArray());
+            CodeData newCode = verificationCache.getNewCode(projectId);
+            throw new ThrowPrompt("请填写验证码", 40310, newCode);
         }
 
-        if (!codedata.getCode().equals(code)) {
-            CodeData newCode = verificationCache.newCode(projectId, ip);
-            throw new ThrowPrompt("验证码错误", 40311, newCode.getByteArray());
+        // 对比验证码
+        String codeCache = verificationCache.getCode(projectId, captchaId);
+        if (VerifyUtils.isEmpty(codeCache) || !codeCache.equals(code)) {
+            CodeData newCode = verificationCache.getNewCode(projectId);
+            throw new ThrowPrompt("验证码错误", 40311, newCode);
         }
+
+        verificationCache.clear(projectId, captchaId);
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+        throws IOException {
         if (handler instanceof HandlerMethod handlerMethod) {
             CAPTCHA methodAnnotation = handlerMethod.getMethodAnnotation(CAPTCHA.class);
             CAPTCHA classAnnotation = handlerMethod.getBeanType().getAnnotation(CAPTCHA.class);
@@ -64,7 +75,28 @@ public class CAPTCHAInterceptor implements HandlerInterceptor {
             ModeEnum mode = Optional.ofNullable(methodAnnotation).map(CAPTCHA::value)
                 .orElse(Optional.ofNullable(classAnnotation).map(CAPTCHA::value).orElse(null));
 
-            this.checkCode(mode, request.getHeader("projectId"), request.getHeader("ip"), request.getHeader("code"));
+            String code = "";
+            String captchaId = "";
+            if (request.getMethod().equals(RequestMethod.GET) || request.getMethod().equals(RequestMethod.DELETE)) {
+                code = request.getParameter("code");
+                captchaId = request.getParameter("captchaId");
+            } else {
+                byte[] bodyBytes = StreamUtils.copyToByteArray(request.getInputStream());
+                String body = new String(bodyBytes, request.getCharacterEncoding());
+
+                Matcher matcherCode = Pattern.compile("\"code\":\\s*\"([^\"]+)\"").matcher(body);
+                if (matcherCode.find()) {
+                    code = matcherCode.group(1);
+                }
+
+                Matcher matcherId = Pattern.compile("\"captchaId\":\\s*\"([^\"]+)\"").matcher(body);
+                if (matcherId.find()) {
+                    captchaId = matcherId.group(1);
+                }
+            }
+
+            // 通过request获取body或url上的code参数
+            this.checkCode(mode, request.getHeader("projectId"), captchaId, code);
         }
 
         return true;

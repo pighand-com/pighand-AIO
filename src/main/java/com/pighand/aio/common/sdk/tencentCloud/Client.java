@@ -14,9 +14,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class Client {
-    public static final String name = CacheConfigEnum.CLIENT.name();
 
-    @Cacheable(cacheNames = {CacheConfigEnum.CLIENT_CACHE_NAME}, key = "'cos_' + #region + '_' + #appid")
+    @Cacheable(cacheNames = {CacheConfigEnum.CLIENT_CACHE}, key = "'cos_' + #region + '_' + #appid")
     public COSClient cosClient(String appid, String secret, String region) {
         COSCredentials cred = new BasicCOSCredentials(appid, secret);
 

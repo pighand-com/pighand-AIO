@@ -1,15 +1,16 @@
 package com.pighand.aio.controller.user;
 
-import com.pighand.framework.spring.api.annotation.Post;
-import com.pighand.framework.spring.api.annotation.RestController;
-import com.pighand.framework.spring.base.BaseController;
-import com.pighand.framework.spring.response.Result;
+import com.pighand.aio.common.CAPTCHA.CAPTCHA;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.service.user.LoginService;
 import com.pighand.aio.service.user.UserService;
 import com.pighand.aio.service.user.tripartite.wechat.AppletImpl;
 import com.pighand.aio.vo.user.Login;
 import com.pighand.aio.vo.user.UserVO;
+import com.pighand.framework.spring.api.annotation.Post;
+import com.pighand.framework.spring.api.annotation.RestController;
+import com.pighand.framework.spring.base.BaseController;
+import com.pighand.framework.spring.response.Result;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -27,6 +28,7 @@ public class LoginController extends BaseController<UserService> {
     private final LoginService loginService;
 
     @Post()
+    @CAPTCHA()
     public Result<UserVO> password(@RequestBody Login login) {
         UserVO user = loginService.byPassword(login.getUsername(), login.getPassword());
         return new Result(user);

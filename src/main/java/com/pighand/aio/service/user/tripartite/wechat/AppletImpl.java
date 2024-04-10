@@ -2,15 +2,15 @@ package com.pighand.aio.service.user.tripartite.wechat;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pighand.framework.spring.exception.ThrowException;
 import com.pighand.aio.common.enums.PlatformEnum;
-import com.pighand.aio.domain.project.ProjectPlatformKeyDomain;
 import com.pighand.aio.common.sdk.wechat.WechatSDK;
 import com.pighand.aio.common.sdk.wechat.entity.UserInfo;
+import com.pighand.aio.domain.project.ProjectPlatformKeyDomain;
 import com.pighand.aio.service.project.ProjectPlatformKeyService;
 import com.pighand.aio.service.user.TripartitePlatformService;
 import com.pighand.aio.vo.user.tripartite.EncryptedData;
 import com.pighand.aio.vo.user.tripartite.TripartitePlatformUserInfo;
+import com.pighand.framework.spring.exception.ThrowException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +29,8 @@ import java.util.regex.Pattern;
 @Service
 public class AppletImpl extends AbstractWechat<UserInfo> implements TripartitePlatformService {
 
+    ObjectMapper om = new ObjectMapper();
+
     @Autowired
     private ProjectPlatformKeyService platformKeyService;
 
@@ -46,7 +48,6 @@ public class AppletImpl extends AbstractWechat<UserInfo> implements TripartitePl
         String result = WechatSDK.MINI_APPLET.code2Session(key.getAppid(), key.getSecret(), code, null);
 
         // 使用Jackson将result转换为UserInfo
-        ObjectMapper om = new ObjectMapper();
         UserInfo userInfo = null;
         try {
             userInfo = om.readValue(result, UserInfo.class);

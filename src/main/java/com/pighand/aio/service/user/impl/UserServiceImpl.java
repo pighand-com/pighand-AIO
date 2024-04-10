@@ -10,7 +10,6 @@ import com.pighand.aio.common.enums.UserStatusEnum;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.user.UserDomain;
 import com.pighand.aio.mapper.user.UserMapper;
-import com.pighand.aio.service.user.UserBindService;
 import com.pighand.aio.service.user.UserExtensionService;
 import com.pighand.aio.service.user.UserService;
 import com.pighand.aio.vo.user.CheckUserExist;
@@ -41,7 +40,7 @@ import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> implements UserService {
 
     private final UserExtensionService userExtensionService;
-    private final UserBindService userBindService;
+    ObjectMapper om = new ObjectMapper();
 
     /**
      * 判断是否是手机号
@@ -233,7 +232,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
     public void update(UserVO userVO) {
         this.checkUserExist(userVO);
 
-        ObjectMapper om = new ObjectMapper();
         om.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
         om.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, false);
         om.setSerializationInclusion(JsonInclude.Include.NON_NULL);

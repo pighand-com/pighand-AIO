@@ -9,8 +9,8 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pighand.aio.common.enums.AuthorizationAlgEnum;
 import com.pighand.aio.common.enums.AuthorizationTypeEnum;
-import com.pighand.aio.domain.project.ProjectAuthorizationDomain;
 import com.pighand.aio.common.interceptor.Context;
+import com.pighand.aio.domain.project.ProjectAuthorizationDomain;
 import com.pighand.aio.service.project.ProjectAuthorizationService;
 import com.pighand.aio.service.user.AuthorizationService;
 import com.pighand.aio.vo.user.LoginUser;
@@ -40,12 +40,12 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class AuthorizationServiceImpl implements AuthorizationService {
 
+    ObjectMapper om = new ObjectMapper();
+    
     @Value("spring.profiles.active")
     private String env;
-
     @Autowired
     private StringRedisTemplate redisTemplate;
-
     @Autowired
     private ProjectAuthorizationService projectAuthorizationService;
 
@@ -118,7 +118,6 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         // 根据jwtBody中的key，从userInfo和extension中获取对应的值
         Map<String, Object> jwtBody = projectAuthorization.getJwtBody();
         if (jwtBody != null) {
-            ObjectMapper om = new ObjectMapper();
 
             // 使用om，将userInfo和extension转换为map，方便获取值
             Map userMap = userInfo != null ? om.convertValue(userInfo, Map.class) : null;

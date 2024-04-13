@@ -15,11 +15,17 @@ public class WechatSDK {
      */
     public static OfficiallyAccount OFFICIALLY_ACCOUNT;
 
+    /**
+     * 小程序
+     */
     public static MiniApplet MINI_APPLET;
 
+    public WechatSDK() {
+    }
+
     @Autowired(required = false)
-    public WechatSDK(OfficiallyAccount officiallyAccount, MiniApplet MINI_APPLET) {
+    public WechatSDK(OfficiallyAccount officiallyAccount, MiniApplet miniApplet) {
         WechatSDK.OFFICIALLY_ACCOUNT = officiallyAccount;
-        WechatSDK.MINI_APPLET = MINI_APPLET;
+        WechatSDK.MINI_APPLET = miniApplet;
     }
 }

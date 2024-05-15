@@ -1,9 +1,9 @@
-package com.pighand.aio.service.eCommerce.impl;
+package com.pighand.aio.service.ECommerce.impl;
 
-import com.pighand.aio.domain.eCommerce.GoodsSkuDomain;
-import com.pighand.aio.mapper.eCommerce.GoodsSkuMapper;
-import com.pighand.aio.service.eCommerce.GoodsSkuService;
-import com.pighand.aio.vo.eCommerce.GoodsSkuVO;
+import com.pighand.aio.domain.ECommerce.GoodsSkuDomain;
+import com.pighand.aio.mapper.ECommerce.GoodsSkuMapper;
+import com.pighand.aio.service.ECommerce.GoodsSkuService;
+import com.pighand.aio.vo.ECommerce.GoodsSkuVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;

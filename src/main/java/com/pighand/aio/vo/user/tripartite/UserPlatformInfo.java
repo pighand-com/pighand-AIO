@@ -1,5 +1,9 @@
 package com.pighand.aio.vo.user.tripartite;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -17,10 +21,14 @@ public class UserPlatformInfo {
     /**
      * 用户平台信息id。不存在需要创建
      */
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long dbId;
     /**
      * 系统用户id
      */
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
     /**
      * 三方平台信息

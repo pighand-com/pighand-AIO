@@ -1,9 +1,9 @@
-package com.pighand.aio.service.eCommerce;
+package com.pighand.aio.service.ECommerce;
 
 import com.pighand.framework.spring.base.BaseService;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.aio.domain.eCommerce.WalletTransferDomain;
-import com.pighand.aio.vo.eCommerce.WalletTransferVO;
+import com.pighand.aio.domain.ECommerce.WalletTransferDomain;
+import com.pighand.aio.vo.ECommerce.WalletTransferVO;
 
 /**
  * 电商 - 转账记录

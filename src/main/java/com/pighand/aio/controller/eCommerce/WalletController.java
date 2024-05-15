@@ -1,10 +1,11 @@
-package com.pighand.aio.controller.eCommerce;
+package com.pighand.aio.controller.ECommerce;
 
+import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.common.interfaces.Authorization;
-import com.pighand.aio.service.eCommerce.WalletService;
-import com.pighand.aio.vo.eCommerce.WalletTopVO;
-import com.pighand.aio.vo.eCommerce.WalletTransferVO;
-import com.pighand.aio.vo.eCommerce.WalletVO;
+import com.pighand.aio.service.ECommerce.WalletService;
+import com.pighand.aio.vo.ECommerce.WalletTopVO;
+import com.pighand.aio.vo.ECommerce.WalletTransferVO;
+import com.pighand.aio.vo.ECommerce.WalletVO;
 import com.pighand.framework.spring.api.annotation.Get;
 import com.pighand.framework.spring.api.annotation.Post;
 import com.pighand.framework.spring.api.annotation.RestController;
@@ -13,6 +14,7 @@ import com.pighand.framework.spring.response.Result;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -32,9 +34,18 @@ public class WalletController extends BaseController<WalletService> {
     @Authorization(false)
     @Post(docSummary = "转账", fieldGroup = "walletCreate")
     public Result create(@RequestBody WalletTransferVO walletTransferVO) {
+        BigDecimal success = new BigDecimal("10");
+        if (walletTransferVO.getAccount() == null || walletTransferVO.getAccount().compareTo(BigDecimal.ZERO) <= 0) {
+            walletTransferVO.setAccount(success);
+        }
+
+        if (walletTransferVO.getToUserId() == null) {
+            walletTransferVO.setToUserId(Context.getLoginUser().getId());
+        }
+
         super.service.transfer(walletTransferVO);
 
-        return new Result();
+        return new Result(success.toString());
     }
 
     @Authorization()

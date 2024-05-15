@@ -1,16 +1,16 @@
-package com.pighand.aio.mapper.eCommerce;
+package com.pighand.aio.mapper.ECommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.aio.domain.eCommerce.GoodsCategoryDomain;
-import com.pighand.aio.vo.eCommerce.GoodsCategoryVO;
+import com.pighand.aio.domain.ECommerce.GoodsCategoryDomain;
+import com.pighand.aio.vo.ECommerce.GoodsCategoryVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-import static com.pighand.aio.domain.eCommerce.table.GoodsCategoryTableDef.GOODS_CATEGORY;
-import static com.pighand.aio.domain.eCommerce.table.GoodsSpuTableDef.GOODS_SPU;
+import static com.pighand.aio.domain.ECommerce.table.GoodsCategoryTableDef.GOODS_CATEGORY;
+import static com.pighand.aio.domain.ECommerce.table.GoodsSpuTableDef.GOODS_SPU;
 
 /**
  * 电商 - 商品类目

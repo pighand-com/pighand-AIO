@@ -1,9 +1,9 @@
-package com.pighand.aio.service.eCommerce.impl;
+package com.pighand.aio.service.ECommerce.impl;
 
-import com.pighand.aio.domain.eCommerce.WalletTransferDomain;
-import com.pighand.aio.mapper.eCommerce.WalletTransferMapper;
-import com.pighand.aio.service.eCommerce.WalletTransferService;
-import com.pighand.aio.vo.eCommerce.WalletTransferVO;
+import com.pighand.aio.domain.ECommerce.WalletTransferDomain;
+import com.pighand.aio.mapper.ECommerce.WalletTransferMapper;
+import com.pighand.aio.service.ECommerce.WalletTransferService;
+import com.pighand.aio.vo.ECommerce.WalletTransferVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.pighand.aio.domain.eCommerce.table.WalletBillTableDef.WALLET_BILL;
+import static com.pighand.aio.domain.ECommerce.table.WalletBillTableDef.WALLET_BILL;
 
 /**
  * 电商 - 转账记录

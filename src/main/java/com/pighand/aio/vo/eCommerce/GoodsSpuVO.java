@@ -1,6 +1,10 @@
-package com.pighand.aio.vo.eCommerce;
+package com.pighand.aio.vo.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.GoodsSpuDomain;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.pighand.aio.domain.ECommerce.GoodsSpuDomain;
+import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import lombok.Data;
 
 import java.util.List;
@@ -19,4 +23,13 @@ public class GoodsSpuVO extends GoodsSpuDomain {
 
     private List<GoodsSkuVO> goodsSku;
     // relation table: end
+
+    // 所属门店id
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long storeId;
+    // 购买数量
+    private Integer quantity;
+
+    private String system;
 }

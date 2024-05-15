@@ -1,6 +1,5 @@
 package com.pighand.aio.common.CAPTCHA.utils;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -29,7 +28,7 @@ public class FontLoader {
         return fonts.get(index);
     }
 
-    @PostConstruct
+    //    @PostConstruct
     public void loader() {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         try {

@@ -1,18 +1,18 @@
-package com.pighand.aio.service.eCommerce.impl;
+package com.pighand.aio.service.ECommerce.impl;
 
 import com.mybatisflex.core.query.QueryChain;
-import com.pighand.aio.domain.eCommerce.SessionDomain;
-import com.pighand.aio.domain.eCommerce.SessionTemplateGourpDomain;
-import com.pighand.aio.domain.eCommerce.SessionUserGroupDomain;
+import com.pighand.aio.domain.ECommerce.SessionDomain;
+import com.pighand.aio.domain.ECommerce.SessionTemplateGourpDomain;
+import com.pighand.aio.domain.ECommerce.SessionUserGroupDomain;
 import com.pighand.aio.common.interceptor.Context;
-import com.pighand.aio.mapper.eCommerce.SessionMapper;
-import com.pighand.aio.mapper.eCommerce.WalletMapper;
-import com.pighand.aio.service.eCommerce.SessionService;
-import com.pighand.aio.service.eCommerce.SessionTemplateGourpService;
-import com.pighand.aio.service.eCommerce.SessionUserGroupService;
-import com.pighand.aio.vo.eCommerce.SessionTemplateGourpVO;
-import com.pighand.aio.vo.eCommerce.SessionUserGroupVO;
-import com.pighand.aio.vo.eCommerce.SessionVO;
+import com.pighand.aio.mapper.ECommerce.SessionMapper;
+import com.pighand.aio.mapper.ECommerce.WalletMapper;
+import com.pighand.aio.service.ECommerce.SessionService;
+import com.pighand.aio.service.ECommerce.SessionTemplateGourpService;
+import com.pighand.aio.service.ECommerce.SessionUserGroupService;
+import com.pighand.aio.vo.ECommerce.SessionTemplateGourpVO;
+import com.pighand.aio.vo.ECommerce.SessionUserGroupVO;
+import com.pighand.aio.vo.ECommerce.SessionVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.exception.ThrowPrompt;
 import com.pighand.framework.spring.page.PageOrList;
@@ -26,11 +26,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mybatisflex.core.query.QueryMethods.sum;
-import static com.pighand.aio.domain.eCommerce.table.SessionTableDef.SESSION;
-import static com.pighand.aio.domain.eCommerce.table.SessionTemplateGourpTableDef.SESSION_TEMPLATE_GOURP;
-import static com.pighand.aio.domain.eCommerce.table.SessionTemplateTableDef.SESSION_TEMPLATE;
-import static com.pighand.aio.domain.eCommerce.table.SessionUserGroupTableDef.SESSION_USER_GROUP;
-import static com.pighand.aio.domain.eCommerce.table.WalletBillTableDef.WALLET_BILL;
+import static com.pighand.aio.domain.ECommerce.table.SessionTableDef.SESSION;
+import static com.pighand.aio.domain.ECommerce.table.SessionTemplateGourpTableDef.SESSION_TEMPLATE_GOURP;
+import static com.pighand.aio.domain.ECommerce.table.SessionTemplateTableDef.SESSION_TEMPLATE;
+import static com.pighand.aio.domain.ECommerce.table.SessionUserGroupTableDef.SESSION_USER_GROUP;
+import static com.pighand.aio.domain.ECommerce.table.WalletBillTableDef.WALLET_BILL;
 import static com.pighand.aio.domain.user.table.UserExtensionTableDef.USER_EXTENSION;
 import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 

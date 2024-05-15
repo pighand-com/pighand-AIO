@@ -1,14 +1,14 @@
-package com.pighand.aio.service.eCommerce.impl;
+package com.pighand.aio.service.ECommerce.impl;
 
 import com.pighand.aio.common.enums.PlatformEnum;
-import com.pighand.aio.domain.eCommerce.SessionUserGroupDomain;
-import com.pighand.aio.domain.project.ProjectPlatformKeyDomain;
 import com.pighand.aio.common.interceptor.Context;
-import com.pighand.aio.mapper.eCommerce.SessionUserGroupMapper;
 import com.pighand.aio.common.sdk.wechat.WechatSDK;
-import com.pighand.aio.service.eCommerce.SessionUserGroupService;
+import com.pighand.aio.domain.ECommerce.SessionUserGroupDomain;
+import com.pighand.aio.domain.project.ProjectPlatformKeyDomain;
+import com.pighand.aio.mapper.ECommerce.SessionUserGroupMapper;
+import com.pighand.aio.service.ECommerce.SessionUserGroupService;
 import com.pighand.aio.service.project.ProjectPlatformKeyService;
-import com.pighand.aio.vo.eCommerce.SessionUserGroupVO;
+import com.pighand.aio.vo.ECommerce.SessionUserGroupVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.exception.ThrowException;
 import com.pighand.framework.spring.page.PageOrList;
@@ -97,10 +97,10 @@ public class SessionUserGroupServiceImpl extends BaseServiceImpl<SessionUserGrou
     /**
      * 获取小程序码
      *
-     * @param sessionGroupId
+     * @param money
      */
     @Override
-    public String getWechatAppletQrcode(Long sessionGroupId) {
+    public String getWechatAppletQrcode(Long money) {
         ProjectPlatformKeyDomain key =
             projectPlatformKeyService.findByPlatform(Context.getProjectId(), PlatformEnum.WECHAT_MINI_PROGRAM);
 
@@ -133,9 +133,12 @@ public class SessionUserGroupServiceImpl extends BaseServiceImpl<SessionUserGrou
                 qrcodeEnv = "release";
                 break;
         }
+        long currentTimeMillis = System.currentTimeMillis() + 1000 * 60 * 3;
+        long roundedSeconds = currentTimeMillis / 1000;
 
         params = new HashMap<>();
-        params.put("scene", sessionGroupId.toString());
+        params.put("page", "pages/my-order/my-order");
+        params.put("scene", Context.getLoginUser().getId().toString() + "_" + roundedSeconds + "_" + money);
         params.put("env_version", qrcodeEnv);
         byte[] images = WechatSDK.MINI_APPLET.getAppletQrcode(token, params);
 

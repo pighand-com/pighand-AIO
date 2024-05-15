@@ -1,7 +1,7 @@
-package com.pighand.aio.vo.eCommerce;
+package com.pighand.aio.vo.ECommerce;
 
 import com.mybatisflex.annotation.Column;
-import com.pighand.aio.domain.eCommerce.StoreDomain;
+import com.pighand.aio.domain.ECommerce.StoreDomain;
 import lombok.Data;
 
 import java.util.List;

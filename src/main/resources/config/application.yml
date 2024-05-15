@@ -20,6 +20,14 @@ pighand:
 springdoc:
   enable-spring-security: false
 
+server:
+  tcp:
+    port: 2317
+
+upload:
+  path: /data/app/upload
+  web-path: file
+
 #springdoc:
 # 设置api-docs
 #  api-docs:

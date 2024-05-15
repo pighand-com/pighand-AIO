@@ -1,13 +1,14 @@
 server:
   port: ${PORT:9081}
+  domain: http://jkxc.pighand.com
 
-logging:
-  level:
-    root: warn
+#logging:
+#  level:
+#    root: warn
 
 spring:
   datasource:
-    url: jdbc:mysql://${DB_HOST:127.0.0.1}:3306/${DB:erlangshen}?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+    url: jdbc:mysql://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB:erlangshen}?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
     username: ${DB_USER:root}
     password: ${DB_PWD:123456}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -29,3 +30,9 @@ spring:
           connection-log-enabled: false
           result-set-log-enabled: true
           statement-executable-sql-log-enable: true
+
+upload:
+  path: /data/app/upload
+
+pay:
+  notify-url: https://jkxc.pighand.com/api/order/notify/

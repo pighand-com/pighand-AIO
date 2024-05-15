@@ -1,7 +1,7 @@
-package com.pighand.aio.service.eCommerce;
+package com.pighand.aio.service.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.GoodsSpuDomain;
-import com.pighand.aio.vo.eCommerce.GoodsSpuVO;
+import com.pighand.aio.domain.ECommerce.GoodsSpuDomain;
+import com.pighand.aio.vo.ECommerce.GoodsSpuVO;
 import com.pighand.framework.spring.base.BaseService;
 import com.pighand.framework.spring.page.PageOrList;
 

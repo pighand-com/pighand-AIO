@@ -1,8 +1,8 @@
-package com.pighand.aio.mapper.eCommerce;
+package com.pighand.aio.mapper.ECommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.aio.domain.eCommerce.WalletTransferDomain;
-import com.pighand.aio.vo.eCommerce.WalletTransferVO;
+import com.pighand.aio.domain.ECommerce.WalletTransferDomain;
+import com.pighand.aio.vo.ECommerce.WalletTransferVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
 import org.apache.ibatis.annotations.Mapper;
@@ -10,8 +10,8 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.pighand.aio.domain.eCommerce.table.WalletBillTableDef.WALLET_BILL;
-import static com.pighand.aio.domain.eCommerce.table.WalletTransferTableDef.WALLET_TRANSFER;
+import static com.pighand.aio.domain.ECommerce.table.WalletBillTableDef.WALLET_BILL;
+import static com.pighand.aio.domain.ECommerce.table.WalletTransferTableDef.WALLET_TRANSFER;
 
 /**
  * 电商 - 转账记录

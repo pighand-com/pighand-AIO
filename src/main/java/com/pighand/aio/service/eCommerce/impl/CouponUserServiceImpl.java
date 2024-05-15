@@ -1,14 +1,14 @@
-package com.pighand.aio.service.eCommerce.impl;
+package com.pighand.aio.service.ECommerce.impl;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.common.enums.CouponUserStatusEnum;
 import com.pighand.aio.common.interceptor.Context;
-import com.pighand.aio.domain.eCommerce.CouponUserDomain;
-import com.pighand.aio.mapper.eCommerce.CouponUserMapper;
-import com.pighand.aio.service.eCommerce.CouponUserService;
-import com.pighand.aio.service.eCommerce.CouponUserTransferService;
-import com.pighand.aio.vo.eCommerce.CouponUserTransferVO;
-import com.pighand.aio.vo.eCommerce.CouponUserVO;
+import com.pighand.aio.domain.ECommerce.CouponUserDomain;
+import com.pighand.aio.mapper.ECommerce.CouponUserMapper;
+import com.pighand.aio.service.ECommerce.CouponUserService;
+import com.pighand.aio.service.ECommerce.CouponUserTransferService;
+import com.pighand.aio.vo.ECommerce.CouponUserTransferVO;
+import com.pighand.aio.vo.ECommerce.CouponUserVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.exception.ThrowException;
 import com.pighand.framework.spring.exception.ThrowPrompt;
@@ -21,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
-import static com.pighand.aio.domain.eCommerce.table.CouponTableDef.COUPON;
-import static com.pighand.aio.domain.eCommerce.table.CouponUserTableDef.COUPON_USER;
+import static com.pighand.aio.domain.ECommerce.table.CouponTableDef.COUPON;
+import static com.pighand.aio.domain.ECommerce.table.CouponUserTableDef.COUPON_USER;
 import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 
 /**

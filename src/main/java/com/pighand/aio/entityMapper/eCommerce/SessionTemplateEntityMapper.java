@@ -1,7 +1,7 @@
-package com.pighand.aio.entityMapper.eCommerce;
+package com.pighand.aio.entityMapper.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.SessionTemplateDomain;
-import com.pighand.aio.vo.eCommerce.SessionTemplateVO;
+import com.pighand.aio.domain.ECommerce.SessionTemplateDomain;
+import com.pighand.aio.vo.ECommerce.SessionTemplateVO;
 import org.mapstruct.Mapper;
 
 /**

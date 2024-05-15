@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -16,6 +15,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * 验证码拦截器
@@ -72,6 +72,10 @@ public class CAPTCHAInterceptor implements HandlerInterceptor {
             CAPTCHA methodAnnotation = handlerMethod.getMethodAnnotation(CAPTCHA.class);
             CAPTCHA classAnnotation = handlerMethod.getBeanType().getAnnotation(CAPTCHA.class);
 
+            if (methodAnnotation == null && classAnnotation == null) {
+                return true;
+            }
+
             ModeEnum mode = Optional.ofNullable(methodAnnotation).map(CAPTCHA::value)
                 .orElse(Optional.ofNullable(classAnnotation).map(CAPTCHA::value).orElse(null));
 
@@ -81,8 +85,7 @@ public class CAPTCHAInterceptor implements HandlerInterceptor {
                 code = request.getParameter("code");
                 captchaId = request.getParameter("captchaId");
             } else {
-                byte[] bodyBytes = StreamUtils.copyToByteArray(request.getInputStream());
-                String body = new String(bodyBytes, request.getCharacterEncoding());
+                String body = request.getReader().lines().collect(Collectors.joining());
 
                 Matcher matcherCode = Pattern.compile("\"code\":\\s*\"([^\"]+)\"").matcher(body);
                 if (matcherCode.find()) {

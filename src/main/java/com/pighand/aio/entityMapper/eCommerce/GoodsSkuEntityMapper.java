@@ -1,7 +1,7 @@
-package com.pighand.aio.entityMapper.eCommerce;
+package com.pighand.aio.entityMapper.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.GoodsSkuDomain;
-import com.pighand.aio.vo.eCommerce.GoodsSkuVO;
+import com.pighand.aio.domain.ECommerce.GoodsSkuDomain;
+import com.pighand.aio.vo.ECommerce.GoodsSkuVO;
 import org.mapstruct.Mapper;
 
 import java.util.List;

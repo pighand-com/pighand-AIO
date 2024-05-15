@@ -41,6 +41,7 @@
         <netty-commo.version>4.1.93.Final</netty-commo.version>
         <cos-api.version>5.6.191</cos-api.version>
         <animated-gif-lib.version>1.4</animated-gif-lib.version>
+        <wechatpay-java.version>0.2.12</wechatpay-java.version>
     </properties>
 
     <dependencies>
@@ -63,6 +64,21 @@
             <groupId>com.madgag</groupId>
             <artifactId>animated-gif-lib</artifactId>
             <version>${animated-gif-lib.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.wechatpay-apiv3</groupId>
+            <artifactId>wechatpay-java</artifactId>
+            <version>${wechatpay-java.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.wechatpay-apiv3</groupId>
+            <artifactId>wechatpay-apache-httpclient</artifactId>
+            <version>0.4.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>sensitive-word</artifactId>
+            <version>0.16.1</version>
         </dependency>
     </dependencies>
 

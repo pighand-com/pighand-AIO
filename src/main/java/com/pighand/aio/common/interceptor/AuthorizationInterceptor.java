@@ -28,6 +28,9 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 
     public static LoginUser getLoginUser() {
         return currentUser.get();
+        //        tmp = new LoginUser();
+        //        tmp.setId(1L);
+        //        return tmp;
     }
 
     @Override

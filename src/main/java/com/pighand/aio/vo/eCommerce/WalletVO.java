@@ -1,6 +1,6 @@
-package com.pighand.aio.vo.eCommerce;
+package com.pighand.aio.vo.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.WalletDomain;
+import com.pighand.aio.domain.ECommerce.WalletDomain;
 import lombok.Data;
 
 /**

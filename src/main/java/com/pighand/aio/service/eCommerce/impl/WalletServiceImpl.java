@@ -1,16 +1,16 @@
-package com.pighand.aio.service.eCommerce.impl;
+package com.pighand.aio.service.ECommerce.impl;
 
 import com.pighand.aio.common.enums.RoleEnum;
-import com.pighand.aio.domain.eCommerce.WalletDomain;
-import com.pighand.aio.domain.user.UserDomain;
 import com.pighand.aio.common.interceptor.Context;
-import com.pighand.aio.mapper.eCommerce.WalletMapper;
-import com.pighand.aio.service.eCommerce.SessionService;
-import com.pighand.aio.service.eCommerce.WalletBillService;
-import com.pighand.aio.service.eCommerce.WalletService;
-import com.pighand.aio.service.eCommerce.WalletTransferService;
+import com.pighand.aio.domain.ECommerce.WalletDomain;
+import com.pighand.aio.domain.user.UserDomain;
+import com.pighand.aio.mapper.ECommerce.WalletMapper;
+import com.pighand.aio.service.ECommerce.SessionService;
+import com.pighand.aio.service.ECommerce.WalletBillService;
+import com.pighand.aio.service.ECommerce.WalletService;
+import com.pighand.aio.service.ECommerce.WalletTransferService;
 import com.pighand.aio.service.user.UserService;
-import com.pighand.aio.vo.eCommerce.*;
+import com.pighand.aio.vo.ECommerce.*;
 import com.pighand.aio.vo.user.LoginUser;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.exception.ThrowPrompt;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.mybatisflex.core.query.QueryMethods.sum;
-import static com.pighand.aio.domain.eCommerce.table.WalletTableDef.WALLET;
+import static com.pighand.aio.domain.ECommerce.table.WalletTableDef.WALLET;
 import static com.pighand.aio.domain.user.table.UserExtensionTableDef.USER_EXTENSION;
 import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 
@@ -78,13 +78,14 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletMapper, WalletDomai
         }
 
         if (toUser.getId().equals(fromUserId)) {
-            throw new ThrowPrompt("不能给自己转账");
+            //            throw new ThrowPrompt("不能给自己转账");
+            isFromSystem = true;
         }
 
         if (!isFromSystem) {
             boolean isUpdate =
                 this.updateChain().setRaw(WALLET.TOKENS, WALLET.TOKENS.subtract(walletTransferVO.getAccount()))
-                    .where(WALLET.PROJECT_ID.eq(projectId)).and(WALLET.USER_ID.eq(loginUser.getId()))
+                    .where(WALLET.PROJECT_ID.eq(projectId)).and(WALLET.USER_ID.eq(fromUserId))
                     .and(WALLET.TOKENS.subtract(walletTransferVO.getAccount()).ge(0)).update();
 
             if (!isUpdate) {

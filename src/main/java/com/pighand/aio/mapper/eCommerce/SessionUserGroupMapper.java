@@ -1,8 +1,8 @@
-package com.pighand.aio.mapper.eCommerce;
+package com.pighand.aio.mapper.ECommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.aio.domain.eCommerce.SessionUserGroupDomain;
-import com.pighand.aio.vo.eCommerce.SessionUserGroupVO;
+import com.pighand.aio.domain.ECommerce.SessionUserGroupDomain;
+import com.pighand.aio.vo.ECommerce.SessionUserGroupVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
 import org.apache.ibatis.annotations.Mapper;
@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.pighand.aio.domain.eCommerce.table.SessionUserGroupTableDef.SESSION_USER_GROUP;
+import static com.pighand.aio.domain.ECommerce.table.SessionUserGroupTableDef.SESSION_USER_GROUP;
 
 /**
  * 电商 - 场次 - 用户分组

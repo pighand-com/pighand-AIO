@@ -1,8 +1,8 @@
-package com.pighand.aio.vo.eCommerce;
+package com.pighand.aio.vo.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.SessionDomain;
-import com.pighand.aio.domain.eCommerce.SessionTemplateGourpDomain;
-import com.pighand.aio.domain.eCommerce.SessionUserGroupDomain;
+import com.pighand.aio.domain.ECommerce.SessionDomain;
+import com.pighand.aio.domain.ECommerce.SessionTemplateGourpDomain;
+import com.pighand.aio.domain.ECommerce.SessionUserGroupDomain;
 import lombok.Data;
 
 import java.math.BigDecimal;

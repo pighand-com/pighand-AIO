@@ -1,10 +1,11 @@
-package com.pighand.aio.controller.eCommerce;
+package com.pighand.aio.controller.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.SessionDomain;
-import com.pighand.aio.service.eCommerce.SessionService;
-import com.pighand.aio.service.eCommerce.SessionUserGroupService;
-import com.pighand.aio.vo.eCommerce.SessionUserGroupVO;
-import com.pighand.aio.vo.eCommerce.SessionVO;
+import com.pighand.aio.common.interfaces.Authorization;
+import com.pighand.aio.domain.ECommerce.SessionDomain;
+import com.pighand.aio.service.ECommerce.SessionService;
+import com.pighand.aio.service.ECommerce.SessionUserGroupService;
+import com.pighand.aio.vo.ECommerce.SessionUserGroupVO;
+import com.pighand.aio.vo.ECommerce.SessionVO;
 import com.pighand.framework.spring.api.annotation.Get;
 import com.pighand.framework.spring.api.annotation.Post;
 import com.pighand.framework.spring.api.annotation.Put;
@@ -79,9 +80,10 @@ public class SessionController extends BaseController<SessionService> {
         return new Result();
     }
 
+    @Authorization()
     @Get(path = "wechat/applet/qrcode", docSummary = "场次微信小程序码")
-    public Result<String> getWechatAppletQrcode(Long sessionGroupId) {
-        String qrcode = sessionUserGroupService.getWechatAppletQrcode(sessionGroupId);
+    public Result<String> getWechatAppletQrcode(Long money) {
+        String qrcode = sessionUserGroupService.getWechatAppletQrcode(money);
 
         return new Result(qrcode);
     }

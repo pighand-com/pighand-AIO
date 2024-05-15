@@ -1,6 +1,6 @@
-package com.pighand.aio.vo.eCommerce;
+package com.pighand.aio.vo.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.GoodsSkuDomain;
+import com.pighand.aio.domain.ECommerce.GoodsSkuDomain;
 import lombok.Data;
 
 /**
@@ -12,4 +12,7 @@ import lombok.Data;
 @Data
 public class GoodsSkuVO extends GoodsSkuDomain {
     private GoodsSpuVO goodsSpu;
+
+    // 购买数量
+    private Integer quantity;
 }

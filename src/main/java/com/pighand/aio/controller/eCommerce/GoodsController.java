@@ -1,9 +1,9 @@
-package com.pighand.aio.controller.eCommerce;
+package com.pighand.aio.controller.ECommerce;
 
 import com.pighand.aio.common.CAPTCHA.CAPTCHA;
 import com.pighand.aio.common.CAPTCHA.ModeEnum;
-import com.pighand.aio.service.eCommerce.GoodsSpuService;
-import com.pighand.aio.vo.eCommerce.GoodsSpuVO;
+import com.pighand.aio.service.ECommerce.GoodsSpuService;
+import com.pighand.aio.vo.ECommerce.GoodsSpuVO;
 import com.pighand.framework.spring.api.annotation.Delete;
 import com.pighand.framework.spring.api.annotation.Get;
 import com.pighand.framework.spring.api.annotation.Post;

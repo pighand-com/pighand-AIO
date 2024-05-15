@@ -30,7 +30,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public UserVO byPassword(String username, String password) {
         Long projectId = Context.getProjectId();
-        UserVO user = userService.queryChain().select(USER.ID, USER.PASSWORD).select(USER.STATUS)
+        UserVO user = userService.queryChain().select(USER.ID, USER.PASSWORD, USER.USERNAME).select(USER.STATUS)
             .where(USER.PROJECT_ID.eq(projectId)).and(USER.USERNAME.eq(username)).or(USER.EMAIL.eq(username))
             .or(USER.PHONE.eq(username)).oneAs(UserVO.class);
 

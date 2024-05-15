@@ -1,6 +1,6 @@
-package com.pighand.aio.vo.eCommerce;
+package com.pighand.aio.vo.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.SessionTemplateGourpDomain;
+import com.pighand.aio.domain.ECommerce.SessionTemplateGourpDomain;
 import lombok.Data;
 
 import java.util.List;

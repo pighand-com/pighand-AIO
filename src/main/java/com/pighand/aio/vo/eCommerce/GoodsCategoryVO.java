@@ -1,6 +1,6 @@
-package com.pighand.aio.vo.eCommerce;
+package com.pighand.aio.vo.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.GoodsCategoryDomain;
+import com.pighand.aio.domain.ECommerce.GoodsCategoryDomain;
 import lombok.Data;
 
 import java.util.List;

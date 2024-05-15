@@ -1,7 +1,7 @@
-package com.pighand.aio.service.eCommerce;
+package com.pighand.aio.service.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.SessionUserGroupDomain;
-import com.pighand.aio.vo.eCommerce.SessionUserGroupVO;
+import com.pighand.aio.domain.ECommerce.SessionUserGroupDomain;
+import com.pighand.aio.vo.ECommerce.SessionUserGroupVO;
 import com.pighand.framework.spring.base.BaseService;
 import com.pighand.framework.spring.page.PageOrList;
 
@@ -51,5 +51,5 @@ public interface SessionUserGroupService extends BaseService<SessionUserGroupDom
      */
     void delete(Long id);
 
-    String getWechatAppletQrcode(Long sessionGroupId);
+    String getWechatAppletQrcode(Long money);
 }

@@ -1,4 +1,4 @@
-package com.pighand.aio.vo.eCommerce;
+package com.pighand.aio.vo.ECommerce;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

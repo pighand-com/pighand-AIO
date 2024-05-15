@@ -1,7 +1,7 @@
-package com.pighand.aio.vo.eCommerce;
+package com.pighand.aio.vo.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.CouponDomain;
-import com.pighand.aio.domain.eCommerce.CouponUserDomain;
+import com.pighand.aio.domain.ECommerce.CouponDomain;
+import com.pighand.aio.domain.ECommerce.CouponUserDomain;
 import com.pighand.aio.vo.user.UserVO;
 import lombok.Data;
 

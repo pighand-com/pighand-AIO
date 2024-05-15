@@ -1,7 +1,7 @@
-package com.pighand.aio.entityMapper.eCommerce;
+package com.pighand.aio.entityMapper.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.CouponDomain;
-import com.pighand.aio.vo.eCommerce.CouponVO;
+import com.pighand.aio.domain.ECommerce.CouponDomain;
+import com.pighand.aio.vo.ECommerce.CouponVO;
 import org.mapstruct.Mapper;
 
 /**

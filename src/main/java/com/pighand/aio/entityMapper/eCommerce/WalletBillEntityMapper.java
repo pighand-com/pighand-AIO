@@ -1,7 +1,7 @@
-package com.pighand.aio.entityMapper.eCommerce;
+package com.pighand.aio.entityMapper.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.WalletBillDomain;
-import com.pighand.aio.vo.eCommerce.WalletBillVO;
+import com.pighand.aio.domain.ECommerce.WalletBillDomain;
+import com.pighand.aio.vo.ECommerce.WalletBillVO;
 import org.mapstruct.Mapper;
 
 /**

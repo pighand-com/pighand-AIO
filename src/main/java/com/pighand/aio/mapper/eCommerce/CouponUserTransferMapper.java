@@ -1,8 +1,8 @@
-package com.pighand.aio.mapper.eCommerce;
+package com.pighand.aio.mapper.ECommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.aio.domain.eCommerce.CouponUserTransferDomain;
-import com.pighand.aio.vo.eCommerce.CouponUserTransferVO;
+import com.pighand.aio.domain.ECommerce.CouponUserTransferDomain;
+import com.pighand.aio.vo.ECommerce.CouponUserTransferVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
 import org.apache.ibatis.annotations.Mapper;
@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.pighand.aio.domain.eCommerce.table.CouponUserTransferTableDef.COUPON_USER_TRANSFER;
+import static com.pighand.aio.domain.ECommerce.table.CouponUserTransferTableDef.COUPON_USER_TRANSFER;
 
 /**
  * 电商 - 优惠券 - 转赠记录

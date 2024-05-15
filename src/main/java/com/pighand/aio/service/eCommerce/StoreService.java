@@ -1,9 +1,9 @@
-package com.pighand.aio.service.eCommerce;
+package com.pighand.aio.service.ECommerce;
 
 import com.pighand.framework.spring.base.BaseService;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.aio.domain.eCommerce.StoreDomain;
-import com.pighand.aio.vo.eCommerce.StoreVO;
+import com.pighand.aio.domain.ECommerce.StoreDomain;
+import com.pighand.aio.vo.ECommerce.StoreVO;
 
 /**
  * 电商 - 门店

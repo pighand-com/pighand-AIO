@@ -19,7 +19,7 @@ public class HeaderInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String projectId = request.getHeader("Project-Id");
-        if (projectId == null || projectId.isEmpty()) {
+        if (projectId == null || projectId.isEmpty() || projectId.equals("2")) {
             //            throw new ThrowPrompt("Project-Id header is missing");
             projectId = "1";
         }

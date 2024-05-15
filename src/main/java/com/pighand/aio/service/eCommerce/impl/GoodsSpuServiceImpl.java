@@ -1,17 +1,19 @@
-package com.pighand.aio.service.eCommerce.impl;
+package com.pighand.aio.service.ECommerce.impl;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.update.UpdateChain;
 import com.pighand.aio.common.enums.GoodsSpuStatusEnum;
 import com.pighand.aio.common.interceptor.Context;
-import com.pighand.aio.domain.eCommerce.GoodsSkuDomain;
-import com.pighand.aio.domain.eCommerce.GoodsSpuDomain;
-import com.pighand.aio.entityMapper.eCommerce.GoodsSkuEntityMapper;
-import com.pighand.aio.mapper.eCommerce.GoodsSkuMapper;
-import com.pighand.aio.mapper.eCommerce.GoodsSpuMapper;
-import com.pighand.aio.service.eCommerce.GoodsSpuService;
-import com.pighand.aio.vo.eCommerce.GoodsSkuVO;
-import com.pighand.aio.vo.eCommerce.GoodsSpuVO;
+import com.pighand.aio.domain.ECommerce.GoodsSkuDomain;
+import com.pighand.aio.domain.ECommerce.GoodsSpuDomain;
+import com.pighand.aio.domain.project.ProjectDefaultDomain;
+import com.pighand.aio.entityMapper.ECommerce.GoodsSkuEntityMapper;
+import com.pighand.aio.mapper.ECommerce.GoodsSkuMapper;
+import com.pighand.aio.mapper.ECommerce.GoodsSpuMapper;
+import com.pighand.aio.service.ECommerce.GoodsSpuService;
+import com.pighand.aio.service.project.ProjectDefaultService;
+import com.pighand.aio.vo.ECommerce.GoodsSkuVO;
+import com.pighand.aio.vo.ECommerce.GoodsSpuVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;
@@ -21,8 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.pighand.aio.domain.eCommerce.table.GoodsSkuTableDef.GOODS_SKU;
-import static com.pighand.aio.domain.eCommerce.table.GoodsSpuTableDef.GOODS_SPU;
+import static com.pighand.aio.domain.ECommerce.table.GoodsSkuTableDef.GOODS_SKU;
+import static com.pighand.aio.domain.ECommerce.table.GoodsSpuTableDef.GOODS_SPU;
+import static com.pighand.aio.domain.project.table.ProjectDefaultTableDef.PROJECT_DEFAULT;
 
 /**
  * 电商 - SPU
@@ -36,6 +39,7 @@ public class GoodsSpuServiceImpl extends BaseServiceImpl<GoodsSpuMapper, GoodsSp
 
     private final GoodsSkuMapper goodsSkuMapper;
     private final GoodsSkuEntityMapper goodsSkuEntityMapper;
+    private final ProjectDefaultService projectDefaultService;
 
     /**
      * 创建
@@ -54,7 +58,7 @@ public class GoodsSpuServiceImpl extends BaseServiceImpl<GoodsSpuMapper, GoodsSp
         List<GoodsSkuVO> goodsSku = goodsSpuVO.getGoodsSku();
         goodsSku.forEach(goodsSkuVO -> {
             goodsSkuVO.setProjectId(Context.getProjectId());
-            goodsSkuVO.setGoodsSpuId(goodsSpuVO.getId());
+            goodsSkuVO.setSpuId(goodsSpuVO.getId());
             goodsSkuVO.setDeleted(false);
         });
 
@@ -83,6 +87,13 @@ public class GoodsSpuServiceImpl extends BaseServiceImpl<GoodsSpuMapper, GoodsSp
      */
     @Override
     public PageOrList<GoodsSpuVO> query(GoodsSpuVO goodsSpuVO) {
+        ProjectDefaultDomain projectDefaultDomain =
+            projectDefaultService.queryChain().where(PROJECT_DEFAULT.ID.eq(Context.getProjectId())).one();
+        if (goodsSpuVO.getSystem().equals("ios") && (projectDefaultDomain == null
+            || projectDefaultDomain.getDefaultNickname().equals("1"))) {
+            return null;
+        }
+
         goodsSpuVO.setJoinTables(GOODS_SKU.getTableName());
 
         QueryWrapper queryWrapper = new QueryWrapper();

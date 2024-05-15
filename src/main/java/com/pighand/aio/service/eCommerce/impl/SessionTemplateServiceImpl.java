@@ -1,9 +1,9 @@
-package com.pighand.aio.service.eCommerce.impl;
+package com.pighand.aio.service.ECommerce.impl;
 
-import com.pighand.aio.domain.eCommerce.SessionTemplateDomain;
-import com.pighand.aio.mapper.eCommerce.SessionTemplateMapper;
-import com.pighand.aio.service.eCommerce.SessionTemplateService;
-import com.pighand.aio.vo.eCommerce.SessionTemplateVO;
+import com.pighand.aio.domain.ECommerce.SessionTemplateDomain;
+import com.pighand.aio.mapper.ECommerce.SessionTemplateMapper;
+import com.pighand.aio.service.ECommerce.SessionTemplateService;
+import com.pighand.aio.vo.ECommerce.SessionTemplateVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;

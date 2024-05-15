@@ -1,10 +1,10 @@
-package com.pighand.aio.service.eCommerce;
+package com.pighand.aio.service.ECommerce;
 
 import com.pighand.framework.spring.base.BaseService;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.aio.domain.eCommerce.WalletBillDomain;
-import com.pighand.aio.vo.eCommerce.WalletBillTop;
-import com.pighand.aio.vo.eCommerce.WalletBillVO;
+import com.pighand.aio.domain.ECommerce.WalletBillDomain;
+import com.pighand.aio.vo.ECommerce.WalletBillTop;
+import com.pighand.aio.vo.ECommerce.WalletBillVO;
 
 import java.math.BigDecimal;
 import java.util.List;

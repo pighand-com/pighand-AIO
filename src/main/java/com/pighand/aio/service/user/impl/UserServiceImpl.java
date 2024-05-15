@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
+import com.pighand.aio.common.enums.RoleEnum;
 import com.pighand.aio.common.enums.UserStatusEnum;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.user.UserDomain;
@@ -168,6 +169,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
             userVO.setPassword(new BCryptPasswordEncoder().encode(userVO.getPassword()));
         }
 
+        userVO.setRoleId(RoleEnum.USER.value);
         userVO.setStatus(UserStatusEnum.NORMAL);
         super.mapper.insert(userVO);
 
@@ -183,7 +185,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
     @Override
     public UserVO find(Long id) {
         return this.queryChain()
-            .select(USER.ID, USER.USERNAME, USER.PHONE, USER.EMAIL, USER.STATUS, USER_EXTENSION.PROFILE)
+            .select(USER.ID, USER.ROLE_ID, USER.USERNAME, USER.PHONE, USER.EMAIL, USER.STATUS, USER_EXTENSION.PROFILE)
             .leftJoin(USER_EXTENSION).on(USER_EXTENSION.ID.eq(USER.ID))
             .where(USER.PROJECT_ID.eq(Context.getProjectId())).and(USER.ID.eq(id)).oneAs(UserVO.class);
     }

@@ -1,16 +1,16 @@
-package com.pighand.aio.mapper.eCommerce;
+package com.pighand.aio.mapper.ECommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.aio.domain.eCommerce.GoodsSkuDomain;
-import com.pighand.aio.vo.eCommerce.GoodsSkuVO;
+import com.pighand.aio.domain.ECommerce.GoodsSkuDomain;
+import com.pighand.aio.vo.ECommerce.GoodsSkuVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-import static com.pighand.aio.domain.eCommerce.table.GoodsSkuTableDef.GOODS_SKU;
-import static com.pighand.aio.domain.eCommerce.table.GoodsSpuTableDef.GOODS_SPU;
+import static com.pighand.aio.domain.ECommerce.table.GoodsSkuTableDef.GOODS_SKU;
+import static com.pighand.aio.domain.ECommerce.table.GoodsSpuTableDef.GOODS_SPU;
 
 /**
  * 电商 - SKU
@@ -36,7 +36,7 @@ public interface GoodsSkuMapper extends BaseMapper<GoodsSkuDomain> {
         }
 
         if (joinTables.contains(GOODS_SPU.getTableName())) {
-            queryWrapper.leftJoin(GOODS_SPU).on(GOODS_SPU.ID.eq(GOODS_SKU.GOODS_SPU_ID));
+            queryWrapper.leftJoin(GOODS_SPU).on(GOODS_SPU.ID.eq(GOODS_SKU.SPU_ID));
         }
 
         return queryWrapper;

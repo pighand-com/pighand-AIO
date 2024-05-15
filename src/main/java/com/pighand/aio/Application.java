@@ -33,7 +33,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -48,7 +47,6 @@ import java.util.concurrent.TimeUnit;
  * @author wangshuli
  */
 @EnableAsync
-@EnableScheduling
 @SpringBootApplication
 @MapperScan("com.pighand.aio.mapper")
 @EnableConfigurationProperties({PighandFrameworkConfig.class})

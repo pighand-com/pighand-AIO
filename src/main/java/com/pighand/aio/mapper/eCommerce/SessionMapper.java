@@ -1,8 +1,8 @@
-package com.pighand.aio.mapper.eCommerce;
+package com.pighand.aio.mapper.ECommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.aio.domain.eCommerce.SessionDomain;
-import com.pighand.aio.vo.eCommerce.SessionVO;
+import com.pighand.aio.domain.ECommerce.SessionDomain;
+import com.pighand.aio.vo.ECommerce.SessionVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
 import org.apache.ibatis.annotations.Mapper;
@@ -10,8 +10,8 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.pighand.aio.domain.eCommerce.table.SessionTableDef.SESSION;
-import static com.pighand.aio.domain.eCommerce.table.SessionTemplateTableDef.SESSION_TEMPLATE;
+import static com.pighand.aio.domain.ECommerce.table.SessionTableDef.SESSION;
+import static com.pighand.aio.domain.ECommerce.table.SessionTemplateTableDef.SESSION_TEMPLATE;
 
 /**
  * 电商 - 场次

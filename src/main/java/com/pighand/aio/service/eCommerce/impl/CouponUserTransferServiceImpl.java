@@ -1,11 +1,11 @@
-package com.pighand.aio.service.eCommerce.impl;
+package com.pighand.aio.service.ECommerce.impl;
 
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.aio.domain.eCommerce.CouponUserTransferDomain;
-import com.pighand.aio.mapper.eCommerce.CouponUserTransferMapper;
-import com.pighand.aio.service.eCommerce.CouponUserTransferService;
-import com.pighand.aio.vo.eCommerce.CouponUserTransferVO;
+import com.pighand.aio.domain.ECommerce.CouponUserTransferDomain;
+import com.pighand.aio.mapper.ECommerce.CouponUserTransferMapper;
+import com.pighand.aio.service.ECommerce.CouponUserTransferService;
+import com.pighand.aio.vo.ECommerce.CouponUserTransferVO;
 import org.springframework.stereotype.Service;
 
 /**

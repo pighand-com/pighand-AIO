@@ -1,7 +1,7 @@
-package com.pighand.aio.service.eCommerce;
+package com.pighand.aio.service.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.SessionTemplateDomain;
-import com.pighand.aio.vo.eCommerce.SessionTemplateVO;
+import com.pighand.aio.domain.ECommerce.SessionTemplateDomain;
+import com.pighand.aio.vo.ECommerce.SessionTemplateVO;
 import com.pighand.framework.spring.base.BaseService;
 import com.pighand.framework.spring.page.PageOrList;
 

@@ -1,7 +1,7 @@
-package com.pighand.aio.service.eCommerce;
+package com.pighand.aio.service.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.CouponUserDomain;
-import com.pighand.aio.vo.eCommerce.CouponUserVO;
+import com.pighand.aio.domain.ECommerce.CouponUserDomain;
+import com.pighand.aio.vo.ECommerce.CouponUserVO;
 import com.pighand.framework.spring.base.BaseService;
 import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.transaction.annotation.Transactional;

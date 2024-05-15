@@ -1,13 +1,13 @@
-package com.pighand.aio.controller.eCommerce;
+package com.pighand.aio.controller.ECommerce;
 
+import com.pighand.aio.domain.ECommerce.StoreDomain;
+import com.pighand.aio.service.ECommerce.StoreService;
+import com.pighand.aio.vo.ECommerce.StoreVO;
 import com.pighand.framework.spring.api.annotation.*;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.base.BaseController;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.response.Result;
-import com.pighand.aio.domain.eCommerce.StoreDomain;
-import com.pighand.aio.service.eCommerce.StoreService;
-import com.pighand.aio.vo.eCommerce.StoreVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;

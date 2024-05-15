@@ -1,7 +1,7 @@
-package com.pighand.aio.vo.eCommerce;
+package com.pighand.aio.vo.ECommerce;
 
 import com.mybatisflex.annotation.Column;
-import com.pighand.aio.domain.eCommerce.WalletTransferDomain;
+import com.pighand.aio.domain.ECommerce.WalletTransferDomain;
 import lombok.Data;
 
 import java.math.BigDecimal;

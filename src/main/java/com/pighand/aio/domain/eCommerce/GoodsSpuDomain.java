@@ -1,4 +1,4 @@
-package com.pighand.aio.domain.eCommerce;
+package com.pighand.aio.domain.ECommerce;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -29,6 +29,7 @@ import java.util.List;
 @Data
 public class GoodsSpuDomain extends BaseDomain implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
@@ -39,6 +40,16 @@ public class GoodsSpuDomain extends BaseDomain implements Serializable {
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long projectId;
+
+    @Schema(description = "商户id")
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long businessId;
+
+    @Schema(description = "门店id")
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long storeId;
 
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
@@ -52,6 +63,15 @@ public class GoodsSpuDomain extends BaseDomain implements Serializable {
     @Schema(description = "图片", implementation = EmptyObject.class)
     @Column(typeHandler = JacksonTypeHandler.class)
     private List<String> imageUrls;
+
+    @Schema(description = "最低现价sku对应的原价（分）")
+    private Long originalPrice;
+
+    @Schema(description = "最低现价（分）")
+    private Long currentPrice;
+
+    @Schema(description = "详情")
+    private String details;
 
     @Schema(description = "状态 10上架 20下架")
     private GoodsSpuStatusEnum status;

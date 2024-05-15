@@ -1,19 +1,19 @@
-package com.pighand.aio.service.eCommerce.impl;
+package com.pighand.aio.service.ECommerce.impl;
 
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryMethods;
 import com.pighand.aio.common.enums.RoleEnum;
-import com.pighand.aio.domain.eCommerce.WalletBillDomain;
+import com.pighand.aio.domain.ECommerce.WalletBillDomain;
 import com.pighand.aio.domain.user.UserDomain;
 import com.pighand.aio.common.interceptor.Context;
-import com.pighand.aio.mapper.eCommerce.WalletBillMapper;
-import com.pighand.aio.service.eCommerce.SessionService;
-import com.pighand.aio.service.eCommerce.SessionUserGroupService;
-import com.pighand.aio.service.eCommerce.WalletBillService;
+import com.pighand.aio.mapper.ECommerce.WalletBillMapper;
+import com.pighand.aio.service.ECommerce.SessionService;
+import com.pighand.aio.service.ECommerce.SessionUserGroupService;
+import com.pighand.aio.service.ECommerce.WalletBillService;
 import com.pighand.aio.service.user.UserService;
-import com.pighand.aio.vo.eCommerce.SessionUserGroupVO;
-import com.pighand.aio.vo.eCommerce.WalletBillTop;
-import com.pighand.aio.vo.eCommerce.WalletBillVO;
+import com.pighand.aio.vo.ECommerce.SessionUserGroupVO;
+import com.pighand.aio.vo.ECommerce.WalletBillTop;
+import com.pighand.aio.vo.ECommerce.WalletBillVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.page.PageType;
@@ -30,9 +30,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.pighand.aio.domain.eCommerce.table.SessionTemplateGourpTableDef.SESSION_TEMPLATE_GOURP;
-import static com.pighand.aio.domain.eCommerce.table.SessionUserGroupTableDef.SESSION_USER_GROUP;
-import static com.pighand.aio.domain.eCommerce.table.WalletBillTableDef.WALLET_BILL;
+import static com.pighand.aio.domain.ECommerce.table.SessionTemplateGourpTableDef.SESSION_TEMPLATE_GOURP;
+import static com.pighand.aio.domain.ECommerce.table.SessionUserGroupTableDef.SESSION_USER_GROUP;
+import static com.pighand.aio.domain.ECommerce.table.WalletBillTableDef.WALLET_BILL;
 import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 
 /**

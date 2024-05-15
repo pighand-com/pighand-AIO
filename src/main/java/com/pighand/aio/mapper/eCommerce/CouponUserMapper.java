@@ -1,8 +1,8 @@
-package com.pighand.aio.mapper.eCommerce;
+package com.pighand.aio.mapper.ECommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.aio.domain.eCommerce.CouponUserDomain;
-import com.pighand.aio.vo.eCommerce.CouponUserVO;
+import com.pighand.aio.domain.ECommerce.CouponUserDomain;
+import com.pighand.aio.vo.ECommerce.CouponUserVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
 import org.apache.ibatis.annotations.Mapper;
@@ -10,8 +10,8 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.pighand.aio.domain.eCommerce.table.CouponTableDef.COUPON;
-import static com.pighand.aio.domain.eCommerce.table.CouponUserTableDef.COUPON_USER;
+import static com.pighand.aio.domain.ECommerce.table.CouponTableDef.COUPON;
+import static com.pighand.aio.domain.ECommerce.table.CouponUserTableDef.COUPON_USER;
 import static com.pighand.aio.domain.user.table.UserExtensionTableDef.USER_EXTENSION;
 import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 

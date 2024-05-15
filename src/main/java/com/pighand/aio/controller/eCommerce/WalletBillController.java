@@ -1,10 +1,10 @@
-package com.pighand.aio.controller.eCommerce;
+package com.pighand.aio.controller.ECommerce;
 
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.common.interfaces.Authorization;
-import com.pighand.aio.service.eCommerce.WalletBillService;
-import com.pighand.aio.vo.eCommerce.WalletBillTop;
-import com.pighand.aio.vo.eCommerce.WalletBillVO;
+import com.pighand.aio.service.ECommerce.WalletBillService;
+import com.pighand.aio.vo.ECommerce.WalletBillTop;
+import com.pighand.aio.vo.ECommerce.WalletBillVO;
 import com.pighand.framework.spring.api.annotation.Get;
 import com.pighand.framework.spring.api.annotation.RestController;
 import com.pighand.framework.spring.base.BaseController;

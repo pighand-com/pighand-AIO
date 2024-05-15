@@ -1,8 +1,8 @@
-package com.pighand.aio.mapper.eCommerce;
+package com.pighand.aio.mapper.ECommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.aio.domain.eCommerce.CouponDomain;
-import com.pighand.aio.vo.eCommerce.CouponVO;
+import com.pighand.aio.domain.ECommerce.CouponDomain;
+import com.pighand.aio.vo.ECommerce.CouponVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
 import org.apache.ibatis.annotations.Mapper;
@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mybatisflex.core.query.QueryMethods.count;
-import static com.pighand.aio.domain.eCommerce.table.CouponTableDef.COUPON;
-import static com.pighand.aio.domain.eCommerce.table.CouponUserTableDef.COUPON_USER;
-import static com.pighand.aio.domain.eCommerce.table.StoreTableDef.STORE;
+import static com.pighand.aio.domain.ECommerce.table.CouponTableDef.COUPON;
+import static com.pighand.aio.domain.ECommerce.table.CouponUserTableDef.COUPON_USER;
+import static com.pighand.aio.domain.ECommerce.table.StoreTableDef.STORE;
 
 /**
  * 电商 - 优惠券

@@ -1,16 +1,16 @@
-package com.pighand.aio.service.eCommerce.impl;
+package com.pighand.aio.service.ECommerce.impl;
 
-import com.pighand.aio.domain.eCommerce.GoodsCategoryDomain;
-import com.pighand.aio.mapper.eCommerce.GoodsCategoryMapper;
-import com.pighand.aio.service.eCommerce.GoodsCategoryService;
-import com.pighand.aio.vo.eCommerce.GoodsCategoryVO;
+import com.pighand.aio.domain.ECommerce.GoodsCategoryDomain;
+import com.pighand.aio.mapper.ECommerce.GoodsCategoryMapper;
+import com.pighand.aio.service.ECommerce.GoodsCategoryService;
+import com.pighand.aio.vo.ECommerce.GoodsCategoryVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.pighand.aio.domain.eCommerce.table.GoodsSpuTableDef.GOODS_SPU;
+import static com.pighand.aio.domain.ECommerce.table.GoodsSpuTableDef.GOODS_SPU;
 
 /**
  * 电商 - 商品类目

@@ -1,4 +1,4 @@
-package com.pighand.aio.domain.eCommerce;
+package com.pighand.aio.domain.ECommerce;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

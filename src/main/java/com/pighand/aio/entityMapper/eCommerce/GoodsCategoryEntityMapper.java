@@ -1,7 +1,7 @@
-package com.pighand.aio.entityMapper.eCommerce;
+package com.pighand.aio.entityMapper.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.GoodsCategoryDomain;
-import com.pighand.aio.vo.eCommerce.GoodsCategoryVO;
+import com.pighand.aio.domain.ECommerce.GoodsCategoryDomain;
+import com.pighand.aio.vo.ECommerce.GoodsCategoryVO;
 import org.mapstruct.Mapper;
 
 /**

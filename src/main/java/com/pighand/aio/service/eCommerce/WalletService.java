@@ -1,9 +1,9 @@
-package com.pighand.aio.service.eCommerce;
+package com.pighand.aio.service.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.WalletDomain;
-import com.pighand.aio.vo.eCommerce.WalletTopVO;
-import com.pighand.aio.vo.eCommerce.WalletTransferVO;
-import com.pighand.aio.vo.eCommerce.WalletVO;
+import com.pighand.aio.domain.ECommerce.WalletDomain;
+import com.pighand.aio.vo.ECommerce.WalletTopVO;
+import com.pighand.aio.vo.ECommerce.WalletTransferVO;
+import com.pighand.aio.vo.ECommerce.WalletVO;
 import com.pighand.framework.spring.base.BaseService;
 
 import java.util.List;

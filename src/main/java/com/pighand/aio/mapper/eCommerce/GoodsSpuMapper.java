@@ -1,9 +1,9 @@
-package com.pighand.aio.mapper.eCommerce;
+package com.pighand.aio.mapper.ECommerce;
 
 import com.mybatisflex.core.field.FieldQueryBuilder;
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.aio.domain.eCommerce.GoodsSpuDomain;
-import com.pighand.aio.vo.eCommerce.GoodsSpuVO;
+import com.pighand.aio.domain.ECommerce.GoodsSpuDomain;
+import com.pighand.aio.vo.ECommerce.GoodsSpuVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
 import org.apache.ibatis.annotations.Mapper;
@@ -11,9 +11,9 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static com.pighand.aio.domain.eCommerce.table.GoodsCategoryTableDef.GOODS_CATEGORY;
-import static com.pighand.aio.domain.eCommerce.table.GoodsSkuTableDef.GOODS_SKU;
-import static com.pighand.aio.domain.eCommerce.table.GoodsSpuTableDef.GOODS_SPU;
+import static com.pighand.aio.domain.ECommerce.table.GoodsCategoryTableDef.GOODS_CATEGORY;
+import static com.pighand.aio.domain.ECommerce.table.GoodsSkuTableDef.GOODS_SKU;
+import static com.pighand.aio.domain.ECommerce.table.GoodsSpuTableDef.GOODS_SPU;
 
 /**
  * 电商 - SPU
@@ -67,8 +67,8 @@ public interface GoodsSpuMapper extends BaseMapper<GoodsSpuDomain> {
         int nowIndex = 0;
         if (hasGoodsSku) {
             Consumer<FieldQueryBuilder<GoodsSpuVO>> consumer = (builder) -> {
-                builder.field(GoodsSpuVO::getGoodsSku).queryWrapper(goodsSpuVO -> QueryWrapper.create().from(GOODS_SKU)
-                    .where(GOODS_SKU.GOODS_SPU_ID.eq(goodsSpuVO.getId())));
+                builder.field(GoodsSpuVO::getGoodsSku).queryWrapper(
+                    goodsSpuVO -> QueryWrapper.create().from(GOODS_SKU).where(GOODS_SKU.SPU_ID.eq(goodsSpuVO.getId())));
             };
             fieldQueryBuilders[nowIndex] = consumer;
             nowIndex++;

@@ -1,9 +1,9 @@
-package com.pighand.aio.service.eCommerce;
+package com.pighand.aio.service.ECommerce;
 
 import com.pighand.framework.spring.base.BaseService;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.aio.domain.eCommerce.CouponUserTransferDomain;
-import com.pighand.aio.vo.eCommerce.CouponUserTransferVO;
+import com.pighand.aio.domain.ECommerce.CouponUserTransferDomain;
+import com.pighand.aio.vo.ECommerce.CouponUserTransferVO;
 
 /**
  * 电商 - 优惠券 - 转赠记录

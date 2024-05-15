@@ -1,12 +1,18 @@
-package com.pighand.aio.vo.eCommerce;
+package com.pighand.aio.vo.ECommerce;
 
-import com.pighand.aio.domain.eCommerce.SessionDomain;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.pighand.aio.domain.ECommerce.SessionDomain;
+import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
 public class SessionVO extends SessionDomain {
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long sessionGroupId;
 
     private List<SessionTemplateGourpVO> groups;

@@ -155,8 +155,7 @@ public abstract class AbstractTripartitePlatform<T> {
         UserPlatformInfo userPlatformInfo = this.checkUserExist(projectId, analysisInfo);
         boolean isUserExist = userPlatformInfo != null && userPlatformInfo.getUserId() != null;
 
-        UserVO userInfo = new UserVO();
-        userInfo.setRoleId(1L);
+        UserVO userInfo = null;
 
         // 2.1 创建用户
         UserStatusEnum newUserStatus = null;

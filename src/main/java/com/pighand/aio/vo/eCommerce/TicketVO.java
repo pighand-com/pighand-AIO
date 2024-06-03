@@ -1,7 +1,6 @@
 package com.pighand.aio.vo.ECommerce;
 
 import com.pighand.aio.domain.ECommerce.TicketDomain;
-import com.pighand.aio.vo.TicketValidityVO;
 import lombok.Data;
 
 import java.util.List;

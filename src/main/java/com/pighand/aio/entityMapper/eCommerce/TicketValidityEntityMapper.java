@@ -1,7 +1,7 @@
 package com.pighand.aio.entityMapper.ECommerce;
 
 import com.pighand.aio.domain.ECommerce.TicketValidityDomain;
-import com.pighand.aio.vo.TicketValidityVO;
+import com.pighand.aio.vo.ECommerce.TicketValidityVO;
 import org.mapstruct.Mapper;
 
 import java.util.List;

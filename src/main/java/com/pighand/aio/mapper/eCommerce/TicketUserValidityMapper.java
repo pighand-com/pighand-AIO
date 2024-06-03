@@ -3,7 +3,7 @@ package com.pighand.aio.mapper.ECommerce;
 import com.mybatisflex.core.field.FieldQueryBuilder;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.ECommerce.TicketUserValidityDomain;
-import com.pighand.aio.vo.TicketUserValidityVO;
+import com.pighand.aio.vo.ECommerce.TicketUserValidityVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
 import org.apache.ibatis.annotations.Mapper;

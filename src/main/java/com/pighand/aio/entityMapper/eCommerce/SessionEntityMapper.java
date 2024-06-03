@@ -4,6 +4,8 @@ import com.pighand.aio.domain.ECommerce.SessionDomain;
 import com.pighand.aio.vo.ECommerce.SessionVO;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 /**
  * 电商 - 场次
  *
@@ -16,4 +18,8 @@ public interface SessionEntityMapper {
     SessionVO toVo(SessionDomain entity);
 
     SessionDomain toDomain(SessionVO vo);
+
+    List<SessionVO> toVoList(List<SessionDomain> entity);
+
+    List<SessionDomain> toDomainList(List<SessionVO> vo);
 }

@@ -61,14 +61,14 @@ public interface DeviceMapper extends BaseMapper<DeviceDomain> {
         Consumer<FieldQueryBuilder<DeviceVO>>[] fieldQueryBuilders = new Consumer[length];
 
         int nowIndex = 0;
-        if (hasDeviceTask) {
-            Consumer<FieldQueryBuilder<DeviceVO>> consumer = (builder) -> {
-                builder.field(DeviceVO::getDeviceTask).queryWrapper(
-                    device -> QueryWrapper.create().from(DEVICE_TASK).where(DEVICE_TASK.DEVICE_ID.eq(device.getId())));
-            };
-            fieldQueryBuilders[nowIndex] = consumer;
-            nowIndex++;
-        }
+        //        if (hasDeviceTask) {
+        //            Consumer<FieldQueryBuilder<DeviceVO>> consumer = (builder) -> {
+        //                builder.field(DeviceVO::getDeviceTask).queryWrapper(
+        //                    device -> QueryWrapper.create().from(DEVICE_TASK).where(DEVICE_TASK.DEVICE_ID.eq(device.getId())));
+        //            };
+        //            fieldQueryBuilders[nowIndex] = consumer;
+        //            nowIndex++;
+        //        }
 
         return fieldQueryBuilders;
     }

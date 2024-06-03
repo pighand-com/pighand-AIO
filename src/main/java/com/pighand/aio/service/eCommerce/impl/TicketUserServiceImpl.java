@@ -12,7 +12,7 @@ import com.pighand.aio.service.IoT.DeviceService;
 import com.pighand.aio.service.IoT.DeviceTaskService;
 import com.pighand.aio.vo.ECommerce.TicketUserVO;
 import com.pighand.aio.vo.IoT.DeviceTaskVO;
-import com.pighand.aio.vo.TicketUserValidityVO;
+import com.pighand.aio.vo.ECommerce.TicketUserValidityVO;
 import com.pighand.aio.vo.TicketValidityDetailEntity;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.exception.ThrowPrompt;

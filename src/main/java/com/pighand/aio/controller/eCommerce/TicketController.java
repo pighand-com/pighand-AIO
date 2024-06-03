@@ -1,7 +1,6 @@
 package com.pighand.aio.controller.ECommerce;
 
 import com.pighand.aio.common.interceptor.Context;
-import com.pighand.aio.common.interfaces.Authorization;
 import com.pighand.aio.domain.ECommerce.TicketDomain;
 import com.pighand.aio.service.ECommerce.TicketService;
 import com.pighand.aio.service.ECommerce.TicketUserService;
@@ -23,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wangshuli
  * @createDate 2024-04-26 14:52:18
  */
-@Authorization
+//@Authorization
 @RequiredArgsConstructor
 @RestController(path = "ticket", docName = "电商 - 票务")
 public class TicketController extends BaseController<TicketService> {

@@ -15,9 +15,6 @@ import lombok.Data;
 @Data
 public class TicketValidityDetailEntity {
 
-    // relation table: begin
-    // relation table: end
-
     private Long id;
     private String name;
     @Schema(description = "配置信息", implementation = EmptyObject.class)

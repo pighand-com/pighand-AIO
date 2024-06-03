@@ -7,12 +7,11 @@ import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 电商 - 场次模板。根据模板生成场次
@@ -20,9 +19,9 @@ import java.util.Date;
  * @author wangshuli
  * @createDate 2023-12-05 16:13:27
  */
+@Data()
 @Table(value = "session_template")
-@Data
-public class SessionTemplateDomain extends BaseDomain implements Serializable {
+public class SessionTemplateDomain extends BaseDomainRecord<SessionTemplateDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
@@ -36,8 +35,20 @@ public class SessionTemplateDomain extends BaseDomain implements Serializable {
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long storeId;
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long themeId;
     @Schema(description = "场次类型 10按用户分组")
     private Integer type;
-    private Date beginTime;
-    private Date endTime;
+
+    @Schema(description = "最少人数/起玩人数")
+    private Integer minPeople;
+    @Schema(description = "最大人数")
+    private Integer maxPeople;
+    @Schema(description = "是否支持包场")
+    private Boolean bookingPrivate;
+    @Schema(description = "是否支持拼场")
+    private Boolean bookingShared;
+    @Schema(description = "拼场成功后，是否可以继续加入")
+    private Boolean continueJoin;
 }

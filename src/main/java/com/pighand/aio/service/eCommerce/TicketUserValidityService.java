@@ -1,7 +1,7 @@
 package com.pighand.aio.service.ECommerce;
 
 import com.pighand.aio.domain.ECommerce.TicketUserValidityDomain;
-import com.pighand.aio.vo.TicketUserValidityVO;
+import com.pighand.aio.vo.ECommerce.TicketUserValidityVO;
 import com.pighand.framework.spring.base.BaseService;
 import com.pighand.framework.spring.page.PageOrList;
 

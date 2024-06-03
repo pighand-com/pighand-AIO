@@ -7,7 +7,7 @@ import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -19,9 +19,9 @@ import java.util.Date;
  * @author wangshuli
  * @createDate 2023-12-05 16:13:27
  */
+@Data()
 @Table(value = "session")
-@Data
-public class SessionDomain extends BaseDomain implements Serializable {
+public class SessionDomain extends BaseDomainRecord<SessionDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
@@ -37,8 +37,12 @@ public class SessionDomain extends BaseDomain implements Serializable {
     private Long storeId;
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
+    private Long themeId;
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long sessionTemplateId;
     private Date beginTime;
     private Date endTime;
     private Date createdAt;
+
 }

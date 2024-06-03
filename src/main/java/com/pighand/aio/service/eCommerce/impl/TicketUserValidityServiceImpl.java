@@ -4,7 +4,7 @@ import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.ECommerce.TicketUserValidityDomain;
 import com.pighand.aio.mapper.ECommerce.TicketUserValidityMapper;
 import com.pighand.aio.service.ECommerce.TicketUserValidityService;
-import com.pighand.aio.vo.TicketUserValidityVO;
+import com.pighand.aio.vo.ECommerce.TicketUserValidityVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;

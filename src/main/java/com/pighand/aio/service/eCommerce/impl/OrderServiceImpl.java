@@ -15,7 +15,7 @@ import com.pighand.aio.service.project.ProjectPlatformKeyService;
 import com.pighand.aio.service.project.ProjectPlatformPayService;
 import com.pighand.aio.service.user.UserWechatService;
 import com.pighand.aio.vo.ECommerce.*;
-import com.pighand.aio.vo.TicketUserValidityVO;
+import com.pighand.aio.vo.ECommerce.TicketUserValidityVO;
 import com.pighand.aio.vo.user.LoginUser;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.exception.ThrowPrompt;

@@ -12,7 +12,7 @@ import com.pighand.aio.service.IoT.DeviceService;
 import com.pighand.aio.service.project.ProjectDefaultService;
 import com.pighand.aio.vo.ECommerce.TicketVO;
 import com.pighand.aio.vo.TicketValidityDetailEntity;
-import com.pighand.aio.vo.TicketValidityVO;
+import com.pighand.aio.vo.ECommerce.TicketValidityVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;
@@ -78,6 +78,7 @@ public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomai
     public PageOrList<TicketVO> query(TicketVO ticketVO) {
         ProjectDefaultDomain projectDefaultDomain =
             projectDefaultService.queryChain().where(PROJECT_DEFAULT.ID.eq(Context.getProjectId())).one();
+
         if (ticketVO.getSystem().equals("ios") && (projectDefaultDomain == null
             || projectDefaultDomain.getDefaultNickname().equals("1"))) {
             return null;

@@ -1,8 +1,8 @@
-package com.pighand.aio.mapper.project;
+package com.pighand.aio.mapper.user;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.aio.domain.project.ProjectAuthorizationDomain;
-import com.pighand.aio.vo.project.ProjectAuthorizationVO;
+import com.pighand.aio.domain.user.UserDouyinDomain;
+import com.pighand.aio.vo.user.UserDouyinVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.BeanUtil;
@@ -16,17 +16,17 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.pighand.aio.domain.project.table.ProjectAuthorizationTableDef.PROJECT_AUTHORIZATION;
-import static com.pighand.aio.domain.project.table.ProjectTableDef.PROJECT;
+import static com.pighand.aio.domain.user.table.UserDouyinTableDef.USER_DOUYIN;
+import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 
 /**
- * 项目 - 授权信息配置
+ * 用户 - 抖音
  *
  * @author wangshuli
  * @createDate 2024-06-05 17:35:51
  */
 @Mapper
-public interface ProjectAuthorizationMapper extends BaseMapper<ProjectAuthorizationDomain> {
+public interface UserDouyinMapper extends BaseMapper<UserDouyinDomain> {
 
     /**
      * 基础查询条件
@@ -42,11 +42,11 @@ public interface ProjectAuthorizationMapper extends BaseMapper<ProjectAuthorizat
             return queryWrapper;
         }
 
-        // PROJECT
-        if (joinTables.contains(PROJECT.getTableName())) {
-            queryWrapper.leftJoin(PROJECT).on(PROJECT.ID.eq(PROJECT_AUTHORIZATION.ID));
+        // USER
+        if (joinTables.contains(USER.getTableName())) {
+            queryWrapper.leftJoin(USER).on(USER.ID.eq(USER_DOUYIN.USER_ID));
 
-            joinTables.remove(PROJECT.getTableName());
+            joinTables.remove(USER.getTableName());
         }
 
         return queryWrapper;
@@ -64,9 +64,9 @@ public interface ProjectAuthorizationMapper extends BaseMapper<ProjectAuthorizat
 
         boolean isList = result instanceof List;
 
-        List<Function<ProjectAuthorizationVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
+        List<Function<UserDouyinVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
         List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
-        List<BiConsumer<ProjectAuthorizationVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
+        List<BiConsumer<UserDouyinVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
 
         List<Function<Set<Long>, List>> subTableQueriesList = null;
         List<Function<Long, List>> subTableQueriesSingle = null;
@@ -80,8 +80,7 @@ public interface ProjectAuthorizationMapper extends BaseMapper<ProjectAuthorizat
             BeanUtil.queryWithRelatedData((List)result, mainIdGetters, subTableQueriesList, subTableIdGetter,
                 subResultSetter);
         } else {
-            BeanUtil.queryWithRelatedData((ProjectAuthorizationVO)result, mainIdGetters, subTableQueriesSingle,
-                subResultSetter);
+            BeanUtil.queryWithRelatedData((UserDouyinVO)result, mainIdGetters, subTableQueriesSingle, subResultSetter);
         }
     }
 
@@ -92,12 +91,12 @@ public interface ProjectAuthorizationMapper extends BaseMapper<ProjectAuthorizat
      * @param joinTables 关联表
      * @return
      */
-    default ProjectAuthorizationVO find(Long id, String... joinTables) {
+    default UserDouyinVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(PROJECT_AUTHORIZATION.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(USER_DOUYIN.ID.eq(id));
 
-        ProjectAuthorizationVO result = this.selectOneByQueryAs(queryWrapper, ProjectAuthorizationVO.class);
+        UserDouyinVO result = this.selectOneByQueryAs(queryWrapper, UserDouyinVO.class);
         this.relationMany(joinTableSet, result);
 
         return result;
@@ -110,12 +109,12 @@ public interface ProjectAuthorizationMapper extends BaseMapper<ProjectAuthorizat
      * @param joinTables   关联表
      * @return
      */
-    default ProjectAuthorizationVO find(QueryWrapper queryWrapper, String... joinTables) {
+    default UserDouyinVO find(QueryWrapper queryWrapper, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
         QueryWrapper finalQueryWrapper = this.relationOne(joinTableSet, queryWrapper);
 
-        ProjectAuthorizationVO result = this.selectOneByQueryAs(finalQueryWrapper, ProjectAuthorizationVO.class);
+        UserDouyinVO result = this.selectOneByQueryAs(finalQueryWrapper, UserDouyinVO.class);
         this.relationMany(joinTableSet, result);
 
         return result;
@@ -124,16 +123,14 @@ public interface ProjectAuthorizationMapper extends BaseMapper<ProjectAuthorizat
     /**
      * 分页或列表
      *
-     * @param projectAuthorizationDomain
+     * @param userDouyinDomain
      * @return
      */
-    default PageOrList<ProjectAuthorizationVO> query(ProjectAuthorizationDomain projectAuthorizationDomain,
-        QueryWrapper queryWrapper) {
-        QueryWrapper finalQueryWrapper = this.relationOne(projectAuthorizationDomain.getJoinTables(), queryWrapper);
+    default PageOrList<UserDouyinVO> query(UserDouyinDomain userDouyinDomain, QueryWrapper queryWrapper) {
+        QueryWrapper finalQueryWrapper = this.relationOne(userDouyinDomain.getJoinTables(), queryWrapper);
 
-        PageOrList<ProjectAuthorizationVO> result =
-            this.page(projectAuthorizationDomain, finalQueryWrapper, ProjectAuthorizationVO.class);
-        this.relationMany(projectAuthorizationDomain.getJoinTables(), result.getRecords());
+        PageOrList<UserDouyinVO> result = this.page(userDouyinDomain, finalQueryWrapper, UserDouyinVO.class);
+        this.relationMany(userDouyinDomain.getJoinTables(), result.getRecords());
 
         return result;
     }

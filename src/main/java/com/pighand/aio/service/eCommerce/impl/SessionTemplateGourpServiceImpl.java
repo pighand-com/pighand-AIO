@@ -40,7 +40,7 @@ public class SessionTemplateGourpServiceImpl
      */
     @Override
     public SessionTemplateGourpDomain find(Long id) {
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**
@@ -52,7 +52,7 @@ public class SessionTemplateGourpServiceImpl
     @Override
     public PageOrList<SessionTemplateGourpVO> query(SessionTemplateGourpVO sessionTemplateGourpVO) {
 
-        return super.mapper.query(sessionTemplateGourpVO);
+        return super.mapper.query(sessionTemplateGourpVO, null);
     }
 
     /**

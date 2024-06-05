@@ -10,8 +10,6 @@ import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import static com.pighand.aio.domain.ECommerce.table.SessionTableDef.SESSION;
 import static com.pighand.aio.domain.ECommerce.table.SessionUserCycleTableDef.SESSION_USER_CYCLE;
 import static com.pighand.aio.domain.user.table.UserTableDef.USER;
@@ -47,9 +45,7 @@ public class SessionUserCycleServiceImpl extends BaseServiceImpl<SessionUserCycl
      */
     @Override
     public SessionUserCycleDomain find(Long id) {
-        List<String> joinTables = List.of(SESSION.getTableName(), USER.getTableName());
-
-        return super.mapper.find(id, joinTables);
+        return super.mapper.find(id, SESSION.getTableName(), USER.getTableName());
     }
 
     /**
@@ -66,8 +62,8 @@ public class SessionUserCycleServiceImpl extends BaseServiceImpl<SessionUserCycl
 
         // equal
         queryWrapper.and(SESSION_USER_CYCLE.SESSION_ID.eq(sessionUserCycleVO.getSessionId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(
-            SESSION_USER_CYCLE.SESSION_CYCLE_ID.eq(sessionUserCycleVO.getSessionCycleId(), VerifyUtils::isNotEmpty));
+        queryWrapper.and(SESSION_USER_CYCLE.SESSION_TEMPLATE_CYCLE_ID.eq(sessionUserCycleVO.getSessionTemplateCycleId(),
+            VerifyUtils::isNotEmpty));
         queryWrapper.and(SESSION_USER_CYCLE.ORDER_ID.eq(sessionUserCycleVO.getOrderId(), VerifyUtils::isNotEmpty));
         queryWrapper.and(SESSION_USER_CYCLE.USER_ID.eq(sessionUserCycleVO.getUserId(), VerifyUtils::isNotEmpty));
 

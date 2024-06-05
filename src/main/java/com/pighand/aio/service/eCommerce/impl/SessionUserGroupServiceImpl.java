@@ -59,7 +59,7 @@ public class SessionUserGroupServiceImpl extends BaseServiceImpl<SessionUserGrou
      */
     @Override
     public SessionUserGroupDomain find(Long id) {
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**
@@ -71,7 +71,7 @@ public class SessionUserGroupServiceImpl extends BaseServiceImpl<SessionUserGrou
     @Override
     public PageOrList<SessionUserGroupVO> query(SessionUserGroupVO sessionUserGroupVO) {
 
-        return super.mapper.query(sessionUserGroupVO);
+        return super.mapper.query(sessionUserGroupVO, null);
     }
 
     /**

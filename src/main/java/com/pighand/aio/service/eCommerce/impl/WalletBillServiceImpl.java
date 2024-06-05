@@ -3,9 +3,9 @@ package com.pighand.aio.service.ECommerce.impl;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryMethods;
 import com.pighand.aio.common.enums.RoleEnum;
+import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.ECommerce.WalletBillDomain;
 import com.pighand.aio.domain.user.UserDomain;
-import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.mapper.ECommerce.WalletBillMapper;
 import com.pighand.aio.service.ECommerce.SessionService;
 import com.pighand.aio.service.ECommerce.SessionUserGroupService;
@@ -64,7 +64,7 @@ public class WalletBillServiceImpl extends BaseServiceImpl<WalletBillMapper, Wal
     public PageOrList<WalletBillVO> query(WalletBillVO walletBillVO) {
         walletBillVO.setPageType(PageType.LIST);
 
-        return super.mapper.query(walletBillVO);
+        return super.mapper.query(walletBillVO, null);
     }
 
     /**
@@ -100,7 +100,8 @@ public class WalletBillServiceImpl extends BaseServiceImpl<WalletBillMapper, Wal
                     .and(USER.ROLE_ID.eq(RoleEnum.USER.value)))
 
                 // inner join session_template_group
-                .innerJoin(SESSION_TEMPLATE_GOURP).on(SESSION_USER_GROUP.SESSION_GROUP_ID.eq(SESSION_TEMPLATE_GOURP.ID)
+                .innerJoin(SESSION_TEMPLATE_GOURP)
+                .on(SESSION_USER_GROUP.SESSION_TEMPLATE_GROUP_ID.eq(SESSION_TEMPLATE_GOURP.ID)
                     .and(SESSION_TEMPLATE_GOURP.TYPE.ne(99)))
 
                 // where

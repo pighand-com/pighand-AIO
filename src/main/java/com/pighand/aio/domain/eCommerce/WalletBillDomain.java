@@ -7,7 +7,7 @@ import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -23,7 +23,7 @@ import java.util.Date;
  */
 @Table(value = "wallet_bill")
 @Data
-public class WalletBillDomain extends BaseDomain implements Serializable {
+public class WalletBillDomain extends BaseDomainRecord<WalletBillDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)

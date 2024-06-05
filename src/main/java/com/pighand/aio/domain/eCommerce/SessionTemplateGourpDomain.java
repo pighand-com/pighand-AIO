@@ -7,7 +7,7 @@ import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -22,7 +22,7 @@ import java.io.Serializable;
  */
 @Table(value = "session_template_gourp")
 @Data
-public class SessionTemplateGourpDomain extends BaseDomain implements Serializable {
+public class SessionTemplateGourpDomain extends BaseDomainRecord<SessionTemplateGourpDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)

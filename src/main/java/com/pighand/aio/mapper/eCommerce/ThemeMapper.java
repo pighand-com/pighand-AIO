@@ -1,32 +1,28 @@
 package com.pighand.aio.mapper.ECommerce;
 
-import com.mybatisflex.core.field.FieldQueryBuilder;
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.aio.domain.ECommerce.SessionDomain;
-import com.pighand.aio.domain.ECommerce.SessionTemplateDomain;
 import com.pighand.aio.domain.ECommerce.ThemeDomain;
-import com.pighand.aio.vo.ECommerce.SessionTemplateVO;
-import com.pighand.aio.vo.ECommerce.SessionVO;
 import com.pighand.aio.vo.ECommerce.ThemeVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.util.BeanUtil;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static com.pighand.aio.domain.ECommerce.table.SessionTableDef.SESSION;
-import static com.pighand.aio.domain.ECommerce.table.SessionTemplateTableDef.SESSION_TEMPLATE;
 import static com.pighand.aio.domain.ECommerce.table.ThemeTableDef.THEME;
 
 /**
  * 电商 - 主题
  *
  * @author wangshuli
- * @createDate 2024-05-23 15:01:58
+ * @createDate 2024-06-05 17:35:51
  */
 @Mapper
 public interface ThemeMapper extends BaseMapper<ThemeDomain> {
@@ -36,22 +32,14 @@ public interface ThemeMapper extends BaseMapper<ThemeDomain> {
      *
      * @return
      */
-    default QueryWrapper relationOne(List<String> joinTables, QueryWrapper queryWrapper) {
+    default QueryWrapper relationOne(Set<String> joinTables, QueryWrapper queryWrapper) {
         if (queryWrapper == null) {
             queryWrapper = QueryWrapper.create();
         }
 
-        if (joinTables == null) {
+        if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
         }
-
-        //        if (joinTables.contains(SESSION.getTableName())) {
-        //            queryWrapper.leftJoin(SESSION).on(SESSION.THEME_ID.eq(THEME.ID));
-        //        }
-        //
-        //        if (joinTables.contains(SESSION_TEMPLATE.getTableName())) {
-        //            queryWrapper.leftJoin(SESSION_TEMPLATE).on(SESSION_TEMPLATE.THEME_ID.eq(THEME.ID));
-        //        }
 
         return queryWrapper;
     }
@@ -61,18 +49,31 @@ public interface ThemeMapper extends BaseMapper<ThemeDomain> {
      *
      * @return
      */
-    default Consumer<FieldQueryBuilder<ThemeVO>>[] relationMany(List<String> joinTables) {
-        if (joinTables == null) {
-            return null;
+    default void relationMany(Set<String> joinTables, Object result) {
+        if (joinTables == null || joinTables.isEmpty()) {
+            return;
         }
 
-        int length = 0;
+        boolean isList = result instanceof List;
 
-        Consumer<FieldQueryBuilder<ThemeVO>>[] fieldQueryBuilders = new Consumer[length];
+        List<Function<ThemeVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
+        List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
+        List<BiConsumer<ThemeVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
 
-        int nowIndex = 0;
+        List<Function<Set<Long>, List>> subTableQueriesList = null;
+        List<Function<Long, List>> subTableQueriesSingle = null;
+        if (isList) {
+            subTableQueriesList = new ArrayList<>(joinTables.size());
+        } else {
+            subTableQueriesSingle = new ArrayList<>(joinTables.size());
+        }
 
-        return fieldQueryBuilders;
+        if (result instanceof List) {
+            BeanUtil.queryWithRelatedData((List)result, mainIdGetters, subTableQueriesList, subTableIdGetter,
+                subResultSetter);
+        } else {
+            BeanUtil.queryWithRelatedData((ThemeVO)result, mainIdGetters, subTableQueriesSingle, subResultSetter);
+        }
     }
 
     /**
@@ -82,11 +83,15 @@ public interface ThemeMapper extends BaseMapper<ThemeDomain> {
      * @param joinTables 关联表
      * @return
      */
-    default ThemeVO find(Long id, List<String> joinTables) {
-        QueryWrapper queryWrapper = this.relationOne(joinTables, null).where(THEME.ID.eq(id));
-        Consumer<FieldQueryBuilder<ThemeVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default ThemeVO find(Long id, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(queryWrapper, ThemeVO.class, relationManyBuilders);
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(THEME.ID.eq(id));
+
+        ThemeVO result = this.selectOneByQueryAs(queryWrapper, ThemeVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -96,11 +101,15 @@ public interface ThemeMapper extends BaseMapper<ThemeDomain> {
      * @param joinTables   关联表
      * @return
      */
-    default ThemeVO find(QueryWrapper queryWrapper, List<String> joinTables) {
-        QueryWrapper finalQueryWrapper = this.relationOne(joinTables, queryWrapper);
-        Consumer<FieldQueryBuilder<ThemeVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default ThemeVO find(QueryWrapper queryWrapper, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(finalQueryWrapper, ThemeVO.class, relationManyBuilders);
+        QueryWrapper finalQueryWrapper = this.relationOne(joinTableSet, queryWrapper);
+
+        ThemeVO result = this.selectOneByQueryAs(finalQueryWrapper, ThemeVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -111,30 +120,10 @@ public interface ThemeMapper extends BaseMapper<ThemeDomain> {
      */
     default PageOrList<ThemeVO> query(ThemeDomain themeDomain, QueryWrapper queryWrapper) {
         QueryWrapper finalQueryWrapper = this.relationOne(themeDomain.getJoinTables(), queryWrapper);
-        Consumer<FieldQueryBuilder<ThemeVO>>[] relationManyBuilders = this.relationMany(themeDomain.getJoinTables());
 
-        PageOrList<ThemeVO> result = this.page(themeDomain, finalQueryWrapper, ThemeVO.class, relationManyBuilders);
+        PageOrList<ThemeVO> result = this.page(themeDomain, finalQueryWrapper, ThemeVO.class);
+        this.relationMany(themeDomain.getJoinTables(), result.getRecords());
 
-        Function<Set<Long>, List<SessionVO>> tableSession = ids -> {
-            // 模拟数据库查询
-            return new SessionDomain().select(SESSION.DEFAULT_COLUMNS).where(SESSION.THEME_ID.in(ids))
-                .listAs(SessionVO.class);
-        };
-
-        Function<Set<Long>, List<SessionTemplateVO>> tableSessionTemplate = ids -> {
-            // 模拟数据库查询
-            return new SessionTemplateDomain().select(SESSION_TEMPLATE.DEFAULT_COLUMNS)
-                .where(SESSION_TEMPLATE.THEME_ID.in(ids)).listAs(SessionTemplateVO.class);
-        };
-
-        this.queryWithRelatedData(result.getRecords(), Arrays.asList(ThemeVO::getId, ThemeVO::getId),
-            Arrays.asList(tableSession, tableSessionTemplate),
-            Arrays.asList(obj -> ((SessionVO)obj).getThemeId(), obj -> ((SessionTemplateVO)obj).getThemeId()),
-            Arrays.asList((vo, list) -> {
-                vo.setSession(list);
-            }, (vo, list) -> {
-                vo.setSessionTemplate(list);
-            }));
         return result;
     }
 }

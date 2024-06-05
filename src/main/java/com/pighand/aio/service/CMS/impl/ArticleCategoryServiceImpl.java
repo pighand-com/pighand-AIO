@@ -48,9 +48,7 @@ public class ArticleCategoryServiceImpl extends BaseServiceImpl<ArticleCategoryM
      */
     @Override
     public ArticleCategoryDomain find(Long id) {
-        List<String> joinTables = List.of(ARTICLE.getTableName());
-
-        return super.mapper.find(id, joinTables);
+        return super.mapper.find(id, ARTICLE.getTableName());
     }
 
     @Override

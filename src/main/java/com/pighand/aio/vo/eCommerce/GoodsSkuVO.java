@@ -3,6 +3,8 @@ package com.pighand.aio.vo.ECommerce;
 import com.pighand.aio.domain.ECommerce.GoodsSkuDomain;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 电商 - SKU
  *
@@ -11,6 +13,8 @@ import lombok.Data;
  */
 @Data
 public class GoodsSkuVO extends GoodsSkuDomain {
+    private List<OrderSkuVO> orderSku;
+    
     private GoodsSpuVO goodsSpu;
 
     // 购买数量

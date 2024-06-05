@@ -10,8 +10,6 @@ import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import static com.pighand.aio.domain.ECommerce.table.SessionTableDef.SESSION;
 import static com.pighand.aio.domain.ECommerce.table.SessionTemplateTableDef.SESSION_TEMPLATE;
 import static com.pighand.aio.domain.ECommerce.table.ThemeTableDef.THEME;
@@ -46,9 +44,7 @@ public class ThemeServiceImpl extends BaseServiceImpl<ThemeMapper, ThemeDomain> 
      */
     @Override
     public ThemeDomain find(Long id) {
-        List<String> joinTables = List.of(SESSION.getTableName(), SESSION_TEMPLATE.getTableName());
-
-        return super.mapper.find(id, joinTables);
+        return super.mapper.find(id, SESSION.getTableName(), SESSION_TEMPLATE.getTableName());
     }
 
     /**

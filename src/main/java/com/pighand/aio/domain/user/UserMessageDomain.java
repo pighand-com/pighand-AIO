@@ -8,7 +8,7 @@ import com.mybatisflex.annotation.Table;
 import com.pighand.aio.common.enums.UserMessageTypeEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -24,7 +24,7 @@ import java.util.Date;
  */
 @Table(value = "user_message")
 @Data
-public class UserMessageDomain extends BaseDomain implements Serializable {
+public class UserMessageDomain extends BaseDomainRecord<UserMessageDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)

@@ -58,9 +58,8 @@ public class DeviceTaskServiceImpl extends BaseServiceImpl<DeviceTaskMapper, Dev
      */
     @Override
     public DeviceTaskDomain find(Long id) {
-        List<String> joinTables = List.of(DEVICE.getTableName());
 
-        return super.mapper.find(id, joinTables);
+        return super.mapper.find(id, DEVICE.getTableName());
     }
 
     /**

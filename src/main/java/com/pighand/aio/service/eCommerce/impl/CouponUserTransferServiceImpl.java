@@ -1,11 +1,11 @@
 package com.pighand.aio.service.ECommerce.impl;
 
-import com.pighand.framework.spring.base.BaseServiceImpl;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.domain.ECommerce.CouponUserTransferDomain;
 import com.pighand.aio.mapper.ECommerce.CouponUserTransferMapper;
 import com.pighand.aio.service.ECommerce.CouponUserTransferService;
 import com.pighand.aio.vo.ECommerce.CouponUserTransferVO;
+import com.pighand.framework.spring.base.BaseServiceImpl;
+import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
 
 /**
@@ -40,7 +40,7 @@ public class CouponUserTransferServiceImpl extends BaseServiceImpl<CouponUserTra
     @Override
     public CouponUserTransferDomain find(Long id) {
 
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**
@@ -51,7 +51,7 @@ public class CouponUserTransferServiceImpl extends BaseServiceImpl<CouponUserTra
      */
     @Override
     public PageOrList<CouponUserTransferVO> query(CouponUserTransferVO couponUserTransferVO) {
-        return super.mapper.query(couponUserTransferVO);
+        return super.mapper.query(couponUserTransferVO, null);
     }
 
     /**

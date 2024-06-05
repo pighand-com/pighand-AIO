@@ -39,7 +39,7 @@ public class SessionTemplateServiceImpl extends BaseServiceImpl<SessionTemplateM
      */
     @Override
     public SessionTemplateDomain find(Long id) {
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**
@@ -51,7 +51,7 @@ public class SessionTemplateServiceImpl extends BaseServiceImpl<SessionTemplateM
     @Override
     public PageOrList<SessionTemplateVO> query(SessionTemplateVO sessionTemplateVO) {
 
-        return super.mapper.query(sessionTemplateVO);
+        return super.mapper.query(sessionTemplateVO, null);
     }
 
     /**

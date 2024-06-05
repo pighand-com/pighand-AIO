@@ -1,23 +1,32 @@
 package com.pighand.aio.mapper.ECommerce;
 
-import com.mybatisflex.core.field.FieldQueryBuilder;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.ECommerce.TicketDomain;
+import com.pighand.aio.domain.ECommerce.TicketValidityDomain;
 import com.pighand.aio.vo.ECommerce.TicketVO;
+import com.pighand.aio.vo.ECommerce.TicketValidityVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.util.BeanUtil;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static com.pighand.aio.domain.ECommerce.table.StoreTableDef.STORE;
 import static com.pighand.aio.domain.ECommerce.table.TicketTableDef.TICKET;
+import static com.pighand.aio.domain.ECommerce.table.TicketValidityTableDef.TICKET_VALIDITY;
 
 /**
  * 电商 - 票务
  *
  * @author wangshuli
- * @createDate 2024-04-26 14:52:18
+ * @createDate 2024-06-05 17:35:51
  */
 @Mapper
 public interface TicketMapper extends BaseMapper<TicketDomain> {
@@ -27,13 +36,20 @@ public interface TicketMapper extends BaseMapper<TicketDomain> {
      *
      * @return
      */
-    default QueryWrapper relationOne(List<String> joinTables, QueryWrapper queryWrapper) {
+    default QueryWrapper relationOne(Set<String> joinTables, QueryWrapper queryWrapper) {
         if (queryWrapper == null) {
             queryWrapper = QueryWrapper.create();
         }
 
-        if (joinTables == null) {
+        if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
+        }
+
+        // STORE
+        if (joinTables.contains(STORE.getTableName())) {
+            queryWrapper.leftJoin(STORE).on(STORE.ID.eq(TICKET.STORE_ID));
+
+            joinTables.remove(STORE.getTableName());
         }
 
         return queryWrapper;
@@ -44,18 +60,47 @@ public interface TicketMapper extends BaseMapper<TicketDomain> {
      *
      * @return
      */
-    default Consumer<FieldQueryBuilder<TicketVO>>[] relationMany(List<String> joinTables) {
-        if (joinTables == null) {
-            return null;
+    default void relationMany(Set<String> joinTables, Object result) {
+        if (joinTables == null || joinTables.isEmpty()) {
+            return;
         }
 
-        int length = 0;
+        boolean isList = result instanceof List;
 
-        Consumer<FieldQueryBuilder<TicketVO>>[] fieldQueryBuilders = new Consumer[length];
+        List<Function<TicketVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
+        List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
+        List<BiConsumer<TicketVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
 
-        int nowIndex = 0;
+        List<Function<Set<Long>, List>> subTableQueriesList = null;
+        List<Function<Long, List>> subTableQueriesSingle = null;
+        if (isList) {
+            subTableQueriesList = new ArrayList<>(joinTables.size());
+        } else {
+            subTableQueriesSingle = new ArrayList<>(joinTables.size());
+        }
 
-        return fieldQueryBuilders;
+        // TICKET_VALIDITY
+        if (joinTables.contains(TICKET_VALIDITY.getTableName())) {
+            mainIdGetters.add(TicketVO::getId);
+
+            if (subTableQueriesList != null) {
+                subTableQueriesList.add(ids -> new TicketValidityDomain().select(TICKET_VALIDITY.DEFAULT_COLUMNS)
+                    .where(TICKET_VALIDITY.TICKET_ID.in(ids)).listAs(TicketValidityVO.class));
+            } else {
+                subTableQueriesSingle.add(id -> new TicketValidityDomain().select(TICKET_VALIDITY.DEFAULT_COLUMNS)
+                    .where(TICKET_VALIDITY.TICKET_ID.eq(id)).listAs(TicketValidityVO.class));
+            }
+
+            subTableIdGetter.add(obj -> ((TicketValidityVO)obj).getTicketId());
+            subResultSetter.add((vo, list) -> vo.setTicketValidity((List<TicketValidityVO>)list));
+        }
+
+        if (result instanceof List) {
+            BeanUtil.queryWithRelatedData((List)result, mainIdGetters, subTableQueriesList, subTableIdGetter,
+                subResultSetter);
+        } else {
+            BeanUtil.queryWithRelatedData((TicketVO)result, mainIdGetters, subTableQueriesSingle, subResultSetter);
+        }
     }
 
     /**
@@ -65,15 +110,15 @@ public interface TicketMapper extends BaseMapper<TicketDomain> {
      * @param joinTables 关联表
      * @return
      */
-    default TicketVO find(Long id, List<String> joinTables) {
-        QueryWrapper queryWrapper = this.relationOne(joinTables, null).where(TICKET.ID.eq(id));
-        Consumer<FieldQueryBuilder<TicketVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default TicketVO find(Long id, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        // TODO: 将商品表的base实体标记为非表字段，字表重写本表字段
-        queryWrapper.select(TICKET.ID, TICKET.NAME, TICKET.DETAILS, TICKET.ORIGINAL_PRICE, TICKET.CURRENT_PRICE,
-            TICKET.VALIDATION_COUNT);
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(TICKET.ID.eq(id));
 
-        return this.selectOneByQueryAs(queryWrapper, TicketVO.class, relationManyBuilders);
+        TicketVO result = this.selectOneByQueryAs(queryWrapper, TicketVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -83,11 +128,15 @@ public interface TicketMapper extends BaseMapper<TicketDomain> {
      * @param joinTables   关联表
      * @return
      */
-    default TicketVO find(QueryWrapper queryWrapper, List<String> joinTables) {
-        QueryWrapper finalQueryWrapper = this.relationOne(joinTables, queryWrapper);
-        Consumer<FieldQueryBuilder<TicketVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default TicketVO find(QueryWrapper queryWrapper, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(finalQueryWrapper, TicketVO.class, relationManyBuilders);
+        QueryWrapper finalQueryWrapper = this.relationOne(joinTableSet, queryWrapper);
+
+        TicketVO result = this.selectOneByQueryAs(finalQueryWrapper, TicketVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -98,8 +147,10 @@ public interface TicketMapper extends BaseMapper<TicketDomain> {
      */
     default PageOrList<TicketVO> query(TicketDomain ticketDomain, QueryWrapper queryWrapper) {
         QueryWrapper finalQueryWrapper = this.relationOne(ticketDomain.getJoinTables(), queryWrapper);
-        Consumer<FieldQueryBuilder<TicketVO>>[] relationManyBuilders = this.relationMany(ticketDomain.getJoinTables());
 
-        return this.page(ticketDomain, finalQueryWrapper, TicketVO.class, relationManyBuilders);
+        PageOrList<TicketVO> result = this.page(ticketDomain, finalQueryWrapper, TicketVO.class);
+        this.relationMany(ticketDomain.getJoinTables(), result.getRecords());
+
+        return result;
     }
 }

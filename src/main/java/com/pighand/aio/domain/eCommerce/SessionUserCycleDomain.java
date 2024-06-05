@@ -1,15 +1,13 @@
 package com.pighand.aio.domain.ECommerce;
 
-import com.mybatisflex.annotation.Id;
-import com.mybatisflex.annotation.Table;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.Table;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.base.BaseDomain;
-
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -23,7 +21,7 @@ import java.util.Date;
  */
 @Table(value = "session_user_cycle")
 @Data
-public class SessionUserCycleDomain extends BaseDomain implements Serializable {
+public class SessionUserCycleDomain extends BaseDomainRecord<SessionUserCycleDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
@@ -32,7 +30,7 @@ public class SessionUserCycleDomain extends BaseDomain implements Serializable {
     @RequestFieldException("sessionUserCycleUpdate")
     private Long id;
     private Long sessionId;
-    private Long sessionCycleId;
+    private Long sessionTemplateCycleId;
     private Long orderId;
     private Long userId;
     private Date createdAt;

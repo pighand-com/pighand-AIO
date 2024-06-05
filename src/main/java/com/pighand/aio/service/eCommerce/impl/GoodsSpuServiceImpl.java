@@ -76,7 +76,7 @@ public class GoodsSpuServiceImpl extends BaseServiceImpl<GoodsSpuMapper, GoodsSp
      */
     @Override
     public GoodsSpuVO find(Long id) {
-        return super.mapper.find(id, List.of(GOODS_SKU.getTableName()));
+        return super.mapper.find(id, GOODS_SKU.getTableName());
     }
 
     /**

@@ -3,7 +3,6 @@ package com.pighand.aio.vo.ECommerce;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.core.handler.JacksonTypeHandler;
 import com.pighand.aio.domain.ECommerce.TicketUserValidityDomain;
-import com.pighand.aio.vo.TicketValidityDetailEntity;
 import lombok.Data;
 
 import java.util.List;

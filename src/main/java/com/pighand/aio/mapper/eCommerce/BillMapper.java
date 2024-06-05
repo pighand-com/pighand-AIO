@@ -1,26 +1,28 @@
 package com.pighand.aio.mapper.ECommerce;
 
-import com.mybatisflex.core.field.FieldQueryBuilder;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.ECommerce.BillDomain;
 import com.pighand.aio.vo.ECommerce.BillVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.util.BeanUtil;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.pighand.aio.domain.ECommerce.table.BillTableDef.BILL;
-import static com.pighand.aio.domain.ECommerce.table.OrderSkuTableDef.ORDER_SKU;
-import static com.pighand.aio.domain.ECommerce.table.OrderTableDef.ORDER;
-import static com.pighand.aio.domain.ECommerce.table.OrderTradeTableDef.ORDER_TRADE;
 
 /**
- * 商城 - 账单
+ * 电商 - 账单
  *
  * @author wangshuli
- * @createDate 2024-04-18 14:35:34
+ * @createDate 2024-06-05 17:35:51
  */
 @Mapper
 public interface BillMapper extends BaseMapper<BillDomain> {
@@ -30,25 +32,13 @@ public interface BillMapper extends BaseMapper<BillDomain> {
      *
      * @return
      */
-    default QueryWrapper relationOne(List<String> joinTables, QueryWrapper queryWrapper) {
+    default QueryWrapper relationOne(Set<String> joinTables, QueryWrapper queryWrapper) {
         if (queryWrapper == null) {
             queryWrapper = QueryWrapper.create();
         }
 
-        if (joinTables == null) {
+        if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
-        }
-
-        if (joinTables.contains(ORDER.getTableName())) {
-            queryWrapper.leftJoin(ORDER).on(ORDER.ID.eq(BILL.ORDER_ID));
-        }
-
-        if (joinTables.contains(ORDER_TRADE.getTableName())) {
-            queryWrapper.leftJoin(ORDER_TRADE).on(ORDER_TRADE.ID.eq(BILL.ORDER_TRADE_ID));
-        }
-
-        if (joinTables.contains(ORDER_SKU.getTableName())) {
-            queryWrapper.leftJoin(ORDER_SKU).on(ORDER_SKU.ID.eq(BILL.ORDER_SKU_ID));
         }
 
         return queryWrapper;
@@ -59,18 +49,31 @@ public interface BillMapper extends BaseMapper<BillDomain> {
      *
      * @return
      */
-    default Consumer<FieldQueryBuilder<BillVO>>[] relationMany(List<String> joinTables) {
-        if (joinTables == null) {
-            return null;
+    default void relationMany(Set<String> joinTables, Object result) {
+        if (joinTables == null || joinTables.isEmpty()) {
+            return;
         }
 
-        int length = 0;
+        boolean isList = result instanceof List;
 
-        Consumer<FieldQueryBuilder<BillVO>>[] fieldQueryBuilders = new Consumer[length];
+        List<Function<BillVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
+        List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
+        List<BiConsumer<BillVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
 
-        int nowIndex = 0;
+        List<Function<Set<Long>, List>> subTableQueriesList = null;
+        List<Function<Long, List>> subTableQueriesSingle = null;
+        if (isList) {
+            subTableQueriesList = new ArrayList<>(joinTables.size());
+        } else {
+            subTableQueriesSingle = new ArrayList<>(joinTables.size());
+        }
 
-        return fieldQueryBuilders;
+        if (result instanceof List) {
+            BeanUtil.queryWithRelatedData((List)result, mainIdGetters, subTableQueriesList, subTableIdGetter,
+                subResultSetter);
+        } else {
+            BeanUtil.queryWithRelatedData((BillVO)result, mainIdGetters, subTableQueriesSingle, subResultSetter);
+        }
     }
 
     /**
@@ -80,11 +83,15 @@ public interface BillMapper extends BaseMapper<BillDomain> {
      * @param joinTables 关联表
      * @return
      */
-    default BillVO find(Long id, List<String> joinTables) {
-        QueryWrapper queryWrapper = this.relationOne(joinTables, null).where(BILL.ID.eq(id));
-        Consumer<FieldQueryBuilder<BillVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default BillVO find(Long id, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(queryWrapper, BillVO.class, relationManyBuilders);
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(BILL.ID.eq(id));
+
+        BillVO result = this.selectOneByQueryAs(queryWrapper, BillVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -94,11 +101,15 @@ public interface BillMapper extends BaseMapper<BillDomain> {
      * @param joinTables   关联表
      * @return
      */
-    default BillVO find(QueryWrapper queryWrapper, List<String> joinTables) {
-        QueryWrapper finalQueryWrapper = this.relationOne(joinTables, queryWrapper);
-        Consumer<FieldQueryBuilder<BillVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default BillVO find(QueryWrapper queryWrapper, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(finalQueryWrapper, BillVO.class, relationManyBuilders);
+        QueryWrapper finalQueryWrapper = this.relationOne(joinTableSet, queryWrapper);
+
+        BillVO result = this.selectOneByQueryAs(finalQueryWrapper, BillVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -109,8 +120,10 @@ public interface BillMapper extends BaseMapper<BillDomain> {
      */
     default PageOrList<BillVO> query(BillDomain billDomain, QueryWrapper queryWrapper) {
         QueryWrapper finalQueryWrapper = this.relationOne(billDomain.getJoinTables(), queryWrapper);
-        Consumer<FieldQueryBuilder<BillVO>>[] relationManyBuilders = this.relationMany(billDomain.getJoinTables());
 
-        return this.page(billDomain, finalQueryWrapper, BillVO.class, relationManyBuilders);
+        PageOrList<BillVO> result = this.page(billDomain, finalQueryWrapper, BillVO.class);
+        this.relationMany(billDomain.getJoinTables(), result.getRecords());
+
+        return result;
     }
 }

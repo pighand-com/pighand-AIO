@@ -8,7 +8,7 @@ import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
 
 import static com.pighand.aio.domain.ECommerce.table.CouponTableDef.COUPON;
 
@@ -42,9 +42,7 @@ public class StoreServiceImpl extends BaseServiceImpl<StoreMapper, StoreDomain> 
      */
     @Override
     public StoreDomain find(Long id) {
-        List<String> joinTables = List.of("coupon");
-
-        return super.mapper.find(id, joinTables);
+        return super.mapper.find(id, COUPON.getTableName());
     }
 
     /**
@@ -55,9 +53,9 @@ public class StoreServiceImpl extends BaseServiceImpl<StoreMapper, StoreDomain> 
      */
     @Override
     public PageOrList<StoreVO> query(StoreVO storeVO) {
-        storeVO.setJoinTables(List.of(COUPON.getTableName()));
+        storeVO.setJoinTables(Set.of(COUPON.getTableName()));
 
-        return super.mapper.query(storeVO);
+        return super.mapper.query(storeVO, null);
     }
 
     /**

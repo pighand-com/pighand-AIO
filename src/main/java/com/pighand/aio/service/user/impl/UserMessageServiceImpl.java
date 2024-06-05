@@ -3,8 +3,8 @@ package com.pighand.aio.service.user.impl;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.util.UpdateEntity;
 import com.pighand.aio.common.enums.UserMessageTypeEnum;
-import com.pighand.aio.domain.user.UserMessageDomain;
 import com.pighand.aio.common.interceptor.Context;
+import com.pighand.aio.domain.user.UserMessageDomain;
 import com.pighand.aio.mapper.user.UserMessageMapper;
 import com.pighand.aio.service.user.UserMessageService;
 import com.pighand.aio.vo.user.LoginUser;
@@ -16,9 +16,10 @@ import com.pighand.framework.spring.page.PageType;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import static com.pighand.aio.domain.user.table.UserMessageTableDef.USER_MESSAGE;
+import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 
 /**
  * 用户 - 消息
@@ -57,11 +58,10 @@ public class UserMessageServiceImpl extends BaseServiceImpl<UserMessageMapper, U
     @Override
     public UserMessageVO find(Long id) {
         Long loginUserId = Context.getLoginUser().getId();
-        List<String> joinTables = List.of("sender");
 
         // 只查接收人是登录用户的
         QueryWrapper queryWrapper = QueryWrapper.create();
-        UserMessageVO message = super.mapper.find(id, null, queryWrapper);
+        UserMessageVO message = super.mapper.find(id, USER.getTableName());
 
         if (message.getType().equals(UserMessageTypeEnum.USER) && !message.getSenderId().equals(loginUserId)
             && !message.getReceiverId().equals(loginUserId)) {
@@ -90,7 +90,7 @@ public class UserMessageServiceImpl extends BaseServiceImpl<UserMessageMapper, U
     @Override
     public PageOrList<UserMessageVO> queryReceived(UserMessageVO userMessageVO) {
         userMessageVO.setPageType(PageType.PAGE);
-        userMessageVO.setJoinTables(List.of("sender"));
+        userMessageVO.setJoinTables(Set.of("sender"));
 
         QueryWrapper queryWrapper = QueryWrapper.create();
         queryWrapper.where(USER_MESSAGE.RECEIVER_ID.eq(Context.getLoginUser().getId()));
@@ -108,7 +108,7 @@ public class UserMessageServiceImpl extends BaseServiceImpl<UserMessageMapper, U
     @Override
     public PageOrList<UserMessageVO> querySent(UserMessageVO userMessageVO) {
         userMessageVO.setPageType(PageType.PAGE);
-        userMessageVO.setJoinTables(List.of("receiver"));
+        userMessageVO.setJoinTables(Set.of("receiver"));
 
         QueryWrapper queryWrapper = QueryWrapper.create();
         queryWrapper.where(USER_MESSAGE.SENDER_ID.eq(Context.getLoginUser().getId()));

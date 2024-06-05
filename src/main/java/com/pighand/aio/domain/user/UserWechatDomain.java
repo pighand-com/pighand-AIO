@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.pighand.aio.common.enums.PlatformEnum;
+import com.pighand.aio.common.enums.UserStatusEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
-import com.pighand.framework.spring.base.BaseDomain;
-import com.pighand.aio.common.enums.PlatformEnum;
-import com.pighand.aio.common.enums.UserStatusEnum;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -26,7 +26,7 @@ import java.io.Serializable;
  */
 @Data
 @Table("user_wechat")
-public class UserWechatDomain extends BaseDomain implements Serializable {
+public class UserWechatDomain extends BaseDomainRecord<UserWechatDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id

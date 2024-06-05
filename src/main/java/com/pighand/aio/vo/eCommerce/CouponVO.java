@@ -16,7 +16,7 @@ import java.util.List;
 public class CouponVO extends CouponDomain {
     private StoreVO store;
 
-    private List<CouponUserVO> couponUsers;
+    private List<CouponUserVO> couponUser;
 
     @Schema(description = "持有数量")
     private Integer holdCount;

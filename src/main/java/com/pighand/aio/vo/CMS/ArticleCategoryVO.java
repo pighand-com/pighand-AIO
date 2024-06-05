@@ -16,7 +16,7 @@ public class ArticleCategoryVO extends ArticleCategoryDomain {
 
     // relation table: begin
     // TODO: 增加报错：先查文章再查分类，分类报错；先查分类再查文章，文章报错
-    //    private List<ArticleVO> article;
+    private List<ArticleVO> article;
     // relation table: end
 
     // 子元素数量

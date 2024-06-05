@@ -1,15 +1,20 @@
 package com.pighand.aio.mapper.CMS;
 
-import com.mybatisflex.core.field.FieldQueryBuilder;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.CMS.QuestionAnswerDomain;
 import com.pighand.aio.vo.CMS.QuestionAnswerVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.util.BeanUtil;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.pighand.aio.domain.CMS.table.QuestionAnswerTableDef.QUESTION_ANSWER;
 import static com.pighand.aio.domain.CMS.table.QuestionSetTableDef.QUESTION_SET;
@@ -18,7 +23,7 @@ import static com.pighand.aio.domain.CMS.table.QuestionSetTableDef.QUESTION_SET;
  * CMS - 题目交卷
  *
  * @author wangshuli
- * @createDate 2024-04-10 23:45:23
+ * @createDate 2024-06-05 17:35:51
  */
 @Mapper
 public interface QuestionAnswerMapper extends BaseMapper<QuestionAnswerDomain> {
@@ -28,17 +33,20 @@ public interface QuestionAnswerMapper extends BaseMapper<QuestionAnswerDomain> {
      *
      * @return
      */
-    default QueryWrapper relationOne(List<String> joinTables, QueryWrapper queryWrapper) {
+    default QueryWrapper relationOne(Set<String> joinTables, QueryWrapper queryWrapper) {
         if (queryWrapper == null) {
             queryWrapper = QueryWrapper.create();
         }
 
-        if (joinTables == null) {
+        if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
         }
 
+        // QUESTION_SET
         if (joinTables.contains(QUESTION_SET.getTableName())) {
             queryWrapper.leftJoin(QUESTION_SET).on(QUESTION_SET.ID.eq(QUESTION_ANSWER.QUESTION_SET_ID));
+
+            joinTables.remove(QUESTION_SET.getTableName());
         }
 
         return queryWrapper;
@@ -49,18 +57,32 @@ public interface QuestionAnswerMapper extends BaseMapper<QuestionAnswerDomain> {
      *
      * @return
      */
-    default Consumer<FieldQueryBuilder<QuestionAnswerVO>>[] relationMany(List<String> joinTables) {
-        if (joinTables == null) {
-            return null;
+    default void relationMany(Set<String> joinTables, Object result) {
+        if (joinTables == null || joinTables.isEmpty()) {
+            return;
         }
 
-        int length = 0;
+        boolean isList = result instanceof List;
 
-        Consumer<FieldQueryBuilder<QuestionAnswerVO>>[] fieldQueryBuilders = new Consumer[length];
+        List<Function<QuestionAnswerVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
+        List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
+        List<BiConsumer<QuestionAnswerVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
 
-        int nowIndex = 0;
+        List<Function<Set<Long>, List>> subTableQueriesList = null;
+        List<Function<Long, List>> subTableQueriesSingle = null;
+        if (isList) {
+            subTableQueriesList = new ArrayList<>(joinTables.size());
+        } else {
+            subTableQueriesSingle = new ArrayList<>(joinTables.size());
+        }
 
-        return fieldQueryBuilders;
+        if (result instanceof List) {
+            BeanUtil.queryWithRelatedData((List)result, mainIdGetters, subTableQueriesList, subTableIdGetter,
+                subResultSetter);
+        } else {
+            BeanUtil.queryWithRelatedData((QuestionAnswerVO)result, mainIdGetters, subTableQueriesSingle,
+                subResultSetter);
+        }
     }
 
     /**
@@ -70,11 +92,15 @@ public interface QuestionAnswerMapper extends BaseMapper<QuestionAnswerDomain> {
      * @param joinTables 关联表
      * @return
      */
-    default QuestionAnswerVO find(Long id, List<String> joinTables) {
-        QueryWrapper queryWrapper = this.relationOne(joinTables, null).where(QUESTION_ANSWER.ID.eq(id));
-        Consumer<FieldQueryBuilder<QuestionAnswerVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default QuestionAnswerVO find(Long id, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(queryWrapper, QuestionAnswerVO.class, relationManyBuilders);
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(QUESTION_ANSWER.ID.eq(id));
+
+        QuestionAnswerVO result = this.selectOneByQueryAs(queryWrapper, QuestionAnswerVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -84,11 +110,15 @@ public interface QuestionAnswerMapper extends BaseMapper<QuestionAnswerDomain> {
      * @param joinTables   关联表
      * @return
      */
-    default QuestionAnswerVO find(QueryWrapper queryWrapper, List<String> joinTables) {
-        QueryWrapper finalQueryWrapper = this.relationOne(joinTables, queryWrapper);
-        Consumer<FieldQueryBuilder<QuestionAnswerVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default QuestionAnswerVO find(QueryWrapper queryWrapper, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(finalQueryWrapper, QuestionAnswerVO.class, relationManyBuilders);
+        QueryWrapper finalQueryWrapper = this.relationOne(joinTableSet, queryWrapper);
+
+        QuestionAnswerVO result = this.selectOneByQueryAs(finalQueryWrapper, QuestionAnswerVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -99,9 +129,11 @@ public interface QuestionAnswerMapper extends BaseMapper<QuestionAnswerDomain> {
      */
     default PageOrList<QuestionAnswerVO> query(QuestionAnswerDomain questionAnswerDomain, QueryWrapper queryWrapper) {
         QueryWrapper finalQueryWrapper = this.relationOne(questionAnswerDomain.getJoinTables(), queryWrapper);
-        Consumer<FieldQueryBuilder<QuestionAnswerVO>>[] relationManyBuilders =
-            this.relationMany(questionAnswerDomain.getJoinTables());
 
-        return this.page(questionAnswerDomain, finalQueryWrapper, QuestionAnswerVO.class, relationManyBuilders);
+        PageOrList<QuestionAnswerVO> result =
+            this.page(questionAnswerDomain, finalQueryWrapper, QuestionAnswerVO.class);
+        this.relationMany(questionAnswerDomain.getJoinTables(), result.getRecords());
+
+        return result;
     }
 }

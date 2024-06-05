@@ -7,7 +7,7 @@ import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -22,7 +22,8 @@ import java.io.Serializable;
  */
 @Data
 @Table("project_tripartite_platform")
-public class ProjectTripartitePlatformDomain extends BaseDomain implements Serializable {
+public class ProjectTripartitePlatformDomain extends BaseDomainRecord<ProjectTripartitePlatformDomain>
+    implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id

@@ -8,7 +8,7 @@ import com.mybatisflex.annotation.Table;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -25,7 +25,7 @@ import java.util.Date;
  */
 @Table(value = "device_task")
 @Data
-public class DeviceTaskDomain extends BaseDomain implements Serializable {
+public class DeviceTaskDomain extends BaseDomainRecord<DeviceTaskDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)

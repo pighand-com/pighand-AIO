@@ -6,18 +6,25 @@ import com.pighand.aio.domain.ECommerce.WalletDomain;
 import com.pighand.aio.vo.ECommerce.WalletVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.util.BeanUtil;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.pighand.aio.domain.ECommerce.table.WalletTableDef.WALLET;
+import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 
 /**
  * 电商 - 钱包
  *
  * @author wangshuli
- * @createDate 2023-12-04 16:37:26
+ * @createDate 2024-06-05 17:35:51
  */
 @Mapper
 public interface WalletMapper extends BaseMapper<WalletDomain> {
@@ -27,14 +34,55 @@ public interface WalletMapper extends BaseMapper<WalletDomain> {
      *
      * @return
      */
-    default QueryWrapper baseQuery(List<String> joinTables) {
-        if (joinTables == null) {
-            joinTables = new ArrayList<>();
+    default QueryWrapper relationOne(Set<String> joinTables, QueryWrapper queryWrapper) {
+        if (queryWrapper == null) {
+            queryWrapper = QueryWrapper.create();
         }
 
-        QueryWrapper queryWrapper = QueryWrapper.create();
+        if (joinTables == null || joinTables.isEmpty()) {
+            return queryWrapper;
+        }
+
+        // USER
+        if (joinTables.contains(USER.getTableName())) {
+            queryWrapper.leftJoin(USER).on(USER.ID.eq(WALLET.USER_ID));
+
+            joinTables.remove(USER.getTableName());
+        }
 
         return queryWrapper;
+    }
+
+    /**
+     * 一对多关联查询结果
+     *
+     * @return
+     */
+    default void relationMany(Set<String> joinTables, Object result) {
+        if (joinTables == null || joinTables.isEmpty()) {
+            return;
+        }
+
+        boolean isList = result instanceof List;
+
+        List<Function<WalletVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
+        List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
+        List<BiConsumer<WalletVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
+
+        List<Function<Set<Long>, List>> subTableQueriesList = null;
+        List<Function<Long, List>> subTableQueriesSingle = null;
+        if (isList) {
+            subTableQueriesList = new ArrayList<>(joinTables.size());
+        } else {
+            subTableQueriesSingle = new ArrayList<>(joinTables.size());
+        }
+
+        if (result instanceof List) {
+            BeanUtil.queryWithRelatedData((List)result, mainIdGetters, subTableQueriesList, subTableIdGetter,
+                subResultSetter);
+        } else {
+            BeanUtil.queryWithRelatedData((WalletVO)result, mainIdGetters, subTableQueriesSingle, subResultSetter);
+        }
     }
 
     /**
@@ -44,10 +92,33 @@ public interface WalletMapper extends BaseMapper<WalletDomain> {
      * @param joinTables 关联表
      * @return
      */
-    default WalletVO find(Long id, List<String> joinTables) {
-        QueryWrapper queryWrapper = this.baseQuery(joinTables).where(WALLET.ID.eq(id));
+    default WalletVO find(Long id, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(queryWrapper, WalletVO.class);
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(WALLET.ID.eq(id));
+
+        WalletVO result = this.selectOneByQueryAs(queryWrapper, WalletVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
+    }
+
+    /**
+     * 查询详情
+     *
+     * @param queryWrapper
+     * @param joinTables   关联表
+     * @return
+     */
+    default WalletVO find(QueryWrapper queryWrapper, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
+
+        QueryWrapper finalQueryWrapper = this.relationOne(joinTableSet, queryWrapper);
+
+        WalletVO result = this.selectOneByQueryAs(finalQueryWrapper, WalletVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -56,10 +127,13 @@ public interface WalletMapper extends BaseMapper<WalletDomain> {
      * @param walletDomain
      * @return
      */
-    default PageOrList<WalletVO> query(WalletDomain walletDomain) {
-        QueryWrapper queryWrapper = this.baseQuery(walletDomain.getJoinTables());
+    default PageOrList<WalletVO> query(WalletDomain walletDomain, QueryWrapper queryWrapper) {
+        QueryWrapper finalQueryWrapper = this.relationOne(walletDomain.getJoinTables(), queryWrapper);
 
-        return this.page(walletDomain, queryWrapper, WalletVO.class);
+        PageOrList<WalletVO> result = this.page(walletDomain, finalQueryWrapper, WalletVO.class);
+        this.relationMany(walletDomain.getJoinTables(), result.getRecords());
+
+        return result;
     }
 
     /**
@@ -79,4 +153,5 @@ public interface WalletMapper extends BaseMapper<WalletDomain> {
         UpdateChain.of(WalletDomain.class).setRaw(WALLET.TOKENS, WALLET.FREEZE_TOKENS.add(WALLET.TOKENS))
             .set(WALLET.FREEZE_TOKENS, 0).where(WALLET.USER_ID.eq(userId)).update();
     }
+
 }

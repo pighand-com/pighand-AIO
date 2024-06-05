@@ -8,8 +8,6 @@ import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import static com.pighand.aio.domain.ECommerce.table.GoodsSpuTableDef.GOODS_SPU;
 
 /**
@@ -43,9 +41,7 @@ public class GoodsCategoryServiceImpl extends BaseServiceImpl<GoodsCategoryMappe
      */
     @Override
     public GoodsCategoryDomain find(Long id) {
-        List<String> joinTables = List.of("goods_spu");
-
-        return super.mapper.find(id, joinTables);
+        return super.mapper.find(id, GOODS_SPU.getTableName());
     }
 
     /**

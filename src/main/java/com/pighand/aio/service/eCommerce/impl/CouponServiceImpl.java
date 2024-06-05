@@ -9,7 +9,8 @@ import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.page.PageType;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import static com.pighand.aio.domain.ECommerce.table.CouponUserTableDef.COUPON_USER;
+import static com.pighand.aio.domain.ECommerce.table.StoreTableDef.STORE;
 
 /**
  * 电商 - 优惠券
@@ -41,9 +42,7 @@ public class CouponServiceImpl extends BaseServiceImpl<CouponMapper, CouponDomai
      */
     @Override
     public CouponDomain find(Long id) {
-        List<String> joinTables = List.of("store", "coupon_user");
-
-        return super.mapper.find(id, joinTables);
+        return super.mapper.find(id, STORE.getTableName(), COUPON_USER.getTableName());
     }
 
     /**
@@ -56,7 +55,7 @@ public class CouponServiceImpl extends BaseServiceImpl<CouponMapper, CouponDomai
     public PageOrList<CouponVO> query(CouponVO couponVO) {
         couponVO.setPageType(PageType.PAGE);
 
-        return super.mapper.query(couponVO);
+        return super.mapper.query(couponVO, null);
     }
 
     /**

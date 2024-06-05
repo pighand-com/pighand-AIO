@@ -1,15 +1,20 @@
 package com.pighand.aio.mapper.common;
 
-import com.mybatisflex.core.field.FieldQueryBuilder;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.common.SimpleSchedulingDomain;
 import com.pighand.aio.vo.common.SimpleSchedulingVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.util.BeanUtil;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.pighand.aio.domain.common.table.SimpleSchedulingTableDef.SIMPLE_SCHEDULING;
 
@@ -17,7 +22,7 @@ import static com.pighand.aio.domain.common.table.SimpleSchedulingTableDef.SIMPL
  * 简单定时器
  *
  * @author wangshuli
- * @createDate 2024-04-16 11:44:49
+ * @createDate 2024-06-05 17:35:51
  */
 @Mapper
 public interface SimpleSchedulingMapper extends BaseMapper<SimpleSchedulingDomain> {
@@ -27,12 +32,12 @@ public interface SimpleSchedulingMapper extends BaseMapper<SimpleSchedulingDomai
      *
      * @return
      */
-    default QueryWrapper relationOne(List<String> joinTables, QueryWrapper queryWrapper) {
+    default QueryWrapper relationOne(Set<String> joinTables, QueryWrapper queryWrapper) {
         if (queryWrapper == null) {
             queryWrapper = QueryWrapper.create();
         }
 
-        if (joinTables == null) {
+        if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
         }
 
@@ -44,18 +49,32 @@ public interface SimpleSchedulingMapper extends BaseMapper<SimpleSchedulingDomai
      *
      * @return
      */
-    default Consumer<FieldQueryBuilder<SimpleSchedulingVO>>[] relationMany(List<String> joinTables) {
-        if (joinTables == null) {
-            return null;
+    default void relationMany(Set<String> joinTables, Object result) {
+        if (joinTables == null || joinTables.isEmpty()) {
+            return;
         }
 
-        int length = 0;
+        boolean isList = result instanceof List;
 
-        Consumer<FieldQueryBuilder<SimpleSchedulingVO>>[] fieldQueryBuilders = new Consumer[length];
+        List<Function<SimpleSchedulingVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
+        List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
+        List<BiConsumer<SimpleSchedulingVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
 
-        int nowIndex = 0;
+        List<Function<Set<Long>, List>> subTableQueriesList = null;
+        List<Function<Long, List>> subTableQueriesSingle = null;
+        if (isList) {
+            subTableQueriesList = new ArrayList<>(joinTables.size());
+        } else {
+            subTableQueriesSingle = new ArrayList<>(joinTables.size());
+        }
 
-        return fieldQueryBuilders;
+        if (result instanceof List) {
+            BeanUtil.queryWithRelatedData((List)result, mainIdGetters, subTableQueriesList, subTableIdGetter,
+                subResultSetter);
+        } else {
+            BeanUtil.queryWithRelatedData((SimpleSchedulingVO)result, mainIdGetters, subTableQueriesSingle,
+                subResultSetter);
+        }
     }
 
     /**
@@ -65,11 +84,15 @@ public interface SimpleSchedulingMapper extends BaseMapper<SimpleSchedulingDomai
      * @param joinTables 关联表
      * @return
      */
-    default SimpleSchedulingVO find(Long id, List<String> joinTables) {
-        QueryWrapper queryWrapper = this.relationOne(joinTables, null).where(SIMPLE_SCHEDULING.ID.eq(id));
-        Consumer<FieldQueryBuilder<SimpleSchedulingVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default SimpleSchedulingVO find(Long id, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(queryWrapper, SimpleSchedulingVO.class, relationManyBuilders);
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(SIMPLE_SCHEDULING.ID.eq(id));
+
+        SimpleSchedulingVO result = this.selectOneByQueryAs(queryWrapper, SimpleSchedulingVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -79,11 +102,15 @@ public interface SimpleSchedulingMapper extends BaseMapper<SimpleSchedulingDomai
      * @param joinTables   关联表
      * @return
      */
-    default SimpleSchedulingVO find(QueryWrapper queryWrapper, List<String> joinTables) {
-        QueryWrapper finalQueryWrapper = this.relationOne(joinTables, queryWrapper);
-        Consumer<FieldQueryBuilder<SimpleSchedulingVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default SimpleSchedulingVO find(QueryWrapper queryWrapper, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(finalQueryWrapper, SimpleSchedulingVO.class, relationManyBuilders);
+        QueryWrapper finalQueryWrapper = this.relationOne(joinTableSet, queryWrapper);
+
+        SimpleSchedulingVO result = this.selectOneByQueryAs(finalQueryWrapper, SimpleSchedulingVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -95,9 +122,11 @@ public interface SimpleSchedulingMapper extends BaseMapper<SimpleSchedulingDomai
     default PageOrList<SimpleSchedulingVO> query(SimpleSchedulingDomain simpleSchedulingDomain,
         QueryWrapper queryWrapper) {
         QueryWrapper finalQueryWrapper = this.relationOne(simpleSchedulingDomain.getJoinTables(), queryWrapper);
-        Consumer<FieldQueryBuilder<SimpleSchedulingVO>>[] relationManyBuilders =
-            this.relationMany(simpleSchedulingDomain.getJoinTables());
 
-        return this.page(simpleSchedulingDomain, finalQueryWrapper, SimpleSchedulingVO.class, relationManyBuilders);
+        PageOrList<SimpleSchedulingVO> result =
+            this.page(simpleSchedulingDomain, finalQueryWrapper, SimpleSchedulingVO.class);
+        this.relationMany(simpleSchedulingDomain.getJoinTables(), result.getRecords());
+
+        return result;
     }
 }

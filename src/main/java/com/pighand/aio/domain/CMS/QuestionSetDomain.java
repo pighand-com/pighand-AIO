@@ -10,7 +10,7 @@ import com.mybatisflex.core.handler.JacksonTypeHandler;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.api.springdoc.dataType.EmptyObject;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -26,7 +26,7 @@ import java.util.List;
  */
 @Table(value = "question_set")
 @Data
-public class QuestionSetDomain extends BaseDomain implements Serializable {
+public class QuestionSetDomain extends BaseDomainRecord<QuestionSetDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)

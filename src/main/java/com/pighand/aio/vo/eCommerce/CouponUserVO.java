@@ -5,6 +5,8 @@ import com.pighand.aio.domain.ECommerce.CouponUserDomain;
 import com.pighand.aio.vo.user.UserVO;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 电商 - 优惠券 - 用户已领
  *
@@ -13,6 +15,8 @@ import lombok.Data;
  */
 @Data
 public class CouponUserVO extends CouponUserDomain {
+    private List<CouponUserTransferVO> couponUserTransfer;
+
     private CouponDomain coupon;
 
     private UserVO owner;

@@ -1,8 +1,9 @@
 package com.pighand.aio.vo.project;
 
 import com.pighand.aio.domain.project.ProjectDomain;
-
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * 项目
@@ -12,4 +13,6 @@ import lombok.Data;
  */
 @Data
 public class ProjectVO extends ProjectDomain {
+
+    private List<ProjectPlatformKeyVO> projectPlatformKey;
 }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 用户扩展信息。id与user表相同
@@ -38,7 +39,7 @@ public class UserExtensionServiceImpl extends BaseServiceImpl<UserExtensionMappe
      * @param userExtensions
      * @param joinTables
      */
-    private void joinMany(List<UserExtensionVO> userExtensions, List<String> joinTables) {
+    private void joinMany(List<UserExtensionVO> userExtensions, Set<String> joinTables) {
         //        List<Long> ids = userExtensions.stream().map(UserExtensionVO::getId).toList();
         //
         //        if (joinTables.contains("wechatUser")) {
@@ -65,7 +66,7 @@ public class UserExtensionServiceImpl extends BaseServiceImpl<UserExtensionMappe
      * @param userExtension
      * @param joinTables
      */
-    private void joinMany(UserExtensionVO userExtension, List<String> joinTables) {
+    private void joinMany(UserExtensionVO userExtension, Set<String> joinTables) {
         joinMany(List.of(userExtension), joinTables);
     }
 

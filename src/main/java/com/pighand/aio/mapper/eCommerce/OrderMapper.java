@@ -1,26 +1,37 @@
 package com.pighand.aio.mapper.ECommerce;
 
-import com.mybatisflex.core.field.FieldQueryBuilder;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.ECommerce.OrderDomain;
+import com.pighand.aio.domain.ECommerce.OrderSkuDomain;
+import com.pighand.aio.vo.ECommerce.OrderSkuVO;
 import com.pighand.aio.vo.ECommerce.OrderVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.util.BeanUtil;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static com.pighand.aio.domain.ECommerce.table.BillTableDef.BILL;
+import static com.pighand.aio.domain.ECommerce.table.CouponUserTableDef.COUPON_USER;
 import static com.pighand.aio.domain.ECommerce.table.OrderSkuTableDef.ORDER_SKU;
 import static com.pighand.aio.domain.ECommerce.table.OrderTableDef.ORDER;
 import static com.pighand.aio.domain.ECommerce.table.OrderTradeTableDef.ORDER_TRADE;
+import static com.pighand.aio.domain.ECommerce.table.SessionUserCycleTableDef.SESSION_USER_CYCLE;
+import static com.pighand.aio.domain.ECommerce.table.StoreTableDef.STORE;
+import static com.pighand.aio.domain.ECommerce.table.TicketUserTableDef.TICKET_USER;
+import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 
 /**
  * 电商 - 订单
  *
  * @author wangshuli
- * @createDate 2024-04-18 14:35:34
+ * @createDate 2024-06-05 17:35:51
  */
 @Mapper
 public interface OrderMapper extends BaseMapper<OrderDomain> {
@@ -30,17 +41,55 @@ public interface OrderMapper extends BaseMapper<OrderDomain> {
      *
      * @return
      */
-    default QueryWrapper relationOne(List<String> joinTables, QueryWrapper queryWrapper) {
+    default QueryWrapper relationOne(Set<String> joinTables, QueryWrapper queryWrapper) {
         if (queryWrapper == null) {
             queryWrapper = QueryWrapper.create();
         }
 
-        if (joinTables == null) {
+        if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
         }
 
+        // SESSION_USER_CYCLE
+        if (joinTables.contains(SESSION_USER_CYCLE.getTableName())) {
+            queryWrapper.leftJoin(SESSION_USER_CYCLE).on(SESSION_USER_CYCLE.ORDER_ID.eq(ORDER.ID));
+
+            joinTables.remove(SESSION_USER_CYCLE.getTableName());
+        }
+
+        // TICKET_USER
+        if (joinTables.contains(TICKET_USER.getTableName())) {
+            queryWrapper.leftJoin(TICKET_USER).on(TICKET_USER.ORDER_ID.eq(ORDER.ID));
+
+            joinTables.remove(TICKET_USER.getTableName());
+        }
+
+        // COUPON_USER
+        if (joinTables.contains(COUPON_USER.getTableName())) {
+            queryWrapper.leftJoin(COUPON_USER).on(COUPON_USER.USED_ORDER_ID.eq(ORDER.ID));
+
+            joinTables.remove(COUPON_USER.getTableName());
+        }
+
+        // STORE
+        if (joinTables.contains(STORE.getTableName())) {
+            queryWrapper.leftJoin(STORE).on(STORE.ID.eq(ORDER.STORE_ID));
+
+            joinTables.remove(STORE.getTableName());
+        }
+
+        // ORDER_TRADE
         if (joinTables.contains(ORDER_TRADE.getTableName())) {
             queryWrapper.leftJoin(ORDER_TRADE).on(ORDER_TRADE.ID.eq(ORDER.ORDER_TRADE_ID));
+
+            joinTables.remove(ORDER_TRADE.getTableName());
+        }
+
+        // USER
+        if (joinTables.contains(USER.getTableName())) {
+            queryWrapper.leftJoin(USER).on(USER.ID.eq(ORDER.CREATOR_ID));
+
+            joinTables.remove(USER.getTableName());
         }
 
         return queryWrapper;
@@ -51,107 +100,49 @@ public interface OrderMapper extends BaseMapper<OrderDomain> {
      *
      * @return
      */
-    default Consumer<FieldQueryBuilder<OrderVO>>[] relationMany(List<String> joinTables) {
-        if (joinTables == null) {
-            return null;
+    default void relationMany(Set<String> joinTables, Object result) {
+        if (joinTables == null || joinTables.isEmpty()) {
+            return;
         }
 
-        boolean hasOrderSku = joinTables.contains(ORDER_SKU.getTableName());
-        boolean hasBill = joinTables.contains(BILL.getTableName());
-        //        boolean hasGoodsSpu = joinTables.contains(GOODS_SPU.getTableName());
-        //        boolean hasTicket = joinTables.contains(TICKET.getTableName());
+        boolean isList = result instanceof List;
 
-        int length = 0;
+        List<Function<OrderVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
+        List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
+        List<BiConsumer<OrderVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
 
-        if (hasOrderSku) {
-            length++;
+        List<Function<Set<Long>, List>> subTableQueriesList = null;
+        List<Function<Long, List>> subTableQueriesSingle = null;
+        if (isList) {
+            subTableQueriesList = new ArrayList<>(joinTables.size());
+        } else {
+            subTableQueriesSingle = new ArrayList<>(joinTables.size());
         }
-        if (hasBill) {
-            length++;
-        }
-        //        if (hasGoodsSpu) {
-        //            length++;
-        //        }
-        //        if (hasTicket) {
-        //            length++;
-        //        }
 
-        Consumer<FieldQueryBuilder<OrderVO>>[] fieldQueryBuilders = new Consumer[length];
+        // ORDER_SKU
+        if (joinTables.contains(ORDER_SKU.getTableName())) {
+            mainIdGetters.add(OrderVO::getId);
 
-        int nowIndex = 0;
-        if (hasOrderSku) {
-            Consumer<FieldQueryBuilder<OrderVO>> consumer = (builder) -> {
-                builder.field(OrderVO::getOrderSku).queryWrapper(
-                    order -> QueryWrapper.create().from(ORDER_SKU).where(ORDER_SKU.ORDER_ID.eq(order.getId())));
-            };
-            fieldQueryBuilders[nowIndex] = consumer;
-            nowIndex++;
-        }
-        if (hasBill) {
-            Consumer<FieldQueryBuilder<OrderVO>> consumer = (builder) -> {
-                builder.field(OrderVO::getBill)
-                    .queryWrapper(order -> QueryWrapper.create().from(BILL).where(BILL.ORDER_ID.eq(order.getId())));
-            };
-            fieldQueryBuilders[nowIndex] = consumer;
-            nowIndex++;
-        }
-        //        if (hasGoodsSpu) {
-        //            Consumer<FieldQueryBuilder<OrderVO>> consumer = (builder) -> {
-        //                builder.field(OrderVO::getGoodsSpu).queryWrapper(order -> {
-        //                    if (order.getOrderSku() == null || order.getOrderSku().size() == 0) {
-        //                        return null;
-        //                    }
-        //
-        //                    List<Long> spuIds =
-        //                        order.getOrderSku().stream().map(OrderSkuVO::getSpuId).filter(item -> item != null).toList();
-        //
-        //                    if (spuIds.size() == 0) {
-        //                        return null;
-        //                    }
-        //
-        //                    return QueryWrapper.create().from(GOODS_SPU).where(GOODS_SPU.ID.in(spuIds));
-        //                });
-        //
-        //                builder.field(OrderVO::getGoodsSpu).queryWrapper(order -> {
-        //                    if (order.getOrderSku() == null || order.getOrderSku().size() == 0) {
-        //                        return null;
-        //                    }
-        //
-        //                    List<Long> spuIds =
-        //                        order.getOrderSku().stream().map(OrderSkuVO::getSpuId).filter(item -> item != null).toList();
-        //
-        //                    if (spuIds.size() == 0) {
-        //                        return null;
-        //                    }
-        //
-        //                    return QueryWrapper.create().from(GOODS_SPU).where(GOODS_SPU.ID.in(spuIds));
-        //                });
-        //            };
-        //            fieldQueryBuilders[nowIndex] = consumer;
-        //            nowIndex++;
-        //        }
-        //        if (hasTicket) {
-        //            Consumer<FieldQueryBuilder<OrderVO>> consumer = (builder) -> {
-        //                builder.field(OrderVO::getTicket).queryWrapper(order -> {
-        //                    if (order.getOrderSku() == null || order.getOrderSku().size() == 0) {
-        //                        return null;
-        //                    }
-        //
-        //                    List<Long> ticketIds =
-        //                        order.getOrderSku().stream().map(OrderSkuVO::getTicketId).filter(item -> item != null).toList();
-        //
-        //                    if (ticketIds.size() == 0) {
-        //                        return null;
-        //                    }
-        //
-        //                    return QueryWrapper.create().from(TICKET).where(TICKET.ID.in(ticketIds));
-        //                });
-        //            };
-        //            fieldQueryBuilders[nowIndex] = consumer;
-        //            nowIndex++;
-        //        }
+            if (subTableQueriesList != null) {
+                subTableQueriesList.add(
+                    ids -> new OrderSkuDomain().select(ORDER_SKU.DEFAULT_COLUMNS).where(ORDER_SKU.ORDER_ID.in(ids))
+                        .listAs(OrderSkuVO.class));
+            } else {
+                subTableQueriesSingle.add(
+                    id -> new OrderSkuDomain().select(ORDER_SKU.DEFAULT_COLUMNS).where(ORDER_SKU.ORDER_ID.eq(id))
+                        .listAs(OrderSkuVO.class));
+            }
 
-        return fieldQueryBuilders;
+            subTableIdGetter.add(obj -> ((OrderSkuVO)obj).getOrderId());
+            subResultSetter.add((vo, list) -> vo.setOrderSku((List<OrderSkuVO>)list));
+        }
+
+        if (result instanceof List) {
+            BeanUtil.queryWithRelatedData((List)result, mainIdGetters, subTableQueriesList, subTableIdGetter,
+                subResultSetter);
+        } else {
+            BeanUtil.queryWithRelatedData((OrderVO)result, mainIdGetters, subTableQueriesSingle, subResultSetter);
+        }
     }
 
     /**
@@ -161,11 +152,15 @@ public interface OrderMapper extends BaseMapper<OrderDomain> {
      * @param joinTables 关联表
      * @return
      */
-    default OrderVO find(Long id, List<String> joinTables) {
-        QueryWrapper queryWrapper = this.relationOne(joinTables, null).where(ORDER.ID.eq(id));
-        Consumer<FieldQueryBuilder<OrderVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default OrderVO find(Long id, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(queryWrapper, OrderVO.class, relationManyBuilders);
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(ORDER.ID.eq(id));
+
+        OrderVO result = this.selectOneByQueryAs(queryWrapper, OrderVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -175,11 +170,15 @@ public interface OrderMapper extends BaseMapper<OrderDomain> {
      * @param joinTables   关联表
      * @return
      */
-    default OrderVO find(QueryWrapper queryWrapper, List<String> joinTables) {
-        QueryWrapper finalQueryWrapper = this.relationOne(joinTables, queryWrapper);
-        Consumer<FieldQueryBuilder<OrderVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default OrderVO find(QueryWrapper queryWrapper, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(finalQueryWrapper, OrderVO.class, relationManyBuilders);
+        QueryWrapper finalQueryWrapper = this.relationOne(joinTableSet, queryWrapper);
+
+        OrderVO result = this.selectOneByQueryAs(finalQueryWrapper, OrderVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -188,13 +187,12 @@ public interface OrderMapper extends BaseMapper<OrderDomain> {
      * @param orderDomain
      * @return
      */
-    // TODO: 第一个参数改为Page对象。this.page的第三个参数，替换泛型
     default PageOrList<OrderVO> query(OrderDomain orderDomain, QueryWrapper queryWrapper) {
-        // 冒泡排序
-        
         QueryWrapper finalQueryWrapper = this.relationOne(orderDomain.getJoinTables(), queryWrapper);
-        Consumer<FieldQueryBuilder<OrderVO>>[] relationManyBuilders = this.relationMany(orderDomain.getJoinTables());
 
-        return this.page(orderDomain, finalQueryWrapper, OrderVO.class, relationManyBuilders);
+        PageOrList<OrderVO> result = this.page(orderDomain, finalQueryWrapper, OrderVO.class);
+        this.relationMany(orderDomain.getJoinTables(), result.getRecords());
+
+        return result;
     }
 }

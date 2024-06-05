@@ -1,10 +1,10 @@
 package com.pighand.aio.service.ECommerce.impl;
 
 import com.mybatisflex.core.query.QueryChain;
+import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.ECommerce.SessionDomain;
 import com.pighand.aio.domain.ECommerce.SessionTemplateGourpDomain;
 import com.pighand.aio.domain.ECommerce.SessionUserGroupDomain;
-import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.mapper.ECommerce.SessionMapper;
 import com.pighand.aio.mapper.ECommerce.WalletMapper;
 import com.pighand.aio.service.ECommerce.SessionService;
@@ -115,7 +115,7 @@ public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, SessionDo
         List<Long> groupIds = groups.stream().map(SessionTemplateGourpDomain::getId).toList();
 
         List<SessionUserGroupVO> users = sessionUserGroupService.queryChain()
-            .select(SESSION_USER_GROUP.SESSION_GROUP_ID, USER.PHONE, USER_EXTENSION.PROFILE,
+            .select(SESSION_USER_GROUP.SESSION_TEMPLATE_GROUP_ID, USER.PHONE, USER_EXTENSION.PROFILE,
                 sum(WALLET_BILL.AMOUNT).as("amount"))
             // left user
             .leftJoin(USER).on(SESSION_USER_GROUP.USER_ID.eq(USER.ID)).leftJoin(USER_EXTENSION)
@@ -126,8 +126,8 @@ public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, SessionDo
                     .and(SESSION_USER_GROUP.SESSION_ID.eq(session.getId()))))
 
             .where(SESSION_USER_GROUP.SESSION_ID.eq(session.getId()))
-            .groupBy(SESSION_USER_GROUP.SESSION_GROUP_ID, USER.PHONE, USER_EXTENSION.PROFILE).orderBy("amount", false)
-            .listAs(SessionUserGroupVO.class);
+            .groupBy(SESSION_USER_GROUP.SESSION_TEMPLATE_GROUP_ID, USER.PHONE, USER_EXTENSION.PROFILE)
+            .orderBy("amount", false).listAs(SessionUserGroupVO.class);
 
         Map<Long, SessionTemplateGourpVO> groupMap =
             groups.stream().collect(Collectors.toMap(SessionTemplateGourpVO::getId, item -> {
@@ -136,7 +136,7 @@ public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, SessionDo
             }));
 
         users.forEach(item -> {
-            groupMap.get(item.getSessionGroupId()).getUsers().add(item);
+            groupMap.get(item.getSessionTemplateGroupId()).getUsers().add(item);
         });
 
         session.setGroups(groupMap.values().stream().toList());
@@ -152,8 +152,7 @@ public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, SessionDo
      */
     @Override
     public PageOrList<SessionVO> query(SessionVO sessionVO) {
-
-        return super.mapper.query(sessionVO);
+        return super.mapper.query(sessionVO, null);
     }
 
     /**
@@ -197,7 +196,7 @@ public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, SessionDo
             sessionId = nowSession.getId();
         }
 
-        SessionVO session = super.mapper.find(sessionId, Collections.singletonList(SESSION_TEMPLATE.getTableName()));
+        SessionVO session = super.mapper.find(sessionId, SESSION_TEMPLATE.getTableName());
 
         if (session == null) {
             throw new ThrowPrompt("场次不存在");
@@ -210,13 +209,14 @@ public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, SessionDo
         // 返回已加入的场次分组
         SessionUserGroupVO sessionUserGroup = sessionUserGroupService.queryChain().leftJoin(SESSION).as("session")
             .on(SESSION_USER_GROUP.SESSION_ID.eq(SESSION.ID)).leftJoin(SESSION_TEMPLATE_GOURP).as("group")
-            .on(SESSION_TEMPLATE_GOURP.ID.eq(SESSION_USER_GROUP.SESSION_GROUP_ID.eq(SESSION_TEMPLATE_GOURP.ID)))
+            .on(SESSION_TEMPLATE_GOURP.ID.eq(
+                SESSION_USER_GROUP.SESSION_TEMPLATE_GROUP_ID.eq(SESSION_TEMPLATE_GOURP.ID)))
             .where(SESSION_USER_GROUP.SESSION_ID.eq(sessionId))
             .and(SESSION_USER_GROUP.USER_ID.eq(Context.getLoginUser().getId())).oneAs(SessionUserGroupVO.class);
 
         if (sessionUserGroup != null) {
             SessionTemplateGourpDomain nowGroup =
-                sessionTemplateGourpService.getById(sessionUserGroup.getSessionGroupId());
+                sessionTemplateGourpService.getById(sessionUserGroup.getSessionTemplateGroupId());
             sessionUserGroup.setSessionId(sessionId);
             sessionUserGroup.setGroup(nowGroup);
             return sessionUserGroup;
@@ -238,7 +238,7 @@ public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, SessionDo
 
         SessionUserGroupVO sessionUserGroupVO = new SessionUserGroupVO();
         sessionUserGroupVO.setSessionId(sessionId);
-        sessionUserGroupVO.setSessionGroupId(sessionGroupId);
+        sessionUserGroupVO.setSessionTemplateGroupId(sessionGroupId);
         sessionUserGroupVO.setUserId(Context.getLoginUser().getId());
         sessionUserGroupVO.setCreatedAt(new Date());
         sessionUserGroupService.create(sessionUserGroupVO);
@@ -280,8 +280,8 @@ public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, SessionDo
         query.innerJoin(SESSION).as("session").on(SESSION_USER_GROUP.SESSION_ID.eq(SESSION.ID));
 
         if (isReturnSessionInfo) {
-            query.leftJoin(SESSION_TEMPLATE_GOURP).as("group")
-                .on(SESSION_TEMPLATE_GOURP.ID.eq(SESSION_USER_GROUP.SESSION_GROUP_ID.eq(SESSION_TEMPLATE_GOURP.ID)));
+            query.leftJoin(SESSION_TEMPLATE_GOURP).as("group").on(SESSION_TEMPLATE_GOURP.ID.eq(
+                SESSION_USER_GROUP.SESSION_TEMPLATE_GROUP_ID.eq(SESSION_TEMPLATE_GOURP.ID)));
         }
 
         query.where(SESSION_USER_GROUP.USER_ID.eq(userId)).and(SESSION.BEGIN_TIME.le(now)).and(SESSION.END_TIME.ge(now))

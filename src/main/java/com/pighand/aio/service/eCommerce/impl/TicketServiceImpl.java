@@ -11,7 +11,7 @@ import com.pighand.aio.service.ECommerce.TicketValidityService;
 import com.pighand.aio.service.IoT.DeviceService;
 import com.pighand.aio.service.project.ProjectDefaultService;
 import com.pighand.aio.vo.ECommerce.TicketVO;
-import com.pighand.aio.vo.TicketValidityDetailEntity;
+import com.pighand.aio.vo.ECommerce.TicketValidityDetailEntity;
 import com.pighand.aio.vo.ECommerce.TicketValidityVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;

@@ -9,7 +9,7 @@ import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Set;
 
 import static com.pighand.aio.domain.ECommerce.table.WalletBillTableDef.WALLET_BILL;
 
@@ -45,9 +45,7 @@ public class WalletTransferServiceImpl extends BaseServiceImpl<WalletTransferMap
      */
     @Override
     public WalletTransferDomain find(Long id) {
-        List<String> joinTables = List.of("wallet_bill");
-
-        return super.mapper.find(id, joinTables);
+        return super.mapper.find(id, WALLET_BILL.getTableName());
     }
 
     /**
@@ -58,9 +56,9 @@ public class WalletTransferServiceImpl extends BaseServiceImpl<WalletTransferMap
      */
     @Override
     public PageOrList<WalletTransferVO> query(WalletTransferVO walletTransferVO) {
-        walletTransferVO.setJoinTables(List.of(WALLET_BILL.getTableName()));
+        walletTransferVO.setJoinTables(Set.of(WALLET_BILL.getTableName()));
 
-        return super.mapper.query(walletTransferVO);
+        return super.mapper.query(walletTransferVO, null);
     }
 
     /**

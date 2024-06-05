@@ -9,7 +9,7 @@ import com.mybatisflex.annotation.Table;
 import com.pighand.aio.common.enums.OrderSKUTypeEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -24,7 +24,7 @@ import java.io.Serializable;
  */
 @Table(value = "order_sku")
 @Data
-public class OrderSkuDomain extends BaseDomain implements Serializable {
+public class OrderSkuDomain extends BaseDomainRecord<OrderSkuDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)

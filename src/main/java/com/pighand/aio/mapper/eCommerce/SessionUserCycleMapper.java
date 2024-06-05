@@ -1,17 +1,24 @@
 package com.pighand.aio.mapper.ECommerce;
 
-import com.mybatisflex.core.field.FieldQueryBuilder;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.ECommerce.SessionUserCycleDomain;
 import com.pighand.aio.vo.ECommerce.SessionUserCycleVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.util.BeanUtil;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static com.pighand.aio.domain.ECommerce.table.OrderTableDef.ORDER;
 import static com.pighand.aio.domain.ECommerce.table.SessionTableDef.SESSION;
+import static com.pighand.aio.domain.ECommerce.table.SessionTemplateCycleTableDef.SESSION_TEMPLATE_CYCLE;
 import static com.pighand.aio.domain.ECommerce.table.SessionUserCycleTableDef.SESSION_USER_CYCLE;
 import static com.pighand.aio.domain.user.table.UserTableDef.USER;
 
@@ -19,7 +26,7 @@ import static com.pighand.aio.domain.user.table.UserTableDef.USER;
  * 电商 - 场次 - 用户周期
  *
  * @author wangshuli
- * @createDate 2024-05-23 15:01:58
+ * @createDate 2024-06-05 17:35:51
  */
 @Mapper
 public interface SessionUserCycleMapper extends BaseMapper<SessionUserCycleDomain> {
@@ -29,21 +36,42 @@ public interface SessionUserCycleMapper extends BaseMapper<SessionUserCycleDomai
      *
      * @return
      */
-    default QueryWrapper relationOne(List<String> joinTables, QueryWrapper queryWrapper) {
+    default QueryWrapper relationOne(Set<String> joinTables, QueryWrapper queryWrapper) {
         if (queryWrapper == null) {
             queryWrapper = QueryWrapper.create();
         }
 
-        if (joinTables == null) {
+        if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
         }
 
+        // SESSION
         if (joinTables.contains(SESSION.getTableName())) {
             queryWrapper.leftJoin(SESSION).on(SESSION.ID.eq(SESSION_USER_CYCLE.SESSION_ID));
+
+            joinTables.remove(SESSION.getTableName());
         }
 
+        // SESSION_TEMPLATE_CYCLE
+        if (joinTables.contains(SESSION_TEMPLATE_CYCLE.getTableName())) {
+            queryWrapper.leftJoin(SESSION_TEMPLATE_CYCLE)
+                .on(SESSION_TEMPLATE_CYCLE.ID.eq(SESSION_USER_CYCLE.SESSION_TEMPLATE_CYCLE_ID));
+
+            joinTables.remove(SESSION_TEMPLATE_CYCLE.getTableName());
+        }
+
+        // ORDER
+        if (joinTables.contains(ORDER.getTableName())) {
+            queryWrapper.leftJoin(ORDER).on(ORDER.ID.eq(SESSION_USER_CYCLE.ORDER_ID));
+
+            joinTables.remove(ORDER.getTableName());
+        }
+
+        // USER
         if (joinTables.contains(USER.getTableName())) {
             queryWrapper.leftJoin(USER).on(USER.ID.eq(SESSION_USER_CYCLE.USER_ID));
+
+            joinTables.remove(USER.getTableName());
         }
 
         return queryWrapper;
@@ -54,18 +82,32 @@ public interface SessionUserCycleMapper extends BaseMapper<SessionUserCycleDomai
      *
      * @return
      */
-    default Consumer<FieldQueryBuilder<SessionUserCycleVO>>[] relationMany(List<String> joinTables) {
-        if (joinTables == null) {
-            return null;
+    default void relationMany(Set<String> joinTables, Object result) {
+        if (joinTables == null || joinTables.isEmpty()) {
+            return;
         }
 
-        int length = 0;
+        boolean isList = result instanceof List;
 
-        Consumer<FieldQueryBuilder<SessionUserCycleVO>>[] fieldQueryBuilders = new Consumer[length];
+        List<Function<SessionUserCycleVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
+        List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
+        List<BiConsumer<SessionUserCycleVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
 
-        int nowIndex = 0;
+        List<Function<Set<Long>, List>> subTableQueriesList = null;
+        List<Function<Long, List>> subTableQueriesSingle = null;
+        if (isList) {
+            subTableQueriesList = new ArrayList<>(joinTables.size());
+        } else {
+            subTableQueriesSingle = new ArrayList<>(joinTables.size());
+        }
 
-        return fieldQueryBuilders;
+        if (result instanceof List) {
+            BeanUtil.queryWithRelatedData((List)result, mainIdGetters, subTableQueriesList, subTableIdGetter,
+                subResultSetter);
+        } else {
+            BeanUtil.queryWithRelatedData((SessionUserCycleVO)result, mainIdGetters, subTableQueriesSingle,
+                subResultSetter);
+        }
     }
 
     /**
@@ -75,11 +117,15 @@ public interface SessionUserCycleMapper extends BaseMapper<SessionUserCycleDomai
      * @param joinTables 关联表
      * @return
      */
-    default SessionUserCycleVO find(Long id, List<String> joinTables) {
-        QueryWrapper queryWrapper = this.relationOne(joinTables, null).where(SESSION_USER_CYCLE.ID.eq(id));
-        Consumer<FieldQueryBuilder<SessionUserCycleVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default SessionUserCycleVO find(Long id, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(queryWrapper, SessionUserCycleVO.class, relationManyBuilders);
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(SESSION_USER_CYCLE.ID.eq(id));
+
+        SessionUserCycleVO result = this.selectOneByQueryAs(queryWrapper, SessionUserCycleVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -89,11 +135,15 @@ public interface SessionUserCycleMapper extends BaseMapper<SessionUserCycleDomai
      * @param joinTables   关联表
      * @return
      */
-    default SessionUserCycleVO find(QueryWrapper queryWrapper, List<String> joinTables) {
-        QueryWrapper finalQueryWrapper = this.relationOne(joinTables, queryWrapper);
-        Consumer<FieldQueryBuilder<SessionUserCycleVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default SessionUserCycleVO find(QueryWrapper queryWrapper, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(finalQueryWrapper, SessionUserCycleVO.class, relationManyBuilders);
+        QueryWrapper finalQueryWrapper = this.relationOne(joinTableSet, queryWrapper);
+
+        SessionUserCycleVO result = this.selectOneByQueryAs(finalQueryWrapper, SessionUserCycleVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -105,9 +155,11 @@ public interface SessionUserCycleMapper extends BaseMapper<SessionUserCycleDomai
     default PageOrList<SessionUserCycleVO> query(SessionUserCycleDomain sessionUserCycleDomain,
         QueryWrapper queryWrapper) {
         QueryWrapper finalQueryWrapper = this.relationOne(sessionUserCycleDomain.getJoinTables(), queryWrapper);
-        Consumer<FieldQueryBuilder<SessionUserCycleVO>>[] relationManyBuilders =
-            this.relationMany(sessionUserCycleDomain.getJoinTables());
 
-        return this.page(sessionUserCycleDomain, finalQueryWrapper, SessionUserCycleVO.class, relationManyBuilders);
+        PageOrList<SessionUserCycleVO> result =
+            this.page(sessionUserCycleDomain, finalQueryWrapper, SessionUserCycleVO.class);
+        this.relationMany(sessionUserCycleDomain.getJoinTables(), result.getRecords());
+
+        return result;
     }
 }

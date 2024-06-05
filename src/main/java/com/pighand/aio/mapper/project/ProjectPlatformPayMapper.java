@@ -1,23 +1,29 @@
 package com.pighand.aio.mapper.project;
 
-import com.mybatisflex.core.field.FieldQueryBuilder;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.project.ProjectPlatformPayDomain;
 import com.pighand.aio.vo.project.ProjectPlatformPayVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.util.BeanUtil;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.pighand.aio.domain.project.table.ProjectPlatformPayTableDef.PROJECT_PLATFORM_PAY;
+import static com.pighand.aio.domain.project.table.ProjectTableDef.PROJECT;
 
 /**
  * 项目 - 支付信息
  *
  * @author wangshuli
- * @createDate 2024-04-22 15:11:06
+ * @createDate 2024-06-05 17:35:51
  */
 @Mapper
 public interface ProjectPlatformPayMapper extends BaseMapper<ProjectPlatformPayDomain> {
@@ -27,13 +33,20 @@ public interface ProjectPlatformPayMapper extends BaseMapper<ProjectPlatformPayD
      *
      * @return
      */
-    default QueryWrapper relationOne(List<String> joinTables, QueryWrapper queryWrapper) {
+    default QueryWrapper relationOne(Set<String> joinTables, QueryWrapper queryWrapper) {
         if (queryWrapper == null) {
             queryWrapper = QueryWrapper.create();
         }
 
-        if (joinTables == null) {
+        if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
+        }
+
+        // PROJECT
+        if (joinTables.contains(PROJECT.getTableName())) {
+            queryWrapper.leftJoin(PROJECT).on(PROJECT.ID.eq(PROJECT_PLATFORM_PAY.ID));
+
+            joinTables.remove(PROJECT.getTableName());
         }
 
         return queryWrapper;
@@ -44,18 +57,32 @@ public interface ProjectPlatformPayMapper extends BaseMapper<ProjectPlatformPayD
      *
      * @return
      */
-    default Consumer<FieldQueryBuilder<ProjectPlatformPayVO>>[] relationMany(List<String> joinTables) {
-        if (joinTables == null) {
-            return null;
+    default void relationMany(Set<String> joinTables, Object result) {
+        if (joinTables == null || joinTables.isEmpty()) {
+            return;
         }
 
-        int length = 0;
+        boolean isList = result instanceof List;
 
-        Consumer<FieldQueryBuilder<ProjectPlatformPayVO>>[] fieldQueryBuilders = new Consumer[length];
+        List<Function<ProjectPlatformPayVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
+        List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
+        List<BiConsumer<ProjectPlatformPayVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
 
-        int nowIndex = 0;
+        List<Function<Set<Long>, List>> subTableQueriesList = null;
+        List<Function<Long, List>> subTableQueriesSingle = null;
+        if (isList) {
+            subTableQueriesList = new ArrayList<>(joinTables.size());
+        } else {
+            subTableQueriesSingle = new ArrayList<>(joinTables.size());
+        }
 
-        return fieldQueryBuilders;
+        if (result instanceof List) {
+            BeanUtil.queryWithRelatedData((List)result, mainIdGetters, subTableQueriesList, subTableIdGetter,
+                subResultSetter);
+        } else {
+            BeanUtil.queryWithRelatedData((ProjectPlatformPayVO)result, mainIdGetters, subTableQueriesSingle,
+                subResultSetter);
+        }
     }
 
     /**
@@ -65,11 +92,15 @@ public interface ProjectPlatformPayMapper extends BaseMapper<ProjectPlatformPayD
      * @param joinTables 关联表
      * @return
      */
-    default ProjectPlatformPayVO find(Long id, List<String> joinTables) {
-        QueryWrapper queryWrapper = this.relationOne(joinTables, null).where(PROJECT_PLATFORM_PAY.ID.eq(id));
-        Consumer<FieldQueryBuilder<ProjectPlatformPayVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default ProjectPlatformPayVO find(Long id, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(queryWrapper, ProjectPlatformPayVO.class, relationManyBuilders);
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(PROJECT_PLATFORM_PAY.ID.eq(id));
+
+        ProjectPlatformPayVO result = this.selectOneByQueryAs(queryWrapper, ProjectPlatformPayVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -79,11 +110,15 @@ public interface ProjectPlatformPayMapper extends BaseMapper<ProjectPlatformPayD
      * @param joinTables   关联表
      * @return
      */
-    default ProjectPlatformPayVO find(QueryWrapper queryWrapper, List<String> joinTables) {
-        QueryWrapper finalQueryWrapper = this.relationOne(joinTables, queryWrapper);
-        Consumer<FieldQueryBuilder<ProjectPlatformPayVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default ProjectPlatformPayVO find(QueryWrapper queryWrapper, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(finalQueryWrapper, ProjectPlatformPayVO.class, relationManyBuilders);
+        QueryWrapper finalQueryWrapper = this.relationOne(joinTableSet, queryWrapper);
+
+        ProjectPlatformPayVO result = this.selectOneByQueryAs(finalQueryWrapper, ProjectPlatformPayVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -95,9 +130,11 @@ public interface ProjectPlatformPayMapper extends BaseMapper<ProjectPlatformPayD
     default PageOrList<ProjectPlatformPayVO> query(ProjectPlatformPayDomain projectPlatformPayDomain,
         QueryWrapper queryWrapper) {
         QueryWrapper finalQueryWrapper = this.relationOne(projectPlatformPayDomain.getJoinTables(), queryWrapper);
-        Consumer<FieldQueryBuilder<ProjectPlatformPayVO>>[] relationManyBuilders =
-            this.relationMany(projectPlatformPayDomain.getJoinTables());
 
-        return this.page(projectPlatformPayDomain, finalQueryWrapper, ProjectPlatformPayVO.class, relationManyBuilders);
+        PageOrList<ProjectPlatformPayVO> result =
+            this.page(projectPlatformPayDomain, finalQueryWrapper, ProjectPlatformPayVO.class);
+        this.relationMany(projectPlatformPayDomain.getJoinTables(), result.getRecords());
+
+        return result;
     }
 }

@@ -1,15 +1,13 @@
 package com.pighand.aio.domain.ECommerce;
 
-import com.mybatisflex.annotation.Id;
-import com.mybatisflex.annotation.Table;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.Table;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.base.BaseDomain;
-
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -24,7 +22,7 @@ import java.io.Serializable;
  */
 @Table(value = "theme")
 @Data
-public class ThemeDomain extends BaseDomain implements Serializable {
+public class ThemeDomain extends BaseDomainRecord<ThemeDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)

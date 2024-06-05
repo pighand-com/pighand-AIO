@@ -8,7 +8,7 @@ import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -24,7 +24,7 @@ import java.util.Date;
  */
 @Table(value = "article")
 @Data
-public class ArticleDomain extends BaseDomain implements Serializable {
+public class ArticleDomain extends BaseDomainRecord<ArticleDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
@@ -32,6 +32,9 @@ public class ArticleDomain extends BaseDomain implements Serializable {
     @RequestFieldException("articleCreate")
     @RequestFieldException("articleUpdate")
     private Long id;
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long categoryId;
     @Length(max = 65535)
     private String bannerUrl;
     @Length(max = 32)

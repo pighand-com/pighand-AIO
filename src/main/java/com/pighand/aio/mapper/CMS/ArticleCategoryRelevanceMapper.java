@@ -1,23 +1,29 @@
 package com.pighand.aio.mapper.CMS;
 
-import com.mybatisflex.core.field.FieldQueryBuilder;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.CMS.ArticleCategoryRelevanceDomain;
 import com.pighand.aio.vo.CMS.ArticleCategoryRelevanceVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.util.BeanUtil;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.pighand.aio.domain.CMS.table.ArticleCategoryRelevanceTableDef.ARTICLE_CATEGORY_RELEVANCE;
+import static com.pighand.aio.domain.CMS.table.ArticleTableDef.ARTICLE;
 
 /**
  * CMS - 文章、分类关联表
  *
  * @author wangshuli
- * @createDate 2024-04-22 16:17:05
+ * @createDate 2024-06-05 17:35:51
  */
 @Mapper
 public interface ArticleCategoryRelevanceMapper extends BaseMapper<ArticleCategoryRelevanceDomain> {
@@ -27,13 +33,20 @@ public interface ArticleCategoryRelevanceMapper extends BaseMapper<ArticleCatego
      *
      * @return
      */
-    default QueryWrapper relationOne(List<String> joinTables, QueryWrapper queryWrapper) {
+    default QueryWrapper relationOne(Set<String> joinTables, QueryWrapper queryWrapper) {
         if (queryWrapper == null) {
             queryWrapper = QueryWrapper.create();
         }
 
-        if (joinTables == null) {
+        if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
+        }
+
+        // ARTICLE
+        if (joinTables.contains(ARTICLE.getTableName())) {
+            queryWrapper.leftJoin(ARTICLE).on(ARTICLE.ID.eq(ARTICLE_CATEGORY_RELEVANCE.ARTICLE_ID));
+
+            joinTables.remove(ARTICLE.getTableName());
         }
 
         return queryWrapper;
@@ -44,18 +57,32 @@ public interface ArticleCategoryRelevanceMapper extends BaseMapper<ArticleCatego
      *
      * @return
      */
-    default Consumer<FieldQueryBuilder<ArticleCategoryRelevanceVO>>[] relationMany(List<String> joinTables) {
-        if (joinTables == null) {
-            return null;
+    default void relationMany(Set<String> joinTables, Object result) {
+        if (joinTables == null || joinTables.isEmpty()) {
+            return;
         }
 
-        int length = 0;
+        boolean isList = result instanceof List;
 
-        Consumer<FieldQueryBuilder<ArticleCategoryRelevanceVO>>[] fieldQueryBuilders = new Consumer[length];
+        List<Function<ArticleCategoryRelevanceVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
+        List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
+        List<BiConsumer<ArticleCategoryRelevanceVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
 
-        int nowIndex = 0;
+        List<Function<Set<Long>, List>> subTableQueriesList = null;
+        List<Function<Long, List>> subTableQueriesSingle = null;
+        if (isList) {
+            subTableQueriesList = new ArrayList<>(joinTables.size());
+        } else {
+            subTableQueriesSingle = new ArrayList<>(joinTables.size());
+        }
 
-        return fieldQueryBuilders;
+        if (result instanceof List) {
+            BeanUtil.queryWithRelatedData((List)result, mainIdGetters, subTableQueriesList, subTableIdGetter,
+                subResultSetter);
+        } else {
+            BeanUtil.queryWithRelatedData((ArticleCategoryRelevanceVO)result, mainIdGetters, subTableQueriesSingle,
+                subResultSetter);
+        }
     }
 
     /**
@@ -65,11 +92,15 @@ public interface ArticleCategoryRelevanceMapper extends BaseMapper<ArticleCatego
      * @param joinTables 关联表
      * @return
      */
-    default ArticleCategoryRelevanceVO find(Long id, List<String> joinTables) {
-        QueryWrapper queryWrapper = this.relationOne(joinTables, null).where(ARTICLE_CATEGORY_RELEVANCE.ID.eq(id));
-        Consumer<FieldQueryBuilder<ArticleCategoryRelevanceVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default ArticleCategoryRelevanceVO find(Long id, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(queryWrapper, ArticleCategoryRelevanceVO.class, relationManyBuilders);
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(ARTICLE_CATEGORY_RELEVANCE.ID.eq(id));
+
+        ArticleCategoryRelevanceVO result = this.selectOneByQueryAs(queryWrapper, ArticleCategoryRelevanceVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -79,11 +110,16 @@ public interface ArticleCategoryRelevanceMapper extends BaseMapper<ArticleCatego
      * @param joinTables   关联表
      * @return
      */
-    default ArticleCategoryRelevanceVO find(QueryWrapper queryWrapper, List<String> joinTables) {
-        QueryWrapper finalQueryWrapper = this.relationOne(joinTables, queryWrapper);
-        Consumer<FieldQueryBuilder<ArticleCategoryRelevanceVO>>[] relationManyBuilders = this.relationMany(joinTables);
+    default ArticleCategoryRelevanceVO find(QueryWrapper queryWrapper, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(finalQueryWrapper, ArticleCategoryRelevanceVO.class, relationManyBuilders);
+        QueryWrapper finalQueryWrapper = this.relationOne(joinTableSet, queryWrapper);
+
+        ArticleCategoryRelevanceVO result =
+            this.selectOneByQueryAs(finalQueryWrapper, ArticleCategoryRelevanceVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -95,10 +131,11 @@ public interface ArticleCategoryRelevanceMapper extends BaseMapper<ArticleCatego
     default PageOrList<ArticleCategoryRelevanceVO> query(ArticleCategoryRelevanceDomain articleCategoryRelevanceDomain,
         QueryWrapper queryWrapper) {
         QueryWrapper finalQueryWrapper = this.relationOne(articleCategoryRelevanceDomain.getJoinTables(), queryWrapper);
-        Consumer<FieldQueryBuilder<ArticleCategoryRelevanceVO>>[] relationManyBuilders =
-            this.relationMany(articleCategoryRelevanceDomain.getJoinTables());
 
-        return this.page(articleCategoryRelevanceDomain, finalQueryWrapper, ArticleCategoryRelevanceVO.class,
-            relationManyBuilders);
+        PageOrList<ArticleCategoryRelevanceVO> result =
+            this.page(articleCategoryRelevanceDomain, finalQueryWrapper, ArticleCategoryRelevanceVO.class);
+        this.relationMany(articleCategoryRelevanceDomain.getJoinTables(), result.getRecords());
+
+        return result;
     }
 }

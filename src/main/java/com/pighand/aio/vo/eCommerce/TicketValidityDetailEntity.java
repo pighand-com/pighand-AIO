@@ -1,4 +1,4 @@
-package com.pighand.aio.vo;
+package com.pighand.aio.vo.ECommerce;
 
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.core.handler.JacksonTypeHandler;

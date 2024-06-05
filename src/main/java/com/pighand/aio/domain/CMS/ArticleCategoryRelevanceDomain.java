@@ -7,7 +7,7 @@ import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -21,7 +21,8 @@ import java.io.Serializable;
  */
 @Table(value = "article_category_relevance")
 @Data
-public class ArticleCategoryRelevanceDomain extends BaseDomain implements Serializable {
+public class ArticleCategoryRelevanceDomain extends BaseDomainRecord<ArticleCategoryRelevanceDomain>
+    implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)

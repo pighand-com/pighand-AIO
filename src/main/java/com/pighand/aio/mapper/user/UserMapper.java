@@ -5,21 +5,28 @@ import com.pighand.aio.domain.user.UserDomain;
 import com.pighand.aio.vo.user.UserVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.util.BeanUtil;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static com.mybatisflex.core.query.QueryMethods.count;
-import static com.pighand.aio.domain.user.table.UserBindTableDef.USER_BIND;
+import static com.pighand.aio.domain.ECommerce.table.WalletTableDef.WALLET;
+import static com.pighand.aio.domain.user.table.UserDouyinTableDef.USER_DOUYIN;
 import static com.pighand.aio.domain.user.table.UserExtensionTableDef.USER_EXTENSION;
 import static com.pighand.aio.domain.user.table.UserTableDef.USER;
+import static com.pighand.aio.domain.user.table.UserWechatTableDef.USER_WECHAT;
 
 /**
- * 用户关键信息表，主要保存登录所用信息
+ * 用户 - 关键信息表，主要保存登录所用信息
  *
  * @author wangshuli
- * @createDate 2023-03-25 18:45:58
+ * @createDate 2024-06-05 17:35:51
  */
 @Mapper
 public interface UserMapper extends BaseMapper<UserDomain> {
@@ -29,29 +36,76 @@ public interface UserMapper extends BaseMapper<UserDomain> {
      *
      * @return
      */
-    default QueryWrapper baseQuery(List<String> joinTables, QueryWrapper queryWrapper) {
-        if (joinTables == null) {
-            joinTables = new ArrayList<>();
-        }
-
-        queryWrapper.select(USER.ID, USER.PHONE);
-
+    default QueryWrapper relationOne(Set<String> joinTables, QueryWrapper queryWrapper) {
         if (queryWrapper == null) {
             queryWrapper = QueryWrapper.create();
         }
 
-        if (joinTables.contains(USER_EXTENSION.getTableName())) {
-            queryWrapper.select(USER_EXTENSION.NAME, USER_EXTENSION.PROFILE, USER_EXTENSION.REGISTER_AT);
-            queryWrapper.leftJoin(USER_EXTENSION).on(USER_EXTENSION.ID.eq(USER.ID));
+        if (joinTables == null || joinTables.isEmpty()) {
+            return queryWrapper;
         }
 
-        if (joinTables.contains("bind_count")) {
-            queryWrapper.select(count(USER_BIND.ID).as("bindCount"));
-            queryWrapper.leftJoin(USER_BIND).on(USER_BIND.UPPER_ID.eq(USER.ID));
-            queryWrapper.groupBy(USER.ID, USER.PHONE);
+        // USER_EXTENSION
+        if (joinTables.contains(USER_EXTENSION.getTableName())) {
+            queryWrapper.leftJoin(USER_EXTENSION).on(USER_EXTENSION.ID.eq(USER.ID));
+
+            joinTables.remove(USER_EXTENSION.getTableName());
+        }
+
+        // USER_DOUYIN
+        if (joinTables.contains(USER_DOUYIN.getTableName())) {
+            queryWrapper.leftJoin(USER_DOUYIN).on(USER_DOUYIN.USER_ID.eq(USER.ID));
+
+            joinTables.remove(USER_DOUYIN.getTableName());
+        }
+
+        // USER_WECHAT
+        if (joinTables.contains(USER_WECHAT.getTableName())) {
+            queryWrapper.leftJoin(USER_WECHAT).on(USER_WECHAT.USER_ID.eq(USER.ID));
+
+            joinTables.remove(USER_WECHAT.getTableName());
+        }
+
+        // WALLET
+        if (joinTables.contains(WALLET.getTableName())) {
+            queryWrapper.leftJoin(WALLET).on(WALLET.USER_ID.eq(USER.ID));
+
+            joinTables.remove(WALLET.getTableName());
         }
 
         return queryWrapper;
+    }
+
+    /**
+     * 一对多关联查询结果
+     *
+     * @return
+     */
+    default void relationMany(Set<String> joinTables, Object result) {
+        if (joinTables == null || joinTables.isEmpty()) {
+            return;
+        }
+
+        boolean isList = result instanceof List;
+
+        List<Function<UserVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
+        List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
+        List<BiConsumer<UserVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
+
+        List<Function<Set<Long>, List>> subTableQueriesList = null;
+        List<Function<Long, List>> subTableQueriesSingle = null;
+        if (isList) {
+            subTableQueriesList = new ArrayList<>(joinTables.size());
+        } else {
+            subTableQueriesSingle = new ArrayList<>(joinTables.size());
+        }
+
+        if (result instanceof List) {
+            BeanUtil.queryWithRelatedData((List)result, mainIdGetters, subTableQueriesList, subTableIdGetter,
+                subResultSetter);
+        } else {
+            BeanUtil.queryWithRelatedData((UserVO)result, mainIdGetters, subTableQueriesSingle, subResultSetter);
+        }
     }
 
     /**
@@ -61,10 +115,33 @@ public interface UserMapper extends BaseMapper<UserDomain> {
      * @param joinTables 关联表
      * @return
      */
-    default UserVO find(Long id, List<String> joinTables) {
-        QueryWrapper queryWrapper = this.baseQuery(joinTables, null).where(USER.ID.eq(id));
+    default UserVO find(Long id, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        return this.selectOneByQueryAs(queryWrapper, UserVO.class);
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(USER.ID.eq(id));
+
+        UserVO result = this.selectOneByQueryAs(queryWrapper, UserVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
+    }
+
+    /**
+     * 查询详情
+     *
+     * @param queryWrapper
+     * @param joinTables   关联表
+     * @return
+     */
+    default UserVO find(QueryWrapper queryWrapper, String... joinTables) {
+        Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
+
+        QueryWrapper finalQueryWrapper = this.relationOne(joinTableSet, queryWrapper);
+
+        UserVO result = this.selectOneByQueryAs(finalQueryWrapper, UserVO.class);
+        this.relationMany(joinTableSet, result);
+
+        return result;
     }
 
     /**
@@ -74,8 +151,11 @@ public interface UserMapper extends BaseMapper<UserDomain> {
      * @return
      */
     default PageOrList<UserVO> query(UserDomain userDomain, QueryWrapper queryWrapper) {
-        QueryWrapper finalQueryWrapper = this.baseQuery(userDomain.getJoinTables(), queryWrapper);
+        QueryWrapper finalQueryWrapper = this.relationOne(userDomain.getJoinTables(), queryWrapper);
 
-        return this.page(userDomain, finalQueryWrapper, UserVO.class);
+        PageOrList<UserVO> result = this.page(userDomain, finalQueryWrapper, UserVO.class);
+        this.relationMany(userDomain.getJoinTables(), result.getRecords());
+
+        return result;
     }
 }

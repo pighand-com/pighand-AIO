@@ -10,8 +10,6 @@ import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import static com.pighand.aio.domain.ECommerce.table.BillTableDef.BILL;
 import static com.pighand.aio.domain.ECommerce.table.OrderSkuTableDef.ORDER_SKU;
 import static com.pighand.aio.domain.ECommerce.table.OrderTableDef.ORDER;
@@ -47,9 +45,7 @@ public class OrderSkuServiceImpl extends BaseServiceImpl<OrderSkuMapper, OrderSk
      */
     @Override
     public OrderSkuDomain find(Long id) {
-        List<String> joinTables = List.of(ORDER.getTableName(), ORDER_TRADE.getTableName(), BILL.getTableName());
-
-        return super.mapper.find(id, joinTables);
+        return super.mapper.find(id, ORDER.getTableName(), ORDER_TRADE.getTableName(), BILL.getTableName());
     }
 
     /**

@@ -22,6 +22,7 @@ public class GoodsSpuVO extends GoodsSpuDomain {
     private GoodsCategoryVO goodsCategory;
 
     private List<GoodsSkuVO> goodsSku;
+    private List<OrderSkuVO> orderSku;
     // relation table: end
 
     // 所属门店id

@@ -10,8 +10,6 @@ import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import static com.pighand.aio.domain.CMS.table.QuestionAnswerTableDef.QUESTION_ANSWER;
 import static com.pighand.aio.domain.CMS.table.QuestionBankTableDef.QUESTION_BANK;
 import static com.pighand.aio.domain.CMS.table.QuestionSetTableDef.QUESTION_SET;
@@ -47,10 +45,8 @@ public class QuestionSetServiceImpl extends BaseServiceImpl<QuestionSetMapper, Q
      */
     @Override
     public QuestionSetDomain find(Long id) {
-        List<String> joinTables =
-            List.of(QUESTION_BANK.getTableName(), QUESTION_ANSWER.getTableName(), QUESTION_BANK.getTableName());
-
-        return super.mapper.find(id, joinTables);
+        return super.mapper.find(id, QUESTION_BANK.getTableName(), QUESTION_ANSWER.getTableName(),
+            QUESTION_BANK.getTableName());
     }
 
     /**

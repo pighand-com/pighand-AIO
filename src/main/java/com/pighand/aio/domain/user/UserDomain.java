@@ -10,7 +10,7 @@ import com.pighand.aio.common.enums.UserStatusEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -26,7 +26,7 @@ import java.io.Serializable;
  */
 @Data
 @Table("user")
-public class UserDomain extends BaseDomain implements Serializable {
+public class UserDomain extends BaseDomainRecord<UserDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id

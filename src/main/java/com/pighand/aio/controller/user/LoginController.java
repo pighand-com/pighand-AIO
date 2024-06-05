@@ -1,5 +1,6 @@
 package com.pighand.aio.controller.user;
 
+import com.pighand.aio.common.CAPTCHA.CAPTCHA;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.service.user.LoginService;
 import com.pighand.aio.service.user.UserService;
@@ -27,7 +28,7 @@ public class LoginController extends BaseController<UserService> {
     private final LoginService loginService;
 
     @Post()
-    //    @CAPTCHA()
+    @CAPTCHA()
     public Result<UserVO> password(@RequestBody Login login) {
         UserVO user = loginService.byPassword(login.getUsername(), login.getPassword());
         return new Result(user);

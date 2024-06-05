@@ -82,9 +82,7 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, ArticleDo
      */
     @Override
     public ArticleVO find(Long id) {
-        List<String> joinTables = List.of(ARTICLE_CATEGORY_RELEVANCE.getTableName());
-
-        ArticleVO articleVO = super.mapper.find(id, joinTables);
+        ArticleVO articleVO = super.mapper.find(id, ARTICLE_CATEGORY_RELEVANCE.getTableName());
         List<List<String>> categories = new ArrayList<>();
         Set<String> categorySet = new HashSet<>();
         articleVO.getArticleCategoryRelevance().forEach(relevance -> {

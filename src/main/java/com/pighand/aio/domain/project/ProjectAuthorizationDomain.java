@@ -7,13 +7,13 @@ import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.handler.JacksonTypeHandler;
+import com.pighand.aio.common.enums.AuthorizationAlgEnum;
+import com.pighand.aio.common.enums.AuthorizationTypeEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.api.springdoc.dataType.EmptyObject;
-import com.pighand.framework.spring.base.BaseDomain;
-import com.pighand.aio.common.enums.AuthorizationAlgEnum;
-import com.pighand.aio.common.enums.AuthorizationTypeEnum;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -30,7 +30,7 @@ import java.util.Map;
  */
 @Data
 @Table("project_authorization")
-public class ProjectAuthorizationDomain extends BaseDomain implements Serializable {
+public class ProjectAuthorizationDomain extends BaseDomainRecord<ProjectAuthorizationDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id

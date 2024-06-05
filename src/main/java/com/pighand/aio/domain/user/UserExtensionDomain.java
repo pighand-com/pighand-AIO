@@ -9,7 +9,7 @@ import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.api.jacksonSerializer.Conceal;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -26,7 +26,7 @@ import java.util.Date;
  */
 @Data
 @Table("user_extension")
-public class UserExtensionDomain extends BaseDomain implements Serializable {
+public class UserExtensionDomain extends BaseDomainRecord<UserExtensionDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id

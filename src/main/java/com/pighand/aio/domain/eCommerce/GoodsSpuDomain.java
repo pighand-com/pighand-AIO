@@ -11,7 +11,7 @@ import com.pighand.aio.common.enums.GoodsSpuStatusEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.api.springdoc.dataType.EmptyObject;
-import com.pighand.framework.spring.base.BaseDomain;
+import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Table(value = "goods_spu")
 @Data
-public class GoodsSpuDomain extends BaseDomain implements Serializable {
+public class GoodsSpuDomain extends BaseDomainRecord<GoodsSpuDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id

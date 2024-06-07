@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 import static com.pighand.aio.domain.CMS.table.ArticleCategoryRelevanceTableDef.ARTICLE_CATEGORY_RELEVANCE;
 import static com.pighand.aio.domain.CMS.table.ArticleCategoryTableDef.ARTICLE_CATEGORY;
 import static com.pighand.aio.domain.CMS.table.ArticleTableDef.ARTICLE;
-import static com.pighand.aio.domain.user.table.UserTableDef.USER;
+import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 
 /**
  * CMS - 文章

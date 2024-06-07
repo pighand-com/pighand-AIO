@@ -24,7 +24,7 @@ import java.util.List;
  * @author wangshuli
  * @createDate 2024-04-10 23:45:23
  */
-@Table(value = "question_set")
+@Table("cms_question_set")
 @Data
 public class QuestionSetDomain extends BaseDomainRecord<QuestionSetDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

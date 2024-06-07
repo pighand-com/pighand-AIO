@@ -1,9 +1,9 @@
 package com.pighand.aio.common.simpleScheduling;
 
-import com.pighand.aio.domain.common.SimpleSchedulingDomain;
+import com.pighand.aio.domain.system.SimpleSchedulingDomain;
 import com.pighand.aio.service.ECommerce.SessionService;
 import com.pighand.aio.service.IoT.DeviceTaskService;
-import com.pighand.aio.service.common.SimpleSchedulingService;
+import com.pighand.aio.service.system.SimpleSchedulingService;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.pighand.aio.domain.common.table.SimpleSchedulingTableDef.SIMPLE_SCHEDULING;
+import static com.pighand.aio.domain.system.table.SimpleSchedulingTableDef.SIMPLE_SCHEDULING;
 
 /**
  * 简单定时任务，单机模式

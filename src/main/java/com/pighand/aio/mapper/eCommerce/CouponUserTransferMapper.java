@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 import static com.pighand.aio.domain.ECommerce.table.CouponUserTableDef.COUPON_USER;
 import static com.pighand.aio.domain.ECommerce.table.CouponUserTransferTableDef.COUPON_USER_TRANSFER;
-import static com.pighand.aio.domain.user.table.UserTableDef.USER;
+import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 
 /**
  * 电商 - 优惠券 - 转赠记录

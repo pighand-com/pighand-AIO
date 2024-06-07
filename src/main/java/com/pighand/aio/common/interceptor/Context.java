@@ -1,6 +1,6 @@
 package com.pighand.aio.common.interceptor;
 
-import com.pighand.aio.vo.user.LoginUser;
+import com.pighand.aio.vo.base.LoginUser;
 
 /**
  * 拦截器上下文

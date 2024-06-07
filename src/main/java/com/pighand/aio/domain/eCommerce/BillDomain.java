@@ -21,7 +21,7 @@ import java.util.Date;
  * @author wangshuli
  * @createDate 2024-04-18 14:35:34
  */
-@Table(value = "bill")
+@Table("ec_bill")
 @Data
 public class BillDomain extends BaseDomainRecord<BillDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

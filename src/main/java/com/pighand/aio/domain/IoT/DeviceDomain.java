@@ -26,7 +26,7 @@ import java.util.List;
  * @author wangshuli
  * @createDate 2024-04-10 23:45:23
  */
-@Table(value = "device")
+@Table("iot_device")
 @Data
 public class DeviceDomain extends BaseDomainRecord<DeviceDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

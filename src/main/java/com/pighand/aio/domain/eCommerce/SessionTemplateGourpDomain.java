@@ -20,7 +20,7 @@ import java.io.Serializable;
  * @author wangshuli
  * @createDate 2023-12-05 16:13:27
  */
-@Table(value = "session_template_gourp")
+@Table("ec_session_template_gourp")
 @Data
 public class SessionTemplateGourpDomain extends BaseDomainRecord<SessionTemplateGourpDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

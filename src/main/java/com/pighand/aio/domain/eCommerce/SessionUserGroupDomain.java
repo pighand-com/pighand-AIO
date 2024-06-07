@@ -19,7 +19,7 @@ import java.util.Date;
  * @author wangshuli
  * @createDate 2023-12-05 16:13:27
  */
-@Table(value = "session_user_group")
+@Table("ec_session_user_group")
 @Data
 public class SessionUserGroupDomain extends BaseDomainRecord<SessionUserGroupDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

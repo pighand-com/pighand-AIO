@@ -23,7 +23,7 @@ import java.util.Date;
  * @author wangshuli
  * @createDate 2024-04-10 23:45:23
  */
-@Table(value = "device_task")
+@Table("iot_device_task")
 @Data
 public class DeviceTaskDomain extends BaseDomainRecord<DeviceTaskDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

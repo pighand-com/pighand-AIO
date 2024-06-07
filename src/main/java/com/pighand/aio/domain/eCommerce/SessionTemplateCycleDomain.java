@@ -21,7 +21,7 @@ import java.time.LocalTime;
  * @author wangshuli
  * @createDate 2024-05-23 15:01:58
  */
-@Table(value = "session_template_cycle")
+@Table("ec_session_template_cycle")
 @Data
 public class SessionTemplateCycleDomain extends BaseDomainRecord<SessionTemplateCycleDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

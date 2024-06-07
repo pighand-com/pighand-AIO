@@ -25,7 +25,7 @@ import java.util.List;
  * @author wangshuli
  * @createDate 2024-01-07 19:55:48
  */
-@Table(value = "goods_spu")
+@Table("ec_goods_spu")
 @Data
 public class GoodsSpuDomain extends BaseDomainRecord<GoodsSpuDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

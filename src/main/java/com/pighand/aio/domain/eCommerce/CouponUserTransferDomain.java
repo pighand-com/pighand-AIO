@@ -19,7 +19,7 @@ import java.util.Date;
  * @author wangshuli
  * @createDate 2023-12-04 16:37:26
  */
-@Table(value = "coupon_user_transfer")
+@Table("ec_coupon_user_transfer")
 @Data
 public class CouponUserTransferDomain extends BaseDomainRecord<CouponUserTransferDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

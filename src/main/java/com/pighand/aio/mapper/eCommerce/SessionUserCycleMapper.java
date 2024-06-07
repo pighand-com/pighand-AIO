@@ -20,7 +20,7 @@ import static com.pighand.aio.domain.ECommerce.table.OrderTableDef.ORDER;
 import static com.pighand.aio.domain.ECommerce.table.SessionTableDef.SESSION;
 import static com.pighand.aio.domain.ECommerce.table.SessionTemplateCycleTableDef.SESSION_TEMPLATE_CYCLE;
 import static com.pighand.aio.domain.ECommerce.table.SessionUserCycleTableDef.SESSION_USER_CYCLE;
-import static com.pighand.aio.domain.user.table.UserTableDef.USER;
+import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 
 /**
  * 电商 - 场次 - 用户周期

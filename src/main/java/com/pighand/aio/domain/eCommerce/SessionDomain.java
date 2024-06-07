@@ -20,7 +20,7 @@ import java.util.Date;
  * @createDate 2023-12-05 16:13:27
  */
 @Data()
-@Table(value = "session")
+@Table("ec_session")
 public class SessionDomain extends BaseDomainRecord<SessionDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

@@ -1,8 +1,8 @@
 package com.pighand.aio.common.interceptor;
 
 import com.pighand.aio.common.interfaces.Authorization;
-import com.pighand.aio.service.user.AuthorizationService;
-import com.pighand.aio.vo.user.LoginUser;
+import com.pighand.aio.service.base.AuthorizationService;
+import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.framework.spring.util.VerifyUtils;
 import io.netty.util.concurrent.FastThreadLocal;
 import jakarta.servlet.http.HttpServletRequest;

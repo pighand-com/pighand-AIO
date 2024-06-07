@@ -21,7 +21,7 @@ import java.io.Serializable;
  * @author wangshuli
  * @createDate 2024-01-08 11:05:18
  */
-@Table(value = "goods_category")
+@Table("ec_goods_category")
 @Data
 public class GoodsCategoryDomain extends BaseDomainRecord<GoodsCategoryDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

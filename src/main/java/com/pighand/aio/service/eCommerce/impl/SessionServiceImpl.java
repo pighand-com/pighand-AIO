@@ -31,8 +31,8 @@ import static com.pighand.aio.domain.ECommerce.table.SessionTemplateGourpTableDe
 import static com.pighand.aio.domain.ECommerce.table.SessionTemplateTableDef.SESSION_TEMPLATE;
 import static com.pighand.aio.domain.ECommerce.table.SessionUserGroupTableDef.SESSION_USER_GROUP;
 import static com.pighand.aio.domain.ECommerce.table.WalletBillTableDef.WALLET_BILL;
-import static com.pighand.aio.domain.user.table.UserExtensionTableDef.USER_EXTENSION;
-import static com.pighand.aio.domain.user.table.UserTableDef.USER;
+import static com.pighand.aio.domain.base.table.UserExtensionTableDef.USER_EXTENSION;
+import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 
 /**
  * 电商 - 场次

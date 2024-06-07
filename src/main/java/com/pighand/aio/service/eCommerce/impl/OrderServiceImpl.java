@@ -5,18 +5,18 @@ import com.pighand.aio.common.enums.*;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.common.utils.IDGenerator;
 import com.pighand.aio.domain.ECommerce.*;
-import com.pighand.aio.domain.project.ProjectPlatformKeyDomain;
-import com.pighand.aio.domain.project.ProjectPlatformPayDomain;
-import com.pighand.aio.domain.user.UserWechatDomain;
+import com.pighand.aio.domain.base.ProjectPlatformKeyDomain;
+import com.pighand.aio.domain.base.ProjectPlatformPayDomain;
+import com.pighand.aio.domain.base.UserWechatDomain;
 import com.pighand.aio.mapper.ECommerce.OrderMapper;
 import com.pighand.aio.service.ECommerce.*;
 import com.pighand.aio.service.ECommerce.payments.Wechat;
-import com.pighand.aio.service.project.ProjectPlatformKeyService;
-import com.pighand.aio.service.project.ProjectPlatformPayService;
-import com.pighand.aio.service.user.UserWechatService;
+import com.pighand.aio.service.base.ProjectPlatformKeyService;
+import com.pighand.aio.service.base.ProjectPlatformPayService;
+import com.pighand.aio.service.base.UserWechatService;
 import com.pighand.aio.vo.ECommerce.*;
 import com.pighand.aio.vo.ECommerce.TicketUserValidityVO;
-import com.pighand.aio.vo.user.LoginUser;
+import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.exception.ThrowPrompt;
 import com.pighand.framework.spring.page.PageOrList;
@@ -50,7 +50,7 @@ import static com.pighand.aio.domain.ECommerce.table.OrderTableDef.ORDER;
 import static com.pighand.aio.domain.ECommerce.table.OrderTradeTableDef.ORDER_TRADE;
 import static com.pighand.aio.domain.ECommerce.table.TicketTableDef.TICKET;
 import static com.pighand.aio.domain.ECommerce.table.TicketValidityTableDef.TICKET_VALIDITY;
-import static com.pighand.aio.domain.user.table.UserWechatTableDef.USER_WECHAT;
+import static com.pighand.aio.domain.base.table.UserWechatTableDef.USER_WECHAT;
 
 /**
  * 电商 - 订单

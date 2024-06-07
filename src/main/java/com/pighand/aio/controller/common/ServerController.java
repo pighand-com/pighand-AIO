@@ -4,7 +4,7 @@ import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.IoT.DeviceDomain;
 import com.pighand.aio.server.tcp.TcpClient;
 import com.pighand.aio.service.IoT.DeviceService;
-import com.pighand.aio.vo.user.LoginUser;
+import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.framework.spring.api.annotation.Post;
 import com.pighand.framework.spring.api.annotation.RestController;
 import com.pighand.framework.spring.response.Result;

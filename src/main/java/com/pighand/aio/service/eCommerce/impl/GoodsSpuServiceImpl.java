@@ -6,12 +6,12 @@ import com.pighand.aio.common.enums.GoodsSpuStatusEnum;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.ECommerce.GoodsSkuDomain;
 import com.pighand.aio.domain.ECommerce.GoodsSpuDomain;
-import com.pighand.aio.domain.project.ProjectDefaultDomain;
+import com.pighand.aio.domain.base.ProjectDefaultDomain;
 import com.pighand.aio.entityMapper.ECommerce.GoodsSkuEntityMapper;
 import com.pighand.aio.mapper.ECommerce.GoodsSkuMapper;
 import com.pighand.aio.mapper.ECommerce.GoodsSpuMapper;
 import com.pighand.aio.service.ECommerce.GoodsSpuService;
-import com.pighand.aio.service.project.ProjectDefaultService;
+import com.pighand.aio.service.base.ProjectDefaultService;
 import com.pighand.aio.vo.ECommerce.GoodsSkuVO;
 import com.pighand.aio.vo.ECommerce.GoodsSpuVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
@@ -25,7 +25,7 @@ import java.util.List;
 
 import static com.pighand.aio.domain.ECommerce.table.GoodsSkuTableDef.GOODS_SKU;
 import static com.pighand.aio.domain.ECommerce.table.GoodsSpuTableDef.GOODS_SPU;
-import static com.pighand.aio.domain.project.table.ProjectDefaultTableDef.PROJECT_DEFAULT;
+import static com.pighand.aio.domain.base.table.ProjectDefaultTableDef.PROJECT_DEFAULT;
 
 /**
  * 电商 - SPU

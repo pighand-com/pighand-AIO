@@ -23,7 +23,7 @@ import java.util.List;
  * @author wangshuli
  * @createDate 2024-04-28 11:36:03
  */
-@Table(value = "ticket_validity")
+@Table("ec_ticket_validity")
 @Data
 public class TicketValidityDomain extends BaseDomainRecord<TicketValidityDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

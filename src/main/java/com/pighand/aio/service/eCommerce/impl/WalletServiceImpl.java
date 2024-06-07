@@ -3,15 +3,15 @@ package com.pighand.aio.service.ECommerce.impl;
 import com.pighand.aio.common.enums.RoleEnum;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.ECommerce.WalletDomain;
-import com.pighand.aio.domain.user.UserDomain;
+import com.pighand.aio.domain.base.UserDomain;
 import com.pighand.aio.mapper.ECommerce.WalletMapper;
 import com.pighand.aio.service.ECommerce.SessionService;
 import com.pighand.aio.service.ECommerce.WalletBillService;
 import com.pighand.aio.service.ECommerce.WalletService;
 import com.pighand.aio.service.ECommerce.WalletTransferService;
-import com.pighand.aio.service.user.UserService;
+import com.pighand.aio.service.base.UserService;
 import com.pighand.aio.vo.ECommerce.*;
-import com.pighand.aio.vo.user.LoginUser;
+import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.exception.ThrowPrompt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,8 @@ import java.util.Optional;
 
 import static com.mybatisflex.core.query.QueryMethods.sum;
 import static com.pighand.aio.domain.ECommerce.table.WalletTableDef.WALLET;
-import static com.pighand.aio.domain.user.table.UserExtensionTableDef.USER_EXTENSION;
-import static com.pighand.aio.domain.user.table.UserTableDef.USER;
+import static com.pighand.aio.domain.base.table.UserExtensionTableDef.USER_EXTENSION;
+import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 
 /**
  * 电商 - 钱包

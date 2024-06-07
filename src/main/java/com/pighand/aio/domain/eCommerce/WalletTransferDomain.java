@@ -18,7 +18,7 @@ import java.io.Serializable;
  * @author wangshuli
  * @createDate 2023-12-04 16:37:26
  */
-@Table(value = "wallet_transfer")
+@Table("ec_wallet_transfer")
 @Data
 public class WalletTransferDomain extends BaseDomainRecord<WalletTransferDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

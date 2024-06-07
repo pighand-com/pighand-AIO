@@ -21,7 +21,7 @@ import java.io.Serializable;
  * @author wangshuli
  * @createDate 2024-04-10 23:45:23
  */
-@Table(value = "question_bank")
+@Table("cms_question_bank")
 @Data
 public class QuestionBankDomain extends BaseDomainRecord<QuestionBankDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

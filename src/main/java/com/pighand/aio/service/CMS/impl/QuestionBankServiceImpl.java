@@ -15,7 +15,7 @@ import com.pighand.aio.service.IoT.DeviceTaskService;
 import com.pighand.aio.vo.CMS.QuestionAnswerResultVO;
 import com.pighand.aio.vo.CMS.QuestionBankVO;
 import com.pighand.aio.vo.IoT.DeviceTaskVO;
-import com.pighand.aio.vo.user.LoginUser;
+import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.exception.ThrowPrompt;
 import com.pighand.framework.spring.page.PageOrList;

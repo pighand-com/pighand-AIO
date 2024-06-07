@@ -22,7 +22,7 @@ import java.io.Serializable;
  * @author wangshuli
  * @createDate 2024-04-18 14:35:34
  */
-@Table(value = "order_sku")
+@Table("ec_order_sku")
 @Data
 public class OrderSkuDomain extends BaseDomainRecord<OrderSkuDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

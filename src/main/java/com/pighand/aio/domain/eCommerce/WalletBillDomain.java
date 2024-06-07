@@ -21,7 +21,7 @@ import java.util.Date;
  * @author wangshuli
  * @createDate 2023-12-04 16:37:26
  */
-@Table(value = "wallet_bill")
+@Table("ec_wallet_bill")
 @Data
 public class WalletBillDomain extends BaseDomainRecord<WalletBillDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

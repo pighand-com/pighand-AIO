@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 import static com.pighand.aio.domain.ECommerce.table.SessionTableDef.SESSION;
 import static com.pighand.aio.domain.ECommerce.table.SessionTemplateGourpTableDef.SESSION_TEMPLATE_GOURP;
 import static com.pighand.aio.domain.ECommerce.table.SessionUserGroupTableDef.SESSION_USER_GROUP;
-import static com.pighand.aio.domain.user.table.UserTableDef.USER;
+import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 
 /**
  * 电商 - 场次 - 用户分组

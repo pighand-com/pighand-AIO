@@ -25,7 +25,7 @@ import static com.pighand.aio.domain.ECommerce.table.OrderTradeTableDef.ORDER_TR
 import static com.pighand.aio.domain.ECommerce.table.SessionUserCycleTableDef.SESSION_USER_CYCLE;
 import static com.pighand.aio.domain.ECommerce.table.StoreTableDef.STORE;
 import static com.pighand.aio.domain.ECommerce.table.TicketUserTableDef.TICKET_USER;
-import static com.pighand.aio.domain.user.table.UserTableDef.USER;
+import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 
 /**
  * 电商 - 订单

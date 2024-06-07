@@ -22,7 +22,7 @@ import java.util.Date;
  * @author wangshuli
  * @createDate 2024-04-22 15:11:06
  */
-@Table(value = "article")
+@Table("cms_article")
 @Data
 public class ArticleDomain extends BaseDomainRecord<ArticleDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

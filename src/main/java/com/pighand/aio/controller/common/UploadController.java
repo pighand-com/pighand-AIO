@@ -3,7 +3,7 @@ package com.pighand.aio.controller.common;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.common.interfaces.Authorization;
 import com.pighand.aio.common.sdk.tencentCloud.COSSDK;
-import com.pighand.aio.vo.user.LoginUser;
+import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.framework.spring.api.annotation.Get;
 import com.pighand.framework.spring.api.annotation.Post;
 import com.pighand.framework.spring.api.annotation.RestController;

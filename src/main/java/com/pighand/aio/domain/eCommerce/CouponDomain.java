@@ -20,7 +20,7 @@ import java.io.Serializable;
  * @author wangshuli
  * @createDate 2023-12-04 16:37:26
  */
-@Table(value = "coupon")
+@Table("ec_coupon")
 @Data
 public class CouponDomain extends BaseDomainRecord<CouponDomain> implements Serializable {
     @Id

@@ -20,7 +20,7 @@ import java.math.BigDecimal;
  * @author wangshuli
  * @createDate 2023-12-04 16:37:26
  */
-@Table(value = "wallet")
+@Table("ec_wallet")
 @Data
 public class WalletDomain extends BaseDomainRecord<WalletDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

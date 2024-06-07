@@ -19,7 +19,7 @@ import java.io.Serializable;
  * @author wangshuli
  * @createDate 2023-12-04 16:37:26
  */
-@Table(value = "store")
+@Table("ec_store")
 @Data
 public class StoreDomain extends BaseDomainRecord<StoreDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

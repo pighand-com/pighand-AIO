@@ -19,7 +19,7 @@ import java.io.Serializable;
  * @author wangshuli
  * @createDate 2024-04-22 16:17:05
  */
-@Table(value = "article_category_relevance")
+@Table("cms_article_category_relevance")
 @Data
 public class ArticleCategoryRelevanceDomain extends BaseDomainRecord<ArticleCategoryRelevanceDomain>
     implements Serializable {

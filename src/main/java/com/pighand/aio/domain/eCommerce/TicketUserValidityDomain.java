@@ -19,7 +19,7 @@ import java.io.Serializable;
  * @author wangshuli
  * @createDate 2024-04-28 11:36:03
  */
-@Table(value = "ticket_user_validity")
+@Table("ec_ticket_user_validity")
 @Data
 public class TicketUserValidityDomain extends BaseDomainRecord<TicketUserValidityDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

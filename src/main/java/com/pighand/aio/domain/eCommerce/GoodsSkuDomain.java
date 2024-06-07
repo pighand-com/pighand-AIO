@@ -20,7 +20,7 @@ import java.io.Serializable;
  * @author wangshuli
  * @createDate 2024-01-07 19:55:48
  */
-@Table(value = "goods_sku")
+@Table("ec_goods_sku")
 @Data
 public class GoodsSkuDomain extends GoodsBaseInfo implements Serializable {
     private static final long serialVersionUID = 1L;

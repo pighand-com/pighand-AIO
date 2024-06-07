@@ -20,7 +20,7 @@ import java.util.Date;
  * @author wangshuli
  * @createDate 2024-04-26 14:52:18
  */
-@Table(value = "ticket_user")
+@Table("ec_ticket_user")
 @Data
 public class TicketUserDomain extends BaseDomainRecord<TicketUserDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

@@ -4,12 +4,12 @@ import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.ECommerce.TicketDomain;
 import com.pighand.aio.domain.IoT.DeviceDomain;
-import com.pighand.aio.domain.project.ProjectDefaultDomain;
+import com.pighand.aio.domain.base.ProjectDefaultDomain;
 import com.pighand.aio.mapper.ECommerce.TicketMapper;
 import com.pighand.aio.service.ECommerce.TicketService;
 import com.pighand.aio.service.ECommerce.TicketValidityService;
 import com.pighand.aio.service.IoT.DeviceService;
-import com.pighand.aio.service.project.ProjectDefaultService;
+import com.pighand.aio.service.base.ProjectDefaultService;
 import com.pighand.aio.vo.ECommerce.TicketVO;
 import com.pighand.aio.vo.ECommerce.TicketValidityDetailEntity;
 import com.pighand.aio.vo.ECommerce.TicketValidityVO;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import static com.pighand.aio.domain.ECommerce.table.TicketTableDef.TICKET;
 import static com.pighand.aio.domain.ECommerce.table.TicketValidityTableDef.TICKET_VALIDITY;
 import static com.pighand.aio.domain.IoT.table.DeviceTableDef.DEVICE;
-import static com.pighand.aio.domain.project.table.ProjectDefaultTableDef.PROJECT_DEFAULT;
+import static com.pighand.aio.domain.base.table.ProjectDefaultTableDef.PROJECT_DEFAULT;
 
 /**
  * 电商 - 票务

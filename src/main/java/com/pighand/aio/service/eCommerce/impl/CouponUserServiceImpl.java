@@ -23,7 +23,7 @@ import java.util.Date;
 
 import static com.pighand.aio.domain.ECommerce.table.CouponTableDef.COUPON;
 import static com.pighand.aio.domain.ECommerce.table.CouponUserTableDef.COUPON_USER;
-import static com.pighand.aio.domain.user.table.UserTableDef.USER;
+import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 
 /**
  * 电商 - 优惠券 - 用户已领

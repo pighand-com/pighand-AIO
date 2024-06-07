@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 import static com.pighand.aio.domain.ECommerce.table.WalletBillTableDef.WALLET_BILL;
 import static com.pighand.aio.domain.ECommerce.table.WalletTransferTableDef.WALLET_TRANSFER;
-import static com.pighand.aio.domain.user.table.UserTableDef.USER;
+import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 
 /**
  * 电商 - 转账记录

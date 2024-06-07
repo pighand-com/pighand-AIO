@@ -2,8 +2,8 @@ package com.pighand.aio.common.sdk.tencentCloud;
 
 import com.pighand.aio.common.enums.PlatformEnum;
 import com.pighand.aio.common.interceptor.Context;
-import com.pighand.aio.domain.project.ProjectPlatformKeyDomain;
-import com.pighand.aio.service.project.ProjectPlatformKeyService;
+import com.pighand.aio.domain.base.ProjectPlatformKeyDomain;
+import com.pighand.aio.service.base.ProjectPlatformKeyService;
 import com.pighand.framework.spring.util.VerifyUtils;
 import com.qcloud.cos.http.HttpMethodName;
 import com.qcloud.cos.model.ObjectMetadata;

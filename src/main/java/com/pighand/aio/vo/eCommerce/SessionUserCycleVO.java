@@ -1,7 +1,7 @@
 package com.pighand.aio.vo.ECommerce;
 
 import com.pighand.aio.domain.ECommerce.SessionUserCycleDomain;
-import com.pighand.aio.vo.user.UserVO;
+import com.pighand.aio.vo.base.UserVO;
 import lombok.Data;
 
 /**

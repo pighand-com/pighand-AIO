@@ -21,7 +21,7 @@ import java.util.Date;
  * @author wangshuli
  * @createDate 2023-12-04 16:37:26
  */
-@Table(value = "coupon_user")
+@Table("ec_coupon_user")
 @Data
 public class CouponUserDomain extends BaseDomainRecord<CouponUserDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

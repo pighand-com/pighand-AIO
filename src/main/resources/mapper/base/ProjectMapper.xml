@@ -7,10 +7,4 @@
         `id`,`name`
     </sql>
 
-    <select id="query" resultType="com.pighand.aio.vo.base.ProjectVO">
-        select
-        <include refid="Base_Column_List"/>
-        from project
-    </select>
-
 </mapper>

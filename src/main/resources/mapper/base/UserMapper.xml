@@ -9,10 +9,4 @@
         # ,`status`
     </sql>
 
-    <select id="query" resultType="com.pighand.aio.vo.base.UserVO">
-        select
-        <include refid="Base_Column_List"/>
-        from user
-    </select>
-
 </mapper>

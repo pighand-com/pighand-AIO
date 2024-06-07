@@ -7,10 +7,4 @@
         `id`,`type`,`matching_env`,`support_logout`,`jwt_salt`,`jwt_body`,`hash_prefix`,`alg`,`expires_in`
     </sql>
 
-    <select id="query" resultType="com.pighand.aio.vo.base.ProjectAuthorizationVO">
-        select
-        <include refid="Base_Column_List"/>
-        from project_authorization
-    </select>
-
 </mapper>

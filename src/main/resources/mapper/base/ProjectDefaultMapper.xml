@@ -7,10 +7,4 @@
         `id`,`project_id`,`default_nickname`,`default_profile`
     </sql>
 
-    <select id="query" resultType="com.pighand.aio.vo.base.ProjectDefaultVO">
-        select
-        <include refid="Base_Column_List"/>
-        from project_default
-    </select>
-
 </mapper>

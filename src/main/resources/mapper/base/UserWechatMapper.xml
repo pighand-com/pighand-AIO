@@ -7,10 +7,4 @@
         `id`,`project_id`,`user_id`,`openid`,`unionid`,`source_platform`,`status`
     </sql>
 
-    <select id="query" resultType="com.pighand.aio.vo.base.UserWechatVO">
-        select
-        <include refid="Base_Column_List"/>
-        from user_wechat
-    </select>
-
 </mapper>

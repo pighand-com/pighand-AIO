@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pighand.aio.mapper.user.UserWechatMapper">
+<mapper namespace="com.pighand.aio.mapper.base.UserWechatMapper">
     <sql id="Base_Column_List">
         `id`,`project_id`,`user_id`,`openid`,`unionid`,`source_platform`,`status`
     </sql>

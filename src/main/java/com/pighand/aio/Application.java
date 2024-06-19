@@ -5,10 +5,8 @@ import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.core.FlexGlobalConfig;
 import com.mybatisflex.core.audit.AuditManager;
 import com.mybatisflex.core.keygen.KeyGenerators;
-import com.pighand.aio.common.CAPTCHA.CAPTCHAInterceptor;
 import com.pighand.aio.common.enums.CacheConfigEnum;
 import com.pighand.aio.common.interceptor.AuthorizationInterceptor;
-import com.pighand.aio.common.interceptor.HeaderInterceptor;
 import com.pighand.framework.spring.PighandFrameworkConfig;
 import com.pighand.framework.spring.api.jacksonSerializer.JacksonSerializer;
 import com.pighand.framework.spring.api.springdoc.analysis.SpringDocParameter;
@@ -20,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.customizers.ParameterCustomizer;
 import org.springdoc.core.customizers.PropertyCustomizer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -82,10 +79,6 @@ public class Application {
     public class CorsConfig implements WebMvcConfigurer {
 
         private static final Logger logger = LoggerFactory.getLogger("mybatis-flex-sql");
-        @Autowired
-        private AuthorizationInterceptor authorizationInterceptor;
-        @Autowired
-        private CAPTCHAInterceptor captchaInterceptor;
 
         public CorsConfig() {
             //开启审计功能
@@ -107,9 +100,7 @@ public class Application {
 
         @Override
         public void addInterceptors(InterceptorRegistry registry) {
-            registry.addInterceptor(new HeaderInterceptor());
-            registry.addInterceptor(authorizationInterceptor);
-            registry.addInterceptor(captchaInterceptor);
+            registry.addInterceptor(new AuthorizationInterceptor());
         }
 
     }

@@ -28,7 +28,7 @@ public class LoginController extends BaseController<UserService> {
     private final LoginService loginService;
 
     @Post()
-    @CAPTCHA()
+    @CAPTCHA(key = "username")
     public Result<UserVO> password(@RequestBody Login login) {
         UserVO user = loginService.byPassword(login.getUsername(), login.getPassword());
         return new Result(user);

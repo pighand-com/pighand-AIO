@@ -1,5 +1,6 @@
 package com.pighand.aio.common.interceptor;
 
+import com.pighand.aio.common.filter.DefaultFilter;
 import com.pighand.aio.vo.base.LoginUser;
 
 /**
@@ -12,7 +13,7 @@ public class Context {
      * @return
      */
     public static Long getProjectId() {
-        return HeaderInterceptor.getProjectId();
+        return DefaultFilter.getProjectId();
     }
 
     /**

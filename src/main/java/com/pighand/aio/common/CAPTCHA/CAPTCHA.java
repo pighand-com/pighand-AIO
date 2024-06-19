@@ -8,6 +8,9 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CAPTCHA {
+
+    String key();
+
     /**
      * 验证方式
      */

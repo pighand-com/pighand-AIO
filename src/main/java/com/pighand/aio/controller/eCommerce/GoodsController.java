@@ -1,7 +1,5 @@
 package com.pighand.aio.controller.ECommerce;
 
-import com.pighand.aio.common.CAPTCHA.CAPTCHA;
-import com.pighand.aio.common.CAPTCHA.ModeEnum;
 import com.pighand.aio.service.ECommerce.GoodsSpuService;
 import com.pighand.aio.vo.ECommerce.GoodsSpuVO;
 import com.pighand.framework.spring.api.annotation.Delete;
@@ -24,16 +22,6 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 @com.pighand.framework.spring.api.annotation.RestController(path = "goods", docName = "电商 - 商品")
 public class GoodsController extends BaseController<GoodsSpuService> {
-
-    @Get("test")
-    @CAPTCHA(ModeEnum.RETRY)
-    public Result test() {
-        //        Flicker result = new Flicker();
-        //
-        //        return ResponseEntity.ok().header("Content-Type", result.contentType()).body(result.byteArray());
-
-        return new Result();
-    }
 
     /**
      * @param goodsSpuVO

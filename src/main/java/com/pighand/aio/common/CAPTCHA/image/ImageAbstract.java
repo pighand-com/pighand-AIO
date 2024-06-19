@@ -92,7 +92,7 @@ public abstract class ImageAbstract {
 
         CodeData codeData = new CodeData();
         codeData.setCode(String.join("", codes));
-        codeData.setByteArray(outputStream.toByteArray());
+        codeData.setBase64(this.base64());
 
         return codeData;
     }

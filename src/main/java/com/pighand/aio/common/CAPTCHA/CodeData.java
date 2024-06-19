@@ -11,5 +11,5 @@ import lombok.Data;
 public class CodeData {
     private String captchaId;
     private String code;
-    private byte[] byteArray;
+    private String base64;
 }

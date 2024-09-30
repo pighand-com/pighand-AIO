@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pighand.aio.mapper.base.UserExtensionMapper">
+    <sql id="Base_Column_List">
+        `id`,`nickname`,`name`,`gender`,`profile`,`sign_up_at`,`last_sign_in_at`,`real_person_certification`,`initial_info`
+    </sql>
+
+</mapper>

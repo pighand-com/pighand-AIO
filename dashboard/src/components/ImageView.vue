@@ -27,6 +27,11 @@
 <script lang="ts" setup>
 import { CopyDocument } from '@element-plus/icons-vue';
 
+/**
+ * 组件属性定义
+ * @property {String} imageUrl - 图片URL地址
+ * @property {Boolean} imageVisible - 是否显示图片预览对话框,默认为false
+ */
 defineProps({
     imageUrl: String,
     imageVisible: {

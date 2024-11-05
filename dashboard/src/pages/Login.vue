@@ -3,6 +3,7 @@
         <el-form class="form">
             <h1>登录</h1>
             <el-input
+                :disabled="isLoading"
                 :class="errorFields.has('username') ? 'el-input-error' : ''"
                 v-model="loginForm.username"
                 placeholder=""
@@ -10,6 +11,7 @@
                 @input="handleInput('username')"
                 @blur="handleBlur('username')" />
             <el-input
+                :disabled="isLoading"
                 :class="errorFields.has('password') ? 'el-input-error' : ''"
                 type="password"
                 v-model="loginForm.password"
@@ -20,6 +22,7 @@
                 @blur="handleBlur('password')" />
             <div v-if="showCaptcha" class="captcha-container">
                 <el-input
+                    :disabled="isLoading"
                     :class="errorFields.has('captcha') ? 'el-input-error' : ''"
                     v-model="loginForm.captcha"
                     placeholder="请输入验证码"
@@ -31,7 +34,13 @@
                     @click="refreshCaptcha(true)"
                     class="captcha-image" />
             </div>
-            <el-button @click="login" plain>登录</el-button>
+            <el-button
+                @click="login"
+                plain
+                :loading="isLoading"
+                :disabled="isLoading"
+                >{{ isLoading ? '登录中...' : '登录' }}</el-button
+            >
         </el-form>
     </div>
 </template>
@@ -49,11 +58,14 @@ const errorFields = ref(new Set());
 const loginForm = reactive({
     username: '',
     password: '',
-    captcha: ''
+    captcha: '',
+    captchaId: ''
 });
 
 const captchaImage = ref('');
 const showCaptcha = ref(false);
+
+const isLoading = ref(false);
 
 onBeforeMount(() => {
     if (getToken()) {
@@ -102,7 +114,6 @@ const handleBlur = (key: string) => {
     }
 
     if (key === 'username') {
-        console.log('username', loginForm.username);
         if (loginForm.username) {
             showCaptcha.value = true;
             refreshCaptcha();
@@ -118,6 +129,7 @@ const refreshCaptcha = async (force?: boolean) => {
     const result = await common.getCAPTCHACode(loginForm.username);
     if (result && result.base64) {
         captchaImage.value = result.base64;
+        loginForm.captchaId = result.captchaId;
     }
 };
 
@@ -131,16 +143,21 @@ const login = async () => {
     });
 
     if (isRequired) {
-        const result = await user.login(loginForm);
+        isLoading.value = true;
+        try {
+            const result = await user.login(loginForm);
 
-        if (result) {
-            setToken(result.token);
-            setUserInfo({
-                id: result.id,
-                username: result.username,
-                role: result.role
-            });
-            router.push(getDefaultRouterPath());
+            if (result) {
+                setToken(result.token);
+                setUserInfo({
+                    id: result.id,
+                    username: result.username,
+                    role: result.role
+                });
+                router.push(getDefaultRouterPath());
+            }
+        } finally {
+            isLoading.value = false;
         }
     }
 };

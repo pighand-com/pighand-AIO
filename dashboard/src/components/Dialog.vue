@@ -30,6 +30,17 @@ import { ref, inject, watch } from 'vue';
 import { ElMessageBox } from 'element-plus';
 import { ProvideFormInterface } from '@/common/provideForm';
 
+/**
+ * 组件属性定义
+ * @property {String} title - 对话框标题
+ * @property {Boolean} isDialogDetail - 是否显示对话框,默认为false
+ * @property {String} itemAlign - 表单项对齐方式,默认为'left'
+ * @property {Object} dialogFormModel - 对话框表单数据模型
+ * @property {Object} dialogFormRules - 对话框表单验证规则
+ * @property {Function} handleSubmit - 提交表单处理函数
+ * @property {Function} handleQuery - 查询数据处理函数
+ * @property {Function} handleReset - 重置表单处理函数
+ */
 const props = defineProps({
     title: String,
     isDialogDetail: {

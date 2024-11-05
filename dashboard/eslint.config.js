@@ -11,7 +11,7 @@ module.exports = {
         'eslint-config-prettier'
     ],
     parserOptions: {
-        ecmaVersion: 13,
+        ecmaVersion: 'latest', // 使用 'latest' 代替 13
         sourceType: 'module',
         ecmaFeatures: {
             modules: true,

@@ -60,6 +60,14 @@ import { ElMessageBox } from 'element-plus';
 import FormItem from '@/components/FormItem.vue';
 import { ProvideFormInterface } from '@/common/provideForm';
 
+/**
+ * 组件属性定义
+ * @property {String} title - 抽屉标题
+ * @property {Function} handleCreate - 创建数据处理函数
+ * @property {Function} handleUpdate - 更新数据处理函数
+ * @property {Function} handleQuery - 查询数据处理函数
+ * @property {String} size - 抽屉宽度,默认为30%
+ */
 const props = defineProps({
     title: String,
     handleCreate: Function,

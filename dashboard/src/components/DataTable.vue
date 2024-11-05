@@ -9,6 +9,7 @@
 
         <el-table
             v-loading="isTableDataLoading"
+            v-bind="tableAttrs"
             :data="tableDataModel.data"
             class="data-table"
             header-cell-class-name="table-header"
@@ -106,14 +107,30 @@
 
 <script lang="ts" setup>
 import moment from 'moment';
-import { ref, inject, onMounted } from 'vue';
+import { ref, inject, onMounted, useAttrs, computed } from 'vue';
 import { Plus, Edit, DeleteFilled } from '@element-plus/icons-vue';
 
 import { ProvideFormInterface } from '@/common/provideForm';
 
+const attrs = useAttrs();
+
 const dialogImageUrl = ref('');
 const dialogImageVisible = ref(false);
 
+const tableAttrs = computed(() => {
+    const { class: _, style: __, ...rest } = attrs;
+    return rest;
+});
+
+/**
+ * 组件属性定义
+ * @property {Boolean} add - 是否显示添加按钮,默认为true
+ * @property {Array<'edit'|'delete'>|Boolean} tableOperation - 表格操作列配置,可以是数组指定显示的操作按钮,或者布尔值控制是否显示操作列,默认显示编辑和删除按钮
+ * @property {Number|String} operationWidth - 操作列宽度
+ * @property {Function} handleQuery - 查询数据处理函数
+ * @property {Function} handleFind - 查询单条数据处理函数
+ * @property {Function} handleDelete - 删除数据处理函数
+ */
 const props = defineProps({
     add: {
         type: Boolean,

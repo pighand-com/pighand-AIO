@@ -129,6 +129,10 @@ import { Search, Refresh, ArrowUp, ArrowDown } from '@element-plus/icons-vue';
 import { ProvideFormInterface } from '@/common/provideForm';
 import FormItem from '@/components/FormItem.vue';
 
+/**
+ * 组件属性定义
+ * @property {Function} handleQuery - 查询处理函数,用于执行搜索查询操作
+ */
 const props = defineProps({
     handleQuery: Function
 });

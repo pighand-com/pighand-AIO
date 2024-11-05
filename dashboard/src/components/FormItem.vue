@@ -9,20 +9,22 @@
             :prop="item.prop">
             <el-input
                 v-if="!item.domType || item.domType === 'input'"
+                v-bind="item.componentProps || {}"
+                v-model="formModel[item.prop]"
                 :type="item.inputType || 'text'"
                 :show-password="item.inputType === 'password'"
                 :placeholder="item[placeholder] || item.placeholder"
-                v-model="formModel[item.prop]"
-                autocomplete="off"
                 :class="
                     onWhere === 'search'
                         ? 'search-item-style'
                         : 'detail-item-style'
                 "
+                autocomplete="off"
                 clearable />
 
             <el-input-number
                 v-if="item.domType === 'number'"
+                v-bind="item.componentProps || {}"
                 v-model="formModel[item.prop]"
                 :class="
                     onWhere === 'search'
@@ -33,6 +35,8 @@
 
             <el-select
                 v-if="item.domType === 'select'"
+                v-bind="item.componentProps || {}"
+                v-model="formModel[item.prop]"
                 :placeholder="
                     item[placeholder] ||
                     item.placeholder ||
@@ -40,7 +44,6 @@
                         ? '全部'
                         : ''
                 "
-                v-model="formModel[item.prop]"
                 :class="
                     onWhere === 'search'
                         ? 'search-item-style'
@@ -61,6 +64,8 @@
 
             <el-date-picker
                 v-if="item.domType === 'dateTimePicker'"
+                v-bind="item.componentProps || {}"
+                v-model="formModel[item.prop]"
                 type="datetime"
                 :placeholder="
                     item[placeholder] ||
@@ -69,7 +74,6 @@
                         ? '全部'
                         : ''
                 "
-                v-model="formModel[item.prop]"
                 :class="
                     onWhere === 'search'
                         ? 'search-item-style'
@@ -83,6 +87,8 @@
                     item.domType === 'datePicker' ||
                     item.domType === 'datePickerRange'
                 "
+                v-bind="item.componentProps || {}"
+                v-model="formModel[item.prop]"
                 :type="item.domType === 'datePicker' ? 'date' : 'daterange'"
                 range-separator="-"
                 value-format="YYYY-MM-DD"
@@ -93,7 +99,6 @@
                         ? '全部'
                         : ''
                 "
-                v-model="formModel[item.prop]"
                 :class="
                     onWhere === 'search'
                         ? 'search-item-style search-date-picker'
@@ -150,8 +155,9 @@
                     (item.domType === 'uploadImage' && !formModel[item.prop]) ||
                     item.domType === 'uploadImageList'
                 "
-                class="image-uploader"
+                v-bind="item.componentProps || {}"
                 v-loading="uploadImageLoading[item.prop]"
+                class="image-uploader"
                 :show-file-list="false"
                 :http-request="(options) => uploadServer(options, item.prop)"
                 accept="image/png,image/jpeg,image/jpg">
@@ -161,8 +167,9 @@
             <el-upload
                 v-if="item.domType === 'uploadFile'"
                 v-loading="uploadImageLoading[item.prop]"
-                :show-file-list="true"
+                v-bind="item.componentProps || {}"
                 v-model:file-list="uploadFile[item.prop]"
+                :show-file-list="true"
                 :limit="1"
                 :accept="
                     item.uploadAcceptMap
@@ -193,13 +200,21 @@
 
 <script lang="ts" setup>
 import { ref, inject, watch } from 'vue';
-import { ProvideFormInterface } from '@/common/provideForm';
+import {
+    FormColumnsInterface,
+    ProvideFormInterface
+} from '@/common/provideForm';
 import { Plus, Download, Delete, ZoomIn } from '@element-plus/icons-vue';
 
 import cos from '@/common/cos.ts';
 import { common } from '@/api/index.ts';
-import { FormColumnsInterface } from '@/common/provideForm';
 
+/**
+ * 组件属性定义
+ * @property {Array<FormColumnsInterface>} formColumns - 表单列配置数组,定义表单的每一列的配置信息
+ * @property {Object} formModel - 表单数据模型,用于双向绑定表单数据
+ * @property {String} onWhere - 表单所在位置标识,可选值:'search'(搜索表单)/'detail'(详情表单)
+ */
 const props = defineProps({
     formColumns: Array<FormColumnsInterface>,
     formModel: Object,

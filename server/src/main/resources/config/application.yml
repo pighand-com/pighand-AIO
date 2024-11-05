@@ -13,6 +13,12 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
+access-control-allow:
+  mapping: "/**"
+  origin: "*"
+  methods: "*"
+  headers: "*"
+
 pighand:
   exception:
     intercept-exception: true

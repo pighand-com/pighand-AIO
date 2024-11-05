@@ -40,6 +40,9 @@ public class DefaultFilter extends OncePerRequestFilter {
     @Resource
     private VerificationCache verificationCache;
 
+    @Resource
+    private ExceptionHandle exceptionHandle;
+
     /**
      * 注入异常处理方法，用于获取验证码
      */
@@ -107,7 +110,7 @@ public class DefaultFilter extends OncePerRequestFilter {
         throws IOException {
         String projectId = httpServletRequest.getHeader("X-Project-Id");
         if (VerifyUtils.isEmpty(projectId)) {
-            new ExceptionHandle().setResponse(httpServletRequest, httpServletResponse,
+            exceptionHandle.setResponse(httpServletRequest, httpServletResponse,
                 new ThrowException("Header中缺少X-Project-Id"));
             return null;
         }
@@ -160,12 +163,12 @@ public class DefaultFilter extends OncePerRequestFilter {
         String key = finalCAPTCHA.key();
 
         if (VerifyUtils.isEmpty(key)) {
-            new ExceptionHandle().setResponse(httpServletRequest, httpServletResponse,
+            exceptionHandle.setResponse(httpServletRequest, httpServletResponse,
                 new ThrowException("验证码key不能为空"));
             return null;
         }
 
-        String code = httpServletRequest.getParameter("code");
+        String captcha = httpServletRequest.getParameter("captcha");
         String captchaId = httpServletRequest.getParameter("captchaId");
 
         // 获取CAPTCHA的缓存value
@@ -183,16 +186,16 @@ public class DefaultFilter extends OncePerRequestFilter {
         }
 
         if (VerifyUtils.isEmpty(keyValue)) {
-            new ExceptionHandle().setResponse(httpServletRequest, httpServletResponse,
+            exceptionHandle.setResponse(httpServletRequest, httpServletResponse,
                 new ThrowException("验证码key对应的值不能为空"));
             return null;
         }
         String cacheKey = verificationCache.cacheKey(projectId, keyValue);
 
-        if (VerifyUtils.isEmpty(code)) {
+        if (VerifyUtils.isEmpty(captcha)) {
             CodeData newCode = verificationCache.getNewCode(cacheKey);
 
-            new ExceptionHandle().setResponse(httpServletRequest, httpServletResponse,
+            exceptionHandle.setResponse(httpServletRequest, httpServletResponse,
                 new ThrowPrompt("请填写验证码", 40310, newCode));
             return null;
         }
@@ -200,7 +203,7 @@ public class DefaultFilter extends OncePerRequestFilter {
         if (VerifyUtils.isEmpty(captchaId)) {
             CodeData newCode = verificationCache.getNewCode(cacheKey);
 
-            new ExceptionHandle().setResponse(httpServletRequest, httpServletResponse,
+            exceptionHandle.setResponse(httpServletRequest, httpServletResponse,
                 new ThrowPrompt("请填写验证码", 40311, newCode));
             return null;
         }
@@ -216,17 +219,17 @@ public class DefaultFilter extends OncePerRequestFilter {
         if (VerifyUtils.isEmpty(checkCaptchaId) || !checkCaptchaId.equals(captchaId)) {
             CodeData newCode = verificationCache.getNewCode(cacheKey);
 
-            new ExceptionHandle().setResponse(httpServletRequest, httpServletResponse,
+            exceptionHandle.setResponse(httpServletRequest, httpServletResponse,
                 new ThrowPrompt("请填写验证码", 40312, newCode));
             return null;
         }
 
         // 对比验证码
         String codeCache = verificationCache.getCode(captchaId);
-        if (VerifyUtils.isEmpty(codeCache) || !codeCache.equalsIgnoreCase(code)) {
+        if (VerifyUtils.isEmpty(codeCache) || !codeCache.equalsIgnoreCase(captcha)) {
             CodeData newCode = verificationCache.getNewCode(cacheKey);
 
-            new ExceptionHandle().setResponse(httpServletRequest, httpServletResponse,
+            exceptionHandle.setResponse(httpServletRequest, httpServletResponse,
                 new ThrowPrompt("验证码错误", 40313, newCode));
             return null;
         }

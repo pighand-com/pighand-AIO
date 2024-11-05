@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.customizers.ParameterCustomizer;
 import org.springdoc.core.customizers.PropertyCustomizer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -83,6 +84,18 @@ public class Application {
         @Resource
         private AuthorizationInterceptor authorizationInterceptor;
 
+        @Value("${access-control-allow.mapping}")
+        private String AccessControlAllowMapping;
+
+        @Value("${access-control-allow.origin}")
+        private String AccessControlAllowOrigin;
+
+        @Value("${access-control-allow.methods}")
+        private String AccessControlAllowMethods;
+
+        @Value("${access-control-allow.headers}")
+        private String AccessControlAllowHeaders;
+
         public CorsConfig() {
             //开启审计功能
             AuditManager.setAuditEnable(true);
@@ -97,8 +110,9 @@ public class Application {
          */
         @Override
         public void addCorsMappings(CorsRegistry registry) {
-            registry.addMapping("/**").allowedOrigins("*").allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*");
+            registry.addMapping(AccessControlAllowMapping).allowedOrigins(AccessControlAllowOrigin)
+                .allowedMethods(AccessControlAllowMethods).allowedHeaders(AccessControlAllowHeaders)
+                .allowCredentials(false).maxAge(3600);
         }
 
         @Override

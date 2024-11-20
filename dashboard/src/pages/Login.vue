@@ -1,6 +1,6 @@
 <template>
     <div class="body">
-        <el-form class="form">
+        <el-form class="form" @keyup.enter="login">
             <h1>登录</h1>
             <el-input
                 :disabled="isLoading"
@@ -22,6 +22,7 @@
                 @blur="handleBlur('password')" />
             <div v-if="showCaptcha" class="captcha-container">
                 <el-input
+                    ref="captchaInputRef"
                     :disabled="isLoading"
                     :class="errorFields.has('captcha') ? 'el-input-error' : ''"
                     v-model="loginForm.captcha"
@@ -63,6 +64,7 @@ const loginForm = reactive({
 });
 
 const captchaImage = ref('');
+const captchaInputRef = ref(null);
 const showCaptcha = ref(false);
 
 const isLoading = ref(false);
@@ -100,7 +102,7 @@ const getDefaultRouterPath = () => {
             firstSinglePath = item.path;
         }
     });
-    debugger;
+
     return defaultPath || firstSinglePath || '/';
 };
 
@@ -130,6 +132,11 @@ const refreshCaptcha = async (force?: boolean) => {
     if (result && result.base64) {
         captchaImage.value = result.base64;
         loginForm.captchaId = result.captchaId;
+        if (force) {
+            setTimeout(() => {
+                captchaInputRef.value?.input?.focus();
+            }, 0);
+        }
     }
 };
 
@@ -144,21 +151,24 @@ const login = async () => {
 
     if (isRequired) {
         isLoading.value = true;
-        try {
-            const result = await user.login(loginForm);
+        const result = await user.login(loginForm);
 
-            if (result) {
-                setToken(result.token);
-                setUserInfo({
-                    id: result.id,
-                    username: result.username,
-                    role: result.role
-                });
-                router.push(getDefaultRouterPath());
-            }
-        } finally {
-            isLoading.value = false;
+        if (result) {
+            setToken(result.token);
+            setUserInfo({
+                id: result.id,
+                username: result.username,
+                role: result.role
+            });
+
+            const defaultPath = getDefaultRouterPath();
+            router.replace(defaultPath);
+        } else {
+            loginForm.captcha = '';
+            refreshCaptcha(true);
         }
+
+        isLoading.value = false;
     }
 };
 </script>

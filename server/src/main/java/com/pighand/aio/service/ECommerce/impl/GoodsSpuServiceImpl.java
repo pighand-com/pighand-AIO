@@ -6,12 +6,12 @@ import com.pighand.aio.common.enums.GoodsSpuStatusEnum;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.ECommerce.GoodsSkuDomain;
 import com.pighand.aio.domain.ECommerce.GoodsSpuDomain;
-import com.pighand.aio.domain.base.ProjectDefaultDomain;
+import com.pighand.aio.domain.base.ApplicationDefaultDomain;
 import com.pighand.aio.entityMapper.ECommerce.GoodsSkuEntityMapper;
 import com.pighand.aio.mapper.ECommerce.GoodsSkuMapper;
 import com.pighand.aio.mapper.ECommerce.GoodsSpuMapper;
 import com.pighand.aio.service.ECommerce.GoodsSpuService;
-import com.pighand.aio.service.base.ProjectDefaultService;
+import com.pighand.aio.service.base.ApplicationDefaultService;
 import com.pighand.aio.vo.ECommerce.GoodsSkuVO;
 import com.pighand.aio.vo.ECommerce.GoodsSpuVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
@@ -39,7 +39,7 @@ public class GoodsSpuServiceImpl extends BaseServiceImpl<GoodsSpuMapper, GoodsSp
 
     private final GoodsSkuMapper goodsSkuMapper;
     private final GoodsSkuEntityMapper goodsSkuEntityMapper;
-    private final ProjectDefaultService projectDefaultService;
+    private final ApplicationDefaultService projectDefaultService;
 
     /**
      * 创建
@@ -87,7 +87,7 @@ public class GoodsSpuServiceImpl extends BaseServiceImpl<GoodsSpuMapper, GoodsSp
      */
     @Override
     public PageOrList<GoodsSpuVO> query(GoodsSpuVO goodsSpuVO) {
-        ProjectDefaultDomain projectDefaultDomain =
+        ApplicationDefaultDomain projectDefaultDomain =
             projectDefaultService.queryChain().where(PROJECT_DEFAULT.ID.eq(Context.getProjectId())).one();
         if (goodsSpuVO.getSystem().equals("ios") && (projectDefaultDomain == null
             || projectDefaultDomain.getDefaultNickname().equals("1"))) {

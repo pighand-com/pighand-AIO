@@ -23,7 +23,7 @@ import java.io.Serializable;
  * @author wangshuli
  * @createDate 2024-06-05 23:58:27
  */
-@Table("bas_user_douyin")
+@Table("base_user_douyin")
 @Data
 public class UserDouyinDomain extends BaseDomainRecord<UserDouyinDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

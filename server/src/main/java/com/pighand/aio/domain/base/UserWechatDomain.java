@@ -25,7 +25,7 @@ import java.io.Serializable;
  * @createDate 2023-03-25 18:45:58
  */
 @Data
-@Table("bas_user_wechat")
+@Table("base_user_wechat")
 public class UserWechatDomain extends BaseDomainRecord<UserWechatDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

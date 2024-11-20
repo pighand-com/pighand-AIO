@@ -2,8 +2,8 @@ package com.pighand.aio.common.sdk.tencentCloud;
 
 import com.pighand.aio.common.enums.PlatformEnum;
 import com.pighand.aio.common.interceptor.Context;
-import com.pighand.aio.domain.base.ProjectPlatformKeyDomain;
-import com.pighand.aio.service.base.ProjectPlatformKeyService;
+import com.pighand.aio.domain.base.ApplicationPlatformKeyDomain;
+import com.pighand.aio.service.base.ApplicationPlatformKeyService;
 import com.pighand.framework.spring.util.VerifyUtils;
 import com.qcloud.cos.http.HttpMethodName;
 import com.qcloud.cos.model.ObjectMetadata;
@@ -28,7 +28,7 @@ public class COSSDK {
 
     private final Client client;
 
-    private final ProjectPlatformKeyService projectPlatformKeyService;
+    private final ApplicationPlatformKeyService projectPlatformKeyService;
 
     /**
      * 获取COS临时上传URL
@@ -39,7 +39,7 @@ public class COSSDK {
      * @return
      */
     public URL generatePresignedUrl(Long loginUserId, String extension, String path) {
-        ProjectPlatformKeyDomain projectPlatformKeyDomain =
+        ApplicationPlatformKeyDomain projectPlatformKeyDomain =
             projectPlatformKeyService.findByPlatform(Context.getProjectId(), PlatformEnum.TENCENT_CLOUD_COS);
 
         String key = loginUserId + "_" + System.currentTimeMillis();
@@ -76,7 +76,7 @@ public class COSSDK {
      * @param inputStream
      */
     public String upload(String key, InputStream inputStream, Integer size) {
-        ProjectPlatformKeyDomain projectPlatformKeyDomain =
+        ApplicationPlatformKeyDomain projectPlatformKeyDomain =
             projectPlatformKeyService.findByPlatform(Context.getProjectId(), PlatformEnum.TENCENT_CLOUD_COS);
 
         ObjectMetadata objectMetadata = new ObjectMetadata();

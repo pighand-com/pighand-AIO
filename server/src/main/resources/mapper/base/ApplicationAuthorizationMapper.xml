@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pighand.aio.mapper.base.ApplicationAuthorizationMapper">
+    <sql id="Base_Column_List">
+        `id`,`type`,`matching_env`,`support_logout`,`jwt_salt`,`jwt_body`,`hash_prefix`,`alg`,`expires_in`
+    </sql>
+
+</mapper>

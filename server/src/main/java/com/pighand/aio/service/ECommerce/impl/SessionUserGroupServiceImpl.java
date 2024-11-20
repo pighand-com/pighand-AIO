@@ -4,10 +4,10 @@ import com.pighand.aio.common.enums.PlatformEnum;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.common.sdk.wechat.WechatSDK;
 import com.pighand.aio.domain.ECommerce.SessionUserGroupDomain;
-import com.pighand.aio.domain.base.ProjectPlatformKeyDomain;
+import com.pighand.aio.domain.base.ApplicationPlatformKeyDomain;
 import com.pighand.aio.mapper.ECommerce.SessionUserGroupMapper;
 import com.pighand.aio.service.ECommerce.SessionUserGroupService;
-import com.pighand.aio.service.base.ProjectPlatformKeyService;
+import com.pighand.aio.service.base.ApplicationPlatformKeyService;
 import com.pighand.aio.vo.ECommerce.SessionUserGroupVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.exception.ThrowException;
@@ -33,7 +33,7 @@ public class SessionUserGroupServiceImpl extends BaseServiceImpl<SessionUserGrou
     implements SessionUserGroupService {
 
     @Autowired
-    private ProjectPlatformKeyService projectPlatformKeyService;
+    private ApplicationPlatformKeyService projectPlatformKeyService;
 
     @Value("spring.profiles.active")
     private String env;
@@ -101,7 +101,7 @@ public class SessionUserGroupServiceImpl extends BaseServiceImpl<SessionUserGrou
      */
     @Override
     public String getWechatAppletQrcode(Long money) {
-        ProjectPlatformKeyDomain key =
+        ApplicationPlatformKeyDomain key =
             projectPlatformKeyService.findByPlatform(Context.getProjectId(), PlatformEnum.WECHAT_MINI_PROGRAM);
 
         Map<String, String> params = new HashMap<>();

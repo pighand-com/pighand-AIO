@@ -4,11 +4,11 @@ import com.pighand.aio.common.CAPTCHA.CAPTCHA;
 import com.pighand.aio.common.CAPTCHA.CodeData;
 import com.pighand.aio.common.CAPTCHA.ModeEnum;
 import com.pighand.aio.common.CAPTCHA.cache.VerificationCache;
+import com.pighand.aio.common.interceptor.AuthorizationInterceptor;
 import com.pighand.framework.spring.exception.ExceptionHandle;
 import com.pighand.framework.spring.exception.ThrowException;
 import com.pighand.framework.spring.exception.ThrowPrompt;
 import com.pighand.framework.spring.util.VerifyUtils;
-import io.netty.util.concurrent.FastThreadLocal;
 import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -30,9 +30,6 @@ import java.util.regex.Pattern;
  */
 @Component
 public class DefaultFilter extends OncePerRequestFilter {
-    // 当前请求项目id
-    private static final FastThreadLocal<Long> projectIdLocal = new FastThreadLocal<>();
-
     private final String EXCEPTION_DATA_FUNCTION_KEY = "CAPTCHA";
 
     @Resource
@@ -49,15 +46,6 @@ public class DefaultFilter extends OncePerRequestFilter {
     public DefaultFilter() {
         ExceptionHandle.PutExceptionDataFunction(EXCEPTION_DATA_FUNCTION_KEY,
             (Object cacheKey) -> verificationCache.getNewCode((String)cacheKey));
-    }
-
-    /**
-     * 获取当前request的projectId
-     *
-     * @return
-     */
-    public static Long getProjectId() {
-        return projectIdLocal.get();
     }
 
     @Override
@@ -86,38 +74,10 @@ public class DefaultFilter extends OncePerRequestFilter {
     private HttpServletRequest dispose(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
         throws IOException {
 
-        // 获取请求头中的项目ID
-        String projectId = this.getHeaderProjectId(httpServletRequest, httpServletResponse);
-        if (VerifyUtils.isEmpty(projectId)) {
-            return null;
-        }
-
         // 校验验证码
-        HttpServletRequest request = this.checkCAPTCHA(httpServletRequest, httpServletResponse, projectId);
+        HttpServletRequest request = this.checkCAPTCHA(httpServletRequest, httpServletResponse);
 
         return request;
-    }
-
-    /**
-     * 获取请求头中的项目ID
-     *
-     * @param httpServletRequest
-     * @param httpServletResponse
-     * @return
-     * @throws IOException
-     */
-    private String getHeaderProjectId(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
-        throws IOException {
-        String projectId = httpServletRequest.getHeader("X-Project-Id");
-        if (VerifyUtils.isEmpty(projectId)) {
-            exceptionHandle.setResponse(httpServletRequest, httpServletResponse,
-                new ThrowException("Header中缺少X-Project-Id"));
-            return null;
-        }
-
-        projectIdLocal.set(Long.parseLong(projectId));
-
-        return projectId;
     }
 
     /**
@@ -125,12 +85,11 @@ public class DefaultFilter extends OncePerRequestFilter {
      *
      * @param httpServletRequest
      * @param httpServletResponse
-     * @param projectId
      * @return
      * @throws IOException
      */
     private HttpServletRequest checkCAPTCHA(HttpServletRequest httpServletRequest,
-        HttpServletResponse httpServletResponse, String projectId) throws IOException {
+        HttpServletResponse httpServletResponse) throws IOException {
         HttpServletRequest finalRequest = httpServletRequest;
 
         HandlerExecutionChain handlerExecutionChain = null;
@@ -190,7 +149,10 @@ public class DefaultFilter extends OncePerRequestFilter {
                 new ThrowException("验证码key对应的值不能为空"));
             return null;
         }
-        String cacheKey = verificationCache.cacheKey(projectId, keyValue);
+        String applicationId =
+            Optional.ofNullable(httpServletRequest.getHeader(AuthorizationInterceptor.HEADER_APPLICATION_ID))
+                .orElse("_");
+        String cacheKey = verificationCache.cacheKey(applicationId, keyValue);
 
         if (VerifyUtils.isEmpty(captcha)) {
             CodeData newCode = verificationCache.getNewCode(cacheKey);

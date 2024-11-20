@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pighand.aio.common.enums.AuthorizationAlgEnum;
 import com.pighand.aio.common.enums.AuthorizationTypeEnum;
 import com.pighand.aio.common.interceptor.Context;
-import com.pighand.aio.domain.base.ProjectAuthorizationDomain;
-import com.pighand.aio.service.base.ProjectAuthorizationService;
+import com.pighand.aio.domain.base.ApplicationAuthorizationDomain;
+import com.pighand.aio.service.base.ApplicationAuthorizationService;
 import com.pighand.aio.service.base.AuthorizationService;
 import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.aio.vo.base.UserVO;
@@ -47,7 +47,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Autowired
     private StringRedisTemplate redisTemplate;
     @Autowired
-    private ProjectAuthorizationService projectAuthorizationService;
+    private ApplicationAuthorizationService projectAuthorizationService;
 
     /**
      * redis key
@@ -108,7 +108,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      * @param userInfo
      * @returns jwt
      */
-    private String generateJWTToken(ProjectAuthorizationDomain projectAuthorization, UserVO userInfo) {
+    private String generateJWTToken(ApplicationAuthorizationDomain projectAuthorization, UserVO userInfo) {
         if (userInfo == null) {
             throw new ThrowPrompt("用户不存在");
         }
@@ -182,7 +182,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      * @returns hashPrefix + hash(base64)
      */
     @Override
-    public String generateHashToken(ProjectAuthorizationDomain authorization, Long userId) {
+    public String generateHashToken(ApplicationAuthorizationDomain authorization, Long userId) {
 
         MessageDigest digest = null;
         try {
@@ -211,7 +211,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Override
     public UserVO generateToken(UserVO userInfo) {
         Long projectId = Context.getProjectId();
-        ProjectAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(projectId);
+        ApplicationAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(projectId);
 
         String token = "";
         if (AuthorizationTypeEnum.JWT.equals(projectAuthorization.getType())) {
@@ -237,7 +237,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Override
     public LoginUser checkToken(String authorization) {
         Long projectId = Context.getProjectId();
-        ProjectAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(projectId);
+        ApplicationAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(projectId);
 
         String checkEnv = null;
         DecodedJWT decodedJWT = null;
@@ -297,7 +297,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     @Override
     public void logout(String authorization) {
         Long projectId = Context.getProjectId();
-        ProjectAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(projectId);
+        ApplicationAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(projectId);
 
         String redisKey = this.getRedisKey(authorization);
         if (AuthorizationTypeEnum.JWT.equals(projectAuthorization.getType())) {

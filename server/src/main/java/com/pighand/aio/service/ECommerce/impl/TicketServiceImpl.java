@@ -4,12 +4,12 @@ import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.ECommerce.TicketDomain;
 import com.pighand.aio.domain.IoT.DeviceDomain;
-import com.pighand.aio.domain.base.ProjectDefaultDomain;
+import com.pighand.aio.domain.base.ApplicationDefaultDomain;
 import com.pighand.aio.mapper.ECommerce.TicketMapper;
 import com.pighand.aio.service.ECommerce.TicketService;
 import com.pighand.aio.service.ECommerce.TicketValidityService;
 import com.pighand.aio.service.IoT.DeviceService;
-import com.pighand.aio.service.base.ProjectDefaultService;
+import com.pighand.aio.service.base.ApplicationDefaultService;
 import com.pighand.aio.vo.ECommerce.TicketVO;
 import com.pighand.aio.vo.ECommerce.TicketValidityDetailEntity;
 import com.pighand.aio.vo.ECommerce.TicketValidityVO;
@@ -42,7 +42,7 @@ public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomai
 
     private final TicketValidityService ticketValidityService;
     private final DeviceService deviceService;
-    private final ProjectDefaultService projectDefaultService;
+    private final ApplicationDefaultService projectDefaultService;
 
     /**
      * 创建
@@ -76,7 +76,7 @@ public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomai
      */
     @Override
     public PageOrList<TicketVO> query(TicketVO ticketVO) {
-        ProjectDefaultDomain projectDefaultDomain =
+        ApplicationDefaultDomain projectDefaultDomain =
             projectDefaultService.queryChain().where(PROJECT_DEFAULT.ID.eq(Context.getProjectId())).one();
 
         if (ticketVO.getSystem().equals("ios") && (projectDefaultDomain == null

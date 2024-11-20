@@ -1,12 +1,12 @@
 package com.pighand.aio.service.base.impl;
 
-import com.pighand.aio.domain.base.ProjectDefaultDomain;
+import com.pighand.aio.domain.base.ApplicationDefaultDomain;
 import com.pighand.aio.domain.base.UserExtensionDomain;
 import com.pighand.aio.mapper.base.UserExtensionMapper;
-import com.pighand.aio.service.base.ProjectDefaultService;
+import com.pighand.aio.service.base.ApplicationDefaultService;
 import com.pighand.aio.service.base.UserExtensionService;
 import com.pighand.aio.service.base.UserWechatService;
-import com.pighand.aio.vo.base.ProjectDefaultVO;
+import com.pighand.aio.vo.base.ApplicationDefaultVO;
 import com.pighand.aio.vo.base.UserExtensionVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
@@ -28,7 +28,7 @@ public class UserExtensionServiceImpl extends BaseServiceImpl<UserExtensionMappe
     implements UserExtensionService {
 
     @Autowired
-    private ProjectDefaultService projectDefaultService;
+    private ApplicationDefaultService projectDefaultService;
 
     @Autowired
     private UserWechatService userWechatService;
@@ -73,7 +73,7 @@ public class UserExtensionServiceImpl extends BaseServiceImpl<UserExtensionMappe
     /**
      * 创建
      *
-     * <p>优先传入参数，如果没有使用默认信息({@link ProjectDefaultDomain})
+     * <p>优先传入参数，如果没有使用默认信息({@link ApplicationDefaultDomain})
      *
      * @param userExtension
      * @return
@@ -85,7 +85,7 @@ public class UserExtensionServiceImpl extends BaseServiceImpl<UserExtensionMappe
         }
 
         if (userExtension.getProfile() == null || userExtension.getNickname() == null) {
-            ProjectDefaultVO projectDefault = projectDefaultService.find(userExtension.getProjectId());
+            ApplicationDefaultVO projectDefault = projectDefaultService.find(userExtension.getProjectId());
 
             userExtension.setProfile(projectDefault.getRandomProfile());
             userExtension.setNickname(projectDefault.getDefaultNickname());

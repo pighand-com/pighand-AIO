@@ -25,7 +25,7 @@ import java.io.Serializable;
  * @createDate 2023-03-25 18:45:58
  */
 @Data
-@Table("bas_user")
+@Table("base_user")
 public class UserDomain extends BaseDomainRecord<UserDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

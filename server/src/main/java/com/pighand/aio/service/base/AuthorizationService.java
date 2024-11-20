@@ -1,6 +1,6 @@
 package com.pighand.aio.service.base;
 
-import com.pighand.aio.domain.base.ProjectAuthorizationDomain;
+import com.pighand.aio.domain.base.ApplicationAuthorizationDomain;
 import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.aio.vo.base.UserVO;
 
@@ -21,7 +21,7 @@ public interface AuthorizationService {
      * @throws NoSuchAlgorithmException
      * @returns hashPrefix + hash(base64)
      */
-    String generateHashToken(ProjectAuthorizationDomain authorization, Long userId);
+    String generateHashToken(ApplicationAuthorizationDomain authorization, Long userId);
 
     /**
      * 生成授权

@@ -19,7 +19,7 @@ import java.util.Date;
  * @author wangshuli
  * @createDate 2023-12-04 16:37:26
  */
-@Table("bas_user_bind")
+@Table("base_user_bind")
 @Data
 public class UserBindDomain extends BaseDomainRecord<UserBindDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

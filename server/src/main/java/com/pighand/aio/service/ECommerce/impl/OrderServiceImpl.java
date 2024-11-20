@@ -5,14 +5,14 @@ import com.pighand.aio.common.enums.*;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.common.utils.IDGenerator;
 import com.pighand.aio.domain.ECommerce.*;
-import com.pighand.aio.domain.base.ProjectPlatformKeyDomain;
-import com.pighand.aio.domain.base.ProjectPlatformPayDomain;
+import com.pighand.aio.domain.base.ApplicationPlatformKeyDomain;
+import com.pighand.aio.domain.base.ApplicationPlatformPayDomain;
 import com.pighand.aio.domain.base.UserWechatDomain;
 import com.pighand.aio.mapper.ECommerce.OrderMapper;
 import com.pighand.aio.service.ECommerce.*;
 import com.pighand.aio.service.ECommerce.payments.Wechat;
-import com.pighand.aio.service.base.ProjectPlatformKeyService;
-import com.pighand.aio.service.base.ProjectPlatformPayService;
+import com.pighand.aio.service.base.ApplicationPlatformKeyService;
+import com.pighand.aio.service.base.ApplicationPlatformPayService;
 import com.pighand.aio.service.base.UserWechatService;
 import com.pighand.aio.vo.ECommerce.*;
 import com.pighand.aio.vo.ECommerce.TicketUserValidityVO;
@@ -68,8 +68,8 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
     private final OrderTradeService orderTradeService;
     private final OrderSkuService orderSkuService;
     private final Wechat wechat;
-    private final ProjectPlatformPayService projectPlatformPayService;
-    private final ProjectPlatformKeyService projectPlatformKeyService;
+    private final ApplicationPlatformPayService projectPlatformPayService;
+    private final ApplicationPlatformKeyService projectPlatformKeyService;
     private final UserWechatService wechatService;
     private final TicketService ticketService;
     private final TicketValidityService ticketValidityService;
@@ -294,8 +294,8 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
         if (orderVO.getOutTradePlatform() != null) {
             Long projectId = Context.getProjectId();
             if (orderVO.getOutTradePlatform().equals(PlatformEnum.WECHAT_MINI_PROGRAM.value)) {
-                ProjectPlatformPayDomain projectPlatformPayDomain = projectPlatformPayService.find(projectId);
-                ProjectPlatformKeyDomain projectPlatformKeyDomain =
+                ApplicationPlatformPayDomain projectPlatformPayDomain = projectPlatformPayService.find(projectId);
+                ApplicationPlatformKeyDomain projectPlatformKeyDomain =
                     projectPlatformKeyService.findByPlatform(projectId, PlatformEnum.WECHAT_MINI_PROGRAM);
 
                 UserWechatDomain userWechatDomain = wechatService.queryChain().select(USER_WECHAT.OPENID)
@@ -395,7 +395,8 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
         Map<String, String> map = new HashMap<>(2);
         try {
 
-            ProjectPlatformPayDomain projectPlatformPayDomain = projectPlatformPayService.find(Context.getProjectId());
+            ApplicationPlatformPayDomain projectPlatformPayDomain =
+                projectPlatformPayService.find(Context.getProjectId());
             Config config =
                 wechat.getConfig(projectPlatformPayDomain.getWechatMerchantId(), uploadPath + "/apiclient_key.pem",
                     projectPlatformPayDomain.getWechatMerchantCertificateSerial(),
@@ -623,7 +624,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
             OrderTradeDomain orderTradeDomain = orderTradeService.getById(orderVO.getOrderTradeId());
 
             Long projectId = Context.getProjectId();
-            ProjectPlatformPayDomain projectPlatformPayDomain = projectPlatformPayService.find(projectId);
+            ApplicationPlatformPayDomain projectPlatformPayDomain = projectPlatformPayService.find(projectId);
             wechat.refund(projectPlatformPayDomain.getWechatMerchantId(), uploadPath + "/apiclient_key.pem",
                 projectPlatformPayDomain.getWechatMerchantCertificateSerial(),
                 projectPlatformPayDomain.getWechatMerchantV3(), orderTradeDomain.getAmountPaid(),

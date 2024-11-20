@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pighand.aio.common.enums.PlatformEnum;
 import com.pighand.aio.common.sdk.wechat.WechatSDK;
 import com.pighand.aio.common.sdk.wechat.entity.UserInfo;
-import com.pighand.aio.domain.base.ProjectPlatformKeyDomain;
-import com.pighand.aio.service.base.ProjectPlatformKeyService;
+import com.pighand.aio.domain.base.ApplicationPlatformKeyDomain;
+import com.pighand.aio.service.base.ApplicationPlatformKeyService;
 import com.pighand.aio.service.base.TripartitePlatformService;
 import com.pighand.aio.vo.base.tripartite.EncryptedData;
 import com.pighand.aio.vo.base.tripartite.TripartitePlatformUserInfo;
@@ -32,7 +32,7 @@ public class AppletImpl extends AbstractWechat<UserInfo> implements TripartitePl
     ObjectMapper om = new ObjectMapper();
 
     @Autowired
-    private ProjectPlatformKeyService platformKeyService;
+    private ApplicationPlatformKeyService platformKeyService;
 
     AppletImpl() {
         super(PlatformEnum.WECHAT_MINI_PROGRAM);
@@ -43,7 +43,8 @@ public class AppletImpl extends AbstractWechat<UserInfo> implements TripartitePl
      */
     @Override
     protected UserInfo analysisCode(Long projectId, String code, String anonymousCode) {
-        ProjectPlatformKeyDomain key = platformKeyService.findByPlatform(projectId, PlatformEnum.WECHAT_MINI_PROGRAM);
+        ApplicationPlatformKeyDomain key =
+            platformKeyService.findByPlatform(projectId, PlatformEnum.WECHAT_MINI_PROGRAM);
 
         String result = WechatSDK.MINI_APPLET.code2Session(key.getAppid(), key.getSecret(), code, null);
 
@@ -68,7 +69,8 @@ public class AppletImpl extends AbstractWechat<UserInfo> implements TripartitePl
 
     @Override
     protected String bindPhone(Long projectId, EncryptedData encryptedData) {
-        ProjectPlatformKeyDomain key = platformKeyService.findByPlatform(projectId, PlatformEnum.WECHAT_MINI_PROGRAM);
+        ApplicationPlatformKeyDomain key =
+            platformKeyService.findByPlatform(projectId, PlatformEnum.WECHAT_MINI_PROGRAM);
 
         Map<String, String> params = new HashMap<>();
         params.put("appid", key.getAppid());

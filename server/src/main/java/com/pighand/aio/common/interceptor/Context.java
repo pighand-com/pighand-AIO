@@ -1,6 +1,5 @@
 package com.pighand.aio.common.interceptor;
 
-import com.pighand.aio.common.filter.DefaultFilter;
 import com.pighand.aio.vo.base.LoginUser;
 
 /**
@@ -8,12 +7,12 @@ import com.pighand.aio.vo.base.LoginUser;
  */
 public class Context {
     /**
-     * 获取项目id
+     * 获取应用id
      *
      * @return
      */
-    public static Long getProjectId() {
-        return DefaultFilter.getProjectId();
+    public static Long getApplicationId() {
+        return AuthorizationInterceptor.getApplicationId();
     }
 
     /**

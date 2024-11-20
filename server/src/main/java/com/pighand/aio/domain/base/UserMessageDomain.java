@@ -22,7 +22,7 @@ import java.util.Date;
  * @author wangshuli
  * @createDate 2023-12-04 16:37:26
  */
-@Table("bas_user_message")
+@Table("base_user_message")
 @Data
 public class UserMessageDomain extends BaseDomainRecord<UserMessageDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

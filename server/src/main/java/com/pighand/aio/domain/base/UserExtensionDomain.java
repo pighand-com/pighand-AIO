@@ -25,7 +25,7 @@ import java.util.Date;
  * @createDate 2023-03-25 18:45:58
  */
 @Data
-@Table("bas_user_extension")
+@Table("base_user_extension")
 public class UserExtensionDomain extends BaseDomainRecord<UserExtensionDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

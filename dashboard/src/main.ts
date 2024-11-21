@@ -4,6 +4,7 @@ import ElementPlus from 'element-plus';
 import VueDOMPurifyHTML from 'vue-dompurify-html';
 import locale from 'element-plus/lib/locale/lang/zh-CN';
 import '@/assets/css/globalFont.css';
+import 'default-passive-events';
 
 import App from './App.vue';
 import router from './routers/index';

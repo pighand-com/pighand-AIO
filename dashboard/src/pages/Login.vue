@@ -1,5 +1,14 @@
 <template>
     <div class="body">
+        <div class="gradient-bg">
+            <div class="gradients-container">
+                <div class="g1"></div>
+                <div class="g2"></div>
+                <div class="g3"></div>
+                <div class="g4"></div>
+                <div class="g5"></div>
+            </div>
+        </div>
         <el-form class="form" @keyup.enter="login">
             <h1>登录</h1>
             <el-input
@@ -184,86 +193,239 @@ const login = async () => {
 
 <style lang="scss" scoped>
 .body {
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-    background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
-    height: 100vh;
+    width: 100dvw;
+    height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
+.gradient-bg {
+    --color-bg1: #dff9fb;
+    --color-bg2: #ffffff;
+    --color1: 104, 109, 224;
+    --color2: 126, 214, 223;
+    --color3: 223, 249, 251;
+    --color4: 255, 121, 121;
+    --color5: 149, 175, 192;
+    --circle-size: 200%;
+    --blending: hard-light;
+
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(40deg, var(--color-bg1), var(--color-bg2));
+    top: 0;
+    left: 0;
+
+    .gradients-container {
+        filter: url(#goo) blur(40px);
+        width: 100%;
+        height: 100%;
+    }
+
+    .g1 {
+        position: absolute;
+        background: radial-gradient(
+                circle at center,
+                rgba(var(--color1), 0.8) 0,
+                rgba(var(--color1), 0) 50%
+            )
+            no-repeat;
+        mix-blend-mode: var(--blending);
+
+        width: var(--circle-size);
+        height: var(--circle-size);
+        top: calc(50% - var(--circle-size) / 2);
+        left: calc(50% - var(--circle-size) / 2);
+
+        transform-origin: center center;
+        animation: moveVertical 30s ease infinite;
+
+        opacity: 1;
+    }
+
+    .g2 {
+        position: absolute;
+        background: radial-gradient(
+                circle at center,
+                rgba(var(--color2), 0.8) 0,
+                rgba(var(--color2), 0) 50%
+            )
+            no-repeat;
+        mix-blend-mode: var(--blending);
+
+        width: var(--circle-size);
+        height: var(--circle-size);
+        top: calc(50% - var(--circle-size) / 2);
+        left: calc(50% - var(--circle-size) / 2);
+
+        transform-origin: calc(50% - 400px);
+        animation: moveInCircle 20s reverse infinite;
+
+        opacity: 1;
+    }
+
+    .g3 {
+        position: absolute;
+        background: radial-gradient(
+                circle at center,
+                rgba(var(--color3), 0.8) 0,
+                rgba(var(--color3), 0) 50%
+            )
+            no-repeat;
+        mix-blend-mode: var(--blending);
+
+        width: var(--circle-size);
+        height: var(--circle-size);
+        top: calc(50% - var(--circle-size) / 2 + 200px);
+        left: calc(50% - var(--circle-size) / 2 - 500px);
+
+        transform-origin: calc(50% + 400px);
+        animation: moveInCircle 40s linear infinite;
+
+        opacity: 1;
+    }
+
+    .g4 {
+        position: absolute;
+        background: radial-gradient(
+                circle at center,
+                rgba(var(--color4), 0.8) 0,
+                rgba(var(--color4), 0) 50%
+            )
+            no-repeat;
+        mix-blend-mode: var(--blending);
+
+        width: var(--circle-size);
+        height: var(--circle-size);
+        top: calc(50% - var(--circle-size) / 2);
+        left: calc(50% - var(--circle-size) / 2);
+
+        transform-origin: calc(50% - 200px);
+        animation: moveHorizontal 40s ease infinite;
+
+        opacity: 0.7;
+    }
+
+    .g5 {
+        position: absolute;
+        background: radial-gradient(
+                circle at center,
+                rgba(var(--color5), 0.8) 0,
+                rgba(var(--color5), 0) 50%
+            )
+            no-repeat;
+        mix-blend-mode: var(--blending);
+
+        width: calc(var(--circle-size) * 2);
+        height: calc(var(--circle-size) * 2);
+        top: calc(50% - var(--circle-size));
+        left: calc(50% - var(--circle-size));
+
+        transform-origin: calc(50% - 800px) calc(50% + 200px);
+        animation: moveInCircle 20s ease infinite;
+
+        opacity: 1;
+    }
+}
+
 .form {
     width: 264px;
-    color: #f8f9fa;
-
+    color: #17191a;
     display: flex;
     flex-direction: column;
     align-items: center;
-}
-
-.el-input {
-    padding-bottom: 18px;
-    :deep(.el-input__wrapper) {
-        background-color: transparent;
-        box-shadow: none;
-        border: 1px solid #f8f9fa;
-    }
-
-    :deep(.el-input__icon) {
-        color: #f8f9fa;
-    }
-}
-
-.el-input-error {
-    :deep(.el-input__wrapper) {
-        border: 1px solid #cb3030;
-        box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
-    }
-}
-
-:deep(.el-input input) {
-    color: #fff;
-}
-
-.el-button {
-    width: 264px;
-    color: #f8f9fa;
-    background-color: transparent;
-    border: 1px solid #f8f9fa;
-
-    &:hover {
-        color: #212529;
-        background-color: #f8f9fa;
-    }
-}
-
-.captcha-container {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 18px;
+    position: absolute;
 
     .el-input {
-        flex: 1;
-        margin-right: 10px;
+        padding-bottom: 18px;
+
+        :deep(.el-input__wrapper) {
+            background-color: transparent;
+            box-shadow: none;
+            border: 1px solid #17191a;
+        }
+
+        :deep(.el-input__icon) {
+            color: #17191a;
+        }
+
+        :deep(input) {
+            color: rgb(80, 80, 80);
+        }
+
+        &.el-input-error {
+            :deep(.el-input__wrapper) {
+                border: 1px solid #cb3030;
+                box-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+            }
+        }
     }
 
-    .captcha-image {
-        cursor: pointer;
-        height: 34px;
-        border-radius: 4px;
+    .el-button {
+        width: 264px;
+        color: #17191a;
+        background-color: transparent;
+        border: 1px solid #17191a;
+
+        &:hover {
+            color: #f8f9fa;
+            background-color: #17191a;
+        }
+    }
+
+    .captcha-container {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 18px;
+
+        .el-input {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .captcha-image {
+            cursor: pointer;
+            height: 34px;
+            border-radius: 4px;
+        }
     }
 }
 
-@keyframes gradient {
+@keyframes moveInCircle {
     0% {
-        background-position: 0% 50%;
+        transform: rotate(0deg);
     }
     50% {
-        background-position: 100% 50%;
+        transform: rotate(180deg);
     }
     100% {
-        background-position: 0% 50%;
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes moveVertical {
+    0% {
+        transform: translateY(-50%);
+    }
+    50% {
+        transform: translateY(50%);
+    }
+    100% {
+        transform: translateY(-50%);
+    }
+}
+
+@keyframes moveHorizontal {
+    0% {
+        transform: translateX(-50%) translateY(-10%);
+    }
+    50% {
+        transform: translateX(50%) translateY(10%);
+    }
+    100% {
+        transform: translateX(-50%) translateY(-10%);
     }
 }
 </style>

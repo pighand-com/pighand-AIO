@@ -30,16 +30,25 @@ const routes = [
         component: () => import('@/pages/Article.vue')
     },
     {
-        path: '/user',
-        name: 'user',
-        title: '用户管理',
+        path: '/system',
+        name: 'system',
+        title: '系统管理',
         meta: {
-            default: true,
             requiresAuth: true,
             icon: shallowRef(Files),
             pageType: constant.page_type_single
         },
-        component: () => import('@/pages/User.vue')
+        children: [
+            {
+                path: 'user',
+                name: 'user',
+                title: '用户管理',
+                meta: {
+                    icon: shallowRef(Files)
+                },
+                component: () => import('@/pages/User.vue')
+            }
+        ]
     }
 ];
 

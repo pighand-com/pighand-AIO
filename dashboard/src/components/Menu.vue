@@ -58,13 +58,30 @@
             </el-button>
         </div>
 
-        <el-menu-item
-            v-for="(item, index) in menus"
-            :key="index"
-            :index="item.path">
-            <el-icon><component :is="item.icon"></component></el-icon>
-            <template #title>{{ item.title }}</template>
-        </el-menu-item>
+        <template v-for="(item, index) in menus" :key="index">
+            <!-- 没有子菜单的情况 -->
+            <el-menu-item v-if="!item.children?.length" :index="item.path">
+                <el-icon><component :is="item.icon"></component></el-icon>
+                <template #title>{{ item.title }}</template>
+            </el-menu-item>
+
+            <!-- 有子菜单的情况 -->
+            <el-sub-menu v-else :index="item.path">
+                <template #title>
+                    <el-icon><component :is="item.icon"></component></el-icon>
+                    <span>{{ item.title }}</span>
+                </template>
+                <el-menu-item
+                    v-for="(child, childIndex) in item.children"
+                    :key="childIndex"
+                    :index="`${item.path}/${child.path}`">
+                    <el-icon v-if="child.icon"
+                        ><component :is="child.icon"></component
+                    ></el-icon>
+                    <template #title>{{ child.title }}</template>
+                </el-menu-item>
+            </el-sub-menu>
+        </template>
     </el-menu>
 </template>
 
@@ -80,12 +97,16 @@ const isCollapse = ref(false);
 const menus = ref(
     routes
         .filter((item) => item.meta?.pageType === constant.page_type_single)
-        .map((item, index) => {
+        .map((item) => {
             return {
                 path: item.path,
                 title: item.title,
                 icon: item.meta.icon,
-                index
+                children: item.children?.map((child) => ({
+                    path: child.path,
+                    title: child.title,
+                    icon: child.meta?.icon
+                }))
             };
         })
 );

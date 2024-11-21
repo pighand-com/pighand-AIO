@@ -1,10 +1,10 @@
 package com.pighand.aio.service.base;
 
-import com.pighand.framework.spring.base.BaseService;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.common.enums.PlatformEnum;
 import com.pighand.aio.domain.base.ApplicationPlatformKeyDomain;
 import com.pighand.aio.vo.base.ApplicationPlatformKeyVO;
+import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.page.PageOrList;
 
 /**
  * 三方平台key
@@ -55,9 +55,9 @@ public interface ApplicationPlatformKeyService extends BaseService<ApplicationPl
     /**
      * 查询key
      *
-     * @param projectId
+     * @param applicationId
      * @param platform
      * @returns platformKey {@link ApplicationPlatformKeyDomain}
      */
-    ApplicationPlatformKeyDomain findByPlatform(Long projectId, PlatformEnum platform);
+    ApplicationPlatformKeyDomain findByPlatform(Long applicationId, PlatformEnum platform);
 }

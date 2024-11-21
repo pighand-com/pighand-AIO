@@ -17,6 +17,7 @@ import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.aio.vo.base.UserVO;
 import com.pighand.framework.spring.exception.ThrowException;
 import com.pighand.framework.spring.exception.ThrowPrompt;
+import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -210,8 +211,12 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      */
     @Override
     public UserVO generateToken(UserVO userInfo) {
-        Long projectId = Context.getProjectId();
-        ApplicationAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(projectId);
+        Long applicationId = Context.getApplicationId();
+        if (VerifyUtils.isEmpty(applicationId)) {
+            applicationId = 1L;
+        }
+
+        ApplicationAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(applicationId);
 
         String token = "";
         if (AuthorizationTypeEnum.JWT.equals(projectAuthorization.getType())) {
@@ -236,8 +241,8 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      */
     @Override
     public LoginUser checkToken(String authorization) {
-        Long projectId = Context.getProjectId();
-        ApplicationAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(projectId);
+        Long applicationId = Context.getApplicationId();
+        ApplicationAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(applicationId);
 
         String checkEnv = null;
         DecodedJWT decodedJWT = null;
@@ -296,8 +301,8 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      */
     @Override
     public void logout(String authorization) {
-        Long projectId = Context.getProjectId();
-        ApplicationAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(projectId);
+        Long applicationId = Context.getApplicationId();
+        ApplicationAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(applicationId);
 
         String redisKey = this.getRedisKey(authorization);
         if (AuthorizationTypeEnum.JWT.equals(projectAuthorization.getType())) {

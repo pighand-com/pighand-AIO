@@ -38,7 +38,7 @@ public class ApplicationPlatformKeyDomain extends BaseDomainRecord<ApplicationPl
     @NotNull(groups = {ValidationGroup.Create.class})
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long projectId;
+    private Long applicationId;
 
     @NotNull(groups = {ValidationGroup.Create.class})
     @Schema(description = "三方平台 21公众号 22小程序")

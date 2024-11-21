@@ -1,9 +1,9 @@
 package com.pighand.aio.service.base;
 
-import com.pighand.framework.spring.base.BaseService;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.domain.base.ApplicationTripartitePlatformDomain;
 import com.pighand.aio.vo.base.ApplicationTripartitePlatformVO;
+import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.page.PageOrList;
 
 /**
  * 项目三方平台配置
@@ -33,7 +33,7 @@ public interface ApplicationTripartitePlatformService extends BaseService<Applic
      * 分页或列表
      *
      * @param projectTripartitePlatformVO
-     * @return PageOrList<ProjectTripartitePlatformVO>
+     * @return PageOrList<ApplicationTripartitePlatformVO>
      */
     PageOrList<ApplicationTripartitePlatformVO> query(ApplicationTripartitePlatformVO projectTripartitePlatformVO);
 

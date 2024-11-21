@@ -1,11 +1,11 @@
 package com.pighand.aio.service.base.impl;
 
-import com.pighand.framework.spring.base.BaseServiceImpl;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.domain.base.ApplicationTripartitePlatformDomain;
 import com.pighand.aio.mapper.base.ApplicationTripartitePlatformMapper;
 import com.pighand.aio.service.base.ApplicationTripartitePlatformService;
 import com.pighand.aio.vo.base.ApplicationTripartitePlatformVO;
+import com.pighand.framework.spring.base.BaseServiceImpl;
+import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
 
 /**
@@ -40,7 +40,7 @@ public class ApplicationTripartitePlatformServiceImpl
      */
     @Override
     public ApplicationTripartitePlatformDomain find(Long id) {
-        //        ProjectTripartitePlatformDomain projectTripartitePlatformDomain =
+        //        ApplicationTripartitePlatformDomain projectTripartitePlatformDomain =
         //                super.mapper.selectById(id);
         //        return projectTripartitePlatformDomain;
         return null;

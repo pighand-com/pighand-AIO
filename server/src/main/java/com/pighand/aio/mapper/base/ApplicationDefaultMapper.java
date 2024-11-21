@@ -16,8 +16,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.pighand.aio.domain.base.table.ProjectDefaultTableDef.PROJECT_DEFAULT;
-import static com.pighand.aio.domain.base.table.ProjectTableDef.PROJECT;
+import static com.pighand.aio.domain.base.table.ApplicationDefaultTableDef.APPLICATION_DEFAULT;
+import static com.pighand.aio.domain.base.table.ApplicationTableDef.APPLICATION;
 
 /**
  * 项目 - 默认设置
@@ -42,11 +42,11 @@ public interface ApplicationDefaultMapper extends BaseMapper<ApplicationDefaultD
             return queryWrapper;
         }
 
-        // PROJECT
-        if (joinTables.contains(PROJECT.getTableName())) {
-            queryWrapper.leftJoin(PROJECT).on(PROJECT.ID.eq(PROJECT_DEFAULT.ID));
+        // APPLICATION
+        if (joinTables.contains(APPLICATION.getTableName())) {
+            queryWrapper.leftJoin(APPLICATION).on(APPLICATION.ID.eq(APPLICATION_DEFAULT.ID));
 
-            joinTables.remove(PROJECT.getTableName());
+            joinTables.remove(APPLICATION.getTableName());
         }
 
         return queryWrapper;
@@ -95,7 +95,7 @@ public interface ApplicationDefaultMapper extends BaseMapper<ApplicationDefaultD
     default ApplicationDefaultVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(PROJECT_DEFAULT.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(APPLICATION_DEFAULT.ID.eq(id));
 
         ApplicationDefaultVO result = this.selectOneByQueryAs(queryWrapper, ApplicationDefaultVO.class);
         this.relationMany(joinTableSet, result);

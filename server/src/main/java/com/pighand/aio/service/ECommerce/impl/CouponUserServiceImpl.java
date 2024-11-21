@@ -141,7 +141,7 @@ public class CouponUserServiceImpl extends BaseServiceImpl<CouponUserMapper, Cou
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.select(COUPON_USER.ID, COUPON_USER.USED_AT);
         queryWrapper.where(COUPON_USER.STATUS.eq(CouponUserStatusEnum.VERIFY))
-            .and(COUPON.PROJECT_ID.eq(Context.getProjectId()));
+            .and(COUPON.APPLICATION_ID.eq(Context.getApplicationId()));
 
         if (VerifyUtils.isNotEmpty(couponUserVO.getQueryPhone())) {
             queryWrapper.where(USER.PHONE.like(couponUserVO.getQueryPhone()));

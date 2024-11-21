@@ -37,10 +37,10 @@ public class UserWechatDomain extends BaseDomainRecord<UserWechatDomain> impleme
     private Long id;
 
     @NotNull(groups = {ValidationGroup.Create.class})
-    @Schema(description = "项目id")
+    @Schema(description = "应用id")
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long projectId;
+    private Long applicationId;
 
     @NotNull(groups = {ValidationGroup.Create.class})
     @Schema(description = "用户id")

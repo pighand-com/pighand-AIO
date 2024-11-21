@@ -31,7 +31,7 @@ public class CouponDomain extends BaseDomainRecord<CouponDomain> implements Seri
     private Long id;
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long projectId;
+    private Long applicationId;
     @Schema(description = "店铺id")
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)

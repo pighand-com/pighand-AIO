@@ -31,7 +31,7 @@ public class OrderDomain extends BaseDomainRecord<OrderDomain> implements Serial
     @RequestFieldException("orderCreate")
     @RequestFieldException("orderUpdate")
     private Long id;
-    private Long projectId;
+    private Long applicationId;
     @Schema(description = "商户id")
     private Long businessId;
     @Schema(description = "门店id")

@@ -106,9 +106,9 @@ public class UserController extends BaseController<UserService> {
     @Authorization
     @Post(value = "bind/phone/wechat", docSummary = "绑定手机号")
     public Result bindPhone(@RequestBody EncryptedData encryptedData) {
-        Long projectId = Context.getProjectId();
+        Long applicationId = Context.getApplicationId();
         LoginUser longUser = Context.getLoginUser();
-        String phone = wechatAppletService.bindPhone(projectId, longUser.getId(), encryptedData.getCode());
+        String phone = wechatAppletService.bindPhone(applicationId, longUser.getId(), encryptedData.getCode());
 
         UserVO userVO = new UserVO();
         userVO.setPhone(phone);

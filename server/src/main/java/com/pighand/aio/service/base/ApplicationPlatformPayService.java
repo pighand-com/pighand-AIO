@@ -33,7 +33,7 @@ public interface ApplicationPlatformPayService extends BaseService<ApplicationPl
      * 分页或列表
      *
      * @param projectPlatformPayVO
-     * @return PageOrList<ProjectPlatformPayVO>
+     * @return PageOrList<ApplicationPlatformPayVO>
      */
     PageOrList<ApplicationPlatformPayVO> query(ApplicationPlatformPayVO projectPlatformPayVO);
 

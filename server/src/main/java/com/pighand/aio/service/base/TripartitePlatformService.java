@@ -12,10 +12,10 @@ public interface TripartitePlatformService {
     /**
      * 使用code登录
      *
-     * @param projectId     项目id
+     * @param applicationId 项目id
      * @param code          三方平台code
      * @param anonymousCode 匿名code
      * @return token
      */
-    UserVO signInByCode(Long projectId, String code, String anonymousCode);
+    UserVO signInByCode(Long applicationId, String code, String anonymousCode);
 }

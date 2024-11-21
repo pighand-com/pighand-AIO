@@ -57,11 +57,11 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletMapper, WalletDomai
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void transfer(WalletTransferVO walletTransferVO) {
-        Long projectId = Context.getProjectId();
+        Long applicationId = Context.getApplicationId();
         LoginUser loginUser = Context.getLoginUser();
 
         UserDomain toUser = userService.getById(walletTransferVO.getToUserId());
-        if (toUser == null || toUser.getProjectId() != projectId) {
+        if (toUser == null || toUser.getApplicationId() != applicationId) {
             throw new ThrowPrompt("转账用户不存在");
         }
 
@@ -85,7 +85,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletMapper, WalletDomai
         if (!isFromSystem) {
             boolean isUpdate =
                 this.updateChain().setRaw(WALLET.TOKENS, WALLET.TOKENS.subtract(walletTransferVO.getAccount()))
-                    .where(WALLET.PROJECT_ID.eq(projectId)).and(WALLET.USER_ID.eq(fromUserId))
+                    .where(WALLET.APPLICATION_ID.eq(applicationId)).and(WALLET.USER_ID.eq(fromUserId))
                     .and(WALLET.TOKENS.subtract(walletTransferVO.getAccount()).ge(0)).update();
 
             if (!isUpdate) {
@@ -94,10 +94,11 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletMapper, WalletDomai
         }
 
         WalletDomain toUserWallet =
-            this.queryChain().where(WALLET.PROJECT_ID.eq(projectId)).and(WALLET.USER_ID.eq(toUser.getId())).one();
+            this.queryChain().where(WALLET.APPLICATION_ID.eq(applicationId)).and(WALLET.USER_ID.eq(toUser.getId()))
+                .one();
         if (toUserWallet == null) {
             toUserWallet = new WalletDomain();
-            toUserWallet.setProjectId(projectId);
+            toUserWallet.setApplicationId(applicationId);
             toUserWallet.setUserId(toUser.getId());
             toUserWallet.setTokens(walletTransferVO.getAccount());
             toUserWallet.setFreezeTokens(BigDecimal.ZERO);
@@ -105,14 +106,14 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletMapper, WalletDomai
         } else {
             boolean isUpdate =
                 this.updateChain().setRaw(WALLET.TOKENS, WALLET.TOKENS.add(walletTransferVO.getAccount()))
-                    .where(WALLET.PROJECT_ID.eq(projectId)).and(WALLET.USER_ID.eq(toUser.getId())).update();
+                    .where(WALLET.APPLICATION_ID.eq(applicationId)).and(WALLET.USER_ID.eq(toUser.getId())).update();
 
             if (!isUpdate) {
                 throw new ThrowPrompt("转账失败");
             }
         }
 
-        walletTransferVO.setProjectId(projectId);
+        walletTransferVO.setApplicationId(applicationId);
         if (loginUser != null) {
             walletTransferVO.setFromUserId(loginUser.getId());
         }
@@ -125,7 +126,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletMapper, WalletDomai
         Date now = new Date();
 
         WalletBillVO fromBill = new WalletBillVO();
-        fromBill.setProjectId(projectId);
+        fromBill.setApplicationId(applicationId);
         fromBill.setUserId(fromUserId);
         fromBill.setType(isFromSystem ? 20 : 32);
         fromBill.setWalletType(20);
@@ -135,7 +136,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletMapper, WalletDomai
         fromBill.setCreatedAt(now);
 
         WalletBillVO toBill = new WalletBillVO();
-        toBill.setProjectId(projectId);
+        toBill.setApplicationId(applicationId);
         toBill.setUserId(toUser.getId());
         toBill.setType(isFromSystem ? 10 : 31);
         toBill.setWalletType(20);

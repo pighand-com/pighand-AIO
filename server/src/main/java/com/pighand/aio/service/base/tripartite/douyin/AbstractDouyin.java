@@ -33,11 +33,11 @@ public abstract class AbstractDouyin<T extends DouyinResponse> extends AbstractT
      * <p>3. 如果unionid用户存在，则使用此用户的userId
      */
     @Override
-    protected UserPlatformInfo checkUserExist(Long projectId, T analysisInfo) {
+    protected UserPlatformInfo checkUserExist(Long applicationId, T analysisInfo) {
         // find by openid
         //        LambdaQueryWrapper<UserWechatDomain> queryOpenid = new QueryWrapper().lambda();
         //        queryOpenid
-        //                .eq(UserWechatDomain::getProjectId, projectId)
+        //                .eq(UserWechatDomain::getApplicationId, applicationId)
         //                .eq(UserWechatDomain::getOpenid, analysisInfo.getOpenid())
         //                .last("limit 1");
         //        UserWechatDomain userByOpenid = userWechatService.getOne(queryOpenid);
@@ -50,7 +50,7 @@ public abstract class AbstractDouyin<T extends DouyinResponse> extends AbstractT
         //        if (userByOpenid == null || isChangeUnionid) {
         //            LambdaQueryWrapper<UserWechatDomain> queryUnionid = new QueryWrapper().lambda();
         //            queryUnionid
-        //                    .eq(UserWechatDomain::getProjectId, projectId)
+        //                    .eq(UserWechatDomain::getApplicationId, applicationId)
         //                    .eq(UserWechatDomain::getUnionid, analysisInfo.getUnionid())
         //                    .last("limit 1");
         //            userByUnionid = userWechatService.getOne(queryUnionid);
@@ -76,11 +76,11 @@ public abstract class AbstractDouyin<T extends DouyinResponse> extends AbstractT
      * <p>不存在 - 创建; 存在 & unionid不同 - 更新unionid
      */
     @Override
-    protected void syncPlatform(Long projectId, T analysisInfo, UserPlatformInfo userPlatformInfo,
+    protected void syncPlatform(Long applicationId, T analysisInfo, UserPlatformInfo userPlatformInfo,
         UserStatusEnum newUserStatus) {
         UserWechatVO userWechatVO = new UserWechatVO();
         if (userPlatformInfo.getDbId() == null) {
-            userWechatVO.setProjectId(projectId);
+            userWechatVO.setApplicationId(applicationId);
             userWechatVO.setUserId(userPlatformInfo.getUserId());
             userWechatVO.setOpenid(analysisInfo.getOpenid());
             userWechatVO.setUnionid(analysisInfo.getUnionid());

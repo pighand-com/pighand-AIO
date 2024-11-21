@@ -32,11 +32,11 @@ public class UserBindServiceImpl extends BaseServiceImpl<UserBindMapper, UserBin
      */
     @Override
     public boolean isBind() {
-        Long projectId = Context.getProjectId();
+        Long applicationId = Context.getApplicationId();
         LoginUser loginUser = Context.getLoginUser();
 
         UserBindDomain userBindDomain = this.queryChain().select(UserBindDomain::getId)
-            .where(USER_BIND.PROJECT_ID.eq(projectId).and(USER_BIND.USER_ID.eq(loginUser.getId()))).one();
+            .where(USER_BIND.APPLICATION_ID.eq(applicationId).and(USER_BIND.USER_ID.eq(loginUser.getId()))).one();
 
         return userBindDomain == null;
     }
@@ -48,7 +48,7 @@ public class UserBindServiceImpl extends BaseServiceImpl<UserBindMapper, UserBin
      */
     @Override
     public void bind(Long bindUserId) {
-        Long projectId = Context.getProjectId();
+        Long applicationId = Context.getApplicationId();
         LoginUser loginUser = Context.getLoginUser();
 
         if (loginUser.getId().equals(bindUserId)) {
@@ -61,7 +61,7 @@ public class UserBindServiceImpl extends BaseServiceImpl<UserBindMapper, UserBin
         }
 
         UserBindDomain userBindDomain = new UserBindDomain();
-        userBindDomain.setProjectId(projectId);
+        userBindDomain.setApplicationId(applicationId);
         userBindDomain.setUserId(loginUser.getId());
         userBindDomain.setUpperId(bindUserId);
         userBindDomain.setCreatedAt(new Date());
@@ -76,11 +76,11 @@ public class UserBindServiceImpl extends BaseServiceImpl<UserBindMapper, UserBin
      */
     @Override
     public void unbind(Long bindUserId) {
-        Long projectId = Context.getProjectId();
+        Long applicationId = Context.getApplicationId();
         LoginUser loginUser = Context.getLoginUser();
 
         QueryWrapper queryWrapper = QueryWrapper.create().and(
-            USER_BIND.PROJECT_ID.eq(projectId).and(USER_BIND.USER_ID.eq(loginUser.getId()))
+            USER_BIND.APPLICATION_ID.eq(applicationId).and(USER_BIND.USER_ID.eq(loginUser.getId()))
                 .and(USER_BIND.UPPER_ID.eq(bindUserId)));
         super.mapper.deleteByQuery(queryWrapper);
     }

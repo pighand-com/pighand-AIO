@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import static com.pighand.aio.domain.ECommerce.table.TicketTableDef.TICKET;
 import static com.pighand.aio.domain.ECommerce.table.TicketValidityTableDef.TICKET_VALIDITY;
 import static com.pighand.aio.domain.IoT.table.DeviceTableDef.DEVICE;
-import static com.pighand.aio.domain.base.table.ProjectDefaultTableDef.PROJECT_DEFAULT;
+import static com.pighand.aio.domain.base.table.ApplicationDefaultTableDef.APPLICATION_DEFAULT;
 
 /**
  * 电商 - 票务
@@ -77,7 +77,7 @@ public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomai
     @Override
     public PageOrList<TicketVO> query(TicketVO ticketVO) {
         ApplicationDefaultDomain projectDefaultDomain =
-            projectDefaultService.queryChain().where(PROJECT_DEFAULT.ID.eq(Context.getProjectId())).one();
+            projectDefaultService.queryChain().where(APPLICATION_DEFAULT.ID.eq(Context.getApplicationId())).one();
 
         if (ticketVO.getSystem().equals("ios") && (projectDefaultDomain == null
             || projectDefaultDomain.getDefaultNickname().equals("1"))) {

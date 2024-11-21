@@ -31,7 +31,7 @@ public class StoreDomain extends BaseDomainRecord<StoreDomain> implements Serial
     private Long id;
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long projectId;
+    private Long applicationId;
     @Length(max = 16)
     private String name;
 }

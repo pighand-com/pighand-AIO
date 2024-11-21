@@ -29,9 +29,9 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public UserVO byPassword(String username, String password) {
-        Long projectId = Context.getProjectId();
+        Long applicationId = Context.getApplicationId();
         UserVO user = userService.queryChain().select(USER.ID, USER.PASSWORD, USER.USERNAME).select(USER.STATUS)
-            .where(USER.PROJECT_ID.eq(projectId)).and(USER.USERNAME.eq(username)).or(USER.EMAIL.eq(username))
+            .where(USER.APPLICATION_ID.eq(applicationId)).and(USER.USERNAME.eq(username)).or(USER.EMAIL.eq(username))
             .or(USER.PHONE.eq(username)).oneAs(UserVO.class);
 
         if (user == null) {

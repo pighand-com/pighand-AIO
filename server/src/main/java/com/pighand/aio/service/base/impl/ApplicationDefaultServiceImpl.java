@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.pighand.aio.domain.base.table.ProjectDefaultTableDef.PROJECT_DEFAULT;
+import static com.pighand.aio.domain.base.table.ApplicationDefaultTableDef.APPLICATION_DEFAULT;
 
 /**
  * 项目默认设置
@@ -45,7 +45,7 @@ public class ApplicationDefaultServiceImpl extends BaseServiceImpl<ApplicationDe
     @Override
     public ApplicationDefaultVO find(Long id) {
         ApplicationDefaultVO projectDefault =
-            this.queryChain().where(PROJECT_DEFAULT.ID.eq(id)).oneAs(ApplicationDefaultVO.class);
+            this.queryChain().where(APPLICATION_DEFAULT.ID.eq(id)).oneAs(ApplicationDefaultVO.class);
         if (projectDefault == null) {
             return new ApplicationDefaultVO();
         }

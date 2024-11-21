@@ -66,7 +66,7 @@ public class UserDouyinServiceImpl extends BaseServiceImpl<UserDouyinMapper, Use
         queryWrapper.and(USER_DOUYIN.ANONYMOUS_OPENID.like(userDouyinVO.getAnonymousOpenid(), VerifyUtils::isNotEmpty));
 
         // equal
-        queryWrapper.and(USER_DOUYIN.PROJECT_ID.eq(userDouyinVO.getProjectId(), VerifyUtils::isNotEmpty));
+        queryWrapper.and(USER_DOUYIN.APPLICATION_ID.eq(userDouyinVO.getApplicationId(), VerifyUtils::isNotEmpty));
         queryWrapper.and(USER_DOUYIN.USER_ID.eq(userDouyinVO.getUserId(), VerifyUtils::isNotEmpty));
         queryWrapper.and(USER_DOUYIN.SOURCE_PLATFORM.eq(userDouyinVO.getSourcePlatform(), VerifyUtils::isNotEmpty));
         queryWrapper.and(USER_DOUYIN.STATUS.eq(userDouyinVO.getStatus(), VerifyUtils::isNotEmpty));

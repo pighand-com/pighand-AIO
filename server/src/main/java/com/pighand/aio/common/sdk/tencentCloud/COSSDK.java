@@ -40,7 +40,7 @@ public class COSSDK {
      */
     public URL generatePresignedUrl(Long loginUserId, String extension, String path) {
         ApplicationPlatformKeyDomain projectPlatformKeyDomain =
-            projectPlatformKeyService.findByPlatform(Context.getProjectId(), PlatformEnum.TENCENT_CLOUD_COS);
+            projectPlatformKeyService.findByPlatform(Context.getApplicationId(), PlatformEnum.TENCENT_CLOUD_COS);
 
         String key = loginUserId + "_" + System.currentTimeMillis();
         if (VerifyUtils.isNotEmpty(extension)) {
@@ -77,7 +77,7 @@ public class COSSDK {
      */
     public String upload(String key, InputStream inputStream, Integer size) {
         ApplicationPlatformKeyDomain projectPlatformKeyDomain =
-            projectPlatformKeyService.findByPlatform(Context.getProjectId(), PlatformEnum.TENCENT_CLOUD_COS);
+            projectPlatformKeyService.findByPlatform(Context.getApplicationId(), PlatformEnum.TENCENT_CLOUD_COS);
 
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(size);

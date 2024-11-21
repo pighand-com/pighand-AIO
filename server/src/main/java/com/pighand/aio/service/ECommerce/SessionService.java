@@ -17,10 +17,10 @@ public interface SessionService extends BaseService<SessionDomain> {
     /**
      * 创建
      *
-     * @param ProjectId 项目id，如果为null，则使用登录用户项目id
+     * @param ApplicationId 项目id，如果为null，则使用登录用户项目id
      * @return
      */
-    SessionVO create(Long ProjectId);
+    SessionVO create(Long ApplicationId);
 
     /**
      * 详情

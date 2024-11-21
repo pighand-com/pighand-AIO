@@ -78,7 +78,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
         boolean hasEmail = VerifyUtils.isNotEmpty(email);
 
         QueryChain query = this.queryChain().select(USER.USERNAME, USER.PHONE, USER.EMAIL)
-            .where(USER.PROJECT_ID.eq(Context.getProjectId()));
+            .where(USER.APPLICATION_ID.eq(Context.getApplicationId()));
 
         if (userId != null) {
             query.and(USER.ID.ne(userId));
@@ -187,7 +187,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
         return this.queryChain()
             .select(USER.ID, USER.ROLE_ID, USER.USERNAME, USER.PHONE, USER.EMAIL, USER.STATUS, USER_EXTENSION.PROFILE)
             .leftJoin(USER_EXTENSION).on(USER_EXTENSION.ID.eq(USER.ID))
-            .where(USER.PROJECT_ID.eq(Context.getProjectId())).and(USER.ID.eq(id)).oneAs(UserVO.class);
+            .where(USER.APPLICATION_ID.eq(Context.getApplicationId())).and(USER.ID.eq(id)).oneAs(UserVO.class);
     }
 
     /**
@@ -199,11 +199,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
     public PageOrList<UserVO> query(UserVO userVO) {
         userVO.setPageType(PageType.PAGE);
         userVO.setJoinTables(USER_EXTENSION.getTableName(), "bind_count");
-        userVO.setProjectId(Context.getProjectId());
+        userVO.setApplicationId(Context.getApplicationId());
 
         // like
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.where(USER.PROJECT_ID.eq(userVO.getProjectId()));
+        queryWrapper.where(USER.APPLICATION_ID.eq(userVO.getApplicationId()));
         if (VerifyUtils.isNotEmpty(userVO.getUsername())) {
             queryWrapper.and(USER.USERNAME.like(userVO.getUsername()));
         }

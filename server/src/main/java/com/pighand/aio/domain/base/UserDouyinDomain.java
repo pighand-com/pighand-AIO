@@ -34,8 +34,8 @@ public class UserDouyinDomain extends BaseDomainRecord<UserDouyinDomain> impleme
     @RequestFieldException("userDouyinUpdate")
     private Long id;
     @NotNull(groups = {ValidationGroup.Create.class})
-    @Schema(description = "项目id")
-    private Long projectId;
+    @Schema(description = "应用id")
+    private Long applicationId;
     @NotNull(groups = {ValidationGroup.Create.class})
     @Schema(description = "用户id")
     private Long userId;

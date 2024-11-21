@@ -14,5 +14,5 @@ import java.util.List;
 @Data
 public class ApplicationVO extends ApplicationDomain {
 
-    private List<ApplicationPlatformKeyVO> projectPlatformKey;
+    private List<ApplicationPlatformKeyVO> ApplicationPlatformKey;
 }

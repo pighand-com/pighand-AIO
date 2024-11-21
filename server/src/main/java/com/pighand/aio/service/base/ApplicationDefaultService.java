@@ -33,7 +33,7 @@ public interface ApplicationDefaultService extends BaseService<ApplicationDefaul
      * 分页或列表
      *
      * @param projectDefaultVO
-     * @return PageOrList<ProjectDefaultVO>
+     * @return PageOrList<ApplicationDefaultVO>
      */
     PageOrList<ApplicationDefaultVO> query(ApplicationDefaultVO projectDefaultVO);
 

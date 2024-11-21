@@ -10,7 +10,7 @@ import com.pighand.framework.spring.exception.ThrowPrompt;
 import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
 
-import static com.pighand.aio.domain.base.table.ProjectPlatformKeyTableDef.PROJECT_PLATFORM_KEY;
+import static com.pighand.aio.domain.base.table.ApplicationPlatformKeyTableDef.APPLICATION_PLATFORM_KEY;
 
 /**
  * 三方平台key
@@ -83,15 +83,15 @@ public class ApplicationPlatformKeyServiceImpl
     /**
      * 查询key
      *
-     * @param projectId
+     * @param applicationId
      * @param platform
      * @returns platformKey {@link ApplicationPlatformKeyDomain}
      */
     @Override
-    public ApplicationPlatformKeyDomain findByPlatform(Long projectId, PlatformEnum platform) {
+    public ApplicationPlatformKeyDomain findByPlatform(Long applicationId, PlatformEnum platform) {
         ApplicationPlatformKeyDomain projectPlatformKeyDomain =
-            this.queryChain().where(PROJECT_PLATFORM_KEY.PROJECT_ID.eq(projectId))
-                .and(PROJECT_PLATFORM_KEY.PLATFORM.eq(platform.value)).one();
+            this.queryChain().where(APPLICATION_PLATFORM_KEY.APPLICATION_ID.eq(applicationId))
+                .and(APPLICATION_PLATFORM_KEY.PLATFORM.eq(platform.value)).one();
 
         if (projectPlatformKeyDomain == null) {
             throw new ThrowPrompt("未配置三方平台key");

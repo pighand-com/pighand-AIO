@@ -75,7 +75,7 @@ public class WalletBillServiceImpl extends BaseServiceImpl<WalletBillMapper, Wal
      */
     @Override
     public List<WalletBillTop> queryBillTopBySessionGroup(WalletBillVO walletBillVO) {
-        Long projectId = Context.getProjectId();
+        Long applicationId = Context.getApplicationId();
         Integer top = walletBillVO.getTop();
         Long topBySessionId = walletBillVO.getTopBySessionId();
         String topByDateType = walletBillVO.getTopByDateType();
@@ -115,7 +115,7 @@ public class WalletBillServiceImpl extends BaseServiceImpl<WalletBillMapper, Wal
             queryChain.select(WALLET_BILL.USER_ID.as("userId"), QueryMethods.sum(WALLET_BILL.AMOUNT).as("amount"))
                 .innerJoin(USER).on(USER.ID.eq(WALLET_BILL.USER_ID).and(USER.ROLE_ID.eq(RoleEnum.USER.value)));
 
-            queryChain.where(WALLET_BILL.PROJECT_ID.eq(projectId));
+            queryChain.where(WALLET_BILL.APPLICATION_ID.eq(applicationId));
 
             if (topByDateType.equals("week")) {
                 LocalDate startOfWeek = currentDate.with(DayOfWeek.MONDAY);

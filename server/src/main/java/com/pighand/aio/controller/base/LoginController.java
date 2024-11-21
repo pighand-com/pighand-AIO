@@ -36,8 +36,8 @@ public class LoginController extends BaseController<UserService> {
 
     @Post("wechat/applet")
     public Result wechatApplet(@RequestBody Login login) {
-        Long projectId = Context.getProjectId();
-        UserVO userVO = wechatAppletService.signInByCode(projectId, login.getCode());
+        Long applicationId = Context.getApplicationId();
+        UserVO userVO = wechatAppletService.signInByCode(applicationId, login.getCode());
         return new Result(userVO);
     }
 

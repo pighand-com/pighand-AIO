@@ -10,7 +10,7 @@ import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
-import static com.pighand.aio.domain.base.table.ProjectPlatformPayTableDef.PROJECT_PLATFORM_PAY;
+import static com.pighand.aio.domain.base.table.ApplicationPlatformPayTableDef.APPLICATION_PLATFORM_PAY;
 
 /**
  * 项目 - 支付信息
@@ -51,7 +51,7 @@ public class ApplicationPlatformPayServiceImpl
      * 分页或列表
      *
      * @param projectPlatformPayVO
-     * @return PageOrList<ProjectPlatformPayVO>
+     * @return PageOrList<ApplicationPlatformPayVO>
      */
     @Override
     public PageOrList<ApplicationPlatformPayVO> query(ApplicationPlatformPayVO projectPlatformPayVO) {
@@ -59,17 +59,15 @@ public class ApplicationPlatformPayServiceImpl
         QueryWrapper queryWrapper = new QueryWrapper();
 
         // like
-        queryWrapper.and(PROJECT_PLATFORM_PAY.WECHAT_MERCHANT_ID.like(projectPlatformPayVO.getWechatMerchantId(),
+        queryWrapper.and(APPLICATION_PLATFORM_PAY.WECHAT_MERCHANT_ID.like(projectPlatformPayVO.getWechatMerchantId(),
             VerifyUtils::isNotEmpty));
-        queryWrapper.and(
-            PROJECT_PLATFORM_PAY.WECHAT_MERCHANT_PRIVATE_KEY.like(projectPlatformPayVO.getWechatMerchantPrivateKey(),
-                VerifyUtils::isNotEmpty));
-        queryWrapper.and(
-            PROJECT_PLATFORM_PAY.WECHAT_MERCHANT_CERTIFICATE.like(projectPlatformPayVO.getWechatMerchantCertificate(),
-                VerifyUtils::isNotEmpty));
-        queryWrapper.and(PROJECT_PLATFORM_PAY.WECHAT_MERCHANT_CERTIFICATE_SERIAL.like(
+        queryWrapper.and(APPLICATION_PLATFORM_PAY.WECHAT_MERCHANT_PRIVATE_KEY.like(
+            projectPlatformPayVO.getWechatMerchantPrivateKey(), VerifyUtils::isNotEmpty));
+        queryWrapper.and(APPLICATION_PLATFORM_PAY.WECHAT_MERCHANT_CERTIFICATE.like(
+            projectPlatformPayVO.getWechatMerchantCertificate(), VerifyUtils::isNotEmpty));
+        queryWrapper.and(APPLICATION_PLATFORM_PAY.WECHAT_MERCHANT_CERTIFICATE_SERIAL.like(
             projectPlatformPayVO.getWechatMerchantCertificateSerial(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(PROJECT_PLATFORM_PAY.WECHAT_MERCHANT_V3.like(projectPlatformPayVO.getWechatMerchantV3(),
+        queryWrapper.and(APPLICATION_PLATFORM_PAY.WECHAT_MERCHANT_V3.like(projectPlatformPayVO.getWechatMerchantV3(),
             VerifyUtils::isNotEmpty));
 
         return super.mapper.query(projectPlatformPayVO, queryWrapper);

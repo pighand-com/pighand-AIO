@@ -30,7 +30,7 @@ public class WalletTransferDomain extends BaseDomainRecord<WalletTransferDomain>
     private Long id;
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long projectId;
+    private Long applicationId;
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long fromUserId;

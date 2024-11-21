@@ -80,7 +80,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
 
         // 解析ApplicationId
         String applicationId = request.getHeader(HEADER_APPLICATION_ID);
-        if (VerifyUtils.isEmpty(applicationId)) {
+        if (VerifyUtils.isNotEmpty(applicationId)) {
             applicationIdLocal.set(Long.parseLong(applicationId));
         } else if (isApplicationRequired) {
             try {

@@ -42,9 +42,9 @@ public class AppletImpl extends AbstractWechat<UserInfo> implements TripartitePl
      * 解析code
      */
     @Override
-    protected UserInfo analysisCode(Long projectId, String code, String anonymousCode) {
+    protected UserInfo analysisCode(Long applicationId, String code, String anonymousCode) {
         ApplicationPlatformKeyDomain key =
-            platformKeyService.findByPlatform(projectId, PlatformEnum.WECHAT_MINI_PROGRAM);
+            platformKeyService.findByPlatform(applicationId, PlatformEnum.WECHAT_MINI_PROGRAM);
 
         String result = WechatSDK.MINI_APPLET.code2Session(key.getAppid(), key.getSecret(), code, null);
 
@@ -68,9 +68,9 @@ public class AppletImpl extends AbstractWechat<UserInfo> implements TripartitePl
     }
 
     @Override
-    protected String bindPhone(Long projectId, EncryptedData encryptedData) {
+    protected String bindPhone(Long applicationId, EncryptedData encryptedData) {
         ApplicationPlatformKeyDomain key =
-            platformKeyService.findByPlatform(projectId, PlatformEnum.WECHAT_MINI_PROGRAM);
+            platformKeyService.findByPlatform(applicationId, PlatformEnum.WECHAT_MINI_PROGRAM);
 
         Map<String, String> params = new HashMap<>();
         params.put("appid", key.getAppid());

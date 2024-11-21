@@ -85,7 +85,7 @@ public class UserExtensionServiceImpl extends BaseServiceImpl<UserExtensionMappe
         }
 
         if (userExtension.getProfile() == null || userExtension.getNickname() == null) {
-            ApplicationDefaultVO projectDefault = projectDefaultService.find(userExtension.getProjectId());
+            ApplicationDefaultVO projectDefault = projectDefaultService.find(userExtension.getApplicationId());
 
             userExtension.setProfile(projectDefault.getRandomProfile());
             userExtension.setNickname(projectDefault.getDefaultNickname());

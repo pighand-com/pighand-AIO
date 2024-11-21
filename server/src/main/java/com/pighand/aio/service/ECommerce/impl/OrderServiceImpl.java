@@ -15,7 +15,6 @@ import com.pighand.aio.service.base.ApplicationPlatformKeyService;
 import com.pighand.aio.service.base.ApplicationPlatformPayService;
 import com.pighand.aio.service.base.UserWechatService;
 import com.pighand.aio.vo.ECommerce.*;
-import com.pighand.aio.vo.ECommerce.TicketUserValidityVO;
 import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.exception.ThrowPrompt;
@@ -292,15 +291,15 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
         }
 
         if (orderVO.getOutTradePlatform() != null) {
-            Long projectId = Context.getProjectId();
+            Long applicationId = Context.getApplicationId();
             if (orderVO.getOutTradePlatform().equals(PlatformEnum.WECHAT_MINI_PROGRAM.value)) {
-                ApplicationPlatformPayDomain projectPlatformPayDomain = projectPlatformPayService.find(projectId);
+                ApplicationPlatformPayDomain projectPlatformPayDomain = projectPlatformPayService.find(applicationId);
                 ApplicationPlatformKeyDomain projectPlatformKeyDomain =
-                    projectPlatformKeyService.findByPlatform(projectId, PlatformEnum.WECHAT_MINI_PROGRAM);
+                    projectPlatformKeyService.findByPlatform(applicationId, PlatformEnum.WECHAT_MINI_PROGRAM);
 
                 UserWechatDomain userWechatDomain = wechatService.queryChain().select(USER_WECHAT.OPENID)
                     .where(USER_WECHAT.USER_ID.eq(Context.getLoginUser().getId()))
-                    .and(USER_WECHAT.PROJECT_ID.eq(projectId)).one();
+                    .and(USER_WECHAT.APPLICATION_ID.eq(applicationId)).one();
 
                 PayVO payVO = new PayVO();
                 String prepay_id =
@@ -396,7 +395,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
         try {
 
             ApplicationPlatformPayDomain projectPlatformPayDomain =
-                projectPlatformPayService.find(Context.getProjectId());
+                projectPlatformPayService.find(Context.getApplicationId());
             Config config =
                 wechat.getConfig(projectPlatformPayDomain.getWechatMerchantId(), uploadPath + "/apiclient_key.pem",
                     projectPlatformPayDomain.getWechatMerchantCertificateSerial(),
@@ -623,8 +622,8 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
         if (orderVO.getOrderTradeId() != null) {
             OrderTradeDomain orderTradeDomain = orderTradeService.getById(orderVO.getOrderTradeId());
 
-            Long projectId = Context.getProjectId();
-            ApplicationPlatformPayDomain projectPlatformPayDomain = projectPlatformPayService.find(projectId);
+            Long applicationId = Context.getApplicationId();
+            ApplicationPlatformPayDomain projectPlatformPayDomain = projectPlatformPayService.find(applicationId);
             wechat.refund(projectPlatformPayDomain.getWechatMerchantId(), uploadPath + "/apiclient_key.pem",
                 projectPlatformPayDomain.getWechatMerchantCertificateSerial(),
                 projectPlatformPayDomain.getWechatMerchantV3(), orderTradeDomain.getAmountPaid(),

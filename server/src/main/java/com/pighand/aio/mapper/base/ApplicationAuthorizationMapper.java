@@ -16,8 +16,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.pighand.aio.domain.base.table.ProjectAuthorizationTableDef.PROJECT_AUTHORIZATION;
-import static com.pighand.aio.domain.base.table.ProjectTableDef.PROJECT;
+import static com.pighand.aio.domain.base.table.ApplicationAuthorizationTableDef.APPLICATION_AUTHORIZATION;
+import static com.pighand.aio.domain.base.table.ApplicationTableDef.APPLICATION;
 
 /**
  * 项目 - 授权信息配置
@@ -42,11 +42,11 @@ public interface ApplicationAuthorizationMapper extends BaseMapper<ApplicationAu
             return queryWrapper;
         }
 
-        // PROJECT
-        if (joinTables.contains(PROJECT.getTableName())) {
-            queryWrapper.leftJoin(PROJECT).on(PROJECT.ID.eq(PROJECT_AUTHORIZATION.ID));
+        // APPLICATION
+        if (joinTables.contains(APPLICATION.getTableName())) {
+            queryWrapper.leftJoin(APPLICATION).on(APPLICATION.ID.eq(APPLICATION_AUTHORIZATION.ID));
 
-            joinTables.remove(PROJECT.getTableName());
+            joinTables.remove(APPLICATION.getTableName());
         }
 
         return queryWrapper;
@@ -95,7 +95,7 @@ public interface ApplicationAuthorizationMapper extends BaseMapper<ApplicationAu
     default ApplicationAuthorizationVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(PROJECT_AUTHORIZATION.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(APPLICATION_AUTHORIZATION.ID.eq(id));
 
         ApplicationAuthorizationVO result = this.selectOneByQueryAs(queryWrapper, ApplicationAuthorizationVO.class);
         this.relationMany(joinTableSet, result);

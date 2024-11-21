@@ -66,7 +66,7 @@ public class ThemeServiceImpl extends BaseServiceImpl<ThemeMapper, ThemeDomain> 
         queryWrapper.and(THEME.PICTURE_DESCRIPTION.like(themeVO.getPictureDescription(), VerifyUtils::isNotEmpty));
 
         // equal
-        queryWrapper.and(THEME.PROJECT_ID.eq(themeVO.getProjectId(), VerifyUtils::isNotEmpty));
+        queryWrapper.and(THEME.APPLICATION_ID.eq(themeVO.getApplicationId(), VerifyUtils::isNotEmpty));
         queryWrapper.and(THEME.STORE_ID.eq(themeVO.getStoreId(), VerifyUtils::isNotEmpty));
         queryWrapper.and(THEME.ORIGINAL_PRICE.eq(themeVO.getOriginalPrice(), VerifyUtils::isNotEmpty));
         queryWrapper.and(THEME.PRESENT_PRICE.eq(themeVO.getPresentPrice(), VerifyUtils::isNotEmpty));

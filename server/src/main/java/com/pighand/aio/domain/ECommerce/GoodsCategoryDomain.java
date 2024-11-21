@@ -34,7 +34,7 @@ public class GoodsCategoryDomain extends BaseDomainRecord<GoodsCategoryDomain> i
 
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long projectId;
+    private Long applicationId;
 
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)

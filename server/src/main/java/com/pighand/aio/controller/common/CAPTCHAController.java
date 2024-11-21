@@ -6,6 +6,7 @@ import com.pighand.aio.common.interceptor.Context;
 import com.pighand.framework.spring.api.annotation.Get;
 import com.pighand.framework.spring.api.annotation.RestController;
 import com.pighand.framework.spring.response.Result;
+import com.pighand.framework.spring.util.VerifyUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -20,9 +21,14 @@ public class CAPTCHAController {
 
     @Get(path = "code", docSummary = "获取验证码")
     public Result<CodeData> getCode(@RequestParam(required = true) String key) {
-        Long projectId = Context.getProjectId();
+        String applicationIdString = "_";
 
-        String cacheKey = verificationCache.cacheKey(projectId.toString(), key);
+        Long applicationId = Context.getApplicationId();
+        if (VerifyUtils.isNotEmpty(applicationId)) {
+            applicationIdString = applicationId.toString();
+        }
+
+        String cacheKey = verificationCache.cacheKey(applicationIdString, key);
         CodeData codeData = verificationCache.getNewCode(cacheKey);
 
         return new Result(codeData);

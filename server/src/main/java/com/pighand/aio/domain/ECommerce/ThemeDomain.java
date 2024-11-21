@@ -30,7 +30,7 @@ public class ThemeDomain extends BaseDomainRecord<ThemeDomain> implements Serial
     @RequestFieldException("themeCreate")
     @RequestFieldException("themeUpdate")
     private Long id;
-    private Long projectId;
+    private Long applicationId;
     private Long storeId;
     @Length(max = 32)
     @Schema(description = "主题名称")

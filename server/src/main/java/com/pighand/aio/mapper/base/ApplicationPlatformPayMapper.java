@@ -16,8 +16,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.pighand.aio.domain.base.table.ProjectPlatformPayTableDef.PROJECT_PLATFORM_PAY;
-import static com.pighand.aio.domain.base.table.ProjectTableDef.PROJECT;
+import static com.pighand.aio.domain.base.table.ApplicationPlatformPayTableDef.APPLICATION_PLATFORM_PAY;
+import static com.pighand.aio.domain.base.table.ApplicationTableDef.APPLICATION;
 
 /**
  * 项目 - 支付信息
@@ -42,11 +42,11 @@ public interface ApplicationPlatformPayMapper extends BaseMapper<ApplicationPlat
             return queryWrapper;
         }
 
-        // PROJECT
-        if (joinTables.contains(PROJECT.getTableName())) {
-            queryWrapper.leftJoin(PROJECT).on(PROJECT.ID.eq(PROJECT_PLATFORM_PAY.ID));
+        // APPLICATION
+        if (joinTables.contains(APPLICATION.getTableName())) {
+            queryWrapper.leftJoin(APPLICATION).on(APPLICATION.ID.eq(APPLICATION_PLATFORM_PAY.ID));
 
-            joinTables.remove(PROJECT.getTableName());
+            joinTables.remove(APPLICATION.getTableName());
         }
 
         return queryWrapper;
@@ -95,7 +95,7 @@ public interface ApplicationPlatformPayMapper extends BaseMapper<ApplicationPlat
     default ApplicationPlatformPayVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(PROJECT_PLATFORM_PAY.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(APPLICATION_PLATFORM_PAY.ID.eq(id));
 
         ApplicationPlatformPayVO result = this.selectOneByQueryAs(queryWrapper, ApplicationPlatformPayVO.class);
         this.relationMany(joinTableSet, result);

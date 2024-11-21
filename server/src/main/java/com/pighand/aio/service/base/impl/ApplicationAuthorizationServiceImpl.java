@@ -1,11 +1,11 @@
 package com.pighand.aio.service.base.impl;
 
-import com.pighand.framework.spring.base.BaseServiceImpl;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.domain.base.ApplicationAuthorizationDomain;
 import com.pighand.aio.mapper.base.ApplicationAuthorizationMapper;
 import com.pighand.aio.service.base.ApplicationAuthorizationService;
 import com.pighand.aio.vo.base.ApplicationAuthorizationVO;
+import com.pighand.framework.spring.base.BaseServiceImpl;
+import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
 
 /**
@@ -40,7 +40,7 @@ public class ApplicationAuthorizationServiceImpl
      */
     @Override
     public ApplicationAuthorizationDomain find(Long id) {
-        //        ProjectAuthorizationDomain projectAuthorizationDomain = super.mapper.selectById(id);
+        //        ApplicationAuthorizationDomain projectAuthorizationDomain = super.mapper.selectById(id);
         //        return projectAuthorizationDomain;
         return null;
 

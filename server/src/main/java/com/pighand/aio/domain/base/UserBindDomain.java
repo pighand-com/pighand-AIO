@@ -31,7 +31,7 @@ public class UserBindDomain extends BaseDomainRecord<UserBindDomain> implements 
     private Long id;
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long projectId;
+    private Long applicationId;
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long upperId;

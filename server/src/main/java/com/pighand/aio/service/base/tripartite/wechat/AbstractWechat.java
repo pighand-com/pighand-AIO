@@ -3,8 +3,8 @@ package com.pighand.aio.service.base.tripartite.wechat;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.common.enums.PlatformEnum;
 import com.pighand.aio.common.enums.UserStatusEnum;
-import com.pighand.aio.domain.base.UserWechatDomain;
 import com.pighand.aio.common.sdk.wechat.entity.WechatResponse;
+import com.pighand.aio.domain.base.UserWechatDomain;
 import com.pighand.aio.service.base.UserWechatService;
 import com.pighand.aio.service.base.tripartite.AbstractTripartitePlatform;
 import com.pighand.aio.vo.base.UserWechatVO;
@@ -38,9 +38,9 @@ public abstract class AbstractWechat<T extends WechatResponse> extends AbstractT
      * <p>3. 如果unionid用户存在，则使用此用户的userId
      */
     @Override
-    protected UserPlatformInfo checkUserExist(Long projectId, T analysisInfo) {
+    protected UserPlatformInfo checkUserExist(Long applicationId, T analysisInfo) {
         // find by openid
-        QueryWrapper queryOpenid = QueryWrapper.create().eq(UserWechatDomain::getProjectId, projectId)
+        QueryWrapper queryOpenid = QueryWrapper.create().eq(UserWechatDomain::getApplicationId, applicationId)
             .eq(UserWechatDomain::getOpenid, analysisInfo.getOpenid()).limit(1);
         UserWechatDomain userByOpenid = userWechatService.getOne(queryOpenid);
 
@@ -49,7 +49,7 @@ public abstract class AbstractWechat<T extends WechatResponse> extends AbstractT
             .equals(analysisInfo.getUnionid());
         UserWechatDomain userByUnionid = null;
         if (isChangeUnionid) {
-            QueryWrapper queryUnionid = QueryWrapper.create().eq(UserWechatDomain::getProjectId, projectId)
+            QueryWrapper queryUnionid = QueryWrapper.create().eq(UserWechatDomain::getApplicationId, applicationId)
                 .eq(UserWechatDomain::getUnionid, analysisInfo.getUnionid()).limit(1);
             userByUnionid = userWechatService.getOne(queryUnionid);
         }
@@ -69,11 +69,11 @@ public abstract class AbstractWechat<T extends WechatResponse> extends AbstractT
      * <p>不存在 - 创建; 存在 & unionid不同 - 更新unionid
      */
     @Override
-    protected void syncPlatform(Long projectId, T analysisInfo, UserPlatformInfo userPlatformInfo,
+    protected void syncPlatform(Long applicationId, T analysisInfo, UserPlatformInfo userPlatformInfo,
         UserStatusEnum newUserStatus) {
         UserWechatVO userWechatVO = new UserWechatVO();
         if (userPlatformInfo.getDbId() == null) {
-            userWechatVO.setProjectId(projectId);
+            userWechatVO.setApplicationId(applicationId);
             userWechatVO.setUserId(userPlatformInfo.getUserId());
             userWechatVO.setOpenid(analysisInfo.getOpenid());
             userWechatVO.setUnionid(analysisInfo.getUnionid());

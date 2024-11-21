@@ -1,9 +1,9 @@
 package com.pighand.aio.service.base;
 
-import com.pighand.framework.spring.base.BaseService;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.domain.base.ApplicationAuthorizationDomain;
 import com.pighand.aio.vo.base.ApplicationAuthorizationVO;
+import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.page.PageOrList;
 
 /**
  * Authorization配置
@@ -33,7 +33,7 @@ public interface ApplicationAuthorizationService extends BaseService<Application
      * 分页或列表
      *
      * @param projectAuthorizationVO
-     * @return PageOrList<ProjectAuthorizationVO>
+     * @return PageOrList<ApplicationAuthorizationVO>
      */
     PageOrList<ApplicationAuthorizationVO> query(ApplicationAuthorizationVO projectAuthorizationVO);
 

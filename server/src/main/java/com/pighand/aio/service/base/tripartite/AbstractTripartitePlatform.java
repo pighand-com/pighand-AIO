@@ -56,21 +56,21 @@ public abstract class AbstractTripartitePlatform<T> {
     /**
      * 解析code
      *
-     * @param projectId     项目id
+     * @param applicationId 项目id
      * @param code          三方平台code
      * @param anonymousCode 匿名code
      * @return T
      */
-    protected abstract T analysisCode(Long projectId, String code, String anonymousCode);
+    protected abstract T analysisCode(Long applicationId, String code, String anonymousCode);
 
     /**
      * 校验用户在库中是否存在
      *
-     * @param projectId    项目id
-     * @param analysisInfo CODE解析信息
+     * @param applicationId 项目id
+     * @param analysisInfo  CODE解析信息
      * @return userPlatformInfo {@link UserPlatformInfo}
      */
-    protected abstract UserPlatformInfo checkUserExist(Long projectId, T analysisInfo);
+    protected abstract UserPlatformInfo checkUserExist(Long applicationId, T analysisInfo);
 
     /**
      * 获取用户平台信息
@@ -83,23 +83,23 @@ public abstract class AbstractTripartitePlatform<T> {
     /**
      * 绑定手机号
      *
-     * @param projectId
+     * @param applicationId
      * @param encryptedData
      * @return
      */
-    protected abstract String bindPhone(Long projectId, EncryptedData encryptedData);
+    protected abstract String bindPhone(Long applicationId, EncryptedData encryptedData);
 
     /**
      * 同步用户平台信息
      *
      * <p>创建或更新
      *
-     * @param projectId        项目id
+     * @param applicationId    项目id
      * @param analysisInfo     CODE解析信息
      * @param userPlatformInfo 用户平台信息
      * @param newUserStatus    新用户状态
      */
-    protected abstract void syncPlatform(Long projectId, T analysisInfo, UserPlatformInfo userPlatformInfo,
+    protected abstract void syncPlatform(Long applicationId, T analysisInfo, UserPlatformInfo userPlatformInfo,
         UserStatusEnum newUserStatus);
 
     /**
@@ -107,8 +107,8 @@ public abstract class AbstractTripartitePlatform<T> {
      *
      * @see #signInByCode(Long, String, String)
      */
-    public UserVO signInByCode(Long projectId, String code, Long roleId) {
-        return this.signInByCode(projectId, code, null, roleId);
+    public UserVO signInByCode(Long applicationId, String code, Long roleId) {
+        return this.signInByCode(applicationId, code, null, roleId);
     }
 
     /**
@@ -116,8 +116,8 @@ public abstract class AbstractTripartitePlatform<T> {
      *
      * @see #signInByCode(Long, String, String)
      */
-    public UserVO signInByCode(Long projectId, String code) {
-        return this.signInByCode(projectId, code, null, null);
+    public UserVO signInByCode(Long applicationId, String code) {
+        return this.signInByCode(applicationId, code, null, null);
     }
 
     /**
@@ -125,8 +125,8 @@ public abstract class AbstractTripartitePlatform<T> {
      *
      * @see #signInByCode(Long, String, String)
      */
-    public UserVO signInByCode(Long projectId, String code, String anonymousCode) {
-        return this.signInByCode(projectId, code, anonymousCode, null);
+    public UserVO signInByCode(Long applicationId, String code, String anonymousCode) {
+        return this.signInByCode(applicationId, code, anonymousCode, null);
     }
 
     /**
@@ -142,17 +142,17 @@ public abstract class AbstractTripartitePlatform<T> {
      *
      * <p>5. 使用三方平台的用户信息，创建或更新用户扩展数据
      *
-     * @param projectId     项目id
+     * @param applicationId 项目id
      * @param code          三方平台code
      * @param anonymousCode 匿名code
      * @return token
      */
-    public UserVO signInByCode(Long projectId, String code, String anonymousCode, Long roleId) {
+    public UserVO signInByCode(Long applicationId, String code, String anonymousCode, Long roleId) {
         // 1. 解析CODE
-        T analysisInfo = this.analysisCode(projectId, code, anonymousCode);
+        T analysisInfo = this.analysisCode(applicationId, code, anonymousCode);
 
         // 2. 用户是否存在
-        UserPlatformInfo userPlatformInfo = this.checkUserExist(projectId, analysisInfo);
+        UserPlatformInfo userPlatformInfo = this.checkUserExist(applicationId, analysisInfo);
         boolean isUserExist = userPlatformInfo != null && userPlatformInfo.getUserId() != null;
 
         UserVO userInfo = null;
@@ -161,7 +161,7 @@ public abstract class AbstractTripartitePlatform<T> {
         UserStatusEnum newUserStatus = null;
         if (!isUserExist) {
             UserVO userVO = new UserVO();
-            userVO.setProjectId(projectId);
+            userVO.setApplicationId(applicationId);
             userVO.setInitialSourcePlatform(this.userSourcePlatform);
 
             if (roleId == null) {
@@ -219,7 +219,7 @@ public abstract class AbstractTripartitePlatform<T> {
         }
 
         // 3. 同步用户平台数据
-        this.syncPlatform(projectId, analysisInfo, userPlatformInfo, newUserStatus);
+        this.syncPlatform(applicationId, analysisInfo, userPlatformInfo, newUserStatus);
 
         // 4. 查询三方平台数据
         TripartitePlatformUserInfo platFormUserInfo = this.getPlatformUserInfo(analysisInfo);
@@ -229,7 +229,7 @@ public abstract class AbstractTripartitePlatform<T> {
         if (userExtensionDomain == null) {
             userExtensionDomain = new UserExtensionDomain();
             userExtensionDomain.setId(userInfo.getId());
-            userExtensionDomain.setProjectId(projectId);
+            userExtensionDomain.setApplicationId(applicationId);
             userExtensionDomain.setNickname(platFormUserInfo.getNickname());
             userExtensionDomain.setProfile(platFormUserInfo.getProfile());
             userExtensionDomain.setGender(platFormUserInfo.getGender());
@@ -243,15 +243,15 @@ public abstract class AbstractTripartitePlatform<T> {
     /**
      * 绑定手机号
      *
-     * @param projectId
+     * @param applicationId
      * @param userId
      * @param code
      */
-    public String bindPhone(Long projectId, Long userId, String code) {
+    public String bindPhone(Long applicationId, Long userId, String code) {
         EncryptedData encryptedData = new EncryptedData();
         encryptedData.setCode(code);
 
-        String phone = this.bindPhone(projectId, encryptedData);
+        String phone = this.bindPhone(applicationId, encryptedData);
 
         UserDomain userDomain = new UserDomain();
         userDomain.setId(userId);

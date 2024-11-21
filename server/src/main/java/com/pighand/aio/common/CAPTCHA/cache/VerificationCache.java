@@ -31,16 +31,16 @@ public class VerificationCache {
     /**
      * 缓存key
      *
-     * @param projectId
-     * @param keyValue  缓存的关键字值，如用户名、邮箱等
+     * @param applicationId
+     * @param keyValue      缓存的关键字值，如用户名、邮箱等
      * @return
      */
-    public String cacheKey(String projectId, String keyValue) {
+    public String cacheKey(String applicationId, String keyValue) {
         if (VerifyUtils.isEmpty(keyValue)) {
             return null;
         }
 
-        return "CAPTCHA_" + projectId + "_" + keyValue;
+        return "CAPTCHA_" + applicationId + "_" + keyValue;
     }
 
     /**

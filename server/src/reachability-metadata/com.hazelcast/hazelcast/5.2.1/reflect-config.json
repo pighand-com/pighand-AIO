@@ -4570,7 +4570,7 @@
     "condition": {
       "typeReachable": "com.hazelcast.internal.serialization.impl.DataSerializableSerializer"
     },
-    "name": "com.hazelcast.projection.impl.ProjectionDataSerializerHook",
+    "name": "com.hazelcast.projection.impl.ApplicationionDataSerializerHook",
     "methods": [
       {
         "name": "<init>",

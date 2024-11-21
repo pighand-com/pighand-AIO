@@ -34,7 +34,7 @@ public class GoodsSkuDomain extends GoodsBaseInfo implements Serializable {
 
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long projectId;
+    private Long applicationId;
 
     @Length(max = 32)
     @Schema(description = "属性。格式：attributeKey1_attributeVlaue1,attributeKey2_attributeVlaue2")

@@ -1,9 +1,9 @@
 package com.pighand.aio.service.base;
 
-import com.pighand.framework.spring.base.BaseService;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.domain.base.ApplicationDomain;
 import com.pighand.aio.vo.base.ApplicationVO;
+import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.page.PageOrList;
 
 /**
  * 项目
@@ -33,7 +33,7 @@ public interface ApplicationService extends BaseService<ApplicationDomain> {
      * 分页或列表
      *
      * @param projectVO
-     * @return PageOrList<ProjectVO>
+     * @return PageOrList<ApplicationVO>
      */
     PageOrList<ApplicationVO> query(ApplicationVO projectVO);
 

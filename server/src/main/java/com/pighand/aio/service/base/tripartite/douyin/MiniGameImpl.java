@@ -1,8 +1,8 @@
 package com.pighand.aio.service.base.tripartite.douyin;
 
 import com.pighand.aio.common.enums.PlatformEnum;
-import com.pighand.aio.domain.base.ApplicationPlatformKeyDomain;
 import com.pighand.aio.common.sdk.douyin.entity.AccessToken;
+import com.pighand.aio.domain.base.ApplicationPlatformKeyDomain;
 import com.pighand.aio.service.base.ApplicationPlatformKeyService;
 import com.pighand.aio.service.base.TripartitePlatformService;
 import com.pighand.aio.vo.base.tripartite.EncryptedData;
@@ -27,8 +27,9 @@ public class MiniGameImpl extends AbstractDouyin<AccessToken> implements Tripart
      * 解析code
      */
     @Override
-    protected AccessToken analysisCode(Long projectId, String code, String anonymousCode) {
-        ApplicationPlatformKeyDomain key = platformKeyService.findByPlatform(projectId, PlatformEnum.DOUYIN_MINI_GAME);
+    protected AccessToken analysisCode(Long applicationId, String code, String anonymousCode) {
+        ApplicationPlatformKeyDomain key =
+            platformKeyService.findByPlatform(applicationId, PlatformEnum.DOUYIN_MINI_GAME);
 
         //        return DouyinSDK.MINI_GAME.code2session(key.getAppid(), key.getSecret(), code, anonymousCode);
         return null;
@@ -43,7 +44,7 @@ public class MiniGameImpl extends AbstractDouyin<AccessToken> implements Tripart
     }
 
     @Override
-    protected String bindPhone(Long projectId, EncryptedData encryptedData) {
+    protected String bindPhone(Long applicationId, EncryptedData encryptedData) {
         return "";
     }
 }

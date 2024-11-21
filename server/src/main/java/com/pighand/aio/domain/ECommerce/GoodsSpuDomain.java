@@ -39,7 +39,7 @@ public class GoodsSpuDomain extends BaseDomainRecord<GoodsSpuDomain> implements 
 
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long projectId;
+    private Long applicationId;
 
     @Schema(description = "商户id")
     @JsonDeserialize(using = ToLongSerializer.class)

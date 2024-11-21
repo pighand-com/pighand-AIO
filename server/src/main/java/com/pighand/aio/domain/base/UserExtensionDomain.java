@@ -37,10 +37,10 @@ public class UserExtensionDomain extends BaseDomainRecord<UserExtensionDomain> i
     private Long id;
 
     @NotNull(groups = {ValidationGroup.Create.class})
-    @Schema(description = "项目id")
+    @Schema(description = "应用id")
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    private Long projectId;
+    private Long applicationId;
 
     @Length(max = 16)
     @Schema(description = "昵称")

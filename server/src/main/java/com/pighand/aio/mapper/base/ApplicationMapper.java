@@ -18,11 +18,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.pighand.aio.domain.base.table.ProjectAuthorizationTableDef.PROJECT_AUTHORIZATION;
-import static com.pighand.aio.domain.base.table.ProjectDefaultTableDef.PROJECT_DEFAULT;
-import static com.pighand.aio.domain.base.table.ProjectPlatformKeyTableDef.PROJECT_PLATFORM_KEY;
-import static com.pighand.aio.domain.base.table.ProjectPlatformPayTableDef.PROJECT_PLATFORM_PAY;
-import static com.pighand.aio.domain.base.table.ProjectTableDef.PROJECT;
+import static com.pighand.aio.domain.base.table.ApplicationAuthorizationTableDef.APPLICATION_AUTHORIZATION;
+import static com.pighand.aio.domain.base.table.ApplicationDefaultTableDef.APPLICATION_DEFAULT;
+import static com.pighand.aio.domain.base.table.ApplicationPlatformKeyTableDef.APPLICATION_PLATFORM_KEY;
+import static com.pighand.aio.domain.base.table.ApplicationPlatformPayTableDef.APPLICATION_PLATFORM_PAY;
+import static com.pighand.aio.domain.base.table.ApplicationTableDef.APPLICATION;
 
 /**
  * 项目 - 基本信息
@@ -47,25 +47,25 @@ public interface ApplicationMapper extends BaseMapper<ApplicationDomain> {
             return queryWrapper;
         }
 
-        // PROJECT_DEFAULT
-        if (joinTables.contains(PROJECT_DEFAULT.getTableName())) {
-            queryWrapper.leftJoin(PROJECT_DEFAULT).on(PROJECT_DEFAULT.ID.eq(PROJECT.ID));
+        // APPLICATION_DEFAULT
+        if (joinTables.contains(APPLICATION_DEFAULT.getTableName())) {
+            queryWrapper.leftJoin(APPLICATION_DEFAULT).on(APPLICATION_DEFAULT.ID.eq(APPLICATION.ID));
 
-            joinTables.remove(PROJECT_DEFAULT.getTableName());
+            joinTables.remove(APPLICATION_DEFAULT.getTableName());
         }
 
-        // PROJECT_AUTHORIZATION
-        if (joinTables.contains(PROJECT_AUTHORIZATION.getTableName())) {
-            queryWrapper.leftJoin(PROJECT_AUTHORIZATION).on(PROJECT_AUTHORIZATION.ID.eq(PROJECT.ID));
+        // APPLICATION_AUTHORIZATION
+        if (joinTables.contains(APPLICATION_AUTHORIZATION.getTableName())) {
+            queryWrapper.leftJoin(APPLICATION_AUTHORIZATION).on(APPLICATION_AUTHORIZATION.ID.eq(APPLICATION.ID));
 
-            joinTables.remove(PROJECT_AUTHORIZATION.getTableName());
+            joinTables.remove(APPLICATION_AUTHORIZATION.getTableName());
         }
 
-        // PROJECT_PLATFORM_PAY
-        if (joinTables.contains(PROJECT_PLATFORM_PAY.getTableName())) {
-            queryWrapper.leftJoin(PROJECT_PLATFORM_PAY).on(PROJECT_PLATFORM_PAY.ID.eq(PROJECT.ID));
+        // APPLICATION_PLATFORM_PAY
+        if (joinTables.contains(APPLICATION_PLATFORM_PAY.getTableName())) {
+            queryWrapper.leftJoin(APPLICATION_PLATFORM_PAY).on(APPLICATION_PLATFORM_PAY.ID.eq(APPLICATION.ID));
 
-            joinTables.remove(PROJECT_PLATFORM_PAY.getTableName());
+            joinTables.remove(APPLICATION_PLATFORM_PAY.getTableName());
         }
 
         return queryWrapper;
@@ -95,22 +95,22 @@ public interface ApplicationMapper extends BaseMapper<ApplicationDomain> {
             subTableQueriesSingle = new ArrayList<>(joinTables.size());
         }
 
-        // PROJECT_PLATFORM_KEY
-        if (joinTables.contains(PROJECT_PLATFORM_KEY.getTableName())) {
+        // APPLICATION_PLATFORM_KEY
+        if (joinTables.contains(APPLICATION_PLATFORM_KEY.getTableName())) {
             mainIdGetters.add(ApplicationVO::getId);
 
             if (subTableQueriesList != null) {
                 subTableQueriesList.add(
-                    ids -> new ApplicationPlatformKeyDomain().select(PROJECT_PLATFORM_KEY.DEFAULT_COLUMNS)
-                        .where(PROJECT_PLATFORM_KEY.PROJECT_ID.in(ids)).listAs(ApplicationPlatformKeyVO.class));
+                    ids -> new ApplicationPlatformKeyDomain().select(APPLICATION_PLATFORM_KEY.DEFAULT_COLUMNS)
+                        .where(APPLICATION_PLATFORM_KEY.APPLICATION_ID.in(ids)).listAs(ApplicationPlatformKeyVO.class));
             } else {
                 subTableQueriesSingle.add(
-                    id -> new ApplicationPlatformKeyDomain().select(PROJECT_PLATFORM_KEY.DEFAULT_COLUMNS)
-                        .where(PROJECT_PLATFORM_KEY.PROJECT_ID.eq(id)).listAs(ApplicationPlatformKeyVO.class));
+                    id -> new ApplicationPlatformKeyDomain().select(APPLICATION_PLATFORM_KEY.DEFAULT_COLUMNS)
+                        .where(APPLICATION_PLATFORM_KEY.APPLICATION_ID.eq(id)).listAs(ApplicationPlatformKeyVO.class));
             }
 
-            subTableIdGetter.add(obj -> ((ApplicationPlatformKeyVO)obj).getProjectId());
-            subResultSetter.add((vo, list) -> vo.setProjectPlatformKey((List<ApplicationPlatformKeyVO>)list));
+            subTableIdGetter.add(obj -> ((ApplicationPlatformKeyVO)obj).getApplicationId());
+            subResultSetter.add((vo, list) -> vo.setApplicationPlatformKey((List<ApplicationPlatformKeyVO>)list));
         }
 
         if (result instanceof List) {
@@ -131,7 +131,7 @@ public interface ApplicationMapper extends BaseMapper<ApplicationDomain> {
     default ApplicationVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(PROJECT.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(APPLICATION.ID.eq(id));
 
         ApplicationVO result = this.selectOneByQueryAs(queryWrapper, ApplicationVO.class);
         this.relationMany(joinTableSet, result);

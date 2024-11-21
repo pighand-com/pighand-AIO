@@ -3,9 +3,9 @@ import axios, { AxiosResponse, HttpStatusCode } from 'axios';
 
 import router from '@/routers/index';
 import constant from './constant';
-import { getToken } from './storage';
+import { getToken, clearAll } from './storage';
 
-const default_project_id = 1;
+const default_application_id = 1;
 
 /**
  * 将所有状态码视为成功
@@ -34,7 +34,9 @@ const disposeResponse = (
         isSuccess = false;
         errorMsg = data.msg || data.error;
     } else if (status === HttpStatusCode.Unauthorized) {
+        clearAll();
         router.push('/login');
+        return;
     } else if (status !== HttpStatusCode.Ok) {
         isSuccess = false;
         errorMsg = data;
@@ -90,7 +92,7 @@ const get = async (
     const axiosConfig: any = {
         params: params || {},
         headers: {
-            'X-Project-Id': default_project_id,
+            'X-Application-Id': default_application_id,
             ...(config?.headers || {}),
             Authorization: getToken()
         }
@@ -124,7 +126,7 @@ const post = async (
     const axiosConfig: any = {
         params: config?.params || {},
         headers: {
-            'X-Project-Id': default_project_id,
+            'X-Application-Id': default_application_id,
             ...(config?.headers || {}),
             Authorization: getToken()
         }
@@ -156,7 +158,7 @@ const put = async (
     const result = await axios.put(url, data, {
         params: config?.params || {},
         headers: {
-            'X-Project-Id': default_project_id,
+            'X-Application-Id': default_application_id,
             ...(config?.headers || {}),
             Authorization: getToken()
         }
@@ -174,7 +176,7 @@ const del = async (
     const result = await axios.delete(url, {
         params: params || {},
         headers: {
-            'X-Project-Id': default_project_id,
+            'X-Application-Id': default_application_id,
             ...(config?.headers || {}),
             Authorization: getToken()
         }

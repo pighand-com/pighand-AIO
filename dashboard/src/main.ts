@@ -17,6 +17,7 @@ import Drawer from '@/components/Drawer.vue';
 import Dialog from '@/components/Dialog.vue';
 import DataTable from '@/components/DataTable.vue';
 import ImageView from '@/components/ImageView.vue';
+import DataManager from '@/components/DataManager.vue';
 
 const app = createApp(App);
 app.use(VueDOMPurifyHTML);
@@ -30,6 +31,7 @@ app.component('PDrawer', Drawer);
 app.component('PDialog', Dialog);
 app.component('PDataTable', DataTable);
 app.component('PImageView', ImageView);
+app.component('PDataManager', DataManager);
 
 const store = createStore({
     state() {

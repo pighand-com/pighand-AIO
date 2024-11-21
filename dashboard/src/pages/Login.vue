@@ -108,6 +108,15 @@ const getDefaultRouterPath = () => {
 
 const handleInput = (key: string) => {
     errorFields.value.delete(key);
+
+    if (
+        loginForm.captcha &&
+        loginForm.captcha.length === 4 &&
+        loginForm.username &&
+        loginForm.password
+    ) {
+        login();
+    }
 };
 
 const handleBlur = (key: string) => {

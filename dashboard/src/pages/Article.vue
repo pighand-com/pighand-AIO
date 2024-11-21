@@ -1,18 +1,14 @@
 <template>
-    <PSearch :handle-query="article.query"> </PSearch>
-
-    <PDataTable
+    <PDataManager
         :handle-query="article.query"
         :handle-find="article.find"
-        :handle-delete="article.del">
-    </PDataTable>
-
-    <PDrawer
+        :handle-delete="article.del"
         :handle-create="article.create"
         :handle-update="article.update"
-        :handle-query="article.query"
-        :size="'60%'">
-        <template #[`2-after`]>
+        :drawer-props="{
+            size: '60%'
+        }">
+        <template #[`drawer-2-after`]>
             <el-form-item label="分类" prop="categories">
                 <el-cascader
                     :options="allCategories"
@@ -21,7 +17,7 @@
                     clearable />
             </el-form-item>
         </template>
-    </PDrawer>
+    </PDataManager>
 </template>
 
 <script lang="ts" setup>

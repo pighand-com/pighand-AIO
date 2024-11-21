@@ -1,6 +1,195 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
-    <span v-for="(item, index) in props.formColumns" :key="index">
+    <el-row :gutter="20" v-if="props.onWhere === 'search'">
+        <el-col
+            :xs="24"
+            :md="item.domType === 'datePickerRange' ? 12 : 12"
+            :lg="item.domType === 'datePickerRange' ? 8 : 6"
+            :xl="item.domType === 'datePickerRange' ? 4 : 3"
+            v-for="(item, index) in props.formColumns"
+            :key="index">
+            <slot :name="`${onWhere}-${index}-before`" />
+
+            <el-form-item
+                v-show="!item.hidden"
+                :label="item.label"
+                :prop="item.prop">
+                <el-input
+                    v-if="!item.domType || item.domType === 'input'"
+                    v-bind="item.componentProps || {}"
+                    v-model="formModel[item.prop]"
+                    :type="item.inputType || 'text'"
+                    :show-password="item.inputType === 'password'"
+                    :placeholder="item[placeholder] || item.placeholder"
+                    autocomplete="off"
+                    clearable />
+
+                <el-input-number
+                    v-if="item.domType === 'number'"
+                    v-bind="item.componentProps || {}"
+                    v-model="formModel[item.prop]"
+                    clearable />
+
+                <el-select
+                    v-if="item.domType === 'select'"
+                    v-bind="item.componentProps || {}"
+                    v-model="formModel[item.prop]"
+                    :placeholder="
+                        item[placeholder] ||
+                        item.placeholder ||
+                        onWhere === 'search'
+                            ? '全部'
+                            : ''
+                    "
+                    :remote-method="getDomData[item.label + item.prop]"
+                    :remote="!!getDomData[item.label + item.prop]"
+                    :loading="domDataSetLoading[item.label + item.prop]"
+                    remote-show-suffix
+                    filterable
+                    clearable>
+                    <el-option
+                        v-for="domDataItem in domDataSet[item.prop]"
+                        :key="domDataItem.value"
+                        :label="domDataItem.label"
+                        :value="domDataItem.value" />
+                </el-select>
+
+                <el-date-picker
+                    v-if="item.domType === 'dateTimePicker'"
+                    v-bind="item.componentProps || {}"
+                    v-model="formModel[item.prop]"
+                    type="datetime"
+                    :placeholder="
+                        item[placeholder] ||
+                        item.placeholder ||
+                        onWhere === 'search'
+                            ? '全部'
+                            : ''
+                    "
+                    clearable>
+                </el-date-picker>
+
+                <el-date-picker
+                    v-if="
+                        item.domType === 'datePicker' ||
+                        item.domType === 'datePickerRange'
+                    "
+                    v-bind="item.componentProps || {}"
+                    v-model="formModel[item.prop]"
+                    :type="item.domType === 'datePicker' ? 'date' : 'daterange'"
+                    range-separator="-"
+                    value-format="YYYY-MM-DD"
+                    :placeholder="
+                        item[placeholder] ||
+                        item.placeholder ||
+                        onWhere === 'search'
+                            ? '全部'
+                            : ''
+                    "
+                    clearable>
+                </el-date-picker>
+
+                <div
+                    v-for="(imageItem, imageIndex) in (
+                        (item.domType === 'uploadImage'
+                            ? [formModel[item.prop]]
+                            : item.domType === 'uploadImageList'
+                            ? formModel[item.prop]
+                            : []) || []
+                    ).filter((formImageItem) => formImageItem)"
+                    :key="'image_' + imageIndex"
+                    class="upload-image-list">
+                    <img :src="imageItem" class="image" />
+
+                    <span class="upload-operation">
+                        <span
+                            @click.stop
+                            @click="
+                                handlePictureCardPreview(
+                                    item.prop,
+                                    imageIndex,
+                                    item.domType
+                                )
+                            "
+                            :style="{ cursor: 'pointer' }">
+                            <el-icon><ZoomIn /></el-icon>
+                        </span>
+                        <span
+                            @click.stop
+                            @click="
+                                handleDownload(
+                                    item.prop,
+                                    imageIndex,
+                                    item.domType
+                                )
+                            "
+                            :style="{ cursor: 'pointer' }">
+                            <el-icon><Download /></el-icon>
+                        </span>
+                        <span
+                            @click.stop
+                            @click="
+                                handleRemove(
+                                    item.prop,
+                                    imageIndex,
+                                    item.domType
+                                )
+                            "
+                            :style="{ cursor: 'pointer' }">
+                            <el-icon><Delete /></el-icon>
+                        </span>
+                    </span>
+                </div>
+                <el-upload
+                    v-if="
+                        (item.domType === 'uploadImage' &&
+                            !formModel[item.prop]) ||
+                        item.domType === 'uploadImageList'
+                    "
+                    v-bind="item.componentProps || {}"
+                    v-loading="uploadImageLoading[item.prop]"
+                    class="image-uploader"
+                    :show-file-list="false"
+                    :http-request="
+                        (options) => uploadServer(options, item.prop)
+                    "
+                    accept="image/png,image/jpeg,image/jpg">
+                    <el-icon class="image-uploader-icon"><Plus /></el-icon>
+                </el-upload>
+
+                <el-upload
+                    v-if="item.domType === 'uploadFile'"
+                    v-loading="uploadImageLoading[item.prop]"
+                    v-bind="item.componentProps || {}"
+                    v-model:file-list="uploadFile[item.prop]"
+                    :show-file-list="true"
+                    :limit="1"
+                    :accept="
+                        item.uploadAcceptMap
+                            ? item.uploadAcceptMap.map[
+                                  formModel[item.uploadAcceptMap.key]
+                              ]
+                            : '*'
+                    "
+                    :http-request="
+                        (options) => uploadServer(options, item.prop)
+                    ">
+                    <template #trigger>
+                        <el-button type="primary">选择文件</el-button>
+                    </template>
+                </el-upload>
+
+                <PEditor
+                    v-model="formModel[item.prop]"
+                    v-if="item.domType === 'editor'"
+                    :upload-path="item.uploadPath" />
+            </el-form-item>
+
+            <slot :name="`${onWhere}-${index}-after`" />
+        </el-col>
+    </el-row>
+
+    <span v-else v-for="(item, index) in props.formColumns" :key="index">
         <slot :name="`${onWhere}-${index}-before`" />
 
         <el-form-item
@@ -14,11 +203,6 @@
                 :type="item.inputType || 'text'"
                 :show-password="item.inputType === 'password'"
                 :placeholder="item[placeholder] || item.placeholder"
-                :class="
-                    onWhere === 'search'
-                        ? 'search-item-style'
-                        : 'detail-item-style'
-                "
                 autocomplete="off"
                 clearable />
 
@@ -26,11 +210,6 @@
                 v-if="item.domType === 'number'"
                 v-bind="item.componentProps || {}"
                 v-model="formModel[item.prop]"
-                :class="
-                    onWhere === 'search'
-                        ? 'search-item-style'
-                        : 'detail-item-style'
-                "
                 clearable />
 
             <el-select
@@ -43,11 +222,6 @@
                     onWhere === 'search'
                         ? '全部'
                         : ''
-                "
-                :class="
-                    onWhere === 'search'
-                        ? 'search-item-style'
-                        : 'detail-item-style'
                 "
                 :remote-method="getDomData[item.label + item.prop]"
                 :remote="!!getDomData[item.label + item.prop]"
@@ -74,11 +248,6 @@
                         ? '全部'
                         : ''
                 "
-                :class="
-                    onWhere === 'search'
-                        ? 'search-item-style'
-                        : 'detail-item-style'
-                "
                 clearable>
             </el-date-picker>
 
@@ -98,11 +267,6 @@
                     onWhere === 'search'
                         ? '全部'
                         : ''
-                "
-                :class="
-                    onWhere === 'search'
-                        ? 'search-item-style search-date-picker'
-                        : 'detail-item-style'
                 "
                 clearable>
             </el-date-picker>
@@ -340,18 +504,6 @@ const handleDownload = (prop, index, domType) => {
 </script>
 
 <style lang="scss" scoped>
-.search-item-style {
-    width: 120px;
-
-    :deep(.el-input) {
-        width: 100%;
-    }
-}
-
-.detail-item-style {
-    /* width: 240px; */
-}
-
 .upload-image-list {
     position: relative;
     margin: 0px 16px 16px 0px;

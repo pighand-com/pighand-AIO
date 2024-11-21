@@ -70,8 +70,6 @@ const { detailFormModel } = provideForm([
     {
         label: 'id',
         prop: 'id',
-        isSearch: true,
-        isSearchMore: false,
         isDetail: true,
         isPrimaryKey: true,
         hidden: true

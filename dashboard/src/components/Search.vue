@@ -224,15 +224,30 @@ const handleShowHiddenMore = () => {
 .search-default {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+
+    > div:first-child {
+        flex: 1;
+        min-width: 300px;
+    }
 }
 
 .button-group {
     display: flex;
     justify-content: flex-end;
     min-width: 136px;
+    margin-bottom: 16px;
+
+    @media screen and (max-width: 768px) {
+        width: 100%;
+        justify-content: flex-end;
+    }
 
     :deep(.el-button) {
         padding: 0 !important;
+        min-width: 40px;
+        height: 32px;
     }
 
     :deep(.el-button > span) {
@@ -247,14 +262,24 @@ const handleShowHiddenMore = () => {
     }
 }
 
+:deep(.el-form-item) {
+    margin-right: 16px;
+    margin-bottom: 16px;
+
+    @media screen and (max-width: 768px) {
+        width: 100%;
+        margin-right: 0;
+    }
+}
+
 .more-hidden {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.5s linear;
+    transition: all 0.3s ease-in-out;
 }
 
 .more-show {
-    max-height: 800px;
+    max-height: 1200px;
 }
 
 .el-divider {

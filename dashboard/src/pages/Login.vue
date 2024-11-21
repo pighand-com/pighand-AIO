@@ -60,8 +60,7 @@ import { ref, reactive, onBeforeMount } from 'vue';
 import { User, Lock } from '@element-plus/icons-vue';
 import { user, common } from '@/api';
 import { setToken, setUserInfo, getToken } from '@/common/storage';
-import constant from '@/common/constant';
-import routes from '@/routers/routes';
+import { getDefaultRouterPath } from '@/routers/routes';
 import router from '@/routers/index';
 
 const errorFields = ref(new Set());
@@ -85,35 +84,6 @@ onBeforeMount(() => {
 
     refreshCaptcha();
 });
-
-/**
- * 获取默认路由
- *
- * 优先:
- * 1. meta.default = true
- * 2. 第一个page_type_single页面
- * 3. '/'
- */
-const getDefaultRouterPath = () => {
-    let defaultPath = '';
-    let firstSinglePath = '';
-    routes.forEach((item) => {
-        if (item?.meta?.default) {
-            defaultPath = item.path;
-        }
-
-        if (
-            !defaultPath &&
-            Object.keys(item.components || {}).includes(
-                constant.page_type_single
-            )
-        ) {
-            firstSinglePath = item.path;
-        }
-    });
-
-    return defaultPath || firstSinglePath || '/';
-};
 
 const handleInput = (key: string) => {
     errorFields.value.delete(key);

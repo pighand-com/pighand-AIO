@@ -1,8 +1,4 @@
-import {
-    createRouter,
-    createWebHistory,
-    createWebHashHistory
-} from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 
 import routes from './routes';
 import { getToken } from '@/common/storage';

@@ -79,11 +79,7 @@ import constant from '@/common/constant';
 const isCollapse = ref(false);
 const menus = ref(
     routes
-        .filter((item) =>
-            Object.keys(item.components || {}).includes(
-                constant.page_type_single
-            )
-        )
+        .filter((item) => item.meta?.pageType === constant.page_type_single)
         .map((item, index) => {
             return {
                 path: item.path,

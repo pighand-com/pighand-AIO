@@ -1,23 +1,16 @@
 <template>
     <router-view
-        v-if="
-            Object.keys($route.matched[0]?.components || {}).includes(
-                constant.page_type_multi
-            )
-        "
-        :name="constant.page_type_multi">
+        v-if="$route.matched[0]?.meta?.pageType === constant.page_type_multi">
     </router-view>
 
     <div
         v-else-if="
-            Object.keys($route.matched[0]?.components || {}).includes(
-                constant.page_type_single
-            )
+            $route.matched[0]?.meta?.pageType === constant.page_type_single
         "
         class="dashboard">
         <div class="menu"><Menu /></div>
         <div class="page">
-            <router-view :name="constant.page_type_single"></router-view>
+            <router-view></router-view>
         </div>
     </div>
 </template>

@@ -17,6 +17,7 @@
         "axios": "^1.4.0",
         "element-plus": "^2.3.3",
         "moment": "^2.29.4",
+        "motion": "^11.11.17",
         "sass": "^1.62.1",
         "sass-loader": "^13.3.1",
         "tinymce": "^6.4.2",

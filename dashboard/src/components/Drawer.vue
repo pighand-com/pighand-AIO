@@ -82,7 +82,7 @@ const props = defineProps({
 const provideForm: ProvideFormInterface = inject('provideForm');
 const {
     isDetailDataLoading,
-    pageCurrent,
+    pageNumber,
     formColumns,
     formRules,
     isOpenDetail,
@@ -254,11 +254,11 @@ const onSubmit = async () => {
 
             if (props.handleQuery) {
                 await queryTableData(async (params: any) => {
-                    pageCurrent.value = 1;
+                    pageNumber.value = 1;
 
                     return await props.handleQuery({
                         ...params,
-                        pageCurrent: 1
+                        pageNumber: 1
                     });
                 });
             }

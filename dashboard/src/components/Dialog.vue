@@ -65,7 +65,7 @@ const dialogForm = ref();
 const oldData = ref({ ...(props.dialogFormModel || {}) });
 
 const provideForm: ProvideFormInterface = inject('provideForm');
-const { pageCurrent, queryTableData, getDetailOperation, detailFormModel } =
+const { pageNumber, queryTableData, getDetailOperation, detailFormModel } =
     provideForm;
 
 // const formStyle = {
@@ -165,11 +165,11 @@ const onSubmit = async () => {
             // 保存后查询
             if (props.handleQuery) {
                 await queryTableData(async (params: any) => {
-                    pageCurrent.value = 1;
+                    pageNumber.value = 1;
 
                     return await props.handleQuery({
                         ...params,
-                        pageCurrent: 1
+                        pageNumber: 1
                     });
                 });
             }

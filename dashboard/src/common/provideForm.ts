@@ -126,7 +126,7 @@ export interface TableDataInterface {
     /** 表格数据列表 */
     data: Array<any>;
     /** 数据总条数 */
-    total: number;
+    totalRow: number;
 }
 
 /**
@@ -167,7 +167,7 @@ export interface ProvideFormInterface {
     /** 分页大小 */
     pageSize: Ref<number>;
     /** 当前页码 */
-    pageCurrent: Ref<number>;
+    pageNumber: Ref<number>;
     /** 搜索表单默认值 */
     searchDefaultValue: {
         [key: string]: any;
@@ -201,7 +201,7 @@ export default function provideForm(
     // 表格数据模型
     const tableDataModel: TableDataInterface = reactive({
         data: [],
-        total: 0
+        totalRow: 0
     });
 
     // 搜索表单数据模型
@@ -347,12 +347,12 @@ export default function provideForm(
         const result = await fun({
             ...searchFormModel,
             pageSize: pageSize.value,
-            pageCurrent: pageCurrent.value
+            pageNumber: pageNumber.value
         });
 
         if (result) {
             tableDataModel.data = result.records;
-            tableDataModel.total = result.page.total;
+            tableDataModel.totalRow = result.page.totalRow;
         }
 
         isTableDataLoading.value = false;
@@ -367,7 +367,7 @@ export default function provideForm(
     // 分页大小
     const pageSize = ref(10);
     // 当前页码
-    const pageCurrent = ref(1);
+    const pageNumber = ref(1);
 
     // 提供表单上下文给子组件
     provide('provideForm', {
@@ -382,7 +382,7 @@ export default function provideForm(
         isDetailDataLoading,
         isOpenDetail,
         pageSize,
-        pageCurrent,
+        pageNumber,
         searchDefaultValue,
         detailDefaultValue,
         domDataSet,
@@ -403,7 +403,7 @@ export default function provideForm(
         isDetailDataLoading,
         isOpenDetail,
         pageSize,
-        pageCurrent,
+        pageNumber,
         searchDefaultValue,
         detailDefaultValue,
         domDataSet,

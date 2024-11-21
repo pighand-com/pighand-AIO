@@ -145,7 +145,7 @@ const {
     isTableDataLoading,
     searchFormModel,
     formColumns,
-    pageCurrent,
+    pageNumber,
     queryTableData,
     searchDefaultValue,
     getDomData
@@ -175,11 +175,11 @@ onMounted(() => {
 const handleSearch = async () => {
     if (props.handleQuery && !isTableDataLoading.value) {
         await queryTableData(async (params: any) => {
-            pageCurrent.value = 1;
+            pageNumber.value = 1;
 
             return await props.handleQuery({
                 ...params,
-                pageCurrent: 1
+                pageNumber: 1
             });
         });
     }

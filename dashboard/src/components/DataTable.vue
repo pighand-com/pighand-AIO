@@ -90,12 +90,12 @@
         <el-pagination
             class="pagination"
             :disabled="isTableDataLoading"
-            :current-page="pageCurrent"
+            :current-page="pageNumber"
             :page-size="pageSize"
             :page-sizes="[10, 20, 50, 100]"
             :background="true"
             layout="total, sizes, prev, pager, next, jumper"
-            :total="tableDataModel.total"
+            :total="tableDataModel.totalRow"
             @update:page-size="handleChangePageSize"
             @update:current-page="handleChangeCurrentPage" />
     </div>
@@ -153,7 +153,7 @@ const {
     isDetailDataLoading,
     formColumns,
     pageSize,
-    pageCurrent,
+    pageNumber,
     isOpenDetail,
     queryTableData,
     detailFormModel,
@@ -176,33 +176,33 @@ const handleChangePageSize = async (newPageSize) => {
 
     await queryTableData(async (params: any) => {
         pageSize.value = newPageSize;
-        pageCurrent.value = 1;
+        pageNumber.value = 1;
 
         return await props.handleQuery({
             ...params,
             pageSize: newPageSize,
-            pageCurrent: 1
+            pageNumber: 1
         });
     });
 };
 
 /**
  * 切换当前页
- * @param pageCurrent null:第一页
+ * @param pageNumber null:第一页
  */
 const handleChangeCurrentPage = async (newCurrentPage?: number) => {
     if (
         !props.handleQuery ||
-        (newCurrentPage && pageCurrent.value === newCurrentPage)
+        (newCurrentPage && pageNumber.value === newCurrentPage)
     )
         return;
 
     await queryTableData(async (params: any) => {
-        pageCurrent.value = newCurrentPage || 1;
+        pageNumber.value = newCurrentPage || 1;
 
         return await props.handleQuery({
             ...params,
-            pageCurrent: newCurrentPage || 1
+            pageNumber: newCurrentPage || 1
         });
     });
 };

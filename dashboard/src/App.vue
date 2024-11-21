@@ -41,6 +41,7 @@ import constant from '@/common/constant';
 .page {
     padding: 24px;
     width: 100%;
+    overflow-y: scroll;
 }
 
 .el-menu {

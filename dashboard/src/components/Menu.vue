@@ -34,7 +34,10 @@
         </template>
     </el-menu>
 
-    <div class="user-info" :class="{ 'is-collapse': isCollapse }">
+    <div
+        class="user-info"
+        :class="{ 'is-collapse': isCollapse }"
+        ref="userInfoRef">
         <el-popover :show-after="500" width="auto">
             <template #reference>
                 <div class="avatar">
@@ -77,23 +80,28 @@
             </template>
         </el-popover>
 
-        <el-button
-            @click="changeCollapse"
-            :icon="isCollapse ? ArrowRightBold : ArrowLeftBold"
-            color="var(--p-color-dark)"
-            circle
-            size="small" />
+        <div ref="userInfoCollapseRef">
+            <el-button
+                @click="changeCollapse"
+                :icon="ArrowRightBold"
+                color="var(--p-color-dark)"
+                circle
+                size="small" />
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { ArrowRightBold, ArrowLeftBold } from '@element-plus/icons-vue';
+import { ArrowRightBold } from '@element-plus/icons-vue';
 import router from '@/routers/index';
 import routes from '@/routers/routes';
 import { clearToken, getUserInfo } from '@/common/storage';
 import constant from '@/common/constant';
-import { ElCollapseTransition } from 'element-plus';
+import { animate } from 'motion';
+
+const userInfoRef = ref(null);
+const userInfoCollapseRef = ref(null);
 
 const isCollapse = ref(false);
 const menus = ref(
@@ -123,8 +131,29 @@ const confirmEvent = () => {
     router.push('/login');
 };
 
+/**
+ * 切换折叠
+ */
 const changeCollapse = () => {
-    isCollapse.value = !isCollapse.value;
+    const newValue = !isCollapse.value;
+
+    // 切换宽度动画
+    animate(
+        userInfoRef.value,
+        {
+            width: !newValue ? '88%' : '40px'
+        },
+        { duration: 0.2 }
+    );
+
+    // 切换旋转动画
+    animate(
+        userInfoCollapseRef.value,
+        { rotate: newValue ? 180 : 0 },
+        { duration: 0.2 }
+    );
+
+    isCollapse.value = newValue;
 };
 </script>
 
@@ -144,13 +173,14 @@ const changeCollapse = () => {
     padding: 12px 8px;
     background: #fff;
     border-radius: 16px;
-    margin-bottom: 8px;
+    margin-bottom: 24px;
     border: solid 1px #e4e4e7;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     gap: 16px;
-    width: fit-content;
+    width: 88%;
+    overflow: hidden;
 }
 
 .user-info.is-collapse {

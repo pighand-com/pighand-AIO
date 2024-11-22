@@ -11,6 +11,7 @@
             <slot :name="`${onWhere}-${index}-before`" />
 
             <el-form-item
+                :style="{ width: '100%' }"
                 v-show="!item.hidden"
                 :label="item.label"
                 :prop="item.prop">

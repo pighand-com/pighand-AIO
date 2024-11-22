@@ -94,8 +94,9 @@
             :page-size="pageSize"
             :page-sizes="[10, 20, 50, 100]"
             :background="true"
-            layout="total, sizes, prev, pager, next, jumper"
             :total="tableDataModel.totalRow"
+            size="small"
+            layout="total, sizes, prev, pager, next, jumper"
             @update:page-size="handleChangePageSize"
             @update:current-page="handleChangeCurrentPage" />
     </div>

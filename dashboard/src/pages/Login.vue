@@ -302,7 +302,7 @@ const login = async () => {
 
 .form {
     width: 264px;
-    color: #17191a;
+    color: var(--p-color-dark);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -314,11 +314,11 @@ const login = async () => {
         :deep(.el-input__wrapper) {
             background-color: transparent;
             box-shadow: none;
-            border: 1px solid #17191a;
+            border: 1px solid var(--p-color-dark);
         }
 
         :deep(.el-input__icon) {
-            color: #17191a;
+            color: var(--p-color-dark);
         }
 
         :deep(input) {
@@ -335,13 +335,13 @@ const login = async () => {
 
     .el-button {
         width: 264px;
-        color: #17191a;
+        color: var(--p-color-dark);
         background-color: transparent;
-        border: 1px solid #17191a;
+        border: 1px solid var(--p-color-dark);
 
         &:hover {
-            color: #f8f9fa;
-            background-color: #17191a;
+            color: var(--p-color-white);
+            background-color: var(--p-color-dark);
         }
     }
 

@@ -2,7 +2,8 @@ import { createApp } from 'vue';
 import { createStore } from 'vuex';
 import ElementPlus from 'element-plus';
 import VueDOMPurifyHTML from 'vue-dompurify-html';
-import locale from 'element-plus/lib/locale/lang/zh-CN';
+import zhCn from 'element-plus/es/locale/lang/zh-cn';
+
 import '@/assets/css/globalFont.css';
 import 'default-passive-events';
 
@@ -23,7 +24,7 @@ import DataManager from '@/components/DataManager.vue';
 const app = createApp(App);
 app.use(VueDOMPurifyHTML);
 app.use(router);
-app.use(ElementPlus, { locale });
+app.use(ElementPlus, { locale: zhCn });
 
 // 注入自定义组件
 app.component('PEditor', TEditor);

@@ -5,6 +5,7 @@ export default {
     },
     local_storage_token: 'token',
     local_storage_user_info: 'user_info',
+    local_storage_application_info: 'application_info',
 
     /**
      * @description: 页面类型。single: 单页应用(菜单对应的页面)；multi: 多页应用

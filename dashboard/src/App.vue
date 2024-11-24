@@ -11,6 +11,8 @@
         <div class="bg">
             <div class="g1"></div>
             <div class="g2"></div>
+            <div class="g3"></div>
+            <div class="g4"></div>
         </div>
         <div class="menu"><Menu /></div>
         <div class="page">
@@ -37,7 +39,7 @@ initApplicationInfo();
 <style>
 :root {
     --p-color-primary: #4682f6;
-    --p-color-background: #f6f8fa;
+    --p-color-background: #f6f8fada;
     --p-color-white: #f8f9fa;
     --p-color-dark: #17191a;
 
@@ -69,33 +71,78 @@ initApplicationInfo();
         left: 0;
 
         .g1 {
-            width: 20%;
-            height: 40%;
+            width: 60%;
+            height: 60%;
             position: absolute;
             top: 0;
             left: 0;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) rotate(128deg);
             background: radial-gradient(
-                    ellipse at center,
-                    rgba(175, 207, 255, 1) 0,
-                    rgba(175, 207, 255, 0.5) 40%,
-                    transparent 60%
+                    ellipse 60% 70% at 40% 50%,
+                    rgba(147, 197, 253, 1) 0,
+                    rgba(147, 197, 253, 0.8) 20%,
+                    rgba(147, 197, 253, 0.5) 35%,
+                    rgba(147, 197, 253, 0.3) 45%,
+                    rgba(147, 197, 253, 0.1) 60%,
+                    transparent 75%
                 )
                 no-repeat;
         }
 
         .g2 {
-            width: 40%;
-            height: 80%;
+            width: 50%;
+            height: 70%;
             position: absolute;
             top: 0;
-            left: 0;
-            transform: translate(-50%, -50%);
+            left: 20%;
+            transform: translate(-50%, -30%) rotate(140deg);
+            background: radial-gradient(
+                    ellipse 70% 60% at 50% 40%,
+                    rgba(216, 180, 254, 1) 0,
+                    rgba(216, 180, 254, 0.8) 15%,
+                    rgba(216, 180, 254, 0.6) 30%,
+                    rgba(216, 180, 254, 0.3) 45%,
+                    rgba(216, 180, 254, 0.1) 60%,
+                    transparent 70%
+                )
+                no-repeat;
+        }
+
+        .g3 {
+            width: 80%;
+            height: 90%;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            transform: translate(50%, 50%) rotate(-15deg);
             background: radial-gradient(
                     ellipse at center,
-                    rgb(200, 200, 247) 0,
-                    rgba(200, 200, 247, 0.5) 40%,
-                    transparent 60%
+                    rgba(255, 198, 255, 1) 0,
+                    rgba(255, 198, 255, 0.8) 20%,
+                    rgba(255, 198, 255, 0.5) 30%,
+                    rgba(255, 198, 255, 0.3) 45%,
+                    rgba(255, 198, 255, 0.1) 55%,
+                    transparent 70%
+                )
+                no-repeat;
+        }
+
+        .g4 {
+            width: 60%;
+            height: 70%;
+            position: absolute;
+            bottom: 0;
+            right: 10%;
+            transform: translate(30%, 40%) rotate(25deg);
+            background: radial-gradient(
+                    ellipse at center,
+                    rgba(162, 223, 251, 1) 0,
+                    rgba(162, 223, 251, 0.8) 15%,
+                    rgba(162, 223, 251, 0.6) 25%,
+                    rgba(162, 223, 251, 0.4) 40%,
+                    rgba(162, 223, 251, 0.2) 50%,
+                    rgba(162, 223, 251, 0.1) 60%,
+                    transparent 75%
                 )
                 no-repeat;
         }
@@ -117,7 +164,6 @@ initApplicationInfo();
         padding: 24px;
         width: 100%;
         overflow-y: scroll;
-        position: relative;
     }
 }
 </style>

@@ -1,57 +1,64 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
-    <el-drawer
-        :model-value="isOpenDetail"
-        :title="title"
-        :before-close="onClose"
-        :size="size"
-        direction="rtl">
-        <el-form
-            v-loading="isDetailDataLoading"
-            :model="detailFormModel"
-            :disabled="loading"
-            :rules="formRules"
-            ref="detailForm"
-            label-position="right"
-            label-width="auto">
-            <FormItem
-                :form-model="detailFormModel"
-                :form-columns="formColumns.filter((item) => getIsDetail(item))"
-                :on-where="'detail'">
-                <template
-                    v-for="(item, index) in formColumns.filter((item) =>
-                        getIsDetail(item)
-                    )"
-                    :key="index"
-                    #[`detail-${index}-before`]>
-                    <slot :name="`${index}-before`" />
-                </template>
+    <div>
+        <el-drawer
+            :model-value="isOpenDetail"
+            :title="title"
+            :before-close="onClose"
+            :size="size"
+            direction="rtl">
+            <div class="drawer-bg"></div>
+            <el-form
+                v-loading="isDetailDataLoading"
+                :model="detailFormModel"
+                :disabled="loading"
+                :rules="formRules"
+                ref="detailForm"
+                label-position="right"
+                label-width="auto">
+                <FormItem
+                    :form-model="detailFormModel"
+                    :form-columns="
+                        formColumns.filter((item) => getIsDetail(item))
+                    "
+                    :on-where="'detail'">
+                    <template
+                        v-for="(item, index) in formColumns.filter((item) =>
+                            getIsDetail(item)
+                        )"
+                        :key="index"
+                        #[`detail-${index}-before`]>
+                        <slot :name="`${index}-before`" />
+                    </template>
 
-                <template
-                    v-for="(item, index) in formColumns.filter((item) =>
-                        getIsDetail(item)
-                    )"
-                    :key="index"
-                    #[`detail-${index}-after`]>
-                    <slot :name="`${index}-after`" />
-                </template>
-            </FormItem>
+                    <template
+                        v-for="(item, index) in formColumns.filter((item) =>
+                            getIsDetail(item)
+                        )"
+                        :key="index"
+                        #[`detail-${index}-after`]>
+                        <slot :name="`${index}-after`" />
+                    </template>
+                </FormItem>
 
-            <slot />
-        </el-form>
-        <template #footer>
-            <el-button v-if="!isDetailDataLoading && !loading" @click="onClose"
-                >取消</el-button
-            >
-            <el-button
-                v-if="!isDetailDataLoading"
-                type="primary"
-                :loading="loading"
-                @click="onSubmit()"
-                >保存</el-button
-            >
-        </template>
-    </el-drawer>
+                <slot />
+            </el-form>
+            <template #footer>
+                <el-button
+                    v-if="!isDetailDataLoading && !loading"
+                    @click="onClose"
+                    >取消</el-button
+                >
+                <el-button
+                    v-if="!isDetailDataLoading"
+                    type="primary"
+                    :loading="loading"
+                    @click="onSubmit()"
+                    >保存</el-button
+                >
+            </template>
+        </el-drawer>
+    </div>
 </template>
 
 <script lang="ts" setup>
@@ -266,3 +273,52 @@ const onSubmit = async () => {
     });
 };
 </script>
+
+<style scoped>
+.drawer-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background: linear-gradient(
+        to right,
+        rgba(183, 223, 255, 0.1) 0%,
+        rgba(147, 129, 255, 0.15) 25%,
+        rgba(190, 144, 255, 0.2) 50%,
+        rgba(126, 188, 255, 0.25) 75%
+    );
+    mask-image: linear-gradient(to top, transparent, black);
+    -webkit-mask-image: linear-gradient(to top, transparent, black);
+    width: 100%;
+    height: 24%;
+}
+
+.el-form {
+    position: relative;
+}
+
+:deep(.el-overlay) {
+    background: #e3e3e396;
+}
+
+:deep(.el-drawer) {
+    margin: 16px !important;
+    height: calc(100% - 32px) !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    border: solid 1px #fff;
+
+    box-shadow: 0px 20px 60px 20px rgba(0, 0, 0, 0.06),
+        0px 16px 40px rgba(0, 0, 0, 0.08),
+        0px 10px 20px -10px rgba(0, 0, 0, 0.1);
+}
+
+:deep(.el-drawer__header),
+:deep(el-drawer__body),
+:deep(.el-drawer__footer) {
+    position: relative !important;
+    z-index: 1 !important;
+}
+</style>

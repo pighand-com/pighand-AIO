@@ -7,7 +7,6 @@ import com.pighand.aio.service.CMS.ArticleCategoryRelevanceService;
 import com.pighand.aio.vo.CMS.ArticleCategoryRelevanceVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
 import static com.pighand.aio.domain.CMS.table.ArticleCategoryRelevanceTableDef.ARTICLE_CATEGORY_RELEVANCE;
@@ -56,16 +55,13 @@ public class ArticleCategoryRelevanceServiceImpl
     @Override
     public PageOrList<ArticleCategoryRelevanceVO> query(ArticleCategoryRelevanceVO articleCategoryRelevanceVO) {
 
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // like
+            .and(ARTICLE_CATEGORY_RELEVANCE.ARTICLE_CATEGORY_PATH.like(
+                articleCategoryRelevanceVO.getArticleCategoryPath()))
 
-        // like
-        queryWrapper.and(
-            ARTICLE_CATEGORY_RELEVANCE.ARTICLE_CATEGORY_PATH.like(articleCategoryRelevanceVO.getArticleCategoryPath(),
-                VerifyUtils::isNotEmpty));
-
-        // equal
-        queryWrapper.and(ARTICLE_CATEGORY_RELEVANCE.ARTICLE_ID.eq(articleCategoryRelevanceVO.getArticleId(),
-            VerifyUtils::isNotEmpty));
+            // equal
+            .and(ARTICLE_CATEGORY_RELEVANCE.ARTICLE_ID.eq(articleCategoryRelevanceVO.getArticleId()));
 
         return super.mapper.query(articleCategoryRelevanceVO, queryWrapper);
     }

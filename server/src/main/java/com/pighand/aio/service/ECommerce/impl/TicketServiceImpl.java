@@ -84,18 +84,18 @@ public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomai
             return null;
         }
 
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.select(TICKET.ID, TICKET.NAME, TICKET.DETAILS, TICKET.ORIGINAL_PRICE, TICKET.CURRENT_PRICE,
-            TICKET.VALIDATION_COUNT);
+        QueryWrapper queryWrapper = QueryWrapper.create()
+        .select(TICKET.ID, TICKET.NAME, TICKET.DETAILS, TICKET.ORIGINAL_PRICE, TICKET.CURRENT_PRICE,
+            TICKET.VALIDATION_COUNT)
 
         // like
-        queryWrapper.and(TICKET.NAME.like(ticketVO.getName(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(TICKET.DETAILS.like(ticketVO.getDetails(), VerifyUtils::isNotEmpty));
+        .and(TICKET.NAME.like(ticketVO.getName()))
+        .and(TICKET.DETAILS.like(ticketVO.getDetails()))
 
         // equal
-        queryWrapper.and(TICKET.ORIGINAL_PRICE.eq(ticketVO.getOriginalPrice(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(TICKET.CURRENT_PRICE.eq(ticketVO.getCurrentPrice(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(TICKET.VALIDATION_COUNT.eq(ticketVO.getValidationCount(), VerifyUtils::isNotEmpty));
+        .and(TICKET.ORIGINAL_PRICE.eq(ticketVO.getOriginalPrice()))
+        .and(TICKET.CURRENT_PRICE.eq(ticketVO.getCurrentPrice()))
+        .and(TICKET.VALIDATION_COUNT.eq(ticketVO.getValidationCount()));
 
         PageOrList<TicketVO> result = super.mapper.query(ticketVO, queryWrapper);
 

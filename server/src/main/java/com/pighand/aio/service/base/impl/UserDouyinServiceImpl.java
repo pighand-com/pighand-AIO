@@ -58,18 +58,17 @@ public class UserDouyinServiceImpl extends BaseServiceImpl<UserDouyinMapper, Use
     public PageOrList<UserDouyinVO> query(UserDouyinVO userDouyinVO) {
         userDouyinVO.setJoinTables(USER.getTableName());
 
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // like
+            .and(USER_DOUYIN.OPENID.like(userDouyinVO.getOpenid()))
+            .and(USER_DOUYIN.UNIONID.like(userDouyinVO.getUnionid()))
+            .and(USER_DOUYIN.ANONYMOUS_OPENID.like(userDouyinVO.getAnonymousOpenid()))
 
-        // like
-        queryWrapper.and(USER_DOUYIN.OPENID.like(userDouyinVO.getOpenid(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(USER_DOUYIN.UNIONID.like(userDouyinVO.getUnionid(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(USER_DOUYIN.ANONYMOUS_OPENID.like(userDouyinVO.getAnonymousOpenid(), VerifyUtils::isNotEmpty));
-
-        // equal
-        queryWrapper.and(USER_DOUYIN.APPLICATION_ID.eq(userDouyinVO.getApplicationId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(USER_DOUYIN.USER_ID.eq(userDouyinVO.getUserId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(USER_DOUYIN.SOURCE_PLATFORM.eq(userDouyinVO.getSourcePlatform(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(USER_DOUYIN.STATUS.eq(userDouyinVO.getStatus(), VerifyUtils::isNotEmpty));
+            // equal
+            .and(USER_DOUYIN.APPLICATION_ID.eq(userDouyinVO.getApplicationId()))
+            .and(USER_DOUYIN.USER_ID.eq(userDouyinVO.getUserId()))
+            .and(USER_DOUYIN.SOURCE_PLATFORM.eq(userDouyinVO.getSourcePlatform()))
+            .and(USER_DOUYIN.STATUS.eq(userDouyinVO.getStatus()));
 
         return super.mapper.query(userDouyinVO, queryWrapper);
     }

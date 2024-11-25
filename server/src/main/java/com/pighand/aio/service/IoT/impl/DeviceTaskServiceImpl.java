@@ -11,7 +11,6 @@ import com.pighand.aio.service.IoT.DeviceTaskService;
 import com.pighand.aio.vo.IoT.DeviceTaskVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,15 +71,13 @@ public class DeviceTaskServiceImpl extends BaseServiceImpl<DeviceTaskMapper, Dev
     public PageOrList<DeviceTaskVO> query(DeviceTaskVO deviceTaskVO) {
         deviceTaskVO.setJoinTables(DEVICE.getTableName());
 
-        QueryWrapper queryWrapper = new QueryWrapper();
-
-        // like
-        queryWrapper.and(DEVICE_TASK.MESSAGE.like(deviceTaskVO.getMessage(), VerifyUtils::isNotEmpty));
-
-        // equal
-        queryWrapper.and(DEVICE_TASK.DEVICE_ID.eq(deviceTaskVO.getDeviceId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(DEVICE_TASK.RUNNING_STATUS.eq(deviceTaskVO.getRunningStatus(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(DEVICE_TASK.CREATOR_ID.eq(deviceTaskVO.getCreatorId(), VerifyUtils::isNotEmpty));
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // like
+            .and(DEVICE_TASK.MESSAGE.like(deviceTaskVO.getMessage()))
+            // equal
+            .and(DEVICE_TASK.DEVICE_ID.eq(deviceTaskVO.getDeviceId()))
+            .and(DEVICE_TASK.RUNNING_STATUS.eq(deviceTaskVO.getRunningStatus()))
+            .and(DEVICE_TASK.CREATOR_ID.eq(deviceTaskVO.getCreatorId()));
 
         return super.mapper.query(deviceTaskVO, queryWrapper);
     }

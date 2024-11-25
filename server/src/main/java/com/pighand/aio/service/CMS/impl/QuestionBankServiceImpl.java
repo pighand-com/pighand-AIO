@@ -82,15 +82,15 @@ public class QuestionBankServiceImpl extends BaseServiceImpl<QuestionBankMapper,
     public PageOrList<QuestionBankVO> query(QuestionBankVO questionBankVO) {
         questionBankVO.setJoinTables(QUESTION_SET.getTableName(), QUESTION_SET.getTableName());
 
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper queryWrapper = QueryWrapper.create()
 
-        // like
-        queryWrapper.and(QUESTION_BANK.NAME.like(questionBankVO.getName(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(QUESTION_BANK.DESCRIPTION.like(questionBankVO.getDescription(), VerifyUtils::isNotEmpty));
+            // like
+            .and(QUESTION_BANK.NAME.like(questionBankVO.getName()))
+            .and(QUESTION_BANK.DESCRIPTION.like(questionBankVO.getDescription()))
 
-        // equal
-        queryWrapper.and(QUESTION_BANK.SELECT_TYPE.eq(questionBankVO.getSelectType(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(QUESTION_BANK.RANDOM_NUMBER.eq(questionBankVO.getRandomNumber(), VerifyUtils::isNotEmpty));
+            // equal
+            .and(QUESTION_BANK.SELECT_TYPE.eq(questionBankVO.getSelectType()))
+            .and(QUESTION_BANK.RANDOM_NUMBER.eq(questionBankVO.getRandomNumber()));
 
         return super.mapper.query(questionBankVO, queryWrapper);
     }

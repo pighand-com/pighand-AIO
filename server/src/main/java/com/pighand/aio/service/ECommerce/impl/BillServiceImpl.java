@@ -7,7 +7,6 @@ import com.pighand.aio.service.ECommerce.BillService;
 import com.pighand.aio.vo.ECommerce.BillVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
 import static com.pighand.aio.domain.ECommerce.table.BillTableDef.BILL;
@@ -58,18 +57,14 @@ public class BillServiceImpl extends BaseServiceImpl<BillMapper, BillDomain> imp
     public PageOrList<BillVO> query(BillVO billVO) {
         billVO.setJoinTables(ORDER.getTableName(), ORDER_TRADE.getTableName(), ORDER_SKU.getTableName());
 
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // like
+            .and(BILL.SOURCE_ID.like(billVO.getSourceId())).and(BILL.SN.like(billVO.getSn()))
 
-        // like
-        queryWrapper.and(BILL.SOURCE_ID.like(billVO.getSourceId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(BILL.SN.like(billVO.getSn(), VerifyUtils::isNotEmpty));
-
-        // equal
-        queryWrapper.and(BILL.ORDER_TRADE_ID.eq(billVO.getOrderTradeId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(BILL.ORDER_ID.eq(billVO.getOrderId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(BILL.ORDER_SKU_ID.eq(billVO.getOrderSkuId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(BILL.AMOUNT.eq(billVO.getAmount(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(BILL.CREATOR_ID.eq(billVO.getCreatorId(), VerifyUtils::isNotEmpty));
+            // equal
+            .and(BILL.ORDER_TRADE_ID.eq(billVO.getOrderTradeId())).and(BILL.ORDER_ID.eq(billVO.getOrderId()))
+            .and(BILL.ORDER_SKU_ID.eq(billVO.getOrderSkuId())).and(BILL.AMOUNT.eq(billVO.getAmount()))
+            .and(BILL.CREATOR_ID.eq(billVO.getCreatorId()));
 
         return super.mapper.query(billVO, queryWrapper);
     }

@@ -57,17 +57,14 @@ public class QuestionAnswerServiceImpl extends BaseServiceImpl<QuestionAnswerMap
     public PageOrList<QuestionAnswerVO> query(QuestionAnswerVO questionAnswerVO) {
         questionAnswerVO.setJoinTables(QUESTION_SET.getTableName());
 
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // like
+            .and(QUESTION_ANSWER.ANSWER_TEXT.like(questionAnswerVO.getAnswerText(), VerifyUtils::isNotEmpty))
 
-        // like
-        queryWrapper.and(QUESTION_ANSWER.ANSWER_TEXT.like(questionAnswerVO.getAnswerText(), VerifyUtils::isNotEmpty));
-
-        // equal
-        queryWrapper.and(
-            QUESTION_ANSWER.QUESTION_BANK_ID.eq(questionAnswerVO.getQuestionBankId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(
-            QUESTION_ANSWER.QUESTION_SET_ID.eq(questionAnswerVO.getQuestionSetId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(QUESTION_ANSWER.CREATOR_ID.eq(questionAnswerVO.getCreatorId(), VerifyUtils::isNotEmpty));
+            // equal
+            .and(QUESTION_ANSWER.QUESTION_BANK_ID.eq(questionAnswerVO.getQuestionBankId(), VerifyUtils::isNotEmpty))
+            .and(QUESTION_ANSWER.QUESTION_SET_ID.eq(questionAnswerVO.getQuestionSetId(), VerifyUtils::isNotEmpty))
+            .and(QUESTION_ANSWER.CREATOR_ID.eq(questionAnswerVO.getCreatorId(), VerifyUtils::isNotEmpty));
 
         return super.mapper.query(questionAnswerVO, queryWrapper);
     }

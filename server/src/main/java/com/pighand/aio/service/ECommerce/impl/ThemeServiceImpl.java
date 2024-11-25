@@ -7,7 +7,6 @@ import com.pighand.aio.service.ECommerce.ThemeService;
 import com.pighand.aio.vo.ECommerce.ThemeVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
 import static com.pighand.aio.domain.ECommerce.table.SessionTableDef.SESSION;
@@ -57,22 +56,18 @@ public class ThemeServiceImpl extends BaseServiceImpl<ThemeMapper, ThemeDomain> 
     public PageOrList<ThemeVO> query(ThemeVO themeVO) {
         themeVO.setJoinTables(SESSION.getTableName(), SESSION_TEMPLATE.getTableName());
 
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // like
+            .and(THEME.THEME_NAME.like(themeVO.getThemeName()))
+            .and(THEME.THEME_INTRODUCTIONE.like(themeVO.getThemeIntroductione()))
+            .and(THEME.POSTER_URL.like(themeVO.getPosterUrl()))
+            .and(THEME.PICTURE_DESCRIPTION.like(themeVO.getPictureDescription()))
 
-        // like
-        queryWrapper.and(THEME.THEME_NAME.like(themeVO.getThemeName(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(THEME.THEME_INTRODUCTIONE.like(themeVO.getThemeIntroductione(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(THEME.POSTER_URL.like(themeVO.getPosterUrl(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(THEME.PICTURE_DESCRIPTION.like(themeVO.getPictureDescription(), VerifyUtils::isNotEmpty));
-
-        // equal
-        queryWrapper.and(THEME.APPLICATION_ID.eq(themeVO.getApplicationId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(THEME.STORE_ID.eq(themeVO.getStoreId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(THEME.ORIGINAL_PRICE.eq(themeVO.getOriginalPrice(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(THEME.PRESENT_PRICE.eq(themeVO.getPresentPrice(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(THEME.MIN_PEOPLE.eq(themeVO.getMinPeople(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(THEME.MAX_PEOPLE.eq(themeVO.getMaxPeople(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(THEME.DURATION.eq(themeVO.getDuration(), VerifyUtils::isNotEmpty));
+            // equal
+            .and(THEME.APPLICATION_ID.eq(themeVO.getApplicationId())).and(THEME.STORE_ID.eq(themeVO.getStoreId()))
+            .and(THEME.ORIGINAL_PRICE.eq(themeVO.getOriginalPrice()))
+            .and(THEME.PRESENT_PRICE.eq(themeVO.getPresentPrice())).and(THEME.MIN_PEOPLE.eq(themeVO.getMinPeople()))
+            .and(THEME.MAX_PEOPLE.eq(themeVO.getMaxPeople())).and(THEME.DURATION.eq(themeVO.getDuration()));
 
         return super.mapper.query(themeVO, queryWrapper);
     }

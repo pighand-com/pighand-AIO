@@ -7,7 +7,6 @@ import com.pighand.aio.service.ECommerce.TicketUserValidityService;
 import com.pighand.aio.vo.ECommerce.TicketUserValidityVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
 import static com.pighand.aio.domain.ECommerce.table.TicketUserValidityTableDef.TICKET_USER_VALIDITY;
@@ -55,17 +54,12 @@ public class TicketUserValidityServiceImpl extends BaseServiceImpl<TicketUserVal
     @Override
     public PageOrList<TicketUserValidityVO> query(TicketUserValidityVO ticketUserValidityVO) {
 
-        QueryWrapper queryWrapper = new QueryWrapper();
-
-        // equal
-        queryWrapper.and(
-            TICKET_USER_VALIDITY.TICKET_ID.eq(ticketUserValidityVO.getTicketId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(
-            TICKET_USER_VALIDITY.TICKET_USER_ID.eq(ticketUserValidityVO.getTicketUserId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(TICKET_USER_VALIDITY.TICKET_VALIDITY_ID.eq(ticketUserValidityVO.getTicketValidityId(),
-            VerifyUtils::isNotEmpty));
-        queryWrapper.and(TICKET_USER_VALIDITY.VALIDATION_COUNT.eq(ticketUserValidityVO.getValidationCount(),
-            VerifyUtils::isNotEmpty));
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // equal
+            .and(TICKET_USER_VALIDITY.TICKET_ID.eq(ticketUserValidityVO.getTicketId()))
+            .and(TICKET_USER_VALIDITY.TICKET_USER_ID.eq(ticketUserValidityVO.getTicketUserId()))
+            .and(TICKET_USER_VALIDITY.TICKET_VALIDITY_ID.eq(ticketUserValidityVO.getTicketValidityId()))
+            .and(TICKET_USER_VALIDITY.VALIDATION_COUNT.eq(ticketUserValidityVO.getValidationCount()));
 
         return super.mapper.query(ticketUserValidityVO, queryWrapper);
     }

@@ -7,7 +7,6 @@ import com.pighand.aio.service.system.SimpleSchedulingService;
 import com.pighand.aio.vo.system.SimpleSchedulingVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
 import static com.pighand.aio.domain.system.table.SimpleSchedulingTableDef.SIMPLE_SCHEDULING;
@@ -55,15 +54,13 @@ public class SimpleSchedulingServiceImpl extends BaseServiceImpl<SimpleSchedulin
     @Override
     public PageOrList<SimpleSchedulingVO> query(SimpleSchedulingVO simpleSchedulingVO) {
 
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // like
+            .and(SIMPLE_SCHEDULING.CORN.like(simpleSchedulingVO.getCorn()))
+            .and(SIMPLE_SCHEDULING.DESCRIPTION.like(simpleSchedulingVO.getDescription()))
 
-        // like
-        queryWrapper.and(SIMPLE_SCHEDULING.CORN.like(simpleSchedulingVO.getCorn(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(
-            SIMPLE_SCHEDULING.DESCRIPTION.like(simpleSchedulingVO.getDescription(), VerifyUtils::isNotEmpty));
-
-        // equal
-        queryWrapper.and(SIMPLE_SCHEDULING.ENABLE.eq(simpleSchedulingVO.getEnable(), VerifyUtils::isNotEmpty));
+            // equal
+            .and(SIMPLE_SCHEDULING.ENABLE.eq(simpleSchedulingVO.getEnable()));
 
         return super.mapper.query(simpleSchedulingVO, queryWrapper);
     }

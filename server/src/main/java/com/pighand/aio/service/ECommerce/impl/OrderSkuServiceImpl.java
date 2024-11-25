@@ -7,7 +7,6 @@ import com.pighand.aio.service.ECommerce.OrderSkuService;
 import com.pighand.aio.vo.ECommerce.OrderSkuVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
 import static com.pighand.aio.domain.ECommerce.table.BillTableDef.BILL;
@@ -58,20 +57,16 @@ public class OrderSkuServiceImpl extends BaseServiceImpl<OrderSkuMapper, OrderSk
     public PageOrList<OrderSkuVO> query(OrderSkuVO orderSkuVO) {
         orderSkuVO.setJoinTables(ORDER.getTableName(), ORDER_TRADE.getTableName(), BILL.getTableName());
 
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // like
+            .and(ORDER_SKU.ORDER_TRADE_ID.like(orderSkuVO.getOrderTradeId()))
 
-        // like
-        queryWrapper.and(ORDER_SKU.ORDER_TRADE_ID.like(orderSkuVO.getOrderTradeId(), VerifyUtils::isNotEmpty));
-
-        // equal
-        queryWrapper.and(ORDER_SKU.ORDER_ID.eq(orderSkuVO.getOrderId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(ORDER_SKU.SPU_ID.eq(orderSkuVO.getSpuId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(ORDER_SKU.SKU_ID.eq(orderSkuVO.getSkuId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(ORDER_SKU.TICKET_ID.eq(orderSkuVO.getTicketId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(ORDER_SKU.SESSION_ID.eq(orderSkuVO.getSessionId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(ORDER_SKU.TYPE.eq(orderSkuVO.getType(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(ORDER_SKU.AMOUNT_PAYABLE.eq(orderSkuVO.getAmountPayable(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(ORDER_SKU.AMOUNT_PAID.eq(orderSkuVO.getAmountPaid(), VerifyUtils::isNotEmpty));
+            // equal
+            .and(ORDER_SKU.ORDER_ID.eq(orderSkuVO.getOrderId())).and(ORDER_SKU.SPU_ID.eq(orderSkuVO.getSpuId()))
+            .and(ORDER_SKU.SKU_ID.eq(orderSkuVO.getSkuId())).and(ORDER_SKU.TICKET_ID.eq(orderSkuVO.getTicketId()))
+            .and(ORDER_SKU.SESSION_ID.eq(orderSkuVO.getSessionId())).and(ORDER_SKU.TYPE.eq(orderSkuVO.getType()))
+            .and(ORDER_SKU.AMOUNT_PAYABLE.eq(orderSkuVO.getAmountPayable()))
+            .and(ORDER_SKU.AMOUNT_PAID.eq(orderSkuVO.getAmountPaid()));
 
         return super.mapper.query(orderSkuVO, queryWrapper);
     }

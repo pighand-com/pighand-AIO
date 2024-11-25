@@ -152,18 +152,16 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, ArticleDo
     public PageOrList<ArticleVO> query(ArticleVO articleVO) {
         articleVO.setJoinTables(ARTICLE_CATEGORY_RELEVANCE.getTableName());
 
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper queryWrapper = QueryWrapper.create()
 
-        // like
-        queryWrapper.and(ARTICLE.BANNER_URL.like(articleVO.getBannerUrl(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(ARTICLE.TITLE.like(articleVO.getTitle(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(ARTICLE.FILE_URL.like(articleVO.getFileUrl(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(ARTICLE.DESCRIPTION.like(articleVO.getDescription(), VerifyUtils::isNotEmpty));
+            // like
+            .and(ARTICLE.BANNER_URL.like(articleVO.getBannerUrl())).and(ARTICLE.TITLE.like(articleVO.getTitle()))
+            .and(ARTICLE.FILE_URL.like(articleVO.getFileUrl()))
+            .and(ARTICLE.DESCRIPTION.like(articleVO.getDescription()))
 
-        // equal
-        queryWrapper.and(ARTICLE.TYPE.eq(articleVO.getType(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(ARTICLE.STATUS.eq(articleVO.getStatus(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(ARTICLE.CREATOR_ID.eq(articleVO.getCreatorId(), VerifyUtils::isNotEmpty));
+            // equal
+            .and(ARTICLE.TYPE.eq(articleVO.getType())).and(ARTICLE.STATUS.eq(articleVO.getStatus()))
+            .and(ARTICLE.CREATOR_ID.eq(articleVO.getCreatorId()));
 
         if (articleVO.getCategoryId() != null) {
             queryWrapper.and("FIND_IN_SET(?, article_category_relevance.article_category_path) > 0",

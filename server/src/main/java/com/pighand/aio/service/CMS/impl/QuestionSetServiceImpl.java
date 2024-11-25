@@ -7,7 +7,6 @@ import com.pighand.aio.service.CMS.QuestionSetService;
 import com.pighand.aio.vo.CMS.QuestionSetVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
 import static com.pighand.aio.domain.CMS.table.QuestionAnswerTableDef.QUESTION_ANSWER;
@@ -60,16 +59,14 @@ public class QuestionSetServiceImpl extends BaseServiceImpl<QuestionSetMapper, Q
         questionSetVO.setJoinTables(QUESTION_BANK.getTableName(), QUESTION_ANSWER.getTableName(),
             QUESTION_BANK.getTableName());
 
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // like
+            .and(QUESTION_SET.QUESTION.like(questionSetVO.getQuestion()))
+            .and(QUESTION_SET.PROMPT.like(questionSetVO.getPrompt()))
 
-        // like
-        queryWrapper.and(QUESTION_SET.QUESTION.like(questionSetVO.getQuestion(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(QUESTION_SET.PROMPT.like(questionSetVO.getPrompt(), VerifyUtils::isNotEmpty));
-
-        // equal
-        queryWrapper.and(QUESTION_SET.QUESTION_BANK_ID.eq(questionSetVO.getQuestionBankId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(QUESTION_SET.TYPE.eq(questionSetVO.getType(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(QUESTION_SET.PAGE.eq(questionSetVO.getPage(), VerifyUtils::isNotEmpty));
+            // equal
+            .and(QUESTION_SET.QUESTION_BANK_ID.eq(questionSetVO.getQuestionBankId()))
+            .and(QUESTION_SET.TYPE.eq(questionSetVO.getType())).and(QUESTION_SET.PAGE.eq(questionSetVO.getPage()));
 
         return super.mapper.query(questionSetVO, queryWrapper);
     }

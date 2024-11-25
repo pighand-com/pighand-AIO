@@ -81,14 +81,12 @@ public class TicketUserServiceImpl extends BaseServiceImpl<TicketUserMapper, Tic
     @Override
     public PageOrList<TicketUserVO> query(TicketUserVO ticketUserVO) {
 
-        QueryWrapper queryWrapper = new QueryWrapper();
-
-        // equal
-        queryWrapper.and(TICKET_USER.TICKET_ID.eq(ticketUserVO.getTicketId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(TICKET_USER.ORDER_ID.eq(ticketUserVO.getOrderId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(TICKET_USER.REMAINING_VALIDATION_COUNT.eq(ticketUserVO.getRemainingValidationCount(),
-            VerifyUtils::isNotEmpty));
-        queryWrapper.and(TICKET_USER.CREATOR_ID.eq(ticketUserVO.getCreatorId(), VerifyUtils::isNotEmpty));
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // equal
+            .and(TICKET_USER.TICKET_ID.eq(ticketUserVO.getTicketId()))
+            .and(TICKET_USER.ORDER_ID.eq(ticketUserVO.getOrderId()))
+            .and(TICKET_USER.REMAINING_VALIDATION_COUNT.eq(ticketUserVO.getRemainingValidationCount()))
+            .and(TICKET_USER.CREATOR_ID.eq(ticketUserVO.getCreatorId()));
 
         // 查询可用票务
         if (ticketUserVO.getUsable() != null && ticketUserVO.getUsable()) {

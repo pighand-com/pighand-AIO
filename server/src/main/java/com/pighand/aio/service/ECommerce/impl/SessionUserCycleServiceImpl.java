@@ -7,7 +7,6 @@ import com.pighand.aio.service.ECommerce.SessionUserCycleService;
 import com.pighand.aio.vo.ECommerce.SessionUserCycleVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
 import static com.pighand.aio.domain.ECommerce.table.SessionTableDef.SESSION;
@@ -58,14 +57,12 @@ public class SessionUserCycleServiceImpl extends BaseServiceImpl<SessionUserCycl
     public PageOrList<SessionUserCycleVO> query(SessionUserCycleVO sessionUserCycleVO) {
         sessionUserCycleVO.setJoinTables(SESSION.getTableName(), USER.getTableName());
 
-        QueryWrapper queryWrapper = new QueryWrapper();
-
-        // equal
-        queryWrapper.and(SESSION_USER_CYCLE.SESSION_ID.eq(sessionUserCycleVO.getSessionId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(SESSION_USER_CYCLE.SESSION_TEMPLATE_CYCLE_ID.eq(sessionUserCycleVO.getSessionTemplateCycleId(),
-            VerifyUtils::isNotEmpty));
-        queryWrapper.and(SESSION_USER_CYCLE.ORDER_ID.eq(sessionUserCycleVO.getOrderId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(SESSION_USER_CYCLE.USER_ID.eq(sessionUserCycleVO.getUserId(), VerifyUtils::isNotEmpty));
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // equal
+            .and(SESSION_USER_CYCLE.SESSION_ID.eq(sessionUserCycleVO.getSessionId()))
+            .and(SESSION_USER_CYCLE.SESSION_TEMPLATE_CYCLE_ID.eq(sessionUserCycleVO.getSessionTemplateCycleId()))
+            .and(SESSION_USER_CYCLE.ORDER_ID.eq(sessionUserCycleVO.getOrderId()))
+            .and(SESSION_USER_CYCLE.USER_ID.eq(sessionUserCycleVO.getUserId()));
 
         return super.mapper.query(sessionUserCycleVO, queryWrapper);
     }

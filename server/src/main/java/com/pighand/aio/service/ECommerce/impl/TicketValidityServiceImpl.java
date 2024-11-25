@@ -7,7 +7,6 @@ import com.pighand.aio.service.ECommerce.TicketValidityService;
 import com.pighand.aio.vo.ECommerce.TicketValidityVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
 import static com.pighand.aio.domain.ECommerce.table.TicketValidityTableDef.TICKET_VALIDITY;
@@ -55,12 +54,10 @@ public class TicketValidityServiceImpl extends BaseServiceImpl<TicketValidityMap
     @Override
     public PageOrList<TicketValidityVO> query(TicketValidityVO ticketValidityVO) {
 
-        QueryWrapper queryWrapper = new QueryWrapper();
-
-        // equal
-        queryWrapper.and(TICKET_VALIDITY.TICKET_ID.eq(ticketValidityVO.getTicketId(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(
-            TICKET_VALIDITY.VALIDATION_COUNT.eq(ticketValidityVO.getValidationCount(), VerifyUtils::isNotEmpty));
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // equal
+            .and(TICKET_VALIDITY.TICKET_ID.eq(ticketValidityVO.getTicketId()))
+            .and(TICKET_VALIDITY.VALIDATION_COUNT.eq(ticketValidityVO.getValidationCount()));
 
         return super.mapper.query(ticketValidityVO, queryWrapper);
     }

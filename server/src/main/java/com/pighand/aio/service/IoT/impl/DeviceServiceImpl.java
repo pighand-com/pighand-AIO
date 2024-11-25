@@ -8,7 +8,6 @@ import com.pighand.aio.service.IoT.DeviceService;
 import com.pighand.aio.vo.IoT.DeviceVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -62,15 +61,12 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceMapper, DeviceDomai
     public PageOrList<DeviceVO> query(DeviceVO deviceVO) {
         //        deviceVO.setJoinTables(DEVICE_TASK.getTableName());
 
-        QueryWrapper queryWrapper = new QueryWrapper();
-
-        // like
-        queryWrapper.and(DEVICE.SN.like(deviceVO.getSn(), VerifyUtils::isNotEmpty));
-
-        // equal
-        queryWrapper.and(DEVICE.GROUP.eq(deviceVO.getGroup(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(DEVICE.LINK_STATUS.eq(deviceVO.getLinkStatus(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(DEVICE.RUNNING_STATUS.eq(deviceVO.getRunningStatus(), VerifyUtils::isNotEmpty));
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // like
+            .and(DEVICE.SN.like(deviceVO.getSn()))
+            // equal
+            .and(DEVICE.GROUP.eq(deviceVO.getGroup())).and(DEVICE.LINK_STATUS.eq(deviceVO.getLinkStatus()))
+            .and(DEVICE.RUNNING_STATUS.eq(deviceVO.getRunningStatus()));
 
         PageOrList<DeviceVO> result = super.mapper.query(deviceVO, queryWrapper);
 

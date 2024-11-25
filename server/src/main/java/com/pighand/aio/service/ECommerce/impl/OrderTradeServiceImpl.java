@@ -7,7 +7,6 @@ import com.pighand.aio.service.ECommerce.OrderTradeService;
 import com.pighand.aio.vo.ECommerce.OrderTradeVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -63,17 +62,17 @@ public class OrderTradeServiceImpl extends BaseServiceImpl<OrderTradeMapper, Ord
     public PageOrList<OrderTradeVO> query(OrderTradeVO orderTradeVO) {
         orderTradeVO.setJoinTables(ORDER.getTableName(), ORDER_SKU.getTableName(), BILL.getTableName());
 
-        QueryWrapper queryWrapper = new QueryWrapper();
+        QueryWrapper queryWrapper = QueryWrapper.create()
 
-        // like
-        queryWrapper.and(ORDER_TRADE.SN.like(orderTradeVO.getSn(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(ORDER_TRADE.CREATOR_ID.like(orderTradeVO.getCreatorId(), VerifyUtils::isNotEmpty));
+            // like
+            .and(ORDER_TRADE.SN.like(orderTradeVO.getSn()))
+            .and(ORDER_TRADE.CREATOR_ID.like(orderTradeVO.getCreatorId()))
 
-        // equal
-        queryWrapper.and(ORDER_TRADE.AMOUNT_PAYABLE.eq(orderTradeVO.getAmountPayable(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(ORDER_TRADE.AMOUNT_PAID.eq(orderTradeVO.getAmountPaid(), VerifyUtils::isNotEmpty));
+            // equal
+            .and(ORDER_TRADE.AMOUNT_PAYABLE.eq(orderTradeVO.getAmountPayable()))
+            .and(ORDER_TRADE.AMOUNT_PAID.eq(orderTradeVO.getAmountPaid()))
 
-        queryWrapper.orderBy(ORDER_TRADE.ID.desc());
+            .orderBy(ORDER_TRADE.ID.desc());
 
         return super.mapper.query(orderTradeVO, queryWrapper);
     }

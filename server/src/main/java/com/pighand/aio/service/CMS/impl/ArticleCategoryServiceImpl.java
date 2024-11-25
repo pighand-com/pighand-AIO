@@ -66,12 +66,12 @@ public class ArticleCategoryServiceImpl extends BaseServiceImpl<ArticleCategoryM
     public PageOrList<ArticleCategoryVO> query(ArticleCategoryVO articleCategoryVO) {
         //        articleCategoryVO.setJoinTables(ARTICLE.getTableName());
 
-        QueryWrapper queryWrapper = new QueryWrapper();
-        // 默认查一级分类，即parentId为null
-        queryWrapper.and(ARTICLE_CATEGORY.PARENT_ID.eq(articleCategoryVO.getParentId()));
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // 默认查一级分类，即parentId为null
+            .and(ARTICLE_CATEGORY.PARENT_ID.eq(articleCategoryVO.getParentId()))
 
-        // like
-        queryWrapper.and(ARTICLE_CATEGORY.NAME.like(articleCategoryVO.getName(), VerifyUtils::isNotEmpty));
+            // like
+            .and(ARTICLE_CATEGORY.NAME.like(articleCategoryVO.getName(), VerifyUtils::isNotEmpty));
 
         PageOrList<ArticleCategoryVO> result = super.mapper.query(articleCategoryVO, queryWrapper);
 

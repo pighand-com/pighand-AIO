@@ -7,7 +7,6 @@ import com.pighand.aio.service.ECommerce.SessionTemplateCycleService;
 import com.pighand.aio.vo.ECommerce.SessionTemplateCycleVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
 import static com.pighand.aio.domain.ECommerce.table.SessionTemplateCycleTableDef.SESSION_TEMPLATE_CYCLE;
@@ -56,19 +55,14 @@ public class SessionTemplateCycleServiceImpl
     @Override
     public PageOrList<SessionTemplateCycleVO> query(SessionTemplateCycleVO sessionTemplateCycleVO) {
 
-        QueryWrapper queryWrapper = new QueryWrapper();
-
-        // equal
-        queryWrapper.and(SESSION_TEMPLATE_CYCLE.SESSION_TEMPLATE_ID.eq(sessionTemplateCycleVO.getSessionTemplateId(),
-            VerifyUtils::isNotEmpty));
-        queryWrapper.and(
-            SESSION_TEMPLATE_CYCLE.CYCLE_TYPE.eq(sessionTemplateCycleVO.getCycleType(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(SESSION_TEMPLATE_CYCLE.WEEK.eq(sessionTemplateCycleVO.getWeek(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(SESSION_TEMPLATE_CYCLE.DAY.eq(sessionTemplateCycleVO.getDay(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(
-            SESSION_TEMPLATE_CYCLE.BEGIN_TIME.eq(sessionTemplateCycleVO.getBeginTime(), VerifyUtils::isNotEmpty));
-        queryWrapper.and(
-            SESSION_TEMPLATE_CYCLE.END_TIME.eq(sessionTemplateCycleVO.getEndTime(), VerifyUtils::isNotEmpty));
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // equal
+            .and(SESSION_TEMPLATE_CYCLE.SESSION_TEMPLATE_ID.eq(sessionTemplateCycleVO.getSessionTemplateId()))
+            .and(SESSION_TEMPLATE_CYCLE.CYCLE_TYPE.eq(sessionTemplateCycleVO.getCycleType()))
+            .and(SESSION_TEMPLATE_CYCLE.WEEK.eq(sessionTemplateCycleVO.getWeek()))
+            .and(SESSION_TEMPLATE_CYCLE.DAY.eq(sessionTemplateCycleVO.getDay()))
+            .and(SESSION_TEMPLATE_CYCLE.BEGIN_TIME.eq(sessionTemplateCycleVO.getBeginTime()))
+            .and(SESSION_TEMPLATE_CYCLE.END_TIME.eq(sessionTemplateCycleVO.getEndTime()));
 
         return super.mapper.query(sessionTemplateCycleVO, queryWrapper);
     }

@@ -201,26 +201,15 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
         userVO.setJoinTables(USER_EXTENSION.getTableName(), "bind_count");
         userVO.setApplicationId(Context.getApplicationId());
 
-        // like
-        QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.where(USER.APPLICATION_ID.eq(userVO.getApplicationId()));
-        if (VerifyUtils.isNotEmpty(userVO.getUsername())) {
-            queryWrapper.and(USER.USERNAME.like(userVO.getUsername()));
-        }
-        if (VerifyUtils.isNotEmpty(userVO.getPhone())) {
-            queryWrapper.and(USER.PHONE.like(userVO.getPhone()));
-        }
-        if (VerifyUtils.isNotEmpty(userVO.getEmail())) {
-            queryWrapper.and(USER.EMAIL.like(userVO.getEmail()));
-        }
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // like
+            .and(USER.ID.like(userVO.getId())).and(USER.ID.like(userVO.getId()))
+            .and(USER.USERNAME.like(userVO.getUsername())).and(USER.PHONE.like(userVO.getPhone()))
+            .and(USER.EMAIL.like(userVO.getEmail()))
 
-        // equal
-        if (VerifyUtils.isNotEmpty(userVO.getStatus())) {
-            queryWrapper.and(USER.STATUS.eq(userVO.getStatus()));
-        }
-        if (VerifyUtils.isNotEmpty(userVO.getRoleId())) {
-            queryWrapper.and(USER.ROLE_ID.eq(userVO.getRoleId()));
-        }
+            // equal
+            .and(USER.APPLICATION_ID.eq(userVO.getApplicationId())).and(USER.STATUS.eq(userVO.getStatus()))
+            .and(USER.ROLE_ID.eq(userVO.getRoleId()));
 
         return this.mapper.query(userVO, queryWrapper);
     }

@@ -15,29 +15,26 @@ import provideForm from '@/common/provideForm';
 
 const { detailFormModel } = provideForm([
     {
-        label: 'id',
+        label: 'ID',
         prop: 'id',
         isSearch: true,
         isSearchMore: false,
-        isDetail: true,
         isPrimaryKey: true,
-        hidden: true
+        isTable: true
     },
     {
-        label: '姓名',
-        prop: 'name',
+        label: '电话',
+        prop: 'phone',
         isSearch: true,
         isSearchMore: false,
-        searchPlaceholder: '模糊搜索',
-        isTable: true,
-        isDetail: true,
-        rules: [
-            {
-                required: true,
-                message: '姓名必填',
-                trigger: 'blur'
-            }
-        ]
+        isTable: true
+    },
+    {
+        label: '账号',
+        prop: 'username',
+        isSearch: true,
+        isSearchMore: false,
+        isTable: true
     }
 ]);
 </script>

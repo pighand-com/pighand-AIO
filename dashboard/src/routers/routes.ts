@@ -30,6 +30,27 @@ const routes = [
         component: () => import('@/pages/Article.vue')
     },
     {
+        path: '/marketing',
+        name: 'marketing',
+        title: '营销活动',
+        meta: {
+            requiresAuth: true,
+            icon: shallowRef(Files),
+            pageType: constant.page_type_single
+        },
+        children: [
+            {
+                path: 'lottery',
+                name: 'lottery',
+                title: '抽奖',
+                meta: {
+                    icon: shallowRef(Files)
+                },
+                component: () => import('@/pages/Lottery.vue')
+            }
+        ]
+    },
+    {
         path: '/system',
         name: 'system',
         title: '系统管理',

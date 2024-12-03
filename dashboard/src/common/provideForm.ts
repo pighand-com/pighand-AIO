@@ -1,4 +1,4 @@
-import { ref, Ref, reactive, provide } from 'vue';
+import { ref, Ref, reactive, provide, watch } from 'vue';
 
 /**
  * 表单列配置接口
@@ -188,6 +188,8 @@ export interface ProvideFormInterface {
     domDataSetLoading: {
         [key: string]: boolean;
     };
+    /** 监听详情表单数据变化 */
+    watchDetailForm: (callback: (newVal: any, oldVal: any) => void) => void;
 }
 
 /**
@@ -369,6 +371,17 @@ export default function provideForm(
     // 当前页码
     const pageNumber = ref(1);
 
+    /** 监听详情表单数据变化 */
+    const watchDetailForm = (callback: (newVal: any, oldVal: any) => void) => {
+        watch(
+            () => detailFormModel,
+            (newVal, oldVal) => {
+                callback(newVal, oldVal);
+            },
+            { deep: true }
+        );
+    };
+
     // 提供表单上下文给子组件
     provide('provideForm', {
         formColumns,
@@ -387,7 +400,8 @@ export default function provideForm(
         detailDefaultValue,
         domDataSet,
         getDomData,
-        domDataSetLoading
+        domDataSetLoading,
+        watchDetailForm
     });
 
     // 返回表单上下文
@@ -408,6 +422,7 @@ export default function provideForm(
         detailDefaultValue,
         domDataSet,
         getDomData,
-        domDataSetLoading
+        domDataSetLoading,
+        watchDetailForm
     };
 }

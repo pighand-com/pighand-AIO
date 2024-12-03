@@ -16,7 +16,7 @@
                 ref="detailForm"
                 label-position="right"
                 label-width="auto">
-                <FormItem
+                <FormItems
                     :form-model="detailFormModel"
                     :form-columns="
                         formColumns.filter((item) => getIsDetail(item))
@@ -36,10 +36,32 @@
                             getIsDetail(item)
                         )"
                         :key="index"
+                        #[`detail-${item.prop}-before`]>
+                        <slot :name="`${item.prop}-before`" />
+                    </template>
+
+                    <template
+                        v-for="(item, index) in formColumns.filter((item) =>
+                            getIsDetail(item)
+                        )"
+                        :key="index"
+                        #[`detail-${item.prop}-after`]>
+                        <slot :name="`${item.prop}-after`" />
+                    </template>
+
+                    <template
+                        v-for="(item, index) in formColumns.filter((item) =>
+                            getIsDetail(item)
+                        )"
+                        :key="index"
                         #[`detail-${index}-after`]>
                         <slot :name="`${index}-after`" />
                     </template>
-                </FormItem>
+
+                    <template #detail-last>
+                        <slot name="detail-last" />
+                    </template>
+                </FormItems>
 
                 <slot />
             </el-form>
@@ -64,7 +86,7 @@
 <script lang="ts" setup>
 import { ref, watch, inject, nextTick } from 'vue';
 import { ElMessageBox } from 'element-plus';
-import FormItem from '@/components/FormItem.vue';
+import FormItems from '@/components/FormItems.vue';
 import { ProvideFormInterface } from '@/common/provideForm';
 
 /**

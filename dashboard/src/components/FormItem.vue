@@ -1,366 +1,120 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
-    <el-row :gutter="20" v-if="props.onWhere === 'search'">
-        <el-col
-            :xs="24"
-            :md="item.domType === 'datePickerRange' ? 12 : 12"
-            :lg="item.domType === 'datePickerRange' ? 8 : 6"
-            :xl="item.domType === 'datePickerRange' ? 4 : 3"
-            v-for="(item, index) in props.formColumns"
-            :key="index">
-            <slot :name="`${onWhere}-${index}-before`" />
+    <el-form-item :style="{ width: '100%' }" v-show="!formColumnItem.hidden" :label="formColumnItem.label"
+        :prop="formColumnItem.prop">
+        <el-input v-if="!formColumnItem.domType || formColumnItem.domType === 'input'"
+            v-bind="formColumnItem.componentProps || {}" v-model="formModel[formColumnItem.prop]"
+            :type="formColumnItem.inputType || 'text'" :show-password="formColumnItem.inputType === 'password'"
+            :placeholder="formColumnItem.placeholder" autocomplete="off" clearable />
 
-            <el-form-item
-                :style="{ width: '100%' }"
-                v-show="!item.hidden"
-                :label="item.label"
-                :prop="item.prop">
-                <el-input
-                    v-if="!item.domType || item.domType === 'input'"
-                    v-bind="item.componentProps || {}"
-                    v-model="formModel[item.prop]"
-                    :type="item.inputType || 'text'"
-                    :show-password="item.inputType === 'password'"
-                    :placeholder="item[placeholder] || item.placeholder"
-                    autocomplete="off"
-                    clearable />
+        <el-input-number v-if="formColumnItem.domType === 'number'" v-bind="formColumnItem.componentProps || {}"
+            v-model="formModel[formColumnItem.prop]" clearable />
 
-                <el-input-number
-                    v-if="item.domType === 'number'"
-                    v-bind="item.componentProps || {}"
-                    v-model="formModel[item.prop]"
-                    clearable />
+        <el-select v-if="formColumnItem.domType === 'select'"
+            v-bind="formColumnItem.componentProps || {}" v-model="formModel[formColumnItem.prop]" :placeholder="formColumnItem.placeholder" :remote-method="getDomData[formColumnItem.label + formColumnItem.prop]"
+            :remote="!!getDomData[formColumnItem.label + formColumnItem.prop]"
+            :loading="domDataSetLoading[formColumnItem.label + formColumnItem.prop]" remote-show-suffix filterable
+            clearable>
+            <el-option v-for="domDataItem in domDataSet[formColumnItem.prop]" :key="domDataItem.value"
+                :label="domDataItem.label" :value="domDataItem.value" />
+        </el-select>
 
-                <el-select
-                    v-if="item.domType === 'select'"
-                    v-bind="item.componentProps || {}"
-                    v-model="formModel[item.prop]"
-                    :placeholder="
-                        item[placeholder] ||
-                        item.placeholder ||
-                        onWhere === 'search'
-                            ? '全部'
-                            : ''
-                    "
-                    :remote-method="getDomData[item.label + item.prop]"
-                    :remote="!!getDomData[item.label + item.prop]"
-                    :loading="domDataSetLoading[item.label + item.prop]"
-                    remote-show-suffix
-                    filterable
-                    clearable>
-                    <el-option
-                        v-for="domDataItem in domDataSet[item.prop]"
-                        :key="domDataItem.value"
-                        :label="domDataItem.label"
-                        :value="domDataItem.value" />
-                </el-select>
+        <el-radio-group v-if="formColumnItem.domType === 'radio'" v-bind="formColumnItem.componentProps || {}"
+            v-model="formModel[formColumnItem.prop]">
+            <el-radio v-for="domDataItem in domDataSet[formColumnItem.prop]" :key="domDataItem.value"
+                :label="domDataItem.label" :value="domDataItem.value">
+                {{ domDataItem.label }}
+            </el-radio>
+        </el-radio-group>
 
-                <el-date-picker
-                    v-if="item.domType === 'dateTimePicker'"
-                    v-bind="item.componentProps || {}"
-                    v-model="formModel[item.prop]"
-                    type="datetime"
-                    :placeholder="
-                        item[placeholder] ||
-                        item.placeholder ||
-                        onWhere === 'search'
-                            ? '全部'
-                            : ''
-                    "
-                    clearable>
-                </el-date-picker>
+        <el-date-picker v-if="formColumnItem.domType === 'dateTimePicker'" v-bind="formColumnItem.componentProps || {}"
+            v-model="formModel[formColumnItem.prop]" type="datetime" :placeholder="formColumnItem.placeholder" clearable>
+        </el-date-picker>
 
-                <el-date-picker
-                    v-if="
-                        item.domType === 'datePicker' ||
-                        item.domType === 'datePickerRange'
-                    "
-                    v-bind="item.componentProps || {}"
-                    v-model="formModel[item.prop]"
-                    :type="item.domType === 'datePicker' ? 'date' : 'daterange'"
-                    range-separator="-"
-                    value-format="YYYY-MM-DD"
-                    :placeholder="
-                        item[placeholder] ||
-                        item.placeholder ||
-                        onWhere === 'search'
-                            ? '全部'
-                            : ''
-                    "
-                    clearable>
-                </el-date-picker>
+        <el-date-picker v-if="
+            formColumnItem.domType === 'datePicker' ||
+            formColumnItem.domType === 'datePickerRange'
+        " v-bind="formColumnItem.componentProps || {}" v-model="formModel[formColumnItem.prop]"
+            :type="formColumnItem.domType === 'datePicker' ? 'date' : 'daterange'" range-separator="-"
+            value-format="YYYY-MM-DD" :placeholder="formColumnItem.placeholder" clearable>
+        </el-date-picker>
 
-                <div
-                    v-for="(imageItem, imageIndex) in (
-                        (item.domType === 'uploadImage'
-                            ? [formModel[item.prop]]
-                            : item.domType === 'uploadImageList'
-                            ? formModel[item.prop]
-                            : []) || []
-                    ).filter((formImageItem) => formImageItem)"
-                    :key="'image_' + imageIndex"
-                    class="upload-image-list">
-                    <img :src="imageItem" class="image" />
+        <div v-for="(imageItem, imageIndex) in (
+            (formColumnItem.domType === 'uploadImage'
+                ? [formModel[formColumnItem.prop]]
+                : formColumnItem.domType === 'uploadImageList'
+                    ? formModel[formColumnItem.prop]
+                    : []) || []
+        ).filter((formImageItem) => formImageItem)" :key="'image_' + imageIndex" class="upload-image-list">
+            <img :src="imageItem" class="image" />
 
-                    <span class="upload-operation">
-                        <span
-                            @click.stop
-                            @click="
-                                handlePictureCardPreview(
-                                    item.prop,
-                                    imageIndex,
-                                    item.domType
-                                )
-                            "
-                            :style="{ cursor: 'pointer' }">
-                            <el-icon><ZoomIn /></el-icon>
-                        </span>
-                        <span
-                            @click.stop
-                            @click="
-                                handleDownload(
-                                    item.prop,
-                                    imageIndex,
-                                    item.domType
-                                )
-                            "
-                            :style="{ cursor: 'pointer' }">
-                            <el-icon><Download /></el-icon>
-                        </span>
-                        <span
-                            @click.stop
-                            @click="
-                                handleRemove(
-                                    item.prop,
-                                    imageIndex,
-                                    item.domType
-                                )
-                            "
-                            :style="{ cursor: 'pointer' }">
-                            <el-icon><Delete /></el-icon>
-                        </span>
-                    </span>
-                </div>
-                <el-upload
-                    v-if="
-                        (item.domType === 'uploadImage' &&
-                            !formModel[item.prop]) ||
-                        item.domType === 'uploadImageList'
-                    "
-                    v-bind="item.componentProps || {}"
-                    v-loading="uploadImageLoading[item.prop]"
-                    class="image-uploader"
-                    :show-file-list="false"
-                    :http-request="
-                        (options) => uploadServer(options, item.prop)
-                    "
-                    accept="image/png,image/jpeg,image/jpg">
-                    <el-icon class="image-uploader-icon"><Plus /></el-icon>
-                </el-upload>
-
-                <el-upload
-                    v-if="item.domType === 'uploadFile'"
-                    v-loading="uploadImageLoading[item.prop]"
-                    v-bind="item.componentProps || {}"
-                    v-model:file-list="uploadFile[item.prop]"
-                    :show-file-list="true"
-                    :limit="1"
-                    :accept="
-                        item.uploadAcceptMap
-                            ? item.uploadAcceptMap.map[
-                                  formModel[item.uploadAcceptMap.key]
-                              ]
-                            : '*'
-                    "
-                    :http-request="
-                        (options) => uploadServer(options, item.prop)
-                    ">
-                    <template #trigger>
-                        <el-button type="primary">选择文件</el-button>
-                    </template>
-                </el-upload>
-
-                <PEditor
-                    v-model="formModel[item.prop]"
-                    v-if="item.domType === 'editor'"
-                    :upload-path="item.uploadPath" />
-            </el-form-item>
-
-            <slot :name="`${onWhere}-${index}-after`" />
-        </el-col>
-    </el-row>
-
-    <span v-else v-for="(item, index) in props.formColumns" :key="index">
-        <slot :name="`${onWhere}-${index}-before`" />
-
-        <el-form-item
-            v-show="!item.hidden"
-            :label="item.label"
-            :prop="item.prop">
-            <el-input
-                v-if="!item.domType || item.domType === 'input'"
-                v-bind="item.componentProps || {}"
-                v-model="formModel[item.prop]"
-                :type="item.inputType || 'text'"
-                :show-password="item.inputType === 'password'"
-                :placeholder="item[placeholder] || item.placeholder"
-                autocomplete="off"
-                clearable />
-
-            <el-input-number
-                v-if="item.domType === 'number'"
-                v-bind="item.componentProps || {}"
-                v-model="formModel[item.prop]"
-                clearable />
-
-            <el-select
-                v-if="item.domType === 'select'"
-                v-bind="item.componentProps || {}"
-                v-model="formModel[item.prop]"
-                :placeholder="
-                    item[placeholder] ||
-                    item.placeholder ||
-                    onWhere === 'search'
-                        ? '全部'
-                        : ''
-                "
-                :remote-method="getDomData[item.label + item.prop]"
-                :remote="!!getDomData[item.label + item.prop]"
-                :loading="domDataSetLoading[item.label + item.prop]"
-                remote-show-suffix
-                filterable
-                clearable>
-                <el-option
-                    v-for="domDataItem in domDataSet[item.prop]"
-                    :key="domDataItem.value"
-                    :label="domDataItem.label"
-                    :value="domDataItem.value" />
-            </el-select>
-
-            <el-date-picker
-                v-if="item.domType === 'dateTimePicker'"
-                v-bind="item.componentProps || {}"
-                v-model="formModel[item.prop]"
-                type="datetime"
-                :placeholder="
-                    item[placeholder] ||
-                    item.placeholder ||
-                    onWhere === 'search'
-                        ? '全部'
-                        : ''
-                "
-                clearable>
-            </el-date-picker>
-
-            <el-date-picker
-                v-if="
-                    item.domType === 'datePicker' ||
-                    item.domType === 'datePickerRange'
-                "
-                v-bind="item.componentProps || {}"
-                v-model="formModel[item.prop]"
-                :type="item.domType === 'datePicker' ? 'date' : 'daterange'"
-                range-separator="-"
-                value-format="YYYY-MM-DD"
-                :placeholder="
-                    item[placeholder] ||
-                    item.placeholder ||
-                    onWhere === 'search'
-                        ? '全部'
-                        : ''
-                "
-                clearable>
-            </el-date-picker>
-
-            <div
-                v-for="(imageItem, imageIndex) in (
-                    (item.domType === 'uploadImage'
-                        ? [formModel[item.prop]]
-                        : item.domType === 'uploadImageList'
-                        ? formModel[item.prop]
-                        : []) || []
-                ).filter((formImageItem) => formImageItem)"
-                :key="'image_' + imageIndex"
-                class="upload-image-list">
-                <img :src="imageItem" class="image" />
-
-                <span class="upload-operation">
-                    <span
-                        @click.stop
-                        @click="
-                            handlePictureCardPreview(
-                                item.prop,
-                                imageIndex,
-                                item.domType
-                            )
-                        "
-                        :style="{ cursor: 'pointer' }">
-                        <el-icon><ZoomIn /></el-icon>
-                    </span>
-                    <span
-                        @click.stop
-                        @click="
-                            handleDownload(item.prop, imageIndex, item.domType)
-                        "
-                        :style="{ cursor: 'pointer' }">
-                        <el-icon><Download /></el-icon>
-                    </span>
-                    <span
-                        @click.stop
-                        @click="
-                            handleRemove(item.prop, imageIndex, item.domType)
-                        "
-                        :style="{ cursor: 'pointer' }">
-                        <el-icon><Delete /></el-icon>
-                    </span>
+            <span class="upload-operation">
+                <span @click.stop @click="
+                    handlePictureCardPreview(
+                        formColumnItem.prop,
+                        imageIndex,
+                        formColumnItem.domType
+                    )
+                    " :style="{ cursor: 'pointer' }">
+                    <el-icon>
+                        <ZoomIn />
+                    </el-icon>
                 </span>
-            </div>
-            <el-upload
-                v-if="
-                    (item.domType === 'uploadImage' && !formModel[item.prop]) ||
-                    item.domType === 'uploadImageList'
-                "
-                v-bind="item.componentProps || {}"
-                v-loading="uploadImageLoading[item.prop]"
-                class="image-uploader"
-                :show-file-list="false"
-                :http-request="(options) => uploadServer(options, item.prop)"
-                accept="image/png,image/jpeg,image/jpg">
-                <el-icon class="image-uploader-icon"><Plus /></el-icon>
-            </el-upload>
+                <span @click.stop @click="
+                    handleDownload(
+                        formColumnItem.prop,
+                        imageIndex,
+                        formColumnItem.domType
+                    )
+                    " :style="{ cursor: 'pointer' }">
+                    <el-icon>
+                        <Download />
+                    </el-icon>
+                </span>
+                <span @click.stop @click="
+                    handleRemove(
+                        formColumnItem.prop,
+                        imageIndex,
+                        formColumnItem.domType
+                    )
+                    " :style="{ cursor: 'pointer' }">
+                    <el-icon>
+                        <Delete />
+                    </el-icon>
+                </span>
+            </span>
+        </div>
+        <el-upload v-if="
+            (formColumnItem.domType === 'uploadImage' &&
+                !formModel[formColumnItem.prop]) ||
+            formColumnItem.domType === 'uploadImageList'
+        " v-bind="formColumnItem.componentProps || {}" v-loading="uploadImageLoading[formColumnItem.prop]"
+            class="image-uploader" :show-file-list="false" :http-request="(options) => uploadServer(options, formColumnItem.prop)
+                " accept="image/png,image/jpeg,image/jpg">
+            <el-icon class="image-uploader-icon">
+                <Plus />
+            </el-icon>
+        </el-upload>
 
-            <el-upload
-                v-if="item.domType === 'uploadFile'"
-                v-loading="uploadImageLoading[item.prop]"
-                v-bind="item.componentProps || {}"
-                v-model:file-list="uploadFile[item.prop]"
-                :show-file-list="true"
-                :limit="1"
-                :accept="
-                    item.uploadAcceptMap
-                        ? item.uploadAcceptMap.map[
-                              formModel[item.uploadAcceptMap.key]
-                          ]
-                        : '*'
-                "
-                :http-request="(options) => uploadServer(options, item.prop)">
-                <template #trigger>
-                    <el-button type="primary">选择文件</el-button>
-                </template>
-            </el-upload>
+        <el-upload v-if="formColumnItem.domType === 'uploadFile'" v-loading="uploadImageLoading[formColumnItem.prop]"
+            v-bind="formColumnItem.componentProps || {}" v-model:file-list="uploadFile[formColumnItem.prop]"
+            :show-file-list="true" :limit="1" :accept="formColumnItem.uploadAcceptMap
+                    ? formColumnItem.uploadAcceptMap.map[
+                    formModel[formColumnItem.uploadAcceptMap.key]
+                    ]
+                    : '*'
+                " :http-request="(options) => uploadServer(options, formColumnItem.prop)
+                        ">
+            <template #trigger>
+                <el-button type="primary">选择文件</el-button>
+            </template>
+        </el-upload>
 
-            <PEditor
-                v-model="formModel[item.prop]"
-                v-if="item.domType === 'editor'"
-                :upload-path="item.uploadPath" />
-        </el-form-item>
+        <PEditor v-model="formModel[formColumnItem.prop]" v-if="formColumnItem.domType === 'editor'"
+            :upload-path="formColumnItem.uploadPath" />
+    </el-form-item>
 
-        <slot :name="`${onWhere}-${index}-after`" />
-    </span>
-
-    <PImageView
-        :image-url="dialogImageUrl"
-        v-model:image-visible="dialogVisible"></PImageView>
+    <PImageView :image-url="dialogImageUrl" v-model:image-visible="dialogVisible"></PImageView>
 </template>
 
 <script lang="ts" setup>
@@ -376,15 +130,13 @@ import { common } from '@/api/index.ts';
 
 /**
  * 组件属性定义
- * @property {Array<FormColumnsInterface>} formColumns - 表单列配置数组,定义表单的每一列的配置信息
+ * @property {FormColumnsInterface} formColumns - 表单列配置数组,定义表单的每一列的配置信息
  * @property {Object} formModel - 表单数据模型,用于双向绑定表单数据
- * @property {String} onWhere - 表单所在位置标识,可选值:'search'(搜索表单)/'detail'(详情表单)
  */
-const props = defineProps({
-    formColumns: Array<FormColumnsInterface>,
+const props = defineProps<{
+    formColumnItem: FormColumnsInterface,
     formModel: Object,
-    onWhere: String
-});
+}>();
 
 const dialogImageUrl = ref('');
 const dialogVisible = ref(false);
@@ -395,34 +147,25 @@ const uploadFile = ref({});
 const provideForm: ProvideFormInterface = inject('provideForm');
 const { domDataSet, getDomData, domDataSetLoading } = provideForm;
 
-let placeholder = 'placeholder';
-if (props.onWhere === 'search') {
-    placeholder = 'searchPlaceholder';
-} else {
-    placeholder = 'detailPlaceholder';
-}
-
-props.formColumns.forEach((item) => {
-    if (item.domType === 'uploadFile') {
-        watch(
-            () => props.formModel[item.prop],
-            (value) => {
-                if (value) {
-                    const uploadFileRef = uploadFile.value;
-                    uploadFileRef[item.prop] = [
-                        {
-                            name: value.split('/').pop(),
-                            url: value
-                        }
-                    ];
-                    uploadFile.value = uploadFileRef;
-                } else {
-                    uploadFile.value = {};
-                }
+if (props.formColumnItem.domType === 'uploadFile') {
+    watch(
+        () => props.formModel[props.formColumnItem.prop],
+        (value) => {
+            if (value) {
+                const uploadFileRef = uploadFile.value;
+                uploadFileRef[props.formColumnItem.prop] = [
+                    {
+                        name: value.split('/').pop(),
+                        url: value
+                    }
+                ];
+                uploadFile.value = uploadFileRef;
+            } else {
+                uploadFile.value = {};
             }
-        );
-    }
-});
+        }
+    );
+}
 
 /**
  * 上传到cos
@@ -553,10 +296,12 @@ const handleDownload = (prop, index, domType) => {
         overflow: hidden;
         transition: var(--el-transition-duration-fast);
     }
+
     :deep(.el-upload:hover) {
         border-color: var(--el-color-primary);
     }
 }
+
 .el-icon.image-uploader-icon {
     font-size: 28px;
     color: #8c939d;

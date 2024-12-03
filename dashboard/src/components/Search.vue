@@ -15,7 +15,7 @@
         label-width="auto">
         <div class="search-default">
             <div>
-                <FormItem
+                <FormItems
                     :form-model="searchFormModel"
                     :form-columns="
                         formColumns.filter(
@@ -37,10 +37,32 @@
                             (item) => item.isSearch && !item.isSearchMore
                         )"
                         :key="index"
+                        #[`search-${item.prop}-before`]>
+                        <slot :name="`${item.prop}-before`" />
+                    </template>
+
+                    <template
+                        v-for="(item, index) in formColumns.filter(
+                            (item) => item.isSearch && !item.isSearchMore
+                        )"
+                        :key="index"
+                        #[`search-${item.prop}-after`]>
+                        <slot :name="`${item.prop}-after`" />
+                    </template>
+
+                    <template
+                        v-for="(item, index) in formColumns.filter(
+                            (item) => item.isSearch && !item.isSearchMore
+                        )"
+                        :key="index"
                         #[`search-${index}-after`]>
                         <slot :name="`${index}-after`" />
                     </template>
-                </FormItem>
+
+                    <template #search-last>
+                        <slot name="search-last" />
+                    </template>
+                </FormItems>
                 <slot />
             </div>
             <div>
@@ -95,7 +117,7 @@
         <div class="more-hidden" :class="{ 'more-show': showMore }">
             <el-divider border-style="dashed" />
 
-            <FormItem
+            <FormItems
                 :form-model="searchFormModel"
                 :form-columns="formColumns.filter((item) => item.isSearchMore)"
                 :on-where="'search-more'">
@@ -116,7 +138,7 @@
                     #[`search-more-${index}-after`]>
                     <slot :name="`more-${index}-after`" />
                 </template>
-            </FormItem>
+            </FormItems>
 
             <slot name="more" />
         </div>
@@ -127,7 +149,7 @@
 import { ref, inject, onMounted } from 'vue';
 import { Search, Refresh, ArrowUp, ArrowDown } from '@element-plus/icons-vue';
 import { ProvideFormInterface } from '@/common/provideForm';
-import FormItem from '@/components/FormItem.vue';
+import FormItems from '@/components/FormItems.vue';
 
 /**
  * 组件属性定义

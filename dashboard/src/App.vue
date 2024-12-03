@@ -69,6 +69,7 @@ initApplicationInfo();
         height: 100%;
         top: 0;
         left: 0;
+        overflow: hidden;
 
         .g1 {
             width: 60%;

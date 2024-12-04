@@ -1,30 +1,35 @@
 <template>
-    <router-view
-        v-if="$route.matched[0]?.meta?.pageType === constant.page_type_multi">
-    </router-view>
+    <el-config-provider :locale="zhCn">
+        <router-view
+            v-if="
+                $route.matched[0]?.meta?.pageType === constant.page_type_multi
+            ">
+        </router-view>
 
-    <div
-        v-else-if="
-            $route.matched[0]?.meta?.pageType === constant.page_type_single
-        "
-        class="dashboard">
-        <div class="bg">
-            <div class="g1"></div>
-            <div class="g2"></div>
-            <div class="g3"></div>
-            <div class="g4"></div>
+        <div
+            v-else-if="
+                $route.matched[0]?.meta?.pageType === constant.page_type_single
+            "
+            class="dashboard">
+            <div class="bg">
+                <div class="g1"></div>
+                <div class="g2"></div>
+                <div class="g3"></div>
+                <div class="g4"></div>
+            </div>
+            <div class="single-menu"><Menu /></div>
+            <div class="single-page">
+                <router-view></router-view>
+            </div>
         </div>
-        <div class="menu"><Menu /></div>
-        <div class="page">
-            <router-view></router-view>
-        </div>
-    </div>
+    </el-config-provider>
 </template>
 
 <script setup lang="ts">
 import Menu from './components/Menu.vue';
 import constant from '@/common/constant';
 import { getApplicationInfo } from '@/common/storage';
+import zhCn from 'element-plus/es/locale/lang/zh-cn';
 
 // 初始化应用信息
 const initApplicationInfo = () => {
@@ -149,7 +154,7 @@ initApplicationInfo();
         }
     }
 
-    .menu {
+    .single-menu {
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -160,7 +165,7 @@ initApplicationInfo();
         align-items: center;
     }
 
-    .page {
+    .single-page {
         position: relative;
         padding: 24px;
         width: 100%;

@@ -251,9 +251,9 @@ export default function provideForm(
     let primaryKey = 'id';
 
     // 搜索表单默认值
-    const searchDefaultValue = config.searchDefaultValue || {};
+    const searchDefaultValue = config?.searchDefaultValue || {};
     // 详情表单默认值
-    const detailDefaultValue = config.detailDefaultValue || {};
+    const detailDefaultValue = config?.detailDefaultValue || {};
 
     // 组件数据集合
     const domDataSet = reactive({});

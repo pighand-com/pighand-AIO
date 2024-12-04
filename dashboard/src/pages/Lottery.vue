@@ -73,6 +73,16 @@
                 <!-- 其他 LotteryParticipatePrizeDomain 相关字段 -->
             </template>
         </template>
+
+        <template #detail-float>
+            
+            <div class="mockup-phone">
+                <div class="camera"></div>
+                <div class="display">
+                    <div class="artboard artboard-demo phone-1">Hi.</div>
+                </div>
+            </div>
+        </template>
     </PDataManager>
 </template>
 

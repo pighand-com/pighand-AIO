@@ -16,52 +16,60 @@
                 ref="detailForm"
                 label-position="right"
                 label-width="auto">
-                <FormItems
-                    :form-model="detailFormModel"
-                    :form-columns="
-                        formColumns.filter((item) => getIsDetail(item))
-                    "
-                    :on-where="'detail'">
-                    <template
-                        v-for="(item, index) in formColumns.filter((item) =>
-                            getIsDetail(item)
-                        )"
-                        :key="index"
-                        #[`detail-${index}-before`]>
-                        <slot :name="`${index}-before`" />
-                    </template>
+                <div class="detail-content">
+                    <div>
+                        <FormItems
+                            :form-model="detailFormModel"
+                            :form-columns="
+                                formColumns.filter((item) => getIsDetail(item))
+                            "
+                            :on-where="'detail'">
+                            <template
+                                v-for="(item, index) in formColumns.filter(
+                                    (item) => getIsDetail(item)
+                                )"
+                                :key="index"
+                                #[`detail-${index}-before`]>
+                                <slot :name="`${index}-before`" />
+                            </template>
 
-                    <template
-                        v-for="(item, index) in formColumns.filter((item) =>
-                            getIsDetail(item)
-                        )"
-                        :key="index"
-                        #[`detail-${item.prop}-before`]>
-                        <slot :name="`${item.prop}-before`" />
-                    </template>
+                            <template
+                                v-for="(item, index) in formColumns.filter(
+                                    (item) => getIsDetail(item)
+                                )"
+                                :key="index"
+                                #[`detail-${item.prop}-before`]>
+                                <slot :name="`${item.prop}-before`" />
+                            </template>
 
-                    <template
-                        v-for="(item, index) in formColumns.filter((item) =>
-                            getIsDetail(item)
-                        )"
-                        :key="index"
-                        #[`detail-${item.prop}-after`]>
-                        <slot :name="`${item.prop}-after`" />
-                    </template>
+                            <template
+                                v-for="(item, index) in formColumns.filter(
+                                    (item) => getIsDetail(item)
+                                )"
+                                :key="index"
+                                #[`detail-${item.prop}-after`]>
+                                <slot :name="`${item.prop}-after`" />
+                            </template>
 
-                    <template
-                        v-for="(item, index) in formColumns.filter((item) =>
-                            getIsDetail(item)
-                        )"
-                        :key="index"
-                        #[`detail-${index}-after`]>
-                        <slot :name="`${index}-after`" />
-                    </template>
+                            <template
+                                v-for="(item, index) in formColumns.filter(
+                                    (item) => getIsDetail(item)
+                                )"
+                                :key="index"
+                                #[`detail-${index}-after`]>
+                                <slot :name="`${index}-after`" />
+                            </template>
 
-                    <template #detail-last>
-                        <slot name="detail-last" />
-                    </template>
-                </FormItems>
+                            <template #detail-last>
+                                <slot name="detail-last" />
+                            </template>
+                        </FormItems>
+                    </div>
+
+                    <div>
+                        <slot name="detail-float" />
+                    </div>
+                </div>
 
                 <slot />
             </el-form>
@@ -316,6 +324,25 @@ const onSubmit = async () => {
     -webkit-mask-image: linear-gradient(to top, transparent, black);
     width: 100%;
     height: 24%;
+}
+
+.detail-content {
+    display: flex;
+}
+
+.detail-content > div {
+    &:first-child {
+        flex: 1;
+    }
+
+    &:last-child {
+        margin-left: 24px;
+        flex-shrink: 0;
+
+        &:empty {
+            display: none;
+        }
+    }
 }
 
 .el-form {

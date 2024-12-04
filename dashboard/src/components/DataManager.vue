@@ -31,6 +31,10 @@
         <template v-for="(_, name) in $slots" #[getDrawerSlotName(name)]>
             <slot :name="name"></slot>
         </template>
+
+        <template #detail-float>
+            <slot name="detail-float"></slot>
+        </template>
     </PDrawer>
 </template>
 

@@ -40,7 +40,7 @@
         ref="userInfoRef">
         <el-popover :show-after="500" width="auto">
             <template #reference>
-                <div class="avatar">
+                <div class="user-avatar">
                     <el-avatar
                         :size="32"
                         src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
@@ -141,7 +141,7 @@ const changeCollapse = () => {
     animate(
         userInfoRef.value,
         {
-            width: !newValue ? '88%' : '40px'
+            width: !newValue ? '100%' : '40px'
         },
         { duration: 0.2 }
     );
@@ -179,19 +179,18 @@ const changeCollapse = () => {
     justify-content: center;
     align-items: center;
     gap: 16px;
-    width: 88%;
     overflow: hidden;
+
+    .user-avatar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
 }
 
 .user-info.is-collapse {
     flex-direction: column;
-}
-
-.avatar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
 }
 
 .username {

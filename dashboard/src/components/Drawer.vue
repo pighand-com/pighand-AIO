@@ -133,16 +133,18 @@ const detailForm = ref();
 watch(
     () => isOpenDetail.value && !isDetailDataLoading.value,
     (newValue) => {
-        if (newValue) {
-            oldData.value = { ...(detailFormModel || {}) };
-
-            // 设置默认值
-            nextTick(() => {
-                Object.keys(detailDefaultValue).forEach((key) => {
-                    detailFormModel[key] = detailDefaultValue[key];
-                });
-            });
+        if (!newValue) {
+            return;
         }
+
+        // 设置默认值
+        nextTick(() => {
+            Object.keys(detailDefaultValue).forEach((key) => {
+                detailFormModel[key] = detailDefaultValue[key];
+            });
+
+            oldData.value = { ...(detailFormModel || {}) };
+        });
     }
 );
 
@@ -238,7 +240,6 @@ const onClose = () => {
         confirmButtonText: '放弃修改',
         confirmButtonClass: 'el-button--danger'
     }).then(() => {
-        isOpenDetail.value = false;
         resetFields();
     });
 };

@@ -195,10 +195,17 @@ export interface ProvideFormInterface {
 /**
  * 提供表单上下文
  * @param formColumns 表单列配置数组
+ * @param config 配置对象
+ * @param config.defaultValue 表单默认值
+ * 
  * @returns {ProvideFormInterface} 返回表单上下文对象,包含表单配置、数据模型、操作方法等
  */
 export default function provideForm(
-    formColumns: Array<FormColumnsInterface>
+    formColumns: Array<FormColumnsInterface>,
+    config?: {
+        searchDefaultValue?: Object;
+        detailDefaultValue?: Object;
+    }
 ): ProvideFormInterface {
     // 表格数据模型
     const tableDataModel: TableDataInterface = reactive({
@@ -222,9 +229,9 @@ export default function provideForm(
     let primaryKey = 'id';
 
     // 搜索表单默认值
-    const searchDefaultValue = {};
+    const searchDefaultValue = config.searchDefaultValue || {};
     // 详情表单默认值
-    const detailDefaultValue = {};
+    const detailDefaultValue = config.detailDefaultValue || {};
 
     // 组件数据集合
     const domDataSet = reactive({});

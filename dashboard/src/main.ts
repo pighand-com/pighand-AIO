@@ -20,6 +20,7 @@ import Dialog from '@/components/Dialog.vue';
 import DataTable from '@/components/DataTable.vue';
 import ImageView from '@/components/ImageView.vue';
 import DataManager from '@/components/DataManager.vue';
+import Divider from '@/components/Divider.vue';
 
 const app = createApp(App);
 app.use(VueDOMPurifyHTML);
@@ -34,6 +35,7 @@ app.component('PDialog', Dialog);
 app.component('PDataTable', DataTable);
 app.component('PImageView', ImageView);
 app.component('PDataManager', DataManager);
+app.component('PDivider', Divider);
 
 const store = createStore({
     state() {

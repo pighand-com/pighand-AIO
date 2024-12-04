@@ -1,7 +1,10 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
+    <PDivider :config="formColumnItem.divider" />
+    
     <el-form-item :style="{ width: '100%' }" v-show="!formColumnItem.hidden" :label="formColumnItem.label"
         :prop="formColumnItem.prop">
+
         <el-input v-if="!formColumnItem.domType || formColumnItem.domType === 'input'"
             v-bind="formColumnItem.componentProps || {}" v-model="formModel[formColumnItem.prop]"
             :type="formColumnItem.inputType || 'text'" :show-password="formColumnItem.inputType === 'password'"

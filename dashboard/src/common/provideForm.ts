@@ -1,6 +1,26 @@
 import { ref, Ref, reactive, provide, watch } from 'vue';
 
 /**
+ * 分隔符配置
+ * @property {boolean} - 是否显示分隔符
+ * @property {string} - 分隔符文本内容
+ * @property {Object} - 分隔符详细配置
+ * @property {string} [content] - 分隔符文本内容
+ * @property {"right" | "center" | "left"} [contentPosition] - 文本位置
+ * @property {'dashed' | 'dotted' | 'double'} style - 分隔符样式
+ * @property {any} [icon] - 分隔符图标
+ */
+export type DividerConfigType =
+    | boolean
+    | string
+    | {
+          content?: string;
+          contentPosition?: 'right' | 'center' | 'left';
+          style?: 'dashed' | 'dotted' | 'double';
+          icon?: any;
+      };
+
+/**
  * 表单列配置接口
  * @interface FormColumnsInterface
  */
@@ -116,6 +136,8 @@ export interface FormColumnsInterface {
     componentProps?: {
         [key: string]: any;
     };
+
+    divider?: DividerConfigType;
 }
 
 /**
@@ -197,7 +219,7 @@ export interface ProvideFormInterface {
  * @param formColumns 表单列配置数组
  * @param config 配置对象
  * @param config.defaultValue 表单默认值
- * 
+ *
  * @returns {ProvideFormInterface} 返回表单上下文对象,包含表单配置、数据模型、操作方法等
  */
 export default function provideForm(

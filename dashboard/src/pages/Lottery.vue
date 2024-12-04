@@ -9,20 +9,6 @@
             size: '60%'
         }">
         <template #[`detail-last`]>
-            <!-- 当抽奖类型为 participate 时显示额外字段 -->
-            <template v-if="detailFormModel.lotteryType === 'participate'">
-                <el-form-item label="奖品名称" prop="prizeName">
-                    <el-input v-model="detailFormModel.prizeName" />
-                </el-form-item>
-                <el-form-item label="奖品图片" prop="prizeImageUrl">
-                    <el-upload
-                        v-model="detailFormModel.prizeImageUrl"
-                        action="/upload"
-                        accept="image/*" />
-                </el-form-item>
-                <!-- 其他 LotteryParticipatePrizeDomain 相关字段 -->
-            </template>
-
             <!-- 新增助力增加类型单选按钮 -->
             <el-form-item label="助力增加类型" prop="helpAddType">
                 <el-radio-group v-model="detailFormModel.helpAddType">
@@ -70,12 +56,28 @@
                     </div>
                 </el-form-item>
             </template>
+
+            <PDivider :config="{ content: '奖品配置', icon: Lollipop }" />
+
+            <!-- 当抽奖类型为 participate 时显示额外字段 -->
+            <template v-if="detailFormModel.lotteryType === 'participate'">
+                <el-form-item label="奖品名称" prop="prizeName">
+                    <el-input v-model="detailFormModel.prizeName" />
+                </el-form-item>
+                <el-form-item label="奖品图片" prop="prizeImageUrl">
+                    <el-upload
+                        v-model="detailFormModel.prizeImageUrl"
+                        action="/upload"
+                        accept="image/*" />
+                </el-form-item>
+                <!-- 其他 LotteryParticipatePrizeDomain 相关字段 -->
+            </template>
         </template>
     </PDataManager>
 </template>
 
 <script lang="ts" setup>
-import { Plus, Minus } from '@element-plus/icons-vue';
+import { Plus, Minus, Lollipop, Share, Help } from '@element-plus/icons-vue';
 import { lottery } from '@/api/index.ts';
 import provideForm from '@/common/provideForm';
 
@@ -124,6 +126,19 @@ const { detailFormModel, watchDetailForm } = provideForm([
         uploadPath: 'lottery/background'
     },
     {
+        label: '更多按钮图片',
+        prop: 'moreButtonUrl',
+        isDetail: true,
+        domType: 'uploadImage',
+        uploadPath: 'lottery/button',
+    },
+    {
+        label: '更多信息外部链接',
+        prop: 'moreExternalUrl',
+        isTable: true,
+        isDetail: true
+    },
+    {
         label: '分享标题',
         prop: 'shareTitle',
         isTable: true,
@@ -134,7 +149,11 @@ const { detailFormModel, watchDetailForm } = provideForm([
                 message: '最大长度32个字符',
                 trigger: 'blur'
             }
-        ]
+        ],
+        divider: {
+            content: '分享配置',
+            icon: Share
+        }
     },
     {
         label: '分享图片',
@@ -151,11 +170,25 @@ const { detailFormModel, watchDetailForm } = provideForm([
         uploadPath: 'lottery/poster'
     },
     {
+        label: '是否已通知',
+        prop: 'showResult',
+        isTable: true,
+    },
+    {
+        label: '结果通知链接',
+        prop: 'resultNotifyUrl',
+        isTable: true,
+    },
+    {
         label: '最多被助力次数',
         prop: 'maxHelpMe',
         isTable: true,
         isDetail: true,
-        domType: 'number'
+        domType: 'number',
+        divider: {
+            content: '助力配置',
+            icon: Help
+        }
     },
     {
         label: '最多助力他人次数',
@@ -164,39 +197,16 @@ const { detailFormModel, watchDetailForm } = provideForm([
         isDetail: true,
         domType: 'number'
     },
-    {
-        label: '是否已通知',
-        prop: 'showResult',
-        isTable: true,
-    },
-    {
-        label: '更多按钮图片',
-        prop: 'moreButtonUrl',
-        isDetail: true,
-        domType: 'uploadImage',
-        uploadPath: 'lottery/button'
-    },
-    {
-        label: '更多信息外部链接',
-        prop: 'moreExternalUrl',
-        isTable: true,
-        isDetail: true
-    },
-    {
-        label: '结果通知链接',
-        prop: 'resultNotifyUrl',
-        isTable: true,
-        isDetail: true
+], {
+    detailDefaultValue: {
+        helpAddType: 'times',
+        helpAddByTimes: 1,
+        helpConfigs: [{
+            reachPeople: 1,
+            addTimes: 1
+        }]
     }
-]);
-
-// 初始化 detailFormModel
-detailFormModel.helpAddType = 'times';
-detailFormModel.helpAddByTimes = 1;
-detailFormModel.helpConfigs = [{
-    reachPeople: 1,
-    addTimes: 1
-}];
+});
 
 // 添加新方法
 const addHelpConfig = () => {
@@ -211,7 +221,7 @@ const removeHelpConfig = (index: number) => {
 };
 
 // 监听助力增加类型的变化
-watchDetailForm((newVal) => {
+watchDetailForm((newVal, oldVal) => {
     // if (newVal.helpAddType === 'times') {
     //     detailFormModel.helpConfigs = [{
     //         reachPeople: 1,

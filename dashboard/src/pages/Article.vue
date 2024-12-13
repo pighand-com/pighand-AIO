@@ -97,6 +97,7 @@ const { detailFormModel } = provideForm([
         isSearchMore: false,
         searchPlaceholder: '模糊搜索',
         isTable: true,
+        tableAlign: 'left',
         isDetail: true,
         rules: [
             {
@@ -113,6 +114,7 @@ const { detailFormModel } = provideForm([
         isSearchMore: false,
         searchPlaceholder: '模糊搜索',
         isTable: true,
+        tableAlign: 'left',
         isDetail: false,
         tableFormat: (_value, row, _item) => {
             const names = (row.categoryNames || []).map((item) => {

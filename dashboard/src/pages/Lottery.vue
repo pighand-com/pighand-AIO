@@ -76,10 +76,10 @@
 
         <template #detail-float>
             
-            <div class="mockup-phone">
-                <div class="camera"></div>
-                <div class="display">
-                    <div class="artboard artboard-demo phone-1">Hi.</div>
+            <div class="dy-mockup-phone">
+                <div class="dy-camera"></div>
+                <div class="dy-display">
+                    <div class="dy-artboard dy-artboard-demo dy-phone-1">Hi.</div>
                 </div>
             </div>
         </template>
@@ -87,7 +87,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Plus, Minus, Lollipop, Share, Help } from '@element-plus/icons-vue';
+import { Plus, Minus, Lollipop, ShareOne, LoveAndHelp } from '@icon-park/vue-next';
 import { lottery } from '@/api/index.ts';
 import provideForm from '@/common/provideForm';
 
@@ -162,7 +162,7 @@ const { detailFormModel, watchDetailForm } = provideForm([
         ],
         divider: {
             content: '分享配置',
-            icon: Share
+            icon: ShareOne
         }
     },
     {
@@ -197,7 +197,7 @@ const { detailFormModel, watchDetailForm } = provideForm([
         domType: 'number',
         divider: {
             content: '助力配置',
-            icon: Help
+            icon: LoveAndHelp
         }
     },
     {
@@ -229,18 +229,6 @@ const addHelpConfig = () => {
 const removeHelpConfig = (index: number) => {
     detailFormModel.helpConfigs.splice(index, 1);
 };
-
-// 监听助力增加类型的变化
-watchDetailForm((newVal, oldVal) => {
-    // if (newVal.helpAddType === 'times') {
-    //     detailFormModel.helpConfigs = [{
-    //         reachPeople: 1,
-    //         addTimes: 1
-    //     }];
-    // } else if (newVal.helpAddType === 'config') {
-    //     detailFormModel.helpAddByTimes = 0;
-    // }
-});
 
 </script>
 

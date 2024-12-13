@@ -57,7 +57,7 @@
 
 <script lang="ts" setup>
 import { ref, reactive, onBeforeMount } from 'vue';
-import { User, Lock } from '@element-plus/icons-vue';
+import { User, Lock } from '@icon-park/vue-next';
 import { user, common } from '@/api';
 import { setToken, setUserInfo, getToken } from '@/common/storage';
 import { getDefaultRouterPath } from '@/routers/routes';

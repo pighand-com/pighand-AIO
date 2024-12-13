@@ -126,7 +126,7 @@ import {
     FormColumnsInterface,
     ProvideFormInterface
 } from '@/common/provideForm';
-import { Plus, Download, Delete, ZoomIn } from '@element-plus/icons-vue';
+import { Plus, Download, Delete, ZoomIn } from '@icon-park/vue-next';
 
 import cos from '@/common/cos.ts';
 import { common } from '@/api/index.ts';

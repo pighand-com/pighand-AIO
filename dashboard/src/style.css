@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --p-color-primary: var(--primary);
+    --p-color-background: #f6f8fada;
+    --p-color-white: #f8f9fa;
+    --p-color-dark: var(--neutral);
+
+    --el-text-color-primary: var(--p-color-dark) !important;
+    --el-menu-bg-color: transparent !important;
+    --el-menu-hover-bg-color: transparent !important;
+    --el-menu-item-height: 48px !important;
+    --el-menu-active-color: var(--p-color-white) !important;
+    /* --el-color-primary: var(--p-color-primary) !important; */
+}
+
+/* -- 按钮点击效果 -- */
+.el-button {
+    transition: transform 0.2s ease;
+}
+
+.el-button:active {
+    transform: scale(0.95);
+}
+/* -- 按钮点击效果 -- */
+
 html,
 body {
     width: 100vw;

@@ -14,7 +14,7 @@
                         link
                         color="#409eff"
                         dark
-                        :icon="CopyDocument"
+                        :icon="Copy"
                         @click="handleCopyUrl(imageUrl)"></el-button>
                 </span> </el-tooltip
             >&nbsp;
@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { CopyDocument } from '@element-plus/icons-vue';
+import { Copy } from '@icon-park/vue-next';
 
 /**
  * 组件属性定义

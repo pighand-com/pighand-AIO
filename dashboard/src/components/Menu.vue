@@ -83,7 +83,7 @@
         <div ref="userInfoCollapseRef">
             <el-button
                 @click="changeCollapse"
-                :icon="ArrowRightBold"
+                :icon="Right"
                 color="var(--p-color-dark)"
                 circle
                 size="small" />
@@ -93,7 +93,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { ArrowRightBold } from '@element-plus/icons-vue';
+import { Right } from '@icon-park/vue-next';
 import router from '@/routers/index';
 import routes from '@/routers/routes';
 import { clearToken, getUserInfo } from '@/common/storage';

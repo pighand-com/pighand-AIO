@@ -105,6 +105,8 @@ export interface FormColumnsInterface {
     tableFormat?: Function;
     /** 表格列宽度 */
     tableWidth?: string | number;
+    /** 表格列对齐方式 */
+    tableAlign?: 'left' | 'center' | 'right';
 
     /** 是否在详情中显示 */
     isDetail?: boolean | Function;

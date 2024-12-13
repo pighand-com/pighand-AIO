@@ -147,7 +147,7 @@
 
 <script lang="ts" setup>
 import { ref, inject, onMounted } from 'vue';
-import { Search, Refresh, ArrowUp, ArrowDown } from '@element-plus/icons-vue';
+import { Search, Refresh, ArrowUp, ArrowDown } from '@icon-park/vue-next';
 import { ProvideFormInterface } from '@/common/provideForm';
 import FormItems from '@/components/FormItems.vue';
 

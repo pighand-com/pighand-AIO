@@ -1,6 +1,6 @@
 import { shallowRef } from 'vue';
 import constant from '@/common/constant';
-import { Files } from '@element-plus/icons-vue';
+import { BookOne, Oceanengine, GoldMedal, System, EveryUser } from '@icon-park/vue-next';
 
 const routes = [
     {
@@ -24,7 +24,7 @@ const routes = [
         meta: {
             default: true,
             requiresAuth: true,
-            icon: shallowRef(Files),
+            icon: shallowRef(BookOne),
             pageType: constant.page_type_single
         },
         component: () => import('@/pages/Article.vue')
@@ -35,7 +35,7 @@ const routes = [
         title: '营销活动',
         meta: {
             requiresAuth: true,
-            icon: shallowRef(Files),
+            icon: shallowRef(Oceanengine),
             pageType: constant.page_type_single
         },
         children: [
@@ -44,7 +44,7 @@ const routes = [
                 name: 'lottery',
                 title: '抽奖',
                 meta: {
-                    icon: shallowRef(Files)
+                    icon: shallowRef(GoldMedal)
                 },
                 component: () => import('@/pages/Lottery.vue')
             }
@@ -56,7 +56,7 @@ const routes = [
         title: '系统管理',
         meta: {
             requiresAuth: true,
-            icon: shallowRef(Files),
+            icon: shallowRef(System),
             pageType: constant.page_type_single
         },
         children: [
@@ -65,7 +65,7 @@ const routes = [
                 name: 'user',
                 title: '用户管理',
                 meta: {
-                    icon: shallowRef(Files)
+                    icon: shallowRef(EveryUser)
                 },
                 component: () => import('@/pages/User.vue')
             }

@@ -1,115 +1,64 @@
 <!-- eslint-disable vue/no-use-v-if-with-v-for -->
 <template>
     <div class="table-form">
-        <el-button type="primary" :icon="Plus" v-if="add" @click="onOpenAdd"
-            >添加</el-button
-        >
+        <el-button type="primary" :icon="Plus" v-if="add" @click="onOpenAdd">添加</el-button>
 
         <slot name="operation" />
 
-        <el-table
-            v-loading="isTableDataLoading"
-            v-bind="tableAttrs"
-            :data="tableDataModel.data"
-            class="data-table"
-            header-cell-class-name="table-header"
-            border>
-            <el-table-column
-                v-for="(item, index) in formColumns.filter(
-                    (item) => item.isTable
-                )"
-                :key="index"
-                :label="item.label"
-                :prop="item.prop"
-                :width="item.tableWidth"
-                :align="item.tableType === 'image' ? 'center' : 'left'">
+        <el-table v-loading="isTableDataLoading" v-bind="tableAttrs" :data="tableDataModel.data" class="data-table"
+            header-cell-class-name="table-header" border>
+            <el-table-column v-for="(item, index) in formColumns.filter(
+                (item) => item.isTable
+            )" :key="index" :label="item.label" :prop="item.prop" :width="item.tableWidth"
+                :align="item.tableAlign || 'center'">
                 <template #default="scope">
-                    <img
-                        v-if="item.tableType === 'image'"
-                        v-for="(imageItem, imageIndex) in Array.isArray(
-                            scope.row[item.prop]
-                        )
-                            ? scope.row[item.prop]
-                            : [scope.row[item.prop]]"
-                        :key="'image_' + imageIndex"
-                        :src="imageItem"
-                        @click="onPreviewImage(imageItem)"
-                        class="table-image" />
+                    <img v-if="item.tableType === 'image'" v-for="(imageItem, imageIndex) in Array.isArray(
+                        scope.row[item.prop]
+                    )
+                        ? scope.row[item.prop]
+                        : [scope.row[item.prop]]" :key="'image_' + imageIndex" :src="imageItem"
+                        @click="onPreviewImage(imageItem)" class="table-image" />
 
-                    <a
-                        v-else-if="item.tableType === 'link'"
-                        :href="scope.row[item.prop]"
-                        target="_blank"
-                        class="table-link"
-                        >{{ scope.row[item.prop] }}</a
-                    >
+                    <a v-else-if="item.tableType === 'link'" :href="scope.row[item.prop]" target="_blank"
+                        class="table-link">{{ scope.row[item.prop] }}</a>
 
-                    <div
-                        v-dompurify-html="dataFormat(scope.row, item)"
-                        v-else></div>
+                    <div v-dompurify-html="dataFormat(scope.row, item)" v-else></div>
                 </template>
             </el-table-column>
 
             <slot />
 
-            <el-table-column
-                fixed="right"
-                v-if="Array.isArray(tableOperation)"
-                label="操作"
+            <el-table-column fixed="right" v-if="Array.isArray(tableOperation)" label="操作" align="center"
                 :width="operationWidth">
                 <template #default="scope">
                     <slot name="table-operation" :row="scope.row" />
 
-                    <el-button
-                        v-if="tableOperation.includes('edit')"
-                        size="small"
-                        :icon="Edit"
-                        type="primary"
-                        @click="onEdit(scope.row)"
-                        >编辑</el-button
-                    >
+                    <el-button v-if="tableOperation.includes('edit')" size="small" :icon="Edit" type="primary"
+                        @click="onEdit(scope.row)">编辑</el-button>
 
-                    <el-popconfirm
-                        v-if="tableOperation.includes('delete')"
-                        icon-color="rgb(245, 108, 108)"
-                        title="是否确认删除?"
-                        @confirm="onDel(scope.row)">
+                    <el-popconfirm v-if="tableOperation.includes('delete')" icon-color="rgb(245, 108, 108)"
+                        title="是否确认删除?" @confirm="onDel(scope.row)">
                         <template #reference>
-                            <el-button
-                                size="small"
-                                :icon="DeleteFilled"
-                                type="danger"
-                                >删除</el-button
-                            >
+                            <el-button size="small" :icon="Delete" type="danger">删除</el-button>
                         </template>
                     </el-popconfirm>
                 </template>
             </el-table-column>
         </el-table>
 
-        <el-pagination
-            class="pagination"
-            :disabled="isTableDataLoading"
-            :current-page="pageNumber"
-            :page-size="pageSize"
-            :page-sizes="[10, 20, 50, 100]"
-            :background="true"
-            :total="tableDataModel.totalRow"
-            size="small"
-            layout="total, sizes, prev, pager, next, jumper"
-            @update:page-size="handleChangePageSize"
+        <el-pagination class="pagination" :disabled="isTableDataLoading" :current-page="pageNumber"
+            :page-size="pageSize" :page-sizes="[10, 20, 50, 100]" :background="true" :total="tableDataModel.totalRow"
+            size="small" layout="total, sizes, prev, pager, next, jumper" @update:page-size="handleChangePageSize"
             @update:current-page="handleChangeCurrentPage" />
     </div>
 
-    <PImageView
-        :image-url="dialogImageUrl"
-        v-model:image-visible="dialogImageVisible"></PImageView>
+    <PImageView :image-url="dialogImageUrl" v-model:image-visible="dialogImageVisible"></PImageView>
 </template>
 
 <script lang="ts" setup>
 import moment from 'moment';
 import { ref, inject, onMounted, useAttrs, computed } from 'vue';
-import { Plus, Edit, DeleteFilled } from '@element-plus/icons-vue';
+import { Plus, Edit, Delete } from '@icon-park/vue-next';
 
 import { ProvideFormInterface } from '@/common/provideForm';
 
@@ -290,11 +239,9 @@ onMounted(() => {
     border-radius: 8px;
     margin-top: 24px;
     padding: 18px 24px;
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.9) 0%,
-        rgba(255, 255, 255, 0.6) 100%
-    );
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(255, 255, 255, 0.6) 100%);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
@@ -322,5 +269,12 @@ onMounted(() => {
 
 .table-link {
     text-decoration: none !important;
+}
+
+.operation-column {
+    gap: 4px;
+    justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
 }
 </style>

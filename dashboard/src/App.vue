@@ -42,20 +42,6 @@ initApplicationInfo();
 </script>
 
 <style>
-:root {
-    --p-color-primary: #4682f6;
-    --p-color-background: #f6f8fada;
-    --p-color-white: #f8f9fa;
-    --p-color-dark: #17191a;
-
-    --el-text-color-primary: var(--p-color-dark) !important;
-    --el-menu-bg-color: transparent !important;
-    --el-menu-hover-bg-color: transparent !important;
-    --el-menu-item-height: 48px !important;
-    --el-menu-active-color: var(--p-color-white) !important;
-    /* --el-color-primary: var(--p-color-primary) !important; */
-}
-
 #app {
     width: 100%;
     height: 100%;

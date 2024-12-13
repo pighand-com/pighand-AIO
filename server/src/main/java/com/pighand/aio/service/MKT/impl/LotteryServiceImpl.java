@@ -105,7 +105,6 @@ public class LotteryServiceImpl extends BaseServiceImpl<LotteryCommonConfigMappe
             .and(LOTTERY_COMMON_CONFIG.RESULT_NOTIFY_URL.like(lotteryO.getResultNotifyUrl()))
 
             // equal
-            .and(LOTTERY_COMMON_CONFIG.LOTTERY_ID.eq(lotteryO.getLotteryId()))
             .and(LOTTERY_COMMON_CONFIG.HELP_ADD_BY_TIMES.eq(lotteryO.getHelpAddByTimes()))
             .and(LOTTERY_COMMON_CONFIG.MAX_HELP_ME.eq(lotteryO.getMaxHelpMe()))
             .and(LOTTERY_COMMON_CONFIG.MAX_HELP_OTHER.eq(lotteryO.getMaxHelpOther()))

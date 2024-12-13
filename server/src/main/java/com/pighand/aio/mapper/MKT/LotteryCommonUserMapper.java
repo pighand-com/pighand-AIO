@@ -1,12 +1,12 @@
 package com.pighand.aio.mapper.MKT;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.aio.domain.MKT.LotteryCommonUserDomain;
 import com.pighand.aio.vo.MKT.LotteryCommonUserVO;
+import com.pighand.framework.spring.base.BaseMapper;
+import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.BeanUtil;
 import org.apache.ibatis.annotations.Mapper;
-import com.pighand.framework.spring.page.PageOrList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.pighand.aio.table.MktLotteryCommonUserTableDef.MKT_LOTTERY_COMMON_USER;
+import static com.pighand.aio.domain.MKT.table.LotteryCommonUserTableDef.LOTTERY_COMMON_USER;
 
 /**
  * 营销 - 抽奖参与用户
@@ -87,7 +87,7 @@ public interface LotteryCommonUserMapper extends BaseMapper<LotteryCommonUserDom
     default LotteryCommonUserVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(MKT_LOTTERY_COMMON_USER.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(LOTTERY_COMMON_USER.ID.eq(id));
 
         LotteryCommonUserVO result = this.selectOneByQueryAs(queryWrapper, LotteryCommonUserVO.class);
         this.relationMany(joinTableSet, result);

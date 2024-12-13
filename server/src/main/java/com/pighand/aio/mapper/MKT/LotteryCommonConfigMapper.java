@@ -2,7 +2,6 @@ package com.pighand.aio.mapper.MKT;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.MKT.LotteryCommonConfigDomain;
-import com.pighand.aio.table.MktLotteryCommonConfigTableDef.MKT_LOTTERY_COMMON_CONFIG;
 import com.pighand.aio.vo.MKT.LotteryVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
@@ -16,6 +15,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.pighand.aio.domain.MKT.table.LotteryCommonConfigTableDef.LOTTERY_COMMON_CONFIG;
 
 /**
  * 营销 - 抽奖配置
@@ -85,7 +86,7 @@ public interface LotteryCommonConfigMapper extends BaseMapper<LotteryCommonConfi
     default LotteryVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(MKT_LOTTERY_COMMON_CONFIG.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(LOTTERY_COMMON_CONFIG.ID.eq(id));
 
         LotteryVO result = this.selectOneByQueryAs(queryWrapper, LotteryVO.class);
         this.relationMany(joinTableSet, result);

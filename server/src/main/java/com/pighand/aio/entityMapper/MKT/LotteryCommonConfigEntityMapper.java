@@ -1,7 +1,7 @@
 package com.pighand.aio.entityMapper.MKT;
 
-import com.pighand.user.domain.MktLotteryCommonConfigDomain;
-import com.pighand.user.domain.MktLotteryCommonConfigVO;
+import com.pighand.aio.domain.MKT.LotteryCommonConfigDomain;
+import com.pighand.aio.vo.MKT.LotteryCommonConfigVO;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -15,11 +15,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface LotteryCommonConfigEntityMapper {
 
-    MktLotteryCommonConfigVO toVo(MktLotteryCommonConfigDomain entity);
+    LotteryCommonConfigVO toVo(LotteryCommonConfigDomain entity);
 
-    MktLotteryCommonConfigDomain toDomain(MktLotteryCommonConfigVO vo);
+    LotteryCommonConfigDomain toDomain(LotteryCommonConfigVO vo);
 
-    List<MktLotteryCommonConfigVO> toVoList(List<MktLotteryCommonConfigDomain> entity);
+    List<LotteryCommonConfigVO> toVoList(List<LotteryCommonConfigDomain> entity);
 
-    List<MktLotteryCommonConfigDomain> toDomainList(List<MktLotteryCommonConfigVO> vo);
+    List<LotteryCommonConfigDomain> toDomainList(List<LotteryCommonConfigVO> vo);
 }

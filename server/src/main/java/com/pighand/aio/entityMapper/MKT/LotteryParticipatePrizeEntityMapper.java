@@ -1,7 +1,7 @@
 package com.pighand.aio.entityMapper.MKT;
 
-import com.pighand.user.domain.MktOtteryParticipatePrizeDomain;
-import com.pighand.user.domain.MktOtteryParticipatePrizeVO;
+import com.pighand.aio.domain.MKT.LotteryParticipatePrizeDomain;
+import com.pighand.aio.vo.MKT.LotteryParticipatePrizeVO;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -15,11 +15,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface LotteryParticipatePrizeEntityMapper {
 
-    MktOtteryParticipatePrizeVO toVo(MktOtteryParticipatePrizeDomain entity);
+    LotteryParticipatePrizeVO toVo(LotteryParticipatePrizeDomain entity);
 
-    MktOtteryParticipatePrizeDomain toDomain(MktOtteryParticipatePrizeVO vo);
+    LotteryParticipatePrizeDomain toDomain(LotteryParticipatePrizeVO vo);
 
-    List<MktOtteryParticipatePrizeVO> toVoList(List<MktOtteryParticipatePrizeDomain> entity);
+    List<LotteryParticipatePrizeVO> toVoList(List<LotteryParticipatePrizeDomain> entity);
 
-    List<MktOtteryParticipatePrizeDomain> toDomainList(List<MktOtteryParticipatePrizeVO> vo);
+    List<LotteryParticipatePrizeDomain> toDomainList(List<LotteryParticipatePrizeVO> vo);
 }

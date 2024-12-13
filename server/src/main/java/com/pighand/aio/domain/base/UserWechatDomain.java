@@ -54,7 +54,7 @@ public class UserWechatDomain extends BaseDomainRecord<UserWechatDomain> impleme
     @Length(max = 64)
     private String unionid;
 
-    @Schema(description = "来源平台 21公众号 22小程序")
+    @Schema(description = "来源平台")
     private PlatformEnum sourcePlatform;
 
     @Schema(description = "状态 10正常 20停用")

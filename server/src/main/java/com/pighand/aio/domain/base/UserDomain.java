@@ -73,7 +73,7 @@ public class UserDomain extends BaseDomainRecord<UserDomain> implements Serializ
     @Schema(description = "手机号是否已验证")
     private Boolean phoneVerified;
 
-    @Schema(description = "初始来源平台 10系统直接注册 21公众号 22小程序")
+    @Schema(description = "初始来源平台")
     private PlatformEnum initialSourcePlatform;
 
     @Schema(description = "状态 10正常 20停用")

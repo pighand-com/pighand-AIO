@@ -102,7 +102,7 @@ public class SessionUserGroupServiceImpl extends BaseServiceImpl<SessionUserGrou
     @Override
     public String getWechatAppletQrcode(Long money) {
         ApplicationPlatformKeyDomain key =
-            projectPlatformKeyService.findByPlatform(Context.getApplicationId(), PlatformEnum.WECHAT_MINI_PROGRAM);
+            projectPlatformKeyService.findByPlatform(Context.getApplicationId(), PlatformEnum.WECHAT_APPLET);
 
         Map<String, String> params = new HashMap<>();
         params.put("appid", key.getAppid());

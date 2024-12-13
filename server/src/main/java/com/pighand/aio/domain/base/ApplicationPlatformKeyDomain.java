@@ -41,7 +41,7 @@ public class ApplicationPlatformKeyDomain extends BaseDomainRecord<ApplicationPl
     private Long applicationId;
 
     @NotNull(groups = {ValidationGroup.Create.class})
-    @Schema(description = "三方平台 21公众号 22小程序")
+    @Schema(description = "三方平台类型")
     private Integer platform;
 
     @NotNull(groups = {ValidationGroup.Create.class})

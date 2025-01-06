@@ -93,7 +93,7 @@ public class CouponController extends BaseController<CouponService> {
 
     @Get(path = "mine", docSummary = "我的")
     public Result<PageOrList<CouponVO>> queryMine(CouponUserVO couponUserVO) {
-        couponUserVO.setCreatorId(Context.getLoginUser().getId());
+        couponUserVO.setCreatorId(Context.loginUser().getId());
         PageOrList<CouponUserVO> result = couponUserService.query(couponUserVO);
 
         return new Result(result);

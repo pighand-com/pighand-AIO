@@ -20,7 +20,7 @@ public class ServerController {
 
     @Post(path = "tcp/{id}", docSummary = "TCP连接，向客户端发送消息")
     public Result tcp(@PathVariable(name = "id") Long id, @RequestBody() String body) {
-        LoginUser loginUserInfo = Context.getLoginUser();
+        LoginUser loginUserInfo = Context.loginUser();
 
         DeviceDomain deviceDomain = deviceService.find(id);
 

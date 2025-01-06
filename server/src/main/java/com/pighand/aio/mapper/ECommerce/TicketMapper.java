@@ -18,9 +18,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.pighand.aio.domain.ECommerce.table.StoreTableDef.STORE;
 import static com.pighand.aio.domain.ECommerce.table.TicketTableDef.TICKET;
 import static com.pighand.aio.domain.ECommerce.table.TicketValidityTableDef.TICKET_VALIDITY;
+import static com.pighand.aio.domain.base.table.StoreTableDef.STORE;
 
 /**
  * 电商 - 票务

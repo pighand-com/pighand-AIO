@@ -80,7 +80,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceMapper, DeviceDomai
         //
         //        List<DeviceTaskDomain> tasks = deviceTaskMapper.selectListByQuery(
         //            QueryWrapper.create().select(DEVICE_TASK.DEVICE_ID)
-        //                .where(DEVICE_TASK.CREATOR_ID.eq(Context.getLoginUser().getId()))
+        //                .where(DEVICE_TASK.CREATOR_ID.eq(Context.loginUser().getId()))
         //                .and(DEVICE_TASK.CREATED_AT.ge(threeDaysAgo)));
         //
         //        Set<Long> deviceIds = tasks.stream().map(DeviceTaskDomain::getDeviceId).collect(Collectors.toSet());

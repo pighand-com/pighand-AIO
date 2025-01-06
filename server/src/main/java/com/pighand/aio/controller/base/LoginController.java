@@ -2,6 +2,7 @@ package com.pighand.aio.controller.base;
 
 import com.pighand.aio.common.CAPTCHA.CAPTCHA;
 import com.pighand.aio.common.interceptor.Context;
+import com.pighand.aio.common.interfaces.ApplicationId;
 import com.pighand.aio.service.base.LoginService;
 import com.pighand.aio.service.base.UserService;
 import com.pighand.aio.service.base.tripartite.wechat.AppletImpl;
@@ -30,13 +31,14 @@ public class LoginController extends BaseController<UserService> {
     @Post()
     @CAPTCHA(key = "username")
     public Result<UserVO> password(@RequestBody Login login) {
-        UserVO user = loginService.byPassword(login.getUsername(), login.getPassword());
+        UserVO user = loginService.loginByPassword(login.getUsername(), login.getPassword());
         return new Result(user);
     }
 
+    @ApplicationId
     @Post("wechat/applet")
     public Result wechatApplet(@RequestBody Login login) {
-        Long applicationId = Context.getApplicationId();
+        Long applicationId = Context.applicationId();
         UserVO userVO = wechatAppletService.signInByCode(applicationId, login.getCode());
         return new Result(userVO);
     }

@@ -40,7 +40,7 @@ public class WalletController extends BaseController<WalletService> {
         }
 
         if (walletTransferVO.getToUserId() == null) {
-            walletTransferVO.setToUserId(Context.getLoginUser().getId());
+            walletTransferVO.setToUserId(Context.loginUser().getId());
         }
 
         super.service.transfer(walletTransferVO);

@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 import static com.pighand.aio.domain.ECommerce.table.GoodsSkuTableDef.GOODS_SKU;
 import static com.pighand.aio.domain.ECommerce.table.GoodsSpuTableDef.GOODS_SPU;
 import static com.pighand.aio.domain.ECommerce.table.OrderSkuTableDef.ORDER_SKU;
-import static com.pighand.aio.domain.ECommerce.table.StoreTableDef.STORE;
+import static com.pighand.aio.domain.base.table.StoreTableDef.STORE;
 
 /**
  * 电商 - SKU

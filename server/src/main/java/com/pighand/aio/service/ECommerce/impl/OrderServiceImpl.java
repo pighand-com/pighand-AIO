@@ -185,7 +185,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
      */
     private OrderTradeDomain getPlaceGoods(List<OrderSkuVO> orderSku) {
         Date now = new Date();
-        LoginUser loginUser = Context.getLoginUser();
+        LoginUser loginUser = Context.loginUser();
 
         // 购买数量map
         Map<Long, OrderSkuVO> skuQuantities = new HashMap<>(orderSku.size());
@@ -291,14 +291,14 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
         }
 
         if (orderVO.getOutTradePlatform() != null) {
-            Long applicationId = Context.getApplicationId();
+            Long applicationId = Context.applicationId();
             if (orderVO.getOutTradePlatform().equals(PlatformEnum.WECHAT_APPLET.value)) {
                 ApplicationPlatformPayDomain projectPlatformPayDomain = projectPlatformPayService.find(applicationId);
                 ApplicationPlatformKeyDomain projectPlatformKeyDomain =
                     projectPlatformKeyService.findByPlatform(applicationId, PlatformEnum.WECHAT_APPLET);
 
                 UserWechatDomain userWechatDomain = wechatService.queryChain().select(USER_WECHAT.OPENID)
-                    .where(USER_WECHAT.USER_ID.eq(Context.getLoginUser().getId()))
+                    .where(USER_WECHAT.USER_ID.eq(Context.loginUser().getId()))
                     .and(USER_WECHAT.APPLICATION_ID.eq(applicationId)).one();
 
                 PayVO payVO = new PayVO();
@@ -395,7 +395,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
         try {
 
             ApplicationPlatformPayDomain projectPlatformPayDomain =
-                projectPlatformPayService.find(Context.getApplicationId());
+                projectPlatformPayService.find(Context.applicationId());
             Config config =
                 wechat.getConfig(projectPlatformPayDomain.getWechatMerchantId(), uploadPath + "/apiclient_key.pem",
                     projectPlatformPayDomain.getWechatMerchantCertificateSerial(),
@@ -622,7 +622,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
         if (orderVO.getOrderTradeId() != null) {
             OrderTradeDomain orderTradeDomain = orderTradeService.getById(orderVO.getOrderTradeId());
 
-            Long applicationId = Context.getApplicationId();
+            Long applicationId = Context.applicationId();
             ApplicationPlatformPayDomain projectPlatformPayDomain = projectPlatformPayService.find(applicationId);
             wechat.refund(projectPlatformPayDomain.getWechatMerchantId(), uploadPath + "/apiclient_key.pem",
                 projectPlatformPayDomain.getWechatMerchantCertificateSerial(),

@@ -32,8 +32,8 @@ public class UserBindServiceImpl extends BaseServiceImpl<UserBindMapper, UserBin
      */
     @Override
     public boolean isBind() {
-        Long applicationId = Context.getApplicationId();
-        LoginUser loginUser = Context.getLoginUser();
+        Long applicationId = Context.applicationId();
+        LoginUser loginUser = Context.loginUser();
 
         UserBindDomain userBindDomain = this.queryChain().select(UserBindDomain::getId)
             .where(USER_BIND.APPLICATION_ID.eq(applicationId).and(USER_BIND.USER_ID.eq(loginUser.getId()))).one();
@@ -48,8 +48,8 @@ public class UserBindServiceImpl extends BaseServiceImpl<UserBindMapper, UserBin
      */
     @Override
     public void bind(Long bindUserId) {
-        Long applicationId = Context.getApplicationId();
-        LoginUser loginUser = Context.getLoginUser();
+        Long applicationId = Context.applicationId();
+        LoginUser loginUser = Context.loginUser();
 
         if (loginUser.getId().equals(bindUserId)) {
             throw new ThrowPrompt("不能绑定自己");
@@ -76,8 +76,8 @@ public class UserBindServiceImpl extends BaseServiceImpl<UserBindMapper, UserBin
      */
     @Override
     public void unbind(Long bindUserId) {
-        Long applicationId = Context.getApplicationId();
-        LoginUser loginUser = Context.getLoginUser();
+        Long applicationId = Context.applicationId();
+        LoginUser loginUser = Context.loginUser();
 
         QueryWrapper queryWrapper = QueryWrapper.create().and(
             USER_BIND.APPLICATION_ID.eq(applicationId).and(USER_BIND.USER_ID.eq(loginUser.getId()))

@@ -57,8 +57,8 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletMapper, WalletDomai
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void transfer(WalletTransferVO walletTransferVO) {
-        Long applicationId = Context.getApplicationId();
-        LoginUser loginUser = Context.getLoginUser();
+        Long applicationId = Context.applicationId();
+        LoginUser loginUser = Context.loginUser();
 
         UserDomain toUser = userService.getById(walletTransferVO.getToUserId());
         if (toUser == null || toUser.getApplicationId() != applicationId) {
@@ -155,7 +155,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletMapper, WalletDomai
      */
     @Override
     public WalletVO find() {
-        LoginUser loginUser = Context.getLoginUser();
+        LoginUser loginUser = Context.loginUser();
         WalletVO walletVO = this.queryChain().where(WALLET.USER_ID.eq(loginUser.getId())).oneAs(WalletVO.class);
 
         BigDecimal freezeTokens = Optional.ofNullable(walletVO).map(WalletVO::getFreezeTokens).orElse(BigDecimal.ZERO);

@@ -52,7 +52,7 @@ public class OrderController extends BaseController<OrderService> {
 
     @Get(path = "mine", docSummary = "我的订单")
     public Result<OrderVO> queryMine(OrderVO orderVO) {
-        orderVO.setCreatorId(Context.getLoginUser().getId());
+        orderVO.setCreatorId(Context.loginUser().getId());
         PageOrList<OrderVO> result = orderService.query(orderVO);
 
         return new Result(result);

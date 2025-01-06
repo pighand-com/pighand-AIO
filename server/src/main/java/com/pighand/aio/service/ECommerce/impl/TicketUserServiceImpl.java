@@ -186,7 +186,7 @@ public class TicketUserServiceImpl extends BaseServiceImpl<TicketUserMapper, Tic
     @Override
     public void validation(TicketUserVO ticketUserVO) {
         TicketUserDomain ticketUserDomain = this.getById(ticketUserVO.getId());
-        if (ticketUserDomain == null || !ticketUserDomain.getCreatorId().equals(Context.getLoginUser().getId())) {
+        if (ticketUserDomain == null || !ticketUserDomain.getCreatorId().equals(Context.loginUser().getId())) {
             throw new ThrowPrompt("票务不存在");
         }
 
@@ -289,7 +289,7 @@ public class TicketUserServiceImpl extends BaseServiceImpl<TicketUserMapper, Tic
             DeviceTaskVO deviceTaskVO = new DeviceTaskVO();
             deviceTaskVO.setDeviceId(ticketUserVO.getDeviceId());
             deviceTaskVO.setCreatedAt(new Date());
-            deviceTaskVO.setCreatorId(Context.getLoginUser().getId());
+            deviceTaskVO.setCreatorId(Context.loginUser().getId());
             deviceTaskVO.setMessage(finalMessage);
             deviceTaskVO.setRunningStatus(10);
             deviceTaskVO.setRunningStatus(10);

@@ -23,7 +23,7 @@ public class CAPTCHAController {
     public Result<CodeData> getCode(@RequestParam(required = true) String key) {
         String applicationIdString = "_";
 
-        Long applicationId = Context.getApplicationId();
+        Long applicationId = Context.applicationId();
         if (VerifyUtils.isNotEmpty(applicationId)) {
             applicationIdString = applicationId.toString();
         }

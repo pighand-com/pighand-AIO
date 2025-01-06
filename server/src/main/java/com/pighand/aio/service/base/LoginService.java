@@ -13,5 +13,5 @@ public interface LoginService {
      * @param password
      * @return token
      */
-    UserVO byPassword(String username, String password);
+    UserVO loginByPassword(String username, String password);
 }

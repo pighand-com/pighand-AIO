@@ -43,7 +43,7 @@ public class DeviceTaskServiceImpl extends BaseServiceImpl<DeviceTaskMapper, Dev
     @Override
     public DeviceTaskVO create(DeviceTaskVO deviceTaskVO) {
         deviceTaskVO.setCreatedAt(new Date());
-        deviceTaskVO.setCreatorId(Context.getLoginUser().getId());
+        deviceTaskVO.setCreatorId(Context.loginUser().getId());
         super.mapper.insert(deviceTaskVO);
 
         return deviceTaskVO;

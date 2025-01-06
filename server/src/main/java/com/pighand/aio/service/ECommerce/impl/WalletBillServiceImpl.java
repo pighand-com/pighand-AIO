@@ -75,7 +75,7 @@ public class WalletBillServiceImpl extends BaseServiceImpl<WalletBillMapper, Wal
      */
     @Override
     public List<WalletBillTop> queryBillTopBySessionGroup(WalletBillVO walletBillVO) {
-        Long applicationId = Context.getApplicationId();
+        Long applicationId = Context.applicationId();
         Integer top = walletBillVO.getTop();
         Long topBySessionId = walletBillVO.getTopBySessionId();
         String topByDateType = walletBillVO.getTopByDateType();
@@ -163,7 +163,7 @@ public class WalletBillServiceImpl extends BaseServiceImpl<WalletBillMapper, Wal
      */
     @Override
     public BigDecimal queryTotalAmount(Integer totalType) {
-        Long userId = Context.getLoginUser().getId();
+        Long userId = Context.loginUser().getId();
 
         QueryChain<WalletBillDomain> query = this.queryChain();
         query.select(QueryMethods.sum(WALLET_BILL.AMOUNT).as("amount"));

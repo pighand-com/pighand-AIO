@@ -12,7 +12,7 @@ public class QrcodeServiceImpl implements QrcodeService {
     private final int expire = 1000 * 60 * 5;
 
     public void encode(QrcodeInfo qrcodeInfo) {
-        qrcodeInfo.setUId(Context.getLoginUser().getId());
+        qrcodeInfo.setUId(Context.loginUser().getId());
         qrcodeInfo.setExpire(System.currentTimeMillis() + expire);
     }
 }

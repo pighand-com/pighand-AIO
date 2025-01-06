@@ -1,8 +1,8 @@
-package com.pighand.aio.mapper.ECommerce;
+package com.pighand.aio.mapper.common;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.aio.domain.ECommerce.StoreDomain;
-import com.pighand.aio.vo.ECommerce.StoreVO;
+import com.pighand.aio.domain.common.AssetsDomain;
+import com.pighand.aio.vo.common.AssetsVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.BeanUtil;
@@ -16,16 +16,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.pighand.aio.domain.ECommerce.table.StoreTableDef.STORE;
+import static com.pighand.aio.domain.common.table.AssetsTableDef.ASSETS;
 
 /**
- * 电商 - 门店
+ * 公共 - 素材
  *
  * @author wangshuli
- * @createDate 2024-06-05 17:35:51
+ * @createDate 2024-12-31 19:04:50
  */
 @Mapper
-public interface StoreMapper extends BaseMapper<StoreDomain> {
+public interface AssetsMapper extends BaseMapper<AssetsDomain> {
 
     /**
      * 基础查询条件
@@ -56,9 +56,9 @@ public interface StoreMapper extends BaseMapper<StoreDomain> {
 
         boolean isList = result instanceof List;
 
-        List<Function<StoreVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
+        List<Function<AssetsVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
         List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
-        List<BiConsumer<StoreVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
+        List<BiConsumer<AssetsVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
 
         List<Function<Set<Long>, List>> subTableQueriesList = null;
         List<Function<Long, List>> subTableQueriesSingle = null;
@@ -72,7 +72,7 @@ public interface StoreMapper extends BaseMapper<StoreDomain> {
             BeanUtil.queryWithRelatedData((List)result, mainIdGetters, subTableQueriesList, subTableIdGetter,
                 subResultSetter);
         } else {
-            BeanUtil.queryWithRelatedData((StoreVO)result, mainIdGetters, subTableQueriesSingle, subResultSetter);
+            BeanUtil.queryWithRelatedData((AssetsVO)result, mainIdGetters, subTableQueriesSingle, subResultSetter);
         }
     }
 
@@ -83,12 +83,12 @@ public interface StoreMapper extends BaseMapper<StoreDomain> {
      * @param joinTables 关联表
      * @return
      */
-    default StoreVO find(Long id, String... joinTables) {
+    default AssetsVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(STORE.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(ASSETS.ID.eq(id));
 
-        StoreVO result = this.selectOneByQueryAs(queryWrapper, StoreVO.class);
+        AssetsVO result = this.selectOneByQueryAs(queryWrapper, AssetsVO.class);
         this.relationMany(joinTableSet, result);
 
         return result;
@@ -101,12 +101,12 @@ public interface StoreMapper extends BaseMapper<StoreDomain> {
      * @param joinTables   关联表
      * @return
      */
-    default StoreVO find(QueryWrapper queryWrapper, String... joinTables) {
+    default AssetsVO find(QueryWrapper queryWrapper, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
         QueryWrapper finalQueryWrapper = this.relationOne(joinTableSet, queryWrapper);
 
-        StoreVO result = this.selectOneByQueryAs(finalQueryWrapper, StoreVO.class);
+        AssetsVO result = this.selectOneByQueryAs(finalQueryWrapper, AssetsVO.class);
         this.relationMany(joinTableSet, result);
 
         return result;
@@ -115,14 +115,14 @@ public interface StoreMapper extends BaseMapper<StoreDomain> {
     /**
      * 分页或列表
      *
-     * @param storeDomain
+     * @param comAssetsDomain
      * @return
      */
-    default PageOrList<StoreVO> query(StoreDomain storeDomain, QueryWrapper queryWrapper) {
-        QueryWrapper finalQueryWrapper = this.relationOne(storeDomain.getJoinTables(), queryWrapper);
+    default PageOrList<AssetsVO> query(AssetsDomain comAssetsDomain, QueryWrapper queryWrapper) {
+        QueryWrapper finalQueryWrapper = this.relationOne(comAssetsDomain.getJoinTables(), queryWrapper);
 
-        PageOrList<StoreVO> result = this.page(storeDomain, finalQueryWrapper, StoreVO.class);
-        this.relationMany(storeDomain.getJoinTables(), result.getRecords());
+        PageOrList<AssetsVO> result = this.page(comAssetsDomain, finalQueryWrapper, AssetsVO.class);
+        this.relationMany(comAssetsDomain.getJoinTables(), result.getRecords());
 
         return result;
     }

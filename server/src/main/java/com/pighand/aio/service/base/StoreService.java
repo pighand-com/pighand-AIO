@@ -1,25 +1,25 @@
-package com.pighand.aio.service.ECommerce;
+package com.pighand.aio.service.base;
 
 import com.pighand.framework.spring.base.BaseService;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.aio.domain.ECommerce.StoreDomain;
-import com.pighand.aio.vo.ECommerce.StoreVO;
+import com.pighand.aio.domain.base.StoreDomain;
+import com.pighand.aio.vo.base.StoreVO;
 
 /**
- * 电商 - 门店
+ * 门店
  *
  * @author wangshuli
- * @createDate 2023-12-04 16:37:26
+ * @createDate 2024-12-31 19:04:50
  */
 public interface StoreService extends BaseService<StoreDomain> {
 
     /**
      * 创建
      *
-     * @param storeVO
+     * @param baseStoreVO
      * @return
      */
-    StoreVO create(StoreVO storeVO);
+    StoreVO create(StoreVO baseStoreVO);
 
     /**
      * 详情
@@ -32,17 +32,17 @@ public interface StoreService extends BaseService<StoreDomain> {
     /**
      * 分页或列表
      *
-     * @param storeVO
-     * @return PageOrList<StoreVO>
+     * @param baseStoreVO
+     * @return PageOrList<BaseStoreVO>
      */
-    PageOrList<StoreVO> query(StoreVO storeVO);
+    PageOrList<StoreVO> query(StoreVO baseStoreVO);
 
     /**
      * 修改
      *
-     * @param storeVO
+     * @param baseStoreVO
      */
-    void update(StoreVO storeVO);
+    void update(StoreVO baseStoreVO);
 
     /**
      * 删除

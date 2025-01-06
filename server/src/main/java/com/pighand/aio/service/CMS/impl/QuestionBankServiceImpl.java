@@ -123,7 +123,7 @@ public class QuestionBankServiceImpl extends BaseServiceImpl<QuestionBankMapper,
      */
     @Override
     public List<QuestionSetDomain> getSet(Long id) {
-        LoginUser loginUser = Context.getLoginUser();
+        LoginUser loginUser = Context.loginUser();
 
         QuestionBankDomain questionBankDomain = this.getById(id);
 
@@ -199,7 +199,7 @@ public class QuestionBankServiceImpl extends BaseServiceImpl<QuestionBankMapper,
     @Override
     public QuestionAnswerResultVO answerSet(Long questionBandId, Long deviceId, List<QuestionAnswerDomain> answer) {
         Date now = new Date();
-        LoginUser loginUser = Context.getLoginUser();
+        LoginUser loginUser = Context.loginUser();
 
         // 检查答题间隙
         //        QuestionBankDomain questionBankDomain = this.getById(questionBandId);
@@ -314,7 +314,7 @@ public class QuestionBankServiceImpl extends BaseServiceImpl<QuestionBankMapper,
      * @param questionBankDomain
      */
     private void checkFrequencyGap(QuestionBankDomain questionBankDomain) {
-        LoginUser loginUser = Context.getLoginUser();
+        LoginUser loginUser = Context.loginUser();
 
         if (questionBankDomain.getFrequencyType() != 21) {
             // 最后一次答题时间

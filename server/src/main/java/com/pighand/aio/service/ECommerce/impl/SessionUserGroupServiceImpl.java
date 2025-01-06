@@ -102,7 +102,7 @@ public class SessionUserGroupServiceImpl extends BaseServiceImpl<SessionUserGrou
     @Override
     public String getWechatAppletQrcode(Long money) {
         ApplicationPlatformKeyDomain key =
-            projectPlatformKeyService.findByPlatform(Context.getApplicationId(), PlatformEnum.WECHAT_APPLET);
+            projectPlatformKeyService.findByPlatform(Context.applicationId(), PlatformEnum.WECHAT_APPLET);
 
         Map<String, String> params = new HashMap<>();
         params.put("appid", key.getAppid());
@@ -138,7 +138,7 @@ public class SessionUserGroupServiceImpl extends BaseServiceImpl<SessionUserGrou
 
         params = new HashMap<>();
         params.put("page", "pages/my-order/my-order");
-        params.put("scene", Context.getLoginUser().getId().toString() + "_" + roundedSeconds + "_" + money);
+        params.put("scene", Context.loginUser().getId().toString() + "_" + roundedSeconds + "_" + money);
         params.put("env_version", qrcodeEnv);
         byte[] images = WechatSDK.MINI_APPLET.getAppletQrcode(token, params);
 

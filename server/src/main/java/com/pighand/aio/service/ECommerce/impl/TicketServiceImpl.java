@@ -15,7 +15,6 @@ import com.pighand.aio.vo.ECommerce.TicketValidityDetailEntity;
 import com.pighand.aio.vo.ECommerce.TicketValidityVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -77,7 +76,7 @@ public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomai
     @Override
     public PageOrList<TicketVO> query(TicketVO ticketVO) {
         ApplicationDefaultDomain projectDefaultDomain =
-            projectDefaultService.queryChain().where(APPLICATION_DEFAULT.ID.eq(Context.getApplicationId())).one();
+            projectDefaultService.queryChain().where(APPLICATION_DEFAULT.ID.eq(Context.applicationId())).one();
 
         if (ticketVO.getSystem().equals("ios") && (projectDefaultDomain == null
             || projectDefaultDomain.getDefaultNickname().equals("1"))) {
@@ -85,17 +84,16 @@ public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomai
         }
 
         QueryWrapper queryWrapper = QueryWrapper.create()
-        .select(TICKET.ID, TICKET.NAME, TICKET.DETAILS, TICKET.ORIGINAL_PRICE, TICKET.CURRENT_PRICE,
-            TICKET.VALIDATION_COUNT)
+            .select(TICKET.ID, TICKET.NAME, TICKET.DETAILS, TICKET.ORIGINAL_PRICE, TICKET.CURRENT_PRICE,
+                TICKET.VALIDATION_COUNT)
 
-        // like
-        .and(TICKET.NAME.like(ticketVO.getName()))
-        .and(TICKET.DETAILS.like(ticketVO.getDetails()))
+            // like
+            .and(TICKET.NAME.like(ticketVO.getName())).and(TICKET.DETAILS.like(ticketVO.getDetails()))
 
-        // equal
-        .and(TICKET.ORIGINAL_PRICE.eq(ticketVO.getOriginalPrice()))
-        .and(TICKET.CURRENT_PRICE.eq(ticketVO.getCurrentPrice()))
-        .and(TICKET.VALIDATION_COUNT.eq(ticketVO.getValidationCount()));
+            // equal
+            .and(TICKET.ORIGINAL_PRICE.eq(ticketVO.getOriginalPrice()))
+            .and(TICKET.CURRENT_PRICE.eq(ticketVO.getCurrentPrice()))
+            .and(TICKET.VALIDATION_COUNT.eq(ticketVO.getValidationCount()));
 
         PageOrList<TicketVO> result = super.mapper.query(ticketVO, queryWrapper);
 

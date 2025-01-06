@@ -53,7 +53,7 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, ArticleDo
     @Transactional(rollbackFor = Exception.class)
     public ArticleVO create(ArticleVO articleVO) {
         articleVO.setCreatedAt(new Date());
-        articleVO.setCreatorId(Context.getLoginUser().getId());
+        articleVO.setCreatorId(Context.loginUser().getId());
         articleVO.setDeleted(false);
         articleVO.setDownloadCount(0);
         articleVO.setViewCount(0);

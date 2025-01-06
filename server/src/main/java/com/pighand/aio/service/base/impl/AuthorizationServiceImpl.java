@@ -17,7 +17,6 @@ import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.aio.vo.base.UserVO;
 import com.pighand.framework.spring.exception.ThrowException;
 import com.pighand.framework.spring.exception.ThrowPrompt;
-import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -211,10 +210,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      */
     @Override
     public UserVO generateToken(UserVO userInfo) {
-        Long applicationId = Context.getApplicationId();
-        if (VerifyUtils.isEmpty(applicationId)) {
-            applicationId = 1L;
-        }
+        Long applicationId = Context.applicationId();
 
         ApplicationAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(applicationId);
 
@@ -241,7 +237,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      */
     @Override
     public LoginUser checkToken(String authorization) {
-        Long applicationId = Context.getApplicationId();
+        Long applicationId = Context.applicationId();
         ApplicationAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(applicationId);
 
         String checkEnv = null;
@@ -301,7 +297,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
      */
     @Override
     public void logout(String authorization) {
-        Long applicationId = Context.getApplicationId();
+        Long applicationId = Context.applicationId();
         ApplicationAuthorizationDomain projectAuthorization = projectAuthorizationService.getById(applicationId);
 
         String redisKey = this.getRedisKey(authorization);

@@ -84,7 +84,7 @@ public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, SessionDo
         Date endTime = calendar.getTime();
 
         SessionVO sessionVO = new SessionVO();
-        sessionVO.setApplicationId(ApplicationId == null ? Context.getApplicationId() : ApplicationId);
+        sessionVO.setApplicationId(ApplicationId == null ? Context.applicationId() : ApplicationId);
         sessionVO.setStoreId(1L);
         sessionVO.setSessionTemplateId(1L);
         sessionVO.setBeginTime(beginTime);
@@ -212,7 +212,7 @@ public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, SessionDo
             .on(SESSION_TEMPLATE_GOURP.ID.eq(
                 SESSION_USER_GROUP.SESSION_TEMPLATE_GROUP_ID.eq(SESSION_TEMPLATE_GOURP.ID)))
             .where(SESSION_USER_GROUP.SESSION_ID.eq(sessionId))
-            .and(SESSION_USER_GROUP.USER_ID.eq(Context.getLoginUser().getId())).oneAs(SessionUserGroupVO.class);
+            .and(SESSION_USER_GROUP.USER_ID.eq(Context.loginUser().getId())).oneAs(SessionUserGroupVO.class);
 
         if (sessionUserGroup != null) {
             SessionTemplateGourpDomain nowGroup =
@@ -239,7 +239,7 @@ public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, SessionDo
         SessionUserGroupVO sessionUserGroupVO = new SessionUserGroupVO();
         sessionUserGroupVO.setSessionId(sessionId);
         sessionUserGroupVO.setSessionTemplateGroupId(sessionGroupId);
-        sessionUserGroupVO.setUserId(Context.getLoginUser().getId());
+        sessionUserGroupVO.setUserId(Context.loginUser().getId());
         sessionUserGroupVO.setCreatedAt(new Date());
         sessionUserGroupService.create(sessionUserGroupVO);
 

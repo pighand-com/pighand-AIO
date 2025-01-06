@@ -4,6 +4,8 @@ import com.pighand.aio.domain.base.UserDomain;
 import com.pighand.aio.domain.base.UserExtensionDomain;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 用户关键信息表，主要保存登录所用信息
  *
@@ -17,4 +19,7 @@ public class UserVO extends UserDomain {
     private String token;
 
     private Integer bindCount;
+
+    private String applicationName;
+    private List<ApplicationVO> relevanceApplications;
 }

@@ -50,14 +50,14 @@ public class GoodsSpuServiceImpl extends BaseServiceImpl<GoodsSpuMapper, GoodsSp
     @Transactional(rollbackFor = Exception.class)
     @Override
     public GoodsSpuVO create(GoodsSpuVO goodsSpuVO) {
-        goodsSpuVO.setApplicationId(Context.getApplicationId());
+        goodsSpuVO.setApplicationId(Context.applicationId());
         goodsSpuVO.setStatus(GoodsSpuStatusEnum.UNLISTED);
         goodsSpuVO.setDeleted(false);
         super.mapper.insert(goodsSpuVO);
 
         List<GoodsSkuVO> goodsSku = goodsSpuVO.getGoodsSku();
         goodsSku.forEach(goodsSkuVO -> {
-            goodsSkuVO.setApplicationId(Context.getApplicationId());
+            goodsSkuVO.setApplicationId(Context.applicationId());
             goodsSkuVO.setSpuId(goodsSpuVO.getId());
             goodsSkuVO.setDeleted(false);
         });
@@ -88,7 +88,7 @@ public class GoodsSpuServiceImpl extends BaseServiceImpl<GoodsSpuMapper, GoodsSp
     @Override
     public PageOrList<GoodsSpuVO> query(GoodsSpuVO goodsSpuVO) {
         ApplicationDefaultDomain projectDefaultDomain =
-            projectDefaultService.queryChain().where(APPLICATION_DEFAULT.ID.eq(Context.getApplicationId())).one();
+            projectDefaultService.queryChain().where(APPLICATION_DEFAULT.ID.eq(Context.applicationId())).one();
         if (goodsSpuVO.getSystem().equals("ios") && (projectDefaultDomain == null
             || projectDefaultDomain.getDefaultNickname().equals("1"))) {
             return null;
@@ -97,7 +97,7 @@ public class GoodsSpuServiceImpl extends BaseServiceImpl<GoodsSpuMapper, GoodsSp
         goodsSpuVO.setJoinTables(GOODS_SKU.getTableName());
 
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.where(GoodsSpuDomain::getApplicationId).eq(Context.getApplicationId());
+        queryWrapper.where(GoodsSpuDomain::getApplicationId).eq(Context.applicationId());
         // like
         queryWrapper.and(GOODS_SPU.NAME.like(goodsSpuVO.getName(), VerifyUtils::isNotEmpty));
 

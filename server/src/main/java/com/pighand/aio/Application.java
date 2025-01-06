@@ -5,14 +5,19 @@ import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.core.FlexGlobalConfig;
 import com.mybatisflex.core.audit.AuditManager;
 import com.mybatisflex.core.keygen.KeyGenerators;
+import com.pighand.aio.common.base.ApplicationIdAware;
 import com.pighand.aio.common.enums.CacheConfigEnum;
 import com.pighand.aio.common.interceptor.AuthorizationInterceptor;
+import com.pighand.aio.common.listener.InsertListener;
 import com.pighand.framework.spring.PighandFrameworkConfig;
 import com.pighand.framework.spring.api.jacksonSerializer.JacksonSerializer;
 import com.pighand.framework.spring.api.springdoc.analysis.SpringDocParameter;
 import com.pighand.framework.spring.api.springdoc.analysis.SpringDocProperty;
+import com.pighand.framework.spring.base.DomainTimeStampAware;
 import com.pighand.framework.spring.converter.StringToEnumConverterFactory;
 import com.pighand.framework.spring.http.exchange.HttpExchangeRegister;
+import com.pighand.framework.spring.listener.DBInsertListener;
+import com.pighand.framework.spring.listener.DBUpdateListener;
 import jakarta.annotation.Resource;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
@@ -156,6 +161,26 @@ public class Application {
             simpleCacheManager.setCaches(caffeineCaches);
 
             return simpleCacheManager;
+        }
+    }
+
+    /**
+     * mybatis-flex 配置
+     */
+    @Configuration
+    public class MyBatisFlexConfiguration {
+
+        public MyBatisFlexConfiguration() {
+
+            InsertListener AIOInsertListener = new InsertListener();
+            DBInsertListener PHInsertListener = new DBInsertListener();
+            DBUpdateListener PHUpdateListener = new DBUpdateListener();
+
+            FlexGlobalConfig config = FlexGlobalConfig.getDefaultConfig();
+
+            config.registerInsertListener(AIOInsertListener, ApplicationIdAware.class);
+            config.registerInsertListener(PHInsertListener, DomainTimeStampAware.class);
+            config.registerUpdateListener(PHUpdateListener, DomainTimeStampAware.class);
         }
     }
 }

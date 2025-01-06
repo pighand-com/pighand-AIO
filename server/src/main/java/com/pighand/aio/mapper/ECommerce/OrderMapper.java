@@ -23,8 +23,8 @@ import static com.pighand.aio.domain.ECommerce.table.OrderSkuTableDef.ORDER_SKU;
 import static com.pighand.aio.domain.ECommerce.table.OrderTableDef.ORDER;
 import static com.pighand.aio.domain.ECommerce.table.OrderTradeTableDef.ORDER_TRADE;
 import static com.pighand.aio.domain.ECommerce.table.SessionUserCycleTableDef.SESSION_USER_CYCLE;
-import static com.pighand.aio.domain.ECommerce.table.StoreTableDef.STORE;
 import static com.pighand.aio.domain.ECommerce.table.TicketUserTableDef.TICKET_USER;
+import static com.pighand.aio.domain.base.table.StoreTableDef.STORE;
 import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 
 /**

@@ -46,7 +46,7 @@ public class UploadController {
     @Get(path = "url", docSummary = "获取上传授权rul")
     public Result getUploadUrl(@RequestParam(required = false) String extension,
         @RequestParam(required = false) String path) {
-        LoginUser loginUserInfo = Context.getLoginUser();
+        LoginUser loginUserInfo = Context.loginUser();
 
         URL url = service.generatePresignedUrl(loginUserInfo.getId(), extension, path);
 
@@ -55,7 +55,7 @@ public class UploadController {
 
     @Post(path = "server", docSummary = "上传至服务器")
     public Result uploadServer(@RequestParam("files") MultipartFile[] files) {
-        LoginUser loginUserInfo = Context.getLoginUser();
+        LoginUser loginUserInfo = Context.loginUser();
 
         File directory = new File(uploadPath);
         if (!directory.exists()) {

@@ -2,6 +2,8 @@ package com.pighand.aio.common.interceptor;
 
 import com.pighand.aio.vo.base.LoginUser;
 
+import java.util.Date;
+
 /**
  * 拦截器上下文
  */
@@ -11,8 +13,8 @@ public class Context {
      *
      * @return
      */
-    public static Long getApplicationId() {
-        return AuthorizationInterceptor.getApplicationId();
+    public static Long applicationId() {
+        return AuthorizationInterceptor.applicationIdLocal();
     }
 
     /**
@@ -20,7 +22,16 @@ public class Context {
      *
      * @return null 未登录
      */
-    public static LoginUser getLoginUser() {
-        return AuthorizationInterceptor.getLoginUser();
+    public static LoginUser loginUser() {
+        return AuthorizationInterceptor.authorizationInfoLocal();
+    }
+
+    /**
+     * 获取当前时间
+     *
+     * @return
+     */
+    public static Date now() {
+        return AuthorizationInterceptor.nowLocal();
     }
 }

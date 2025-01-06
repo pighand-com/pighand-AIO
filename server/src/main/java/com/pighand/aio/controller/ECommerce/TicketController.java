@@ -91,7 +91,7 @@ public class TicketController extends BaseController<TicketService> {
      */
     @Get(path = "user", docSummary = "我的票务")
     public Result<PageOrList<TicketUserVO>> query(TicketUserVO ticketUserVO) {
-        ticketUserVO.setCreatorId(Context.getLoginUser().getId());
+        ticketUserVO.setCreatorId(Context.loginUser().getId());
         PageOrList<TicketUserVO> result = ticketUserService.query(ticketUserVO);
 
         return new Result(result);

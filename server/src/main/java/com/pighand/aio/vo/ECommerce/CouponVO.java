@@ -1,6 +1,7 @@
 package com.pighand.aio.vo.ECommerce;
 
 import com.pighand.aio.domain.ECommerce.CouponDomain;
+import com.pighand.aio.vo.base.StoreVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

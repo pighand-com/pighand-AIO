@@ -4,6 +4,7 @@ import com.pighand.aio.common.interfaces.ApplicationId;
 import com.pighand.aio.common.interfaces.Authorization;
 import com.pighand.aio.service.base.AuthorizationService;
 import com.pighand.aio.vo.base.LoginUser;
+import com.pighand.framework.spring.interceptor.RequestInterceptor;
 import com.pighand.framework.spring.util.VerifyUtils;
 import io.netty.util.concurrent.FastThreadLocal;
 import jakarta.annotation.Resource;
@@ -11,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -23,24 +23,28 @@ import java.util.function.Function;
  * <p>
  */
 @Component
-public class AuthorizationInterceptor implements HandlerInterceptor {
+public class AuthorizationInterceptor extends RequestInterceptor {
 
     public static final String HEADER_APPLICATION_ID = "X-Application-Id";
-    public static final String HEADER_AUTHORIZATION = "Authorization";
 
-    private static final FastThreadLocal<LoginUser> currentUser = new FastThreadLocal<>();
+    private static final FastThreadLocal<LoginUser> authorizationInfoLocal = new FastThreadLocal<>();
 
     private static final FastThreadLocal<Long> applicationIdLocal = new FastThreadLocal<>();
 
     @Resource
     private AuthorizationService authorizationService;
 
-    public static LoginUser getLoginUser() {
-        return currentUser.get();
+    public static LoginUser authorizationInfoLocal() {
+        return authorizationInfoLocal.get();
     }
 
-    public static Long getApplicationId() {
+    public static Long applicationIdLocal() {
         return applicationIdLocal.get();
+    }
+
+    @Override
+    public Long getAuthorizationId() {
+        return Optional.ofNullable(authorizationInfoLocal.get()).map(LoginUser::getId).orElse(null);
     }
 
     private boolean isAnnotationRequired(HandlerMethod handlerMethod, Class<? extends Annotation> annotationClass,
@@ -55,10 +59,10 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         return false;
     }
 
-    @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    public boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // 先清空，防止线程池复用，导致使用上一个线程的登录信息
-        currentUser.remove();
+        authorizationInfoLocal.remove();
+        applicationIdLocal.remove();
 
         // 判断ApplicationId是否必须
         boolean isApplicationRequired = false;
@@ -96,7 +100,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
             try {
                 LoginUser loginUser = authorizationService.checkToken(authorization);
 
-                currentUser.set(loginUser);
+                authorizationInfoLocal.set(loginUser);
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return false;

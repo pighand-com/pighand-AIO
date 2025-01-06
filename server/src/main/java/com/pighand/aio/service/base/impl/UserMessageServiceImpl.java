@@ -39,7 +39,7 @@ public class UserMessageServiceImpl extends BaseServiceImpl<UserMessageMapper, U
      */
     @Override
     public UserMessageVO create(UserMessageVO userMessageVO) {
-        LoginUser loginUser = Context.getLoginUser();
+        LoginUser loginUser = Context.loginUser();
         userMessageVO.setSenderId(loginUser.getId());
         userMessageVO.setSendAt(new Date());
         userMessageVO.setRead(false);
@@ -57,7 +57,7 @@ public class UserMessageServiceImpl extends BaseServiceImpl<UserMessageMapper, U
      */
     @Override
     public UserMessageVO find(Long id) {
-        Long loginUserId = Context.getLoginUser().getId();
+        Long loginUserId = Context.loginUser().getId();
 
         // 只查接收人是登录用户的
         QueryWrapper queryWrapper = QueryWrapper.create();
@@ -93,7 +93,7 @@ public class UserMessageServiceImpl extends BaseServiceImpl<UserMessageMapper, U
         userMessageVO.setJoinTables(Set.of("sender"));
 
         QueryWrapper queryWrapper = QueryWrapper.create();
-        queryWrapper.where(USER_MESSAGE.RECEIVER_ID.eq(Context.getLoginUser().getId()));
+        queryWrapper.where(USER_MESSAGE.RECEIVER_ID.eq(Context.loginUser().getId()));
         queryWrapper.orderBy(USER_MESSAGE.READ.asc(), USER_MESSAGE.ID.desc());
 
         return super.mapper.query(userMessageVO, queryWrapper);
@@ -111,7 +111,7 @@ public class UserMessageServiceImpl extends BaseServiceImpl<UserMessageMapper, U
         userMessageVO.setJoinTables(Set.of("receiver"));
 
         QueryWrapper queryWrapper = QueryWrapper.create();
-        queryWrapper.where(USER_MESSAGE.SENDER_ID.eq(Context.getLoginUser().getId()));
+        queryWrapper.where(USER_MESSAGE.SENDER_ID.eq(Context.loginUser().getId()));
         queryWrapper.orderBy(USER_MESSAGE.ID.desc());
 
         return super.mapper.query(userMessageVO, queryWrapper);
@@ -125,7 +125,7 @@ public class UserMessageServiceImpl extends BaseServiceImpl<UserMessageMapper, U
     @Override
     public void delete(Long id) {
         UserMessageDomain message = this.queryChain()
-            .where(USER_MESSAGE.ID.eq(id).and(USER_MESSAGE.RECEIVER_ID.eq(Context.getLoginUser().getId()))).one();
+            .where(USER_MESSAGE.ID.eq(id).and(USER_MESSAGE.RECEIVER_ID.eq(Context.loginUser().getId()))).one();
 
         if (message == null) {
             throw new ThrowPrompt("消息不存在");

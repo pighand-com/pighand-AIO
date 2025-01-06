@@ -31,7 +31,7 @@ public class WalletBillController extends BaseController<WalletBillService> {
     @Authorization
     @Get(docSummary = "我的账单", fieldGroup = "walletBillQuery")
     public Result<PageOrList<WalletBillVO>> query(WalletBillVO walletBillVO) {
-        walletBillVO.setUserId(Context.getLoginUser().getId());
+        walletBillVO.setUserId(Context.loginUser().getId());
         PageOrList<WalletBillVO> result = super.service.query(walletBillVO);
 
         return new Result(result);

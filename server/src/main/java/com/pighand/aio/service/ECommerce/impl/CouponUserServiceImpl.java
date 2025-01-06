@@ -67,7 +67,7 @@ public class CouponUserServiceImpl extends BaseServiceImpl<CouponUserMapper, Cou
         queryWrapper.where(COUPON_USER.STATUS.eq(CouponUserStatusEnum.UNUSED));
 
         if (couponUserVO.getCreatorId() != null) {
-            queryWrapper.where(COUPON_USER.OWNER_ID.eq(Context.getLoginUser().getId()));
+            queryWrapper.where(COUPON_USER.OWNER_ID.eq(Context.loginUser().getId()));
         }
 
         return super.mapper.query(couponUserVO, queryWrapper);
@@ -82,7 +82,7 @@ public class CouponUserServiceImpl extends BaseServiceImpl<CouponUserMapper, Cou
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void transfer(Long couponId, Long toUserId) {
-        Long fromUserId = Context.getLoginUser().getId();
+        Long fromUserId = Context.loginUser().getId();
         if (fromUserId.equals(toUserId)) {
             return;
         }
@@ -141,7 +141,7 @@ public class CouponUserServiceImpl extends BaseServiceImpl<CouponUserMapper, Cou
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.select(COUPON_USER.ID, COUPON_USER.USED_AT);
         queryWrapper.where(COUPON_USER.STATUS.eq(CouponUserStatusEnum.VERIFY))
-            .and(COUPON.APPLICATION_ID.eq(Context.getApplicationId()));
+            .and(COUPON.APPLICATION_ID.eq(Context.applicationId()));
 
         if (VerifyUtils.isNotEmpty(couponUserVO.getQueryPhone())) {
             queryWrapper.where(USER.PHONE.like(couponUserVO.getQueryPhone()));

@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 import static com.pighand.aio.domain.ECommerce.table.CouponTableDef.COUPON;
 import static com.pighand.aio.domain.ECommerce.table.CouponUserTableDef.COUPON_USER;
-import static com.pighand.aio.domain.ECommerce.table.StoreTableDef.STORE;
+import static com.pighand.aio.domain.base.table.StoreTableDef.STORE;
 
 /**
  * 电商 - 优惠券

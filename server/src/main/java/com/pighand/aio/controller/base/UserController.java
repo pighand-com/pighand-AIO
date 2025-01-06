@@ -70,7 +70,7 @@ public class UserController extends BaseController<UserService> {
     @Authorization
     @Put(path = "self", docSummary = "修改自己的信息")
     public Result updateBySelf(@RequestBody UserVO userVO) {
-        LoginUser longUser = Context.getLoginUser();
+        LoginUser longUser = Context.loginUser();
         userVO.setId(longUser.getId());
         super.service.update(userVO);
 
@@ -106,8 +106,8 @@ public class UserController extends BaseController<UserService> {
     @Authorization
     @Post(value = "bind/phone/wechat", docSummary = "绑定手机号")
     public Result bindPhone(@RequestBody EncryptedData encryptedData) {
-        Long applicationId = Context.getApplicationId();
-        LoginUser longUser = Context.getLoginUser();
+        Long applicationId = Context.applicationId();
+        LoginUser longUser = Context.loginUser();
         String phone = wechatAppletService.bindPhone(applicationId, longUser.getId(), encryptedData.getCode());
 
         UserVO userVO = new UserVO();

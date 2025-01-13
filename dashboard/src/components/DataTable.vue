@@ -201,7 +201,10 @@ const onPreviewImage = (src) => {
  */
 const dataFormat = (row, item) => {
     const { domType, domData, tableFormat } = item;
-    let value = row[item.prop];
+
+    // 支持获取嵌套属性值
+    let value = item.prop.split('.').reduce((obj, key) => obj?.[key], row);
+
     if (value === null || value === undefined) {
         value = '';
     }
@@ -211,11 +214,13 @@ const dataFormat = (row, item) => {
     }
 
     if (
-        (domType === 'dateTimePicker' || domType === 'datePickerRange') &&
+        ['dateTimePicker', 'dateTimePickerRange'].includes(
+            domType
+        ) &&
         value
     ) {
         return moment(value).format('YYYY-MM-DD HH:mm:ss');
-    } else if (domType === 'datePicker' && value) {
+    } else if (['datePicker', 'datePickerRange'].includes(domType) && value) {
         return moment(value).format('YYYY-MM-DD');
     }
     if (domData && Array.isArray(domData)) {

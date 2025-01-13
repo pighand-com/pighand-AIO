@@ -1,5 +1,6 @@
-import { ElMessage } from 'element-plus';
+// import { ElMessage } from 'element-plus';
 import axios, { AxiosResponse, HttpStatusCode } from 'axios';
+import Qs from 'qs';
 
 import router from '@/routers/index';
 import constant from './constant';
@@ -91,6 +92,10 @@ const get = async (
 
     const axiosConfig: any = {
         params: params || {},
+        paramsSerializer: {
+            serialize: (params) =>
+                Qs.stringify(params, { arrayFormat: 'repeat' })
+        },
         headers: {
             'X-Application-Id': default_application_id,
             ...(config?.headers || {}),
@@ -125,6 +130,10 @@ const post = async (
 
     const axiosConfig: any = {
         params: config?.params || {},
+        paramsSerializer: {
+            serialize: (params) =>
+                Qs.stringify(params, { arrayFormat: 'repeat' })
+        },
         headers: {
             'X-Application-Id': default_application_id,
             ...(config?.headers || {}),
@@ -157,6 +166,10 @@ const put = async (
     url = getUrl(url);
     const result = await axios.put(url, data, {
         params: config?.params || {},
+        paramsSerializer: {
+            serialize: (params) =>
+                Qs.stringify(params, { arrayFormat: 'repeat' })
+        },
         headers: {
             'X-Application-Id': default_application_id,
             ...(config?.headers || {}),
@@ -175,6 +188,10 @@ const del = async (
     url = getUrl(url);
     const result = await axios.delete(url, {
         params: params || {},
+        paramsSerializer: {
+            serialize: (params) =>
+                Qs.stringify(params, { arrayFormat: 'repeat' })
+        },
         headers: {
             'X-Application-Id': default_application_id,
             ...(config?.headers || {}),

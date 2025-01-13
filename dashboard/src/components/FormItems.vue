@@ -1,13 +1,10 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
     <el-row :gutter="20" v-if="props.onWhere === 'search'">
-        <el-col
-            :xs="24"
-            :md="item.domType === 'datePickerRange' ? 12 : 12"
-            :lg="item.domType === 'datePickerRange' ? 8 : 6"
-            :xl="item.domType === 'datePickerRange' ? 4 : 3"
-            v-for="(item, index) in props.formColumns"
-            :key="index">
+        <el-col :xs="24" :md="['datePickerRange', 'dateTimePickerRange'].includes(item.domType) ? 12 : 12"
+            :lg="item.domType === 'datePickerRange' ? 8 : (item.domType === 'dateTimePickerRange' ? 10 : 6)"
+            :xl="item.domType === 'datePickerRange' ? 4 : (item.domType === 'dateTimePickerRange' ? 6 : 3)"
+            v-for="(item, index) in props.formColumns" :key="index">
 
             <slot :name="`${onWhere}-${index}-before`" />
             <slot :name="`${onWhere}-${item.prop}-before`" />
@@ -26,7 +23,7 @@
         <FormItem :formColumnItem="formatFormColumn(item)" :formModel="props.formModel" />
         <slot :name="`${onWhere}-${item.prop}-after`" />
         <slot :name="`${onWhere}-${index}-after`" />
-        
+
         <slot v-if="index === props.formColumns.length - 1" :name="`${onWhere}-last`" />
     </span>
 </template>
@@ -59,15 +56,15 @@ if (props.onWhere === 'search') {
 // 格式化formColumns
 const formatFormColumn = (item: FormColumnsInterface): FormColumnsInterface => {
     const formattedItem = { ...item };
-    
-    formattedItem.placeholder = item[placeholder]
-        || item.placeholder 
-        || (['select','radio'].includes(item.domType) && props.onWhere === 'search' ? '全部' : '');
 
-    if(props.onWhere === 'search' && formattedItem.domType === 'radio') {
+    formattedItem.placeholder = item[placeholder]
+        || item.placeholder
+        || (['select', 'radio'].includes(item.domType) && props.onWhere === 'search' ? '全部' : '');
+
+    if (props.onWhere === 'search' && formattedItem.domType === 'radio') {
         formattedItem.domType = 'select';
     }
-    
+
     return formattedItem;
 }
 </script>

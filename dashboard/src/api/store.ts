@@ -1,14 +1,11 @@
 import request from '@/common/request';
 
-const baseUrl = 'user';
+const baseUrl = 'store';
 
 export default {
     create: async (param: any) => await request.post(`${baseUrl}`, param),
     find: async (id: any) => await request.get(`${baseUrl}/${id}`),
     query: async (param?: any) => {
-        if (param.createdAtRange) {
-            param.createdAtRange = param.createdAtRange.join(',');
-        }
         return await request.get(`${baseUrl}`, param);
     },
     update: async (param: any) =>

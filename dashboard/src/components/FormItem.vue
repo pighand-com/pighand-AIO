@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
     <PDivider :config="formColumnItem.divider" />
-    
+
     <el-form-item :style="{ width: '100%' }" v-show="!formColumnItem.hidden" :label="formColumnItem.label"
         :prop="formColumnItem.prop">
 
@@ -13,8 +13,9 @@
         <el-input-number v-if="formColumnItem.domType === 'number'" v-bind="formColumnItem.componentProps || {}"
             v-model="formModel[formColumnItem.prop]" clearable />
 
-        <el-select v-if="formColumnItem.domType === 'select'"
-            v-bind="formColumnItem.componentProps || {}" v-model="formModel[formColumnItem.prop]" :placeholder="formColumnItem.placeholder" :remote-method="getDomData[formColumnItem.label + formColumnItem.prop]"
+        <el-select v-if="formColumnItem.domType === 'select'" v-bind="formColumnItem.componentProps || {}"
+            v-model="formModel[formColumnItem.prop]" :placeholder="formColumnItem.placeholder"
+            :remote-method="getDomData[formColumnItem.label + formColumnItem.prop]"
             :remote="!!getDomData[formColumnItem.label + formColumnItem.prop]"
             :loading="domDataSetLoading[formColumnItem.label + formColumnItem.prop]" remote-show-suffix filterable
             clearable>
@@ -30,16 +31,19 @@
             </el-radio>
         </el-radio-group>
 
-        <el-date-picker v-if="formColumnItem.domType === 'dateTimePicker'" v-bind="formColumnItem.componentProps || {}"
-            v-model="formModel[formColumnItem.prop]" type="datetime" :placeholder="formColumnItem.placeholder" clearable>
-        </el-date-picker>
-
         <el-date-picker v-if="
-            formColumnItem.domType === 'datePicker' ||
-            formColumnItem.domType === 'datePickerRange'
-        " v-bind="formColumnItem.componentProps || {}" v-model="formModel[formColumnItem.prop]"
-            :type="formColumnItem.domType === 'datePicker' ? 'date' : 'daterange'" range-separator="-"
-            value-format="YYYY-MM-DD" :placeholder="formColumnItem.placeholder" clearable>
+            ['datePicker', 'datePickerRange', 'dateTimePickerRange', 'dateTimePicker'].includes(formColumnItem.domType)
+        " v-bind="formColumnItem.componentProps || {}" v-model="formModel[formColumnItem.prop]" :type="formColumnItem.domType === 'datePicker'
+            ? 'date'
+            : formColumnItem.domType === 'datePickerRange'
+                ? 'daterange'
+                : formColumnItem.domType === 'dateTimePicker'
+                    ? 'datetime'
+                    : 'datetimerange'" range-separator="-"
+            :value-format="formColumnItem.domType.startsWith('dateTime') ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'"
+            :placeholder="formColumnItem.placeholder"
+            :shortcuts="['datePickerRange', 'dateTimePickerRange'].includes(formColumnItem.domType) ? shortcuts : undefined"
+            clearable>
         </el-date-picker>
 
         <div v-for="(imageItem, imageIndex) in (
@@ -102,12 +106,12 @@
         <el-upload v-if="formColumnItem.domType === 'uploadFile'" v-loading="uploadImageLoading[formColumnItem.prop]"
             v-bind="formColumnItem.componentProps || {}" v-model:file-list="uploadFile[formColumnItem.prop]"
             :show-file-list="true" :limit="1" :accept="formColumnItem.uploadAcceptMap
-                    ? formColumnItem.uploadAcceptMap.map[
-                    formModel[formColumnItem.uploadAcceptMap.key]
-                    ]
-                    : '*'
+                ? formColumnItem.uploadAcceptMap.map[
+                formModel[formColumnItem.uploadAcceptMap.key]
+                ]
+                : '*'
                 " :http-request="(options) => uploadServer(options, formColumnItem.prop)
-                        ">
+                    ">
             <template #trigger>
                 <el-button type="primary">选择文件</el-button>
             </template>
@@ -129,7 +133,7 @@ import {
 import { Plus, Download, Delete, ZoomIn } from '@icon-park/vue-next';
 
 import cos from '@/common/cos.ts';
-import { common } from '@/api/index.ts';
+import { common } from '@/api';
 
 /**
  * 组件属性定义
@@ -248,6 +252,63 @@ const handleDownload = (prop, index, domType) => {
     a.download = fileName;
     a.click();
 };
+
+const shortcuts = [
+    {
+        text: '今天',
+        value: () => {
+            const end = new Date()
+            const start = new Date()
+            return [start, end]
+        }
+    },
+    {
+        text: '最近24小时',
+        value: () => {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24)
+            return [start, end]
+        }
+    },
+    {
+        text: '昨天',
+        value: () => {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24)
+            end.setTime(end.getTime() - 3600 * 1000 * 24)
+            return [start, end]
+        }
+    },
+    {
+        text: '最近一周',
+        value: () => {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+            return [start, end]
+        }
+    },
+    {
+        text: '最近一月',
+        value: () => {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            return [start, end]
+        }
+    },
+    {
+        text: '最近三月',
+        value: () => {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            return [start, end]
+        }
+    }
+]
 </script>
 
 <style lang="scss" scoped>

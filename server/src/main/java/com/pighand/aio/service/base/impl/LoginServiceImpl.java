@@ -121,22 +121,33 @@ public class LoginServiceImpl implements LoginService {
 
         UserVO firstMatchUser = matchUsers.get(0);
 
-        String relevanceKey = firstMatchUser.getPhone().equals(username) ? "email" : "phone";
-        String relevanceValue = relevanceKey.equals("email") ? firstMatchUser.getEmail() : firstMatchUser.getPhone();
-
         List<UserVO> relevanceUsers = new ArrayList<>(0);
-        if (applicationId == null && VerifyUtils.isNotEmpty(relevanceValue)) {
-            QueryChain relevanceUserQueryChain = userService.queryChain();
-            relevanceUserQueryChain.select(USER.APPLICATION_ID, APPLICATION.NAME.as("applicationName"))
-                .innerJoin(APPLICATION).on(APPLICATION.ID.eq(USER.APPLICATION_ID));
+        if (applicationId == null) {
+            String relevanceKey = "";
+            String relevanceValue = "";
 
-            if (relevanceKey.equals("email")) {
-                relevanceUserQueryChain.where(USER.EMAIL.eq(relevanceValue));
-            } else {
-                relevanceUserQueryChain.where(USER.PHONE.eq(relevanceValue));
+            if (username.equals(firstMatchUser.getPhone())) {
+                relevanceKey = "email";
+                relevanceValue = firstMatchUser.getEmail();
+            } else if (username.equals(firstMatchUser.getEmail())) {
+                relevanceKey = "phone";
+                relevanceValue = firstMatchUser.getPhone();
             }
 
-            relevanceUsers = relevanceUserQueryChain.listAs(UserVO.class);
+            if (VerifyUtils.isNotEmpty(relevanceValue)) {
+                QueryChain relevanceUserQueryChain = userService.queryChain();
+                relevanceUserQueryChain.select(USER.APPLICATION_ID, APPLICATION.NAME.as("applicationName"))
+                    .innerJoin(APPLICATION).on(APPLICATION.ID.eq(USER.APPLICATION_ID));
+
+                if (relevanceKey.equals("email")) {
+                    relevanceUserQueryChain.where(USER.EMAIL.eq(relevanceValue));
+                } else {
+                    relevanceUserQueryChain.where(USER.PHONE.eq(relevanceValue));
+                }
+
+                relevanceUsers = relevanceUserQueryChain.listAs(UserVO.class);
+            }
+
         }
 
         if (users.size() > 1 || relevanceUsers.size() > 0) {

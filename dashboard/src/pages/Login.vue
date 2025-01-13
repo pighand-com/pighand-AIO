@@ -11,46 +11,20 @@
         </div>
         <el-form class="form" @keyup.enter="login">
             <h1>登录</h1>
-            <el-input
-                :disabled="isLoading"
-                :class="errorFields.has('username') ? 'el-input-error' : ''"
-                v-model="loginForm.username"
-                placeholder=""
-                :prefix-icon="User"
-                @input="handleInput('username')"
+            <el-input :disabled="isLoading" :class="errorFields.has('username') ? 'el-input-error' : ''"
+                v-model="loginForm.username" placeholder="" :prefix-icon="User" @input="handleInput('username')"
                 @blur="handleBlur('username')" />
-            <el-input
-                :disabled="isLoading"
-                :class="errorFields.has('password') ? 'el-input-error' : ''"
-                type="password"
-                v-model="loginForm.password"
-                placeholder=""
-                :prefix-icon="Lock"
-                show-password
-                @input="handleInput('password')"
-                @blur="handleBlur('password')" />
+            <el-input :disabled="isLoading" :class="errorFields.has('password') ? 'el-input-error' : ''" type="password"
+                v-model="loginForm.password" placeholder="" :prefix-icon="Lock" show-password
+                @input="handleInput('password')" @blur="handleBlur('password')" />
             <div v-if="showCaptcha" class="captcha-container">
-                <el-input
-                    ref="captchaInputRef"
-                    :disabled="isLoading"
-                    :class="errorFields.has('captcha') ? 'el-input-error' : ''"
-                    v-model="loginForm.captcha"
-                    placeholder="请输入验证码"
-                    @input="handleInput('captcha')"
-                    @blur="handleBlur('captcha')" />
-                <img
-                    :src="captchaImage"
-                    alt="验证码"
-                    @click="refreshCaptcha(true)"
-                    class="captcha-image" />
+                <el-input ref="captchaInputRef" :disabled="isLoading"
+                    :class="errorFields.has('captcha') ? 'el-input-error' : ''" v-model="loginForm.captcha"
+                    placeholder="请输入验证码" @input="handleInput('captcha')" @blur="handleBlur('captcha')" />
+                <img :src="captchaImage" alt="验证码" @click="refreshCaptcha(true)" class="captcha-image" />
             </div>
-            <el-button
-                @click="login"
-                plain
-                :loading="isLoading"
-                :disabled="isLoading"
-                >{{ isLoading ? '登录中...' : '登录' }}</el-button
-            >
+            <el-button @click="login" plain :loading="isLoading" :disabled="isLoading">{{ isLoading ? '登录中...' : '登录'
+                }}</el-button>
         </el-form>
     </div>
 </template>
@@ -58,7 +32,7 @@
 <script lang="ts" setup>
 import { ref, reactive, onBeforeMount } from 'vue';
 import { User, Lock } from '@icon-park/vue-next';
-import { user, common } from '@/api';
+import * as API from '@/api';
 import { setToken, setUserInfo, getToken } from '@/common/storage';
 import { getDefaultRouterPath } from '@/routers/routes';
 import router from '@/routers/index';
@@ -116,7 +90,7 @@ const handleBlur = (key: string) => {
 const refreshCaptcha = async (force?: boolean) => {
     if (!force && (!loginForm.username || captchaImage.value)) return;
 
-    const result = await common.getCAPTCHACode(loginForm.username);
+    const result = await API.common.getCAPTCHACode(loginForm.username);
     if (result && result.base64) {
         captchaImage.value = result.base64;
         loginForm.captchaId = result.captchaId;
@@ -139,7 +113,7 @@ const login = async () => {
 
     if (isRequired) {
         isLoading.value = true;
-        const result = await user.login(loginForm);
+        const result = await API.login.login(loginForm);
 
         if (result) {
             setToken(result.token);
@@ -196,12 +170,9 @@ const login = async () => {
 
     .g1 {
         position: absolute;
-        background: radial-gradient(
-                circle at center,
+        background: radial-gradient(circle at center,
                 rgba(var(--color1), 0.8) 0,
-                rgba(var(--color1), 0) 50%
-            )
-            no-repeat;
+                rgba(var(--color1), 0) 50%) no-repeat;
         mix-blend-mode: var(--blending);
 
         width: var(--circle-size);
@@ -217,12 +188,9 @@ const login = async () => {
 
     .g2 {
         position: absolute;
-        background: radial-gradient(
-                circle at center,
+        background: radial-gradient(circle at center,
                 rgba(var(--color2), 0.8) 0,
-                rgba(var(--color2), 0) 50%
-            )
-            no-repeat;
+                rgba(var(--color2), 0) 50%) no-repeat;
         mix-blend-mode: var(--blending);
 
         width: var(--circle-size);
@@ -238,12 +206,9 @@ const login = async () => {
 
     .g3 {
         position: absolute;
-        background: radial-gradient(
-                circle at center,
+        background: radial-gradient(circle at center,
                 rgba(var(--color3), 0.8) 0,
-                rgba(var(--color3), 0) 50%
-            )
-            no-repeat;
+                rgba(var(--color3), 0) 50%) no-repeat;
         mix-blend-mode: var(--blending);
 
         width: var(--circle-size);
@@ -259,12 +224,9 @@ const login = async () => {
 
     .g4 {
         position: absolute;
-        background: radial-gradient(
-                circle at center,
+        background: radial-gradient(circle at center,
                 rgba(var(--color4), 0.8) 0,
-                rgba(var(--color4), 0) 50%
-            )
-            no-repeat;
+                rgba(var(--color4), 0) 50%) no-repeat;
         mix-blend-mode: var(--blending);
 
         width: var(--circle-size);
@@ -280,12 +242,9 @@ const login = async () => {
 
     .g5 {
         position: absolute;
-        background: radial-gradient(
-                circle at center,
+        background: radial-gradient(circle at center,
                 rgba(var(--color5), 0.8) 0,
-                rgba(var(--color5), 0) 50%
-            )
-            no-repeat;
+                rgba(var(--color5), 0) 50%) no-repeat;
         mix-blend-mode: var(--blending);
 
         width: calc(var(--circle-size) * 2);
@@ -367,9 +326,11 @@ const login = async () => {
     0% {
         transform: rotate(0deg);
     }
+
     50% {
         transform: rotate(180deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
@@ -379,9 +340,11 @@ const login = async () => {
     0% {
         transform: translateY(-50%);
     }
+
     50% {
         transform: translateY(50%);
     }
+
     100% {
         transform: translateY(-50%);
     }
@@ -391,9 +354,11 @@ const login = async () => {
     0% {
         transform: translateX(-50%) translateY(-10%);
     }
+
     50% {
         transform: translateX(50%) translateY(10%);
     }
+
     100% {
         transform: translateX(-50%) translateY(-10%);
     }

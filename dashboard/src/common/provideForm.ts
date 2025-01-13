@@ -48,8 +48,9 @@ export interface FormColumnsInterface {
         | 'select'
         | 'checkbox'
         | 'datePicker'
-        | 'datePickerRange'
         | 'dateTimePicker'
+        | 'datePickerRange'
+        | 'dateTimePickerRange'
         | 'radio'
         | 'switch'
         | 'uploadImage'
@@ -377,8 +378,25 @@ export default function provideForm(
     const queryTableData = async (fun: Function) => {
         isTableDataLoading.value = true;
 
+        // 处理搜索参数
+        const searchParams = { ...searchFormModel };
+
+        // 处理 datePickerRange 类型的字段
+        formColumns.forEach((column) => {
+            if (
+                ['datePickerRange', 'dateTimePickerRange'].includes(
+                    column.domType
+                ) &&
+                column.prop &&
+                searchParams[column.prop]
+            ) {
+                searchParams[`${column.prop}Range`] = searchParams[column.prop];
+                delete searchParams[column.prop];
+            }
+        });
+
         const result = await fun({
-            ...searchFormModel,
+            ...searchParams,
             pageSize: pageSize.value,
             pageNumber: pageNumber.value
         });

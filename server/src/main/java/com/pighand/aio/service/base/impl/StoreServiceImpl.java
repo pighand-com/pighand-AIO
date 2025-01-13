@@ -11,7 +11,10 @@ import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
+import static com.pighand.aio.domain.base.table.ApplicationTableDef.APPLICATION;
 import static com.pighand.aio.domain.base.table.StoreTableDef.STORE;
+import static com.pighand.aio.domain.base.table.TenantTableDef.TENANT;
+import static com.pighand.aio.domain.base.table.UserExtensionTableDef.USER_EXTENSION;
 
 /**
  * 门店
@@ -54,15 +57,19 @@ public class StoreServiceImpl extends BaseServiceImpl<StoreMapper, StoreDomain> 
      */
     @Override
     public PageOrList<StoreVO> query(StoreVO baseStoreVO) {
+        baseStoreVO.setJoinTables(APPLICATION.getName(), USER_EXTENSION.getName(), TENANT.getName());
 
-        QueryWrapper queryWrapper = QueryWrapper.create()
+        QueryWrapper queryWrapper = QueryWrapper.create().select(STORE.DEFAULT_COLUMNS)
 
             // like
             .and(STORE.NAME.like(baseStoreVO.getName()))
 
             // equal
             .and(STORE.APPLICATION_ID.eq(baseStoreVO.getApplicationId()))
-            .and(STORE.TENANT_ID.eq(baseStoreVO.getTenantId()));
+            .and(STORE.TENANT_ID.eq(baseStoreVO.getTenantId()))
+
+            // between
+            .and(STORE.CREATED_AT.between(baseStoreVO.getCreatedAtRange()));
 
         return super.mapper.query(baseStoreVO, queryWrapper);
     }

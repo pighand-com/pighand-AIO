@@ -1,6 +1,14 @@
 import { shallowRef } from 'vue';
 import constant from '@/common/constant';
-import { BookOne, Oceanengine, GoldMedal, System, EveryUser } from '@icon-park/vue-next';
+import {
+    BookOne,
+    Oceanengine,
+    GoldMedal,
+    System,
+    EveryUser,
+    UserBusiness,
+    Shop
+} from '@icon-park/vue-next';
 
 const routes = [
     {
@@ -60,6 +68,24 @@ const routes = [
             pageType: constant.page_type_single
         },
         children: [
+            {
+                path: 'tenant',
+                name: 'tenant',
+                title: '商户管理',
+                meta: {
+                    icon: shallowRef(UserBusiness)
+                },
+                component: () => import('@/pages/Tenant.vue')
+            },
+            {
+                path: 'store',
+                name: 'store',
+                title: '门店管理',
+                meta: {
+                    icon: shallowRef(Shop)
+                },
+                component: () => import('@/pages/Store.vue')
+            },
             {
                 path: 'user',
                 name: 'user',

@@ -16,7 +16,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.pighand.aio.domain.base.table.ApplicationTableDef.APPLICATION;
 import static com.pighand.aio.domain.base.table.TenantTableDef.TENANT;
+import static com.pighand.aio.domain.base.table.UserExtensionTableDef.USER_EXTENSION;
 
 /**
  * 租户
@@ -39,6 +41,20 @@ public interface TenantMapper extends BaseMapper<TenantDomain> {
 
         if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
+        }
+
+        if (joinTables.contains(USER_EXTENSION.getName())) {
+            queryWrapper.select(USER_EXTENSION.ID, USER_EXTENSION.NAME);
+            queryWrapper.leftJoin(USER_EXTENSION).on(TENANT.CREATED_BY.eq(USER_EXTENSION.ID));
+
+            joinTables.remove(USER_EXTENSION.getName());
+        }
+
+        if (joinTables.contains(APPLICATION.getName())) {
+            queryWrapper.select(APPLICATION.ID, APPLICATION.NAME);
+            queryWrapper.leftJoin(APPLICATION).on(APPLICATION.ID.eq(TENANT.APPLICATION_ID));
+
+            joinTables.remove(APPLICATION.getName());
         }
 
         return queryWrapper;

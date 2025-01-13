@@ -1,6 +1,5 @@
 package com.pighand.aio.controller.IoT;
 
-import com.pighand.aio.common.interfaces.Authorization;
 import com.pighand.aio.domain.IoT.DeviceTaskDomain;
 import com.pighand.aio.service.IoT.DeviceTaskService;
 import com.pighand.aio.vo.IoT.DeviceTaskVO;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wangshuli
  * @createDate 2024-04-10 23:45:23
  */
-@Authorization
+//@Authorization
 @RestController(path = "device/task", docName = "IoT - 设备任务")
 public class DeviceTaskController extends BaseController<DeviceTaskService> {
 

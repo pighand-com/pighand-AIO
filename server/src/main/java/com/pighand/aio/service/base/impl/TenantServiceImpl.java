@@ -3,6 +3,7 @@ package com.pighand.aio.service.base.impl;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.update.UpdateChain;
 import com.pighand.aio.domain.base.TenantDomain;
+import com.pighand.aio.domain.base.table.UserTableDef;
 import com.pighand.aio.mapper.base.TenantMapper;
 import com.pighand.aio.service.base.TenantService;
 import com.pighand.aio.vo.base.TenantVO;
@@ -11,7 +12,10 @@ import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
+import static com.pighand.aio.domain.base.table.ApplicationTableDef.APPLICATION;
 import static com.pighand.aio.domain.base.table.TenantTableDef.TENANT;
+import static com.pighand.aio.domain.base.table.UserExtensionTableDef.USER_EXTENSION;
+import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 
 /**
  * 租户
@@ -21,6 +25,10 @@ import static com.pighand.aio.domain.base.table.TenantTableDef.TENANT;
  */
 @Service
 public class TenantServiceImpl extends BaseServiceImpl<TenantMapper, TenantDomain> implements TenantService {
+
+    private static UserTableDef getUser() {
+        return USER;
+    }
 
     /**
      * 创建
@@ -54,14 +62,18 @@ public class TenantServiceImpl extends BaseServiceImpl<TenantMapper, TenantDomai
      */
     @Override
     public PageOrList<TenantVO> query(TenantVO baseTenantVO) {
+        baseTenantVO.setJoinTables(APPLICATION.getName(), USER_EXTENSION.getName());
 
-        QueryWrapper queryWrapper = QueryWrapper.create()
+        QueryWrapper queryWrapper = QueryWrapper.create().select(TENANT.DEFAULT_COLUMNS)
 
             // like
             .and(TENANT.NAME.like(baseTenantVO.getName()))
 
             // equal
-            .and(TENANT.APPLICATION_ID.eq(baseTenantVO.getApplicationId()));
+            .and(TENANT.APPLICATION_ID.eq(baseTenantVO.getApplicationId()))
+
+            // between
+            .and(TENANT.CREATED_AT.between(baseTenantVO.getCreatedAtRange()));
 
         return super.mapper.query(baseTenantVO, queryWrapper);
     }

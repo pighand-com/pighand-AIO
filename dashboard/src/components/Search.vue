@@ -1,61 +1,38 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
-    <el-form
-        ref="searchForm"
-        :inline="true"
-        :model="searchFormModel"
-        :disabled="isTableDataLoading"
-        :class="
-            formColumns.filter(
-                (item) => item.isSearch && !item.isSearchMore && !item.hidden
-            ).length
-                ? 'search-form'
-                : 'search-form search-form-bottom'
-        "
-        label-width="auto">
+    <el-form ref="searchForm" :inline="true" :model="searchFormModel" :disabled="isTableDataLoading" :class="formColumns.filter(
+        (item) => item.isSearch && !item.isSearchMore && !item.hidden
+    ).length
+        ? 'search-form'
+        : 'search-form search-form-bottom'
+        " label-width="auto">
         <div class="search-default">
             <div>
-                <FormItems
-                    :form-model="searchFormModel"
-                    :form-columns="
-                        formColumns.filter(
-                            (item) => item.isSearch && !item.isSearchMore
-                        )
-                    "
-                    :on-where="'search'">
-                    <template
-                        v-for="(item, index) in formColumns.filter(
-                            (item) => item.isSearch && !item.isSearchMore
-                        )"
-                        :key="index"
-                        #[`search-${index}-before`]>
+                <FormItems :form-model="searchFormModel" :form-columns="formColumns.filter(
+                    (item) => item.isSearch && !item.isSearchMore
+                )
+                    " :on-where="'search'">
+                    <template v-for="(item, index) in formColumns.filter(
+                        (item) => item.isSearch && !item.isSearchMore
+                    )" :key="index" #[`search-${index}-before`]>
                         <slot :name="`${index}-before`" />
                     </template>
 
-                    <template
-                        v-for="(item, index) in formColumns.filter(
-                            (item) => item.isSearch && !item.isSearchMore
-                        )"
-                        :key="index"
-                        #[`search-${item.prop}-before`]>
+                    <template v-for="(item, index) in formColumns.filter(
+                        (item) => item.isSearch && !item.isSearchMore
+                    )" :key="index" #[`search-${item.prop}-before`]>
                         <slot :name="`${item.prop}-before`" />
                     </template>
 
-                    <template
-                        v-for="(item, index) in formColumns.filter(
-                            (item) => item.isSearch && !item.isSearchMore
-                        )"
-                        :key="index"
-                        #[`search-${item.prop}-after`]>
+                    <template v-for="(item, index) in formColumns.filter(
+                        (item) => item.isSearch && !item.isSearchMore
+                    )" :key="index" #[`search-${item.prop}-after`]>
                         <slot :name="`${item.prop}-after`" />
                     </template>
 
-                    <template
-                        v-for="(item, index) in formColumns.filter(
-                            (item) => item.isSearch && !item.isSearchMore
-                        )"
-                        :key="index"
-                        #[`search-${index}-after`]>
+                    <template v-for="(item, index) in formColumns.filter(
+                        (item) => item.isSearch && !item.isSearchMore
+                    )" :key="index" #[`search-${index}-after`]>
                         <slot :name="`${index}-after`" />
                     </template>
 
@@ -67,44 +44,26 @@
             </div>
             <div>
                 <el-button-group class="button-group">
-                    <el-button
-                        color="#409eff"
-                        :loading="isTableDataLoading"
-                        @click="handleSearch"
-                        plain
-                        ><el-tooltip
-                            class="button-icon"
-                            :show-after="1000"
-                            content="搜索"
-                            placement="bottom"
-                            effect="light">
-                            <el-icon><Search /></el-icon></el-tooltip
-                    ></el-button>
+                    <el-button color="#409eff" :loading="isTableDataLoading" @click="handleSearch" plain><el-tooltip
+                            class="button-icon" :show-after="1000" content="搜索" placement="bottom" effect="light">
+                            <el-icon>
+                                <Search />
+                            </el-icon></el-tooltip></el-button>
 
                     <el-button color="#409eff" @click="handleReset" plain>
-                        <el-tooltip
-                            :show-after="1000"
-                            content="重置"
-                            placement="bottom"
-                            effect="light">
-                            <el-icon><Refresh /></el-icon>
+                        <el-tooltip :show-after="1000" content="重置" placement="bottom" effect="light">
+                            <el-icon>
+                                <Refresh />
+                            </el-icon>
                         </el-tooltip>
                     </el-button>
 
-                    <el-button
-                        v-if="
-                            formColumns
-                                .map((item) => item.isSearchMore)
-                                .includes(true)
-                        "
-                        color="#409eff"
-                        @click="handleShowHiddenMore"
-                        plain>
-                        <el-tooltip
-                            :show-after="1000"
-                            content="更多"
-                            placement="bottom"
-                            effect="light">
+                    <el-button v-if="
+                        formColumns
+                            .map((item) => item.isSearchMore)
+                            .includes(true)
+                    " color="#409eff" @click="handleShowHiddenMore" plain>
+                        <el-tooltip :show-after="1000" content="更多" placement="bottom" effect="light">
                             <el-icon>
                                 <ArrowUp v-if="showMore" />
                                 <ArrowDown v-else />
@@ -117,25 +76,17 @@
         <div class="more-hidden" :class="{ 'more-show': showMore }">
             <el-divider border-style="dashed" />
 
-            <FormItems
-                :form-model="searchFormModel"
-                :form-columns="formColumns.filter((item) => item.isSearchMore)"
+            <FormItems :form-model="searchFormModel" :form-columns="formColumns.filter((item) => item.isSearchMore)"
                 :on-where="'search-more'">
-                <template
-                    v-for="(item, index) in formColumns.filter(
-                        (item) => item.isSearchMore
-                    )"
-                    :key="index"
-                    #[`search-more-${index}-before`]>
+                <template v-for="(item, index) in formColumns.filter(
+                    (item) => item.isSearchMore
+                )" :key="index" #[`search-more-${index}-before`]>
                     <slot :name="`more-${index}-before`" />
                 </template>
 
-                <template
-                    v-for="(item, index) in formColumns.filter(
-                        (item) => item.isSearch && !item.isSearchMore
-                    )"
-                    :key="index"
-                    #[`search-more-${index}-after`]>
+                <template v-for="(item, index) in formColumns.filter(
+                    (item) => item.isSearch && !item.isSearchMore
+                )" :key="index" #[`search-more-${index}-after`]>
                     <slot :name="`more-${index}-after`" />
                 </template>
             </FormItems>
@@ -217,7 +168,7 @@ const handleReset = async () => {
 
     if (notEmptyValues.length) {
         Object.keys(searchFormModel).forEach((key) => {
-            searchFormModel[key] = null;
+            searchFormModel[key] = undefined;
         });
 
         await handleSearch();
@@ -236,11 +187,9 @@ const handleShowHiddenMore = () => {
 .search-form {
     border-radius: 8px;
     padding: 18px 24px 0px 24px;
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.9) 0%,
-        rgba(255, 255, 255, 0.6) 100%
-    );
+    background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(255, 255, 255, 0.6) 100%);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
@@ -256,7 +205,7 @@ const handleShowHiddenMore = () => {
     flex-wrap: wrap;
     gap: 16px;
 
-    > div:first-child {
+    >div:first-child {
         flex: 1;
         min-width: 300px;
     }

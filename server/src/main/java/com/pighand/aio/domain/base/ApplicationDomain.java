@@ -20,8 +20,8 @@ import java.io.Serializable;
  * @author wangshuli
  * @createDate 2023-03-25 18:45:58
  */
+@Table(value = "base_application")
 @Data
-@Table("base_application")
 public class ApplicationDomain extends BaseDomainRecord<ApplicationDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

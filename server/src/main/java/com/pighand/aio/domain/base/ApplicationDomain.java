@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.pighand.aio.common.enums.PlatformEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecord;
@@ -37,4 +38,7 @@ public class ApplicationDomain extends BaseDomainRecord<ApplicationDomain> imple
 
     @Schema(description = "系统默认加密盐。用于加密二维码等。初始化时由系统生成")
     private String systemEncryptSalt;
+
+    @Schema(description = "上传方式")
+    private PlatformEnum uploadType;
 }

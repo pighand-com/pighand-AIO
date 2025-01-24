@@ -1,7 +1,7 @@
-package com.pighand.aio.controller.common;
+package com.pighand.aio.controller.other;
 
 public class QrcodeController {
     public void decode() {
-        
+
     }
 }

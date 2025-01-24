@@ -295,7 +295,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
             if (orderVO.getOutTradePlatform().equals(PlatformEnum.WECHAT_APPLET.value)) {
                 ApplicationPlatformPayDomain projectPlatformPayDomain = projectPlatformPayService.find(applicationId);
                 ApplicationPlatformKeyDomain projectPlatformKeyDomain =
-                    projectPlatformKeyService.findByPlatform(applicationId, PlatformEnum.WECHAT_APPLET);
+                    projectPlatformKeyService.findByPlatform(PlatformEnum.WECHAT_APPLET);
 
                 UserWechatDomain userWechatDomain = wechatService.queryChain().select(USER_WECHAT.OPENID)
                     .where(USER_WECHAT.USER_ID.eq(Context.loginUser().getId()))

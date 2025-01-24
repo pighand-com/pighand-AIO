@@ -28,8 +28,7 @@ public class MiniGameImpl extends AbstractDouyin<AccessToken> implements Tripart
      */
     @Override
     protected AccessToken analysisCode(Long applicationId, String code, String anonymousCode) {
-        ApplicationPlatformKeyDomain key =
-            platformKeyService.findByPlatform(applicationId, PlatformEnum.DOUYIN_MINI_GAME);
+        ApplicationPlatformKeyDomain key = platformKeyService.findByPlatform(PlatformEnum.DOUYIN_MINI_GAME);
 
         //        return DouyinSDK.MINI_GAME.code2session(key.getAppid(), key.getSecret(), code, anonymousCode);
         return null;

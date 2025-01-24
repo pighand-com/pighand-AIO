@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.pighand.aio.common.enums.PlatformEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
@@ -42,7 +43,7 @@ public class ApplicationPlatformKeyDomain extends BaseDomainRecord<ApplicationPl
 
     @NotNull(groups = {ValidationGroup.Create.class})
     @Schema(description = "三方平台类型")
-    private Integer platform;
+    private PlatformEnum platform;
 
     @NotNull(groups = {ValidationGroup.Create.class})
     @Length(max = 255)

@@ -1,4 +1,4 @@
-package com.pighand.aio.controller.common;
+package com.pighand.aio.controller.other;
 
 import com.pighand.aio.common.CAPTCHA.CodeData;
 import com.pighand.aio.common.CAPTCHA.cache.VerificationCache;

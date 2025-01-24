@@ -33,7 +33,7 @@
     <parent>
         <groupId>com.pighand</groupId>
         <artifactId>pighand-framework-spring-parent</artifactId>
-        <version>2.0.0-bate.2.20250103</version>
+        <version>2.0.0-bate.2.20250124</version>
     </parent>
 
     <properties>

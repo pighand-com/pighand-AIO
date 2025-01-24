@@ -1,5 +1,7 @@
 package com.pighand.aio.controller.base;
 
+import com.pighand.aio.common.interfaces.ApplicationId;
+import com.pighand.aio.common.interfaces.Authorization;
 import com.pighand.aio.domain.base.StoreDomain;
 import com.pighand.aio.service.base.StoreService;
 import com.pighand.aio.vo.base.StoreVO;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wangshuli
  * @createDate 2024-12-31 19:04:50
  */
+@Authorization
+@ApplicationId
 @RestController(path = "store", docName = "门店")
 public class StoreController extends BaseController<StoreService> {
 

@@ -19,8 +19,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
- * 登录拦截器
- * <p>
+ * 授权拦截器
  */
 @Component
 public class AuthorizationInterceptor extends RequestInterceptor {

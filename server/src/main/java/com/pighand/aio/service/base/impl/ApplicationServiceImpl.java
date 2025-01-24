@@ -39,9 +39,8 @@ public class ApplicationServiceImpl extends BaseServiceImpl<ApplicationMapper, A
      */
     @Override
     public ApplicationDomain find(Long id) {
-        //        ApplicationDomain projectDomain = super.mapper.selectById(id);
-        //        return projectDomain;
-        return null;
+        ApplicationDomain projectDomain = super.mapper.selectOneById(id);
+        return projectDomain;
     }
 
     /**

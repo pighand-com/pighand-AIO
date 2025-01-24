@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class Client {
+public class TencentCloudSDK {
 
     @Cacheable(cacheNames = {CacheConfigEnum.CLIENT_CACHE}, key = "'cos_' + #region + '_' + #appid")
     public COSClient cosClient(String appid, String secret, String region) {

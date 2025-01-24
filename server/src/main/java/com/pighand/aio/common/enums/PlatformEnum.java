@@ -2,13 +2,18 @@ package com.pighand.aio.common.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.mybatisflex.annotation.EnumValue;
+import com.pighand.framework.spring.base.BaseEnum;
+import lombok.Getter;
 
 /**
+ * 平台类型
+ *
  * @author wangshuli
  */
-public enum PlatformEnum {
-    // 系统直接注册
-    SYSTEM_SIGN_IN("def"),
+@Getter
+public enum PlatformEnum implements BaseEnum<String> {
+    // 系统直接注册、上传服务器本地
+    SYSTEM("system"),
 
     // 微信 - 公众号
     WECHAT_OFFICIALLY_ACCOUNT("wechat_official_account"),

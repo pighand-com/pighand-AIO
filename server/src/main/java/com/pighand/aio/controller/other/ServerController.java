@@ -1,4 +1,4 @@
-package com.pighand.aio.controller.common;
+package com.pighand.aio.controller.other;
 
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.IoT.DeviceDomain;

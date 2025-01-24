@@ -71,16 +71,25 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
+    /**
+     * api-doc扩展
+     */
     @Bean
     public PropertyCustomizer propertyCustomizer() {
         return (schema, annotatedType) -> SpringDocProperty.analysis(schema, annotatedType);
     }
 
+    /**
+     * api-doc扩展
+     */
     @Bean
     public ParameterCustomizer propertyCustomizers() {
         return (parameterModel, methodParameter) -> SpringDocParameter.analysis(parameterModel, methodParameter);
     }
 
+    /**
+     * mvc配置
+     */
     @Configuration
     @EnableWebMvc
     public class CorsConfig implements WebMvcConfigurer {
@@ -111,6 +120,8 @@ public class Application {
         }
 
         /**
+         * 跨域支持
+         *
          * @param registry
          */
         @Override
@@ -120,15 +131,17 @@ public class Application {
                 .allowCredentials(false).maxAge(3600);
         }
 
+        /**
+         * 拦截器
+         *
+         * @param registry
+         */
         @Override
         public void addInterceptors(InterceptorRegistry registry) {
+            // 授权拦截器
             registry.addInterceptor(authorizationInterceptor);
         }
 
-    }
-
-    @Configuration
-    public class WebMvcConfig implements WebMvcConfigurer {
         /**
          * 枚举类的转换器工厂 addConverterFactory
          */

@@ -1,5 +1,7 @@
 package com.pighand.aio.controller.base;
 
+import com.pighand.aio.common.interfaces.ApplicationId;
+import com.pighand.aio.common.interfaces.Authorization;
 import com.pighand.aio.domain.base.TenantDomain;
 import com.pighand.aio.service.base.TenantService;
 import com.pighand.aio.vo.base.TenantVO;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wangshuli
  * @createDate 2024-12-31 19:04:50
  */
+@Authorization
+@ApplicationId
 @RestController(path = "tenant", docName = "租户")
 public class TenantController extends BaseController<TenantService> {
 

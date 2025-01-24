@@ -1,16 +1,16 @@
 package com.pighand.aio.service.base.impl;
 
-import com.mybatisflex.core.query.QueryChain;
 import com.pighand.aio.common.enums.UserStatusEnum;
 import com.pighand.aio.common.interceptor.Context;
+import com.pighand.aio.domain.base.ApplicationDomain;
 import com.pighand.aio.entityMapper.base.UserEntityMapper;
 import com.pighand.aio.service.base.ApplicationService;
 import com.pighand.aio.service.base.AuthorizationService;
 import com.pighand.aio.service.base.LoginService;
 import com.pighand.aio.service.base.UserService;
-import com.pighand.aio.vo.base.ApplicationVO;
 import com.pighand.aio.vo.base.UserVO;
 import com.pighand.framework.spring.exception.ThrowPrompt;
+import com.pighand.framework.spring.extension.mybatis.flex.PHQueryChain;
 import com.pighand.framework.spring.util.VerifyUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -45,28 +45,28 @@ public class LoginServiceImpl implements LoginService {
      * @param firstMatchUser
      * @return
      */
-    private List<ApplicationVO> getRelevanceApplications(List<UserVO> users, List<UserVO> relevanceUsers,
+    private List<ApplicationDomain> getRelevanceApplications(List<UserVO> users, List<UserVO> relevanceUsers,
         UserVO firstMatchUser) {
-        List<ApplicationVO> relevanceApplications = new ArrayList<>(users.size() - 1 + relevanceUsers.size());
+        List<ApplicationDomain> relevanceApplications = new ArrayList<>(users.size() - 1 + relevanceUsers.size());
 
         Set ApplicationIds = new HashSet(users.size() - 1 + relevanceUsers.size());
         ApplicationIds.add(firstMatchUser.getApplicationId());
 
         for (int i = 1; i < users.size(); i++) {
             if (!ApplicationIds.add(users.get(i).getApplicationId())) {
-                ApplicationVO applicationVO = new ApplicationVO();
-                applicationVO.setId(users.get(i).getApplicationId());
-                applicationVO.setName(users.get(i).getApplicationName());
-                relevanceApplications.add(applicationVO);
+                ApplicationDomain application = new ApplicationDomain();
+                application.setId(users.get(i).getApplicationId());
+                application.setName(users.get(i).getApplication().getName());
+                relevanceApplications.add(application);
             }
         }
 
         for (UserVO relevanceUser : relevanceUsers) {
             if (!ApplicationIds.add(relevanceUser.getApplicationId())) {
-                ApplicationVO applicationVO = new ApplicationVO();
-                applicationVO.setId(relevanceUser.getApplicationId());
-                applicationVO.setName(relevanceUser.getApplicationName());
-                relevanceApplications.add(applicationVO);
+                ApplicationDomain application = new ApplicationDomain();
+                application.setId(relevanceUser.getApplicationId());
+                application.setName(relevanceUser.getApplication().getName());
+                relevanceApplications.add(application);
             }
         }
         return relevanceApplications;
@@ -76,9 +76,9 @@ public class LoginServiceImpl implements LoginService {
     public UserVO loginByPassword(String username, String password) {
         Long applicationId = Context.applicationId();
 
-        QueryChain queryChain = userService.queryChain();
-        queryChain.select(USER.ID, USER.APPLICATION_ID, USER.PASSWORD, USER.USERNAME, USER.STATUS,
-            APPLICATION.NAME.as("applicationName")).innerJoin(APPLICATION).on(APPLICATION.ID.eq(USER.APPLICATION_ID));
+        PHQueryChain queryChain = userService.queryChain();
+        queryChain.fullSelect(USER.ID, USER.PASSWORD, USER.USERNAME, USER.STATUS, APPLICATION.ID, APPLICATION.NAME,
+            APPLICATION.UPLOAD_TYPE).from(USER).innerJoin(APPLICATION).on(APPLICATION.ID.eq(USER.APPLICATION_ID));
 
         if (applicationId != null) {
             queryChain.where(USER.APPLICATION_ID.eq(applicationId)).and(USER.USERNAME.eq(username))
@@ -135,9 +135,9 @@ public class LoginServiceImpl implements LoginService {
             }
 
             if (VerifyUtils.isNotEmpty(relevanceValue)) {
-                QueryChain relevanceUserQueryChain = userService.queryChain();
-                relevanceUserQueryChain.select(USER.APPLICATION_ID, APPLICATION.NAME.as("applicationName"))
-                    .innerJoin(APPLICATION).on(APPLICATION.ID.eq(USER.APPLICATION_ID));
+                PHQueryChain relevanceUserQueryChain = userService.queryChain();
+                relevanceUserQueryChain.select(USER.APPLICATION_ID, APPLICATION.NAME).innerJoin(APPLICATION)
+                    .on(APPLICATION.ID.eq(USER.APPLICATION_ID));
 
                 if (relevanceKey.equals("email")) {
                     relevanceUserQueryChain.where(USER.EMAIL.eq(relevanceValue));
@@ -151,7 +151,8 @@ public class LoginServiceImpl implements LoginService {
         }
 
         if (users.size() > 1 || relevanceUsers.size() > 0) {
-            List<ApplicationVO> relevanceApplications = getRelevanceApplications(users, relevanceUsers, firstMatchUser);
+            List<ApplicationDomain> relevanceApplications =
+                getRelevanceApplications(users, relevanceUsers, firstMatchUser);
 
             firstMatchUser.setRelevanceApplications(relevanceApplications);
         }

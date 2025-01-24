@@ -1,14 +1,15 @@
 package com.pighand.aio.controller.common;
 
+import com.pighand.aio.common.interfaces.ApplicationId;
+import com.pighand.aio.common.interfaces.Authorization;
+import com.pighand.aio.domain.common.AssetsDomain;
+import com.pighand.aio.service.common.AssetsService;
+import com.pighand.aio.vo.common.AssetsVO;
 import com.pighand.framework.spring.api.annotation.*;
-import com.pighand.framework.spring.api.annotation.RestController;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.base.BaseController;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.response.Result;
-import com.pighand.aio.domain.common.AssetsDomain;
-import com.pighand.aio.service.common.AssetsService;
-import com.pighand.aio.vo.common.AssetsVO;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wangshuli
  * @createDate 2024-12-31 19:04:50
  */
-@RestController(path = "com/assets", docName = "公共 - 素材")
+@Authorization
+@ApplicationId
+@RestController(path = "assets", docName = "公共 - 素材")
 public class AssetsController extends BaseController<AssetsService> {
 
     /**
@@ -72,6 +75,12 @@ public class AssetsController extends BaseController<AssetsService> {
     @Delete(path = "{id}", docSummary = "删除")
     public Result delete(@PathVariable(name = "id") Long id) {
         super.service.delete(id);
+        return new Result();
+    }
+
+    @Delete(docSummary = "批量删除")
+    public Result batchDelete(@RequestBody AssetsVO comAssetsVO) {
+        super.service.batchDelete(comAssetsVO.getIds());
         return new Result();
     }
 }

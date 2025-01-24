@@ -55,9 +55,10 @@ public interface ApplicationPlatformKeyService extends BaseService<ApplicationPl
     /**
      * 查询key
      *
-     * @param applicationId
      * @param platform
      * @returns platformKey {@link ApplicationPlatformKeyDomain}
      */
-    ApplicationPlatformKeyDomain findByPlatform(Long applicationId, PlatformEnum platform);
+    ApplicationPlatformKeyDomain findByPlatform(PlatformEnum platform);
+
+    ApplicationPlatformKeyDomain uploadKey();
 }

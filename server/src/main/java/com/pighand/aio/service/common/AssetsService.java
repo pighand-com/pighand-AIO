@@ -1,9 +1,11 @@
 package com.pighand.aio.service.common;
 
-import com.pighand.framework.spring.base.BaseService;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.domain.common.AssetsDomain;
 import com.pighand.aio.vo.common.AssetsVO;
+import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.page.PageOrList;
+
+import java.util.List;
 
 /**
  * 公共 - 素材
@@ -50,4 +52,6 @@ public interface AssetsService extends BaseService<AssetsDomain> {
      * @param id
      */
     void delete(Long id);
+
+    void batchDelete(List<Long> ids);
 }

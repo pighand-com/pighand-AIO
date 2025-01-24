@@ -1,5 +1,8 @@
-// import { ElMessage } from 'element-plus';
-import axios, { AxiosResponse, HttpStatusCode } from 'axios';
+import axios, {
+    AxiosResponse,
+    AxiosRequestConfig,
+    HttpStatusCode
+} from 'axios';
 import Qs from 'qs';
 
 import router from '@/routers/index';
@@ -7,6 +10,10 @@ import constant from './constant';
 import { getToken, clearAll } from './storage';
 
 const default_application_id = 1;
+
+interface RequestConfig extends AxiosRequestConfig {
+    isDialog?: boolean;
+}
 
 /**
  * 将所有状态码视为成功
@@ -83,14 +90,11 @@ const disposeResponse = (
     return result;
 };
 
-const get = async (
-    url: string,
-    params?: any,
-    config?: { isDialog?: boolean; headers?: any; responseType?: string }
-) => {
+const get = async (url: string, params?: any, config?: RequestConfig) => {
     url = getUrl(url);
 
     const axiosConfig: any = {
+        ...config,
         params: params || {},
         paramsSerializer: {
             serialize: (params) =>
@@ -103,10 +107,6 @@ const get = async (
         }
     };
 
-    if (config?.responseType) {
-        axiosConfig.responseType = config.responseType;
-    }
-
     const result = await axios.get(url, axiosConfig);
 
     return disposeResponse(
@@ -116,19 +116,11 @@ const get = async (
     );
 };
 
-const post = async (
-    url: string,
-    data?: any,
-    config?: {
-        params?: any;
-        isDialog?: boolean;
-        headers?: any;
-        responseType?: string;
-    }
-) => {
+const post = async (url: string, data?: any, config?: RequestConfig) => {
     url = getUrl(url);
 
     const axiosConfig: any = {
+        ...config,
         params: config?.params || {},
         paramsSerializer: {
             serialize: (params) =>
@@ -141,10 +133,6 @@ const post = async (
         }
     };
 
-    if (config?.responseType) {
-        axiosConfig.responseType = config.responseType;
-    }
-
     const result = await axios.post(url, data, axiosConfig);
 
     return disposeResponse(
@@ -154,17 +142,10 @@ const post = async (
     );
 };
 
-const put = async (
-    url: string,
-    data?: any,
-    config?: {
-        params?: any;
-        isDialog?: boolean;
-        headers?: any;
-    }
-) => {
+const put = async (url: string, data?: any, config?: RequestConfig) => {
     url = getUrl(url);
     const result = await axios.put(url, data, {
+        ...config,
         params: config?.params || {},
         paramsSerializer: {
             serialize: (params) =>
@@ -180,13 +161,10 @@ const put = async (
     return disposeResponse(result, config?.isDialog);
 };
 
-const del = async (
-    url: string,
-    params?: any,
-    config?: { isDialog?: boolean; headers?: any }
-) => {
+const del = async (url: string, params?: any, config?: RequestConfig) => {
     url = getUrl(url);
     const result = await axios.delete(url, {
+        ...config,
         params: params || {},
         paramsSerializer: {
             serialize: (params) =>

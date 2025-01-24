@@ -91,29 +91,63 @@
                 </span>
             </span>
         </div>
+
         <el-upload v-if="
             (formColumnItem.domType === 'uploadImage' &&
                 !formModel[formColumnItem.prop]) ||
             formColumnItem.domType === 'uploadImageList'
         " v-bind="formColumnItem.componentProps || {}" v-loading="uploadImageLoading[formColumnItem.prop]"
-            class="image-uploader" :show-file-list="false" :http-request="(options) => uploadServer(options, formColumnItem.prop)
+            class="image-uploader" :show-file-list="false" :http-request="(options) => upload(options, formColumnItem.prop, formColumnItem.domType, formColumnItem.uploadPath)
                 " accept="image/png,image/jpeg,image/jpg">
             <el-icon class="image-uploader-icon">
                 <Plus />
             </el-icon>
         </el-upload>
 
-        <el-upload v-if="formColumnItem.domType === 'uploadFile'" v-loading="uploadImageLoading[formColumnItem.prop]"
-            v-bind="formColumnItem.componentProps || {}" v-model:file-list="uploadFile[formColumnItem.prop]"
-            :show-file-list="true" :limit="1" :accept="formColumnItem.uploadAcceptMap
+        <el-upload v-if="['uploadFile', 'uploadFileList'].includes(formColumnItem.domType)"
+            v-loading="uploadImageLoading[formColumnItem.prop]" v-bind="formColumnItem.componentProps || {}"
+            v-model:file-list="uploadFile[formColumnItem.prop]" :show-file-list="false"
+            :limit="formColumnItem.domType === 'uploadFileList' ? 0 : 1"
+            :drag="formColumnItem.domType === 'uploadFileList'" :multiple="formColumnItem.domType === 'uploadFileList'"
+            :accept="formColumnItem.uploadAcceptMap
                 ? formColumnItem.uploadAcceptMap.map[
                 formModel[formColumnItem.uploadAcceptMap.key]
                 ]
                 : '*'
-                " :http-request="(options) => uploadServer(options, formColumnItem.prop)
-                    ">
-            <template #trigger>
+                "
+            :http-request="(options) => upload(options, formColumnItem.prop, formColumnItem.domType, formColumnItem.uploadPath)"
+            class="w-full">
+            <div v-if="formColumnItem.domType === 'uploadFileList'">
+                <div class="el-icon--upload flex justify-center">
+                    <UploadOne />
+                </div>
+                <div class="el-upload__text">
+                    将文件拖到此处，或 <em>点击上传</em>
+                </div>
+            </div>
+            <template v-if="formColumnItem.domType === 'uploadFile'" #trigger>
                 <el-button type="primary">选择文件</el-button>
+            </template>
+            <template #tip>
+                <template v-if="uploadFile[formColumnItem.prop]?.length">
+                    <div v-for="file in uploadFile[formColumnItem.prop]" :key="file.uid"
+                        class="flex justify-center align-center items-center mt-1">
+                        <el-progress :text-inside="true" :stroke-width="20"
+                            :percentage="uploadProgress[formColumnItem.prop + '_' + file.uid]"
+                            :status="uploadProgress[formColumnItem.prop + '_' + file.uid] === 100 ? 'success' : ''"
+                            class="upload-progress w-full mr-1">
+                            <span class="flex items-center">
+                                <strong v-if="uploadProgress[formColumnItem.prop + '_' + file.uid] < 100">
+                                    ({{ uploadProgress[formColumnItem.prop + '_' + file.uid] }}%)
+                                </strong>
+                                <span class="ml-1">{{ file.name }}</span>
+                            </span>
+                        </el-progress>
+                        <DeleteThree v-if="uploadProgress[formColumnItem.prop + '_' + file.uid] === 100"
+                            class="cursor-pointer" style="color: var(--p-color-danger)"
+                            @click="handleFileRemove(formColumnItem.prop, file)" />
+                    </div>
+                </template>
             </template>
         </el-upload>
 
@@ -125,15 +159,17 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, inject, watch } from 'vue';
+import { ref, inject, watch, onUnmounted } from 'vue';
 import {
     FormColumnsInterface,
     ProvideFormInterface
 } from '@/common/provideForm';
-import { Plus, Download, Delete, ZoomIn } from '@icon-park/vue-next';
+import { Plus, Download, Delete, ZoomIn, UploadOne, DeleteThree } from '@icon-park/vue-next';
 
 import cos from '@/common/cos.ts';
 import { common } from '@/api';
+import { getApplicationInfo } from '@/common/storage';
+
 
 /**
  * 组件属性定义
@@ -149,10 +185,27 @@ const dialogImageUrl = ref('');
 const dialogVisible = ref(false);
 const uploadImageLoading = ref({});
 
+// 上传文件
 const uploadFile = ref({});
+// 上传进度
+const uploadProgress = ref({});
 
 const provideForm: ProvideFormInterface = inject('provideForm');
 const { domDataSet, getDomData, domDataSetLoading } = provideForm;
+
+// 监听 formModel 变化，当表单数据被清空时，清空上传相关状态
+watch(() => props.formModel[props.formColumnItem.prop], (newValue) => {
+    if (!newValue && ['uploadFile', 'uploadFileList'].includes(props.formColumnItem.domType)) {
+        // 清空上传文件列表
+        uploadFile.value[props.formColumnItem.prop] = [];
+        // 清空对应的上传进度
+        Object.keys(uploadProgress.value).forEach(key => {
+            if (key.startsWith(props.formColumnItem.prop + '_')) {
+                delete uploadProgress.value[key];
+            }
+        });
+    }
+});
 
 if (props.formColumnItem.domType === 'uploadFile') {
     watch(
@@ -175,45 +228,68 @@ if (props.formColumnItem.domType === 'uploadFile') {
 }
 
 /**
- * 上传到cos
+ * 上传
  * @param options 操作对象
  * @param prop form属性
  * @param domType dom类型 uploadImage-对象 uploadImageList-数组
  */
-const uploadCos = async (options, prop, domType, path) => {
+const upload = async (options, prop, domType, path) => {
     uploadImageLoading.value[prop] = true;
 
-    const result = await cos.upload(options.file, path);
-    if (result) {
-        if (domType === 'uploadImageList') {
-            // eslint-disable-next-line vue/no-mutating-props
-            props.formModel[prop] = [...(props.formModel[prop] || []), result];
-        } else {
-            // eslint-disable-next-line vue/no-mutating-props
-            props.formModel[prop] = result;
+    const applicationInfo = getApplicationInfo();
+
+    let fileUrls = [];
+    if (applicationInfo.uploadType === 'system') {
+        // 上传到server
+        fileUrls = await common.uploadToServer(options.file, (progress: number) => {
+            uploadProgress.value[prop + '_' + options.file.uid] = progress;
+        });
+    } else {
+        // 上传到云服务
+        // 获取上传url
+        const uploadUrlInfo = await common.getUploadUrls([{
+            extension: options.file.type.split('/')[1],
+            path: path
+        }]);
+
+        // 上传失败
+        if (!uploadUrlInfo || uploadUrlInfo.urls.length === 0) {
+            uploadImageLoading.value[prop] = false;
+            // 删除上传文件列表中的文件
+            if (uploadFile.value[prop]) {
+                uploadFile.value[prop] = uploadFile.value[prop].filter(
+                    file => file.uid !== options.file.uid
+                );
+            }
+            return;
+        }
+
+        for (const uploadUrl of uploadUrlInfo.urls) {
+            switch (applicationInfo.uploadType) {
+                case 'tencent_cloud_cos':
+                    await cos.upload(options.file, uploadUrl.uploadUrl, uploadUrlInfo.headers, (progress: number) => {
+                        uploadProgress.value[prop + '_' + options.file.uid] = progress;
+                    });
+
+                    fileUrls.push(uploadUrl.url);
+                    break;
+                default:
+                    ElMessage.error('暂不支持当前上传类型');
+                    break;
+            }
         }
     }
 
-    uploadImageLoading.value[prop] = false;
-};
-
-/**
- * 上传到server
- * @param options 操作对象
- * @param prop form属性
- * @param domType dom类型 uploadImage-对象 uploadImageList-数组
- */
-const uploadServer = async (options, prop) => {
-    uploadImageLoading.value[prop] = true;
-
-    const result = await common.uploadToServer(options.file);
-    if (result) {
+    if (['uploadImageList', 'uploadFileList'].includes(domType)) {
         // eslint-disable-next-line vue/no-mutating-props
-        props.formModel[prop] = result[0];
+        props.formModel[prop] = [...(props.formModel[prop] || []), ...fileUrls];
+    } else {
+        // eslint-disable-next-line vue/no-mutating-props
+        props.formModel[prop] = fileUrls[0];
     }
 
     uploadImageLoading.value[prop] = false;
-};
+}
 
 const handlePictureCardPreview = (prop, index, domType) => {
     if (domType === 'uploadImageList') {
@@ -251,6 +327,16 @@ const handleDownload = (prop, index, domType) => {
     a.href = fileUrl;
     a.download = fileName;
     a.click();
+};
+
+const handleFileRemove = (prop, file) => {
+    if (uploadFile.value[prop]) {
+        uploadFile.value[prop] = uploadFile.value[prop].filter(
+            item => item.uid !== file.uid
+        );
+        // 同时清除对应的进度记录
+        delete uploadProgress.value[prop + '_' + file.uid];
+    }
 };
 
 const shortcuts = [
@@ -372,6 +458,12 @@ const shortcuts = [
     width: 178px;
     height: 178px;
     text-align: center;
+}
+
+.upload-progress {
+    :deep(.el-progress-bar__inner) {
+        text-align: left;
+    }
 }
 </style>
 

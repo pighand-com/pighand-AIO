@@ -1,24 +1,32 @@
 import axios from 'axios';
-import { ElMessage } from 'element-plus';
-import { common } from '@/api/index';
 
 /**
  * 上传文件
- * @param file
- * @param path
+ * @param file 文件
+ * @param uploadUrl 上传地址
+ * @param onUploadProgress 上传进度回调
  * @returns
  */
-const upload = async (file, path) => {
+const upload = async (
+    file,
+    uploadUrl,
+    headers = {},
+    onUploadProgress: (progress: number) => void
+) => {
     try {
         const contentType = file.type;
-        const uploadUrl = await common.getCOSUploadUrl(
-            contentType.split('/')[1],
-            path
-        );
-
         await axios.put(uploadUrl, file, {
             headers: {
-                'Content-Type': contentType
+                'Content-Type': contentType,
+                ...headers
+            },
+            onUploadProgress: (progressEvent) => {
+                if (onUploadProgress) {
+                    const percentCompleted = Math.round(
+                        (progressEvent.loaded * 100) / progressEvent.total
+                    );
+                    onUploadProgress(percentCompleted);
+                }
             }
         });
 

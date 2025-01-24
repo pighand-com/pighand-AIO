@@ -56,6 +56,7 @@ export interface FormColumnsInterface {
         | 'uploadImage'
         | 'uploadImageList'
         | 'uploadFile'
+        | 'uploadFileList'
         | 'cascader';
 
     /**
@@ -108,6 +109,8 @@ export interface FormColumnsInterface {
     tableWidth?: string | number;
     /** 表格列对齐方式 */
     tableAlign?: 'left' | 'center' | 'right';
+    /** 是否在表格中显示复制按钮 */
+    isTableCopyValue?: boolean;
 
     /** 是否在详情中显示 */
     isDetail?: boolean | Function;
@@ -183,6 +186,9 @@ export interface ProvideFormInterface {
     };
     /** 查询表格数据 */
     queryTableData: (fun: Function) => Promise<void>;
+    // 查询表格首页
+    queryTableDataDefault: (fun: Function) => Promise<void>;
+
     /** 表格数据加载状态 */
     isTableDataLoading: Ref<boolean>;
     /** 详情数据加载状态 */
@@ -409,6 +415,16 @@ export default function provideForm(
         isTableDataLoading.value = false;
     };
 
+    // 查询首页数据
+    const queryTableDataDefault = async (fun: Function) => {
+        await queryTableData(async (params: any) => {
+            return await fun({
+                ...params,
+                pageNumber: 1
+            });
+        });
+    };
+
     // 表格数据加载状态
     const isTableDataLoading = ref(false);
     // 详情数据加载状态
@@ -440,6 +456,7 @@ export default function provideForm(
         detailFormModel,
         getDetailOperation,
         queryTableData,
+        queryTableDataDefault,
         isTableDataLoading,
         isDetailDataLoading,
         isOpenDetail,
@@ -462,6 +479,7 @@ export default function provideForm(
         detailFormModel,
         getDetailOperation,
         queryTableData,
+        queryTableDataDefault,
         isTableDataLoading,
         isDetailDataLoading,
         isOpenDetail,

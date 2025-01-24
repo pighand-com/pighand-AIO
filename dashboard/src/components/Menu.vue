@@ -3,47 +3,40 @@
         <img src="@/assets/logo.png" alt="logo" />
     </div>
 
-    <el-menu
-        class="el-menu-vertical"
-        :collapse="isCollapse"
-        :default-active="$route.path"
-        router>
+    <el-menu class="el-menu-vertical" :collapse="isCollapse" :default-active="$route.path" router>
         <template v-for="(item, index) in menus" :key="index">
             <!-- 没有子菜单的情况 -->
             <el-menu-item v-if="!item.children?.length" :index="item.path">
-                <el-icon><component :is="item.icon"></component></el-icon>
+                <el-icon>
+                    <component :is="item.icon"></component>
+                </el-icon>
                 <template #title>{{ item.title }}</template>
             </el-menu-item>
 
             <!-- 有子菜单的情况 -->
             <el-sub-menu v-else :index="item.path">
                 <template #title>
-                    <el-icon><component :is="item.icon"></component></el-icon>
+                    <el-icon>
+                        <component :is="item.icon"></component>
+                    </el-icon>
                     <span>{{ item.title }}</span>
                 </template>
-                <el-menu-item
-                    v-for="(child, childIndex) in item.children"
-                    :key="childIndex"
+                <el-menu-item v-for="(child, childIndex) in item.children" :key="childIndex"
                     :index="`${item.path}/${child.path}`">
-                    <el-icon v-if="child.icon"
-                        ><component :is="child.icon"></component
-                    ></el-icon>
+                    <el-icon v-if="child.icon">
+                        <component :is="child.icon"></component>
+                    </el-icon>
                     <template #title>{{ child.title }}</template>
                 </el-menu-item>
             </el-sub-menu>
         </template>
     </el-menu>
 
-    <div
-        class="user-info"
-        :class="{ 'is-collapse': isCollapse }"
-        ref="userInfoRef">
+    <div class="user-info" :class="{ 'is-collapse': isCollapse }" ref="userInfoRef">
         <el-popover :show-after="500" width="auto">
             <template #reference>
                 <div class="user-avatar">
-                    <el-avatar
-                        :size="32"
-                        src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+                    <el-avatar :size="32" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
                     <div v-show="!isCollapse" class="username">
                         {{ userInfo?.username }}
                     </div>
@@ -52,8 +45,7 @@
             <template #default>
                 <div class="user-info-popover">
                     <div class="user-detail">
-                        <el-avatar
-                            :size="60"
+                        <el-avatar :size="60"
                             src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
                         <div class="user-detail-text">
                             <div class="user-detail-text-title">
@@ -65,28 +57,15 @@
                         </div>
                     </div>
                     <div class="user-buttons">
-                        <el-button class="user-button" type="primary" plain
-                            >修改密码</el-button
-                        >
-                        <el-button
-                            class="user-button"
-                            type="danger"
-                            @click="confirmEvent"
-                            plain
-                            >退出</el-button
-                        >
+                        <el-button class="user-button" type="primary" plain>修改密码</el-button>
+                        <el-button class="user-button" type="danger" @click="confirmEvent" plain>退出</el-button>
                     </div>
                 </div>
             </template>
         </el-popover>
 
         <div ref="userInfoCollapseRef">
-            <el-button
-                @click="changeCollapse"
-                :icon="Right"
-                color="var(--p-color-dark)"
-                circle
-                size="small" />
+            <el-button @click="changeCollapse" :icon="Right" color="var(--p-color-dark)" circle size="small" />
         </div>
     </div>
 </template>
@@ -195,7 +174,7 @@ const changeCollapse = () => {
 
 .username {
     font-size: 14px;
-    color: var(--el-text-color-primary);
+    color: var(--p-color-dark);
 }
 
 .user-info-popover {

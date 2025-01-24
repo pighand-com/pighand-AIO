@@ -1,33 +1,20 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
-    <el-dialog
-        :model-value="isDialogDetail"
-        :title="title"
-        :before-close="onClose"
-        width="32%">
-        <el-form
-            v-loading="loading"
-            :model="dialogFormModel"
-            :disabled="loading"
-            :rules="dialogFormRules"
-            ref="dialogForm"
-            label-position="right"
-            label-width="120px"
+    <el-dialog :model-value="isDialogDetail" :title="title" :before-close="onClose" width="32%">
+        <el-form v-loading="loading" :model="dialogFormModel" :disabled="loading" :rules="dialogFormRules"
+            ref="dialogForm" label-position="right" label-width="120px"
             :style="'display: flex; justify-content: ' + itemAlign">
             <slot />
         </el-form>
         <template #footer>
             <el-button v-if="!loading" @click="onClose">取消</el-button>
-            <el-button type="primary" :loading="loading" @click="onSubmit()"
-                >保存</el-button
-            >
+            <el-button type="primary" :loading="loading" @click="onSubmit()">保存</el-button>
         </template>
     </el-dialog>
 </template>
 
 <script lang="ts" setup>
 import { ref, inject, watch } from 'vue';
-import { ElMessageBox } from 'element-plus';
 import { ProvideFormInterface } from '@/common/provideForm';
 
 /**

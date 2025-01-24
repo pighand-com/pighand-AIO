@@ -5,13 +5,46 @@
 
         <slot name="operation" />
 
-        <el-table v-loading="isTableDataLoading" v-bind="tableAttrs" :data="tableDataModel.data" class="data-table"
-            header-cell-class-name="table-header" border>
+        <!-- 根据批量操作数组显示对应的按钮或下拉菜单 -->
+        <template v-if="batchActions && batchActions.length > 0">
+            <!-- 当只有一个批量操作时显示单个按钮 -->
+            <el-button v-if="batchActions.length === 1" type="default" class="ml-4"
+                :disabled="!multipleSelection.length" @click="batchActions[0].handler(multipleSelection)">
+                {{ batchActions[0].name }}
+            </el-button>
+
+            <!-- 当有多个批量操作时显示下拉菜单 -->
+            <el-dropdown v-else placement="bottom-start" class="ml-4" :disabled="!multipleSelection.length">
+                <el-button type="default" :disabled="!multipleSelection.length">批量操作</el-button>
+                <template #dropdown>
+                    <el-dropdown-menu>
+                        <el-dropdown-item v-for="action in batchActions" :key="action.name"
+                            @click="action.handler(multipleSelection)">
+                            {{ action.name }}
+                        </el-dropdown-item>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
+        </template>
+
+        <el-table v-loading="isTableDataLoading" v-bind="tableAttrs" :data="tableDataModel.data"
+            @selection-change="handleSelectionChange" class="data-table" header-cell-class-name="table-header">
+
+            <!-- 根据是否有批量操作显示复选框 -->
+            <el-table-column v-if="batchActions && batchActions.length > 0" type="selection" width="42" />
+
             <el-table-column v-for="(item, index) in formColumns.filter(
                 (item) => item.isTable
             )" :key="index" :label="item.label" :prop="item.prop" :width="item.tableWidth"
-                :align="item.tableAlign || 'center'">
+                :align="item.tableAlign || 'left'">
                 <template #default="scope">
+                    <el-tooltip content="复制连接" placement="top"
+                        v-if="item.isTableCopyValue && scope.row[item.prop] && ['image', 'link'].includes(item.tableType)">
+                        <el-button type="primary" link @click="onCopy(scope.row, item)">
+                            <CopyLink />
+                        </el-button>
+                    </el-tooltip>
+
                     <img v-if="item.tableType === 'image'" v-for="(imageItem, imageIndex) in Array.isArray(
                         scope.row[item.prop]
                     )
@@ -22,14 +55,21 @@
                     <a v-else-if="item.tableType === 'link'" :href="scope.row[item.prop]" target="_blank"
                         class="table-link">{{ scope.row[item.prop] }}</a>
 
-                    <div v-dompurify-html="dataFormat(scope.row, item)" v-else></div>
+                    <span v-dompurify-html="dataFormat(scope.row, item)" v-else></span>
+
+                    <el-tooltip content="复制" placement="top"
+                        v-if="item.isTableCopyValue && scope.row[item.prop] && !['image', 'link'].includes(item.tableType)">
+                        <el-button type="primary" link @click="onCopy(scope.row, item)">
+                            <Copy />
+                        </el-button>
+                    </el-tooltip>
                 </template>
             </el-table-column>
 
             <slot />
 
             <el-table-column fixed="right" v-if="Array.isArray(tableOperation)" label="操作" align="center"
-                :width="operationWidth">
+                :width="operationWidth || 180">
                 <template #default="scope">
                     <slot name="table-operation" :row="scope.row" />
 
@@ -57,8 +97,8 @@
 
 <script lang="ts" setup>
 import moment from 'moment';
-import { ref, inject, onMounted, useAttrs, computed } from 'vue';
-import { Plus, Edit, Delete } from '@icon-park/vue-next';
+import { ref, inject, onMounted, useAttrs, computed, PropType } from 'vue';
+import { Plus, Edit, Delete, Copy, CopyLink } from '@icon-park/vue-next';
 
 import { ProvideFormInterface } from '@/common/provideForm';
 
@@ -72,6 +112,11 @@ const tableAttrs = computed(() => {
     return rest;
 });
 
+interface BatchAction {
+    name: string;
+    handler: (selection: any[]) => void;
+}
+
 /**
  * 组件属性定义
  * @property {Boolean} add - 是否显示添加按钮,默认为true
@@ -80,6 +125,7 @@ const tableAttrs = computed(() => {
  * @property {Function} handleQuery - 查询数据处理函数
  * @property {Function} handleFind - 查询单条数据处理函数
  * @property {Function} handleDelete - 删除数据处理函数
+ * @property {Array<BatchAction>} batchActions - 批量操作配置
  */
 const props = defineProps({
     add: {
@@ -93,7 +139,11 @@ const props = defineProps({
     operationWidth: [Number, String],
     handleQuery: Function,
     handleFind: Function,
-    handleDelete: Function
+    handleDelete: Function,
+    batchActions: {
+        type: Array as PropType<BatchAction[]>,
+        default: () => []
+    }
 });
 
 const provideForm: ProvideFormInterface = inject('provideForm');
@@ -195,12 +245,23 @@ const onPreviewImage = (src) => {
 };
 
 /**
+ * 复制
+ * @param row
+ * @param item
+ */
+const onCopy = (row, item) => {
+    navigator.clipboard.writeText(row[item.prop])
+        .then(() => ElMessage.success('复制成功'))
+        .catch(() => ElMessage.error('复制失败'));
+};
+
+/**
  * 格式化
  * @param row
  * @param item
  */
 const dataFormat = (row, item) => {
-    const { domType, domData, tableFormat } = item;
+    const { domType, domData, tableFormat, isTableCopyValue } = item;
 
     // 支持获取嵌套属性值
     let value = item.prop.split('.').reduce((obj, key) => obj?.[key], row);
@@ -210,22 +271,19 @@ const dataFormat = (row, item) => {
     }
 
     if (tableFormat && typeof tableFormat === 'function') {
-        return tableFormat(value, row, item);
-    }
-
-    if (
+        value = tableFormat(value, row, item);
+    } else if (
         ['dateTimePicker', 'dateTimePickerRange'].includes(
             domType
         ) &&
         value
     ) {
-        return moment(value).format('YYYY-MM-DD HH:mm:ss');
+        value = moment(value).format('YYYY-MM-DD HH:mm:ss');
     } else if (['datePicker', 'datePickerRange'].includes(domType) && value) {
-        return moment(value).format('YYYY-MM-DD');
-    }
-    if (domData && Array.isArray(domData)) {
+        value = moment(value).format('YYYY-MM-DD');
+    } else if (domData && Array.isArray(domData)) {
         const data = domData.find((item) => item.value == value);
-        return data ? data.label : value;
+        value = data ? data.label : value;
     }
 
     return value;
@@ -237,6 +295,14 @@ const dataFormat = (row, item) => {
 onMounted(() => {
     handleChangeCurrentPage();
 });
+
+// 选中的行数据
+const multipleSelection = ref([]);
+
+// 选择变化处理函数
+const handleSelectionChange = (selection: any[]) => {
+    multipleSelection.value = selection;
+};
 </script>
 
 <style scoped>
@@ -255,6 +321,7 @@ onMounted(() => {
 .data-table {
     width: 100%;
     margin: 8px 0px;
+    color: var(--p-color-dark);
 }
 
 .table-header {
@@ -274,6 +341,11 @@ onMounted(() => {
 
 .table-link {
     text-decoration: none !important;
+}
+
+.table-link:hover {
+    color: var(--p-color-primary) !important;
+    text-decoration: underline !important;
 }
 
 .operation-column {

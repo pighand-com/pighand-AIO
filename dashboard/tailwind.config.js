@@ -2,6 +2,8 @@ const themes = {
     light: {
         primary: '#409eff',
         neutral: '#17191a',
+        regular: '#181a1be6',
+        danger: '#f56c6c',
 
         '.dy-btn-primary, .dy-btn-error': {
             color: '#fff'

@@ -7,7 +7,9 @@ import {
     System,
     EveryUser,
     UserBusiness,
-    Shop
+    Shop,
+    Components,
+    Material
 } from '@icon-park/vue-next';
 
 const routes = [
@@ -94,6 +96,27 @@ const routes = [
                     icon: shallowRef(EveryUser)
                 },
                 component: () => import('@/pages/User.vue')
+            }
+        ]
+    },
+    {
+        path: '/common',
+        name: 'common',
+        title: '其他',
+        meta: {
+            requiresAuth: true,
+            icon: shallowRef(Components),
+            pageType: constant.page_type_single
+        },
+        children: [
+            {
+                path: 'assets',
+                name: 'assets',
+                title: '素材管理',
+                meta: {
+                    icon: shallowRef(Material)
+                },
+                component: () => import('@/pages/Assets.vue')
             }
         ]
     }

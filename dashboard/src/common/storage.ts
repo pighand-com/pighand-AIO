@@ -40,17 +40,33 @@ const setUserInfo = (userInfo: Object) => {
 interface ApplicationInfo {
     id: string;
     name: string;
+    uploadType: string;
 }
 
 const getApplicationInfo = (): ApplicationInfo | null => {
-    return JSON.parse(localStorage.getItem(constant.local_storage_application_info));
+    return JSON.parse(
+        localStorage.getItem(constant.local_storage_application_info)
+    );
 };
 
-const setApplicationInfo = (applicationInfo: { id: string; name: string }) => {
+const setApplicationInfo = (applicationInfo: {
+    id: string;
+    name: string;
+    uploadType: string;
+}) => {
     localStorage.setItem(
         constant.local_storage_application_info,
         JSON.stringify(applicationInfo)
     );
 };
 
-export { getToken, setToken, clearToken, getUserInfo, setUserInfo, getApplicationInfo, setApplicationInfo, clearAll };
+export {
+    getToken,
+    setToken,
+    clearToken,
+    getUserInfo,
+    setUserInfo,
+    getApplicationInfo,
+    setApplicationInfo,
+    clearAll
+};

@@ -33,7 +33,7 @@
 import { ref, reactive, onBeforeMount } from 'vue';
 import { User, Lock } from '@icon-park/vue-next';
 import * as API from '@/api';
-import { setToken, setUserInfo, getToken } from '@/common/storage';
+import { setToken, setUserInfo, getToken, setApplicationInfo } from '@/common/storage';
 import { getDefaultRouterPath } from '@/routers/routes';
 import router from '@/routers/index';
 
@@ -122,6 +122,8 @@ const login = async () => {
                 username: result.username,
                 role: result.role
             });
+
+            setApplicationInfo(result.application);
 
             const defaultPath = getDefaultRouterPath();
             router.replace(defaultPath);

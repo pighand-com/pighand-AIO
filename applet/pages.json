@@ -1,0 +1,26 @@
+{
+	"pages": [
+		{
+			"path": "pages/base/pages/index",
+			"style": {
+				"navigationBarTitleText": "uni-app"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {},
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"tui-(.*)": "@/components/thorui/tui-$1/tui-$1.vue",
+			"user-(.*)": "@/components/user/$1.vue",
+			"tab-bar": "@/components/tab-bar/tab-bar",
+			"navigation": "@/components/navigation/navigation"
+		}
+	}
+}

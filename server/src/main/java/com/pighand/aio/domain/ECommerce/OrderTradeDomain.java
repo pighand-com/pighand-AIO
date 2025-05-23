@@ -25,22 +25,28 @@ import java.util.Date;
 @Data
 public class OrderTradeDomain extends BaseDomainRecord<OrderTradeDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("orderTradeCreate")
     @RequestFieldException("orderTradeUpdate")
     private Long id;
+
     @Length(max = 32)
     @Schema(description = "流水号")
     private String sn;
+
     @Schema(description = "应付金额（分）")
     private Long amountPayable;
+
     @Schema(description = "实付金额（分）")
     private Long amountPaid;
+
     @Length(max = 32)
     @Schema(description = "创建人")
     private Long creatorId;
+
     @Schema(description = "创建时间")
     private Date createdAt;
 }

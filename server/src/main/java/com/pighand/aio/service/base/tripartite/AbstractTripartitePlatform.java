@@ -35,10 +35,13 @@ public abstract class AbstractTripartitePlatform<T> {
 
     @Getter
     private final PlatformEnum userSourcePlatform;
+
     @Autowired
     private UserService userService;
+
     @Autowired
     private UserExtensionService userExtensionService;
+
     @Autowired
     private AuthorizationService authorizationService;
 
@@ -105,28 +108,28 @@ public abstract class AbstractTripartitePlatform<T> {
     /**
      * 使用code登录
      *
-     * @see #signInByCode(Long, String, String)
+     * @see #loginInByCode(Long, String, String)
      */
-    public UserVO signInByCode(Long applicationId, String code, Long roleId) {
-        return this.signInByCode(applicationId, code, null, roleId);
+    public UserVO loginInByCode(Long applicationId, String code, Long roleId) {
+        return this.loginInByCode(applicationId, code, null, roleId);
     }
 
     /**
      * 使用code登录
      *
-     * @see #signInByCode(Long, String, String)
+     * @see #loginInByCode(Long, String, String)
      */
-    public UserVO signInByCode(Long applicationId, String code) {
-        return this.signInByCode(applicationId, code, null, null);
+    public UserVO loginInByCode(Long applicationId, String code) {
+        return this.loginInByCode(applicationId, code, null, null);
     }
 
     /**
      * 使用code登录
      *
-     * @see #signInByCode(Long, String, String)
+     * @see #loginInByCode(Long, String, String)
      */
-    public UserVO signInByCode(Long applicationId, String code, String anonymousCode) {
-        return this.signInByCode(applicationId, code, anonymousCode, null);
+    public UserVO loginInByCode(Long applicationId, String code, String anonymousCode) {
+        return this.loginInByCode(applicationId, code, anonymousCode, null);
     }
 
     /**
@@ -147,7 +150,7 @@ public abstract class AbstractTripartitePlatform<T> {
      * @param anonymousCode 匿名code
      * @return token
      */
-    public UserVO signInByCode(Long applicationId, String code, String anonymousCode, Long roleId) {
+    public UserVO loginInByCode(Long applicationId, String code, String anonymousCode, Long roleId) {
         // 1. 解析CODE
         T analysisInfo = this.analysisCode(applicationId, code, anonymousCode);
 

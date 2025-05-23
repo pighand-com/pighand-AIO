@@ -13,21 +13,31 @@ import java.util.Base64;
 
 public abstract class ImageAbstract {
     protected static final SecureRandom RANDOM = new SecureRandom();
+
     protected ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
     @Setter
     protected int width = 130; // 验证码显示宽度
+
     @Setter
     protected int height = 48; // 验证码显示高度
+
     @Setter
     protected Color bgColor = Color.WHITE; // 验证码背景色
+
     @Setter
     protected int codeLength = 4; // 验证码随机字符长度
+
     @Setter
     protected int fontSize = 30; // 验证码字体大小
+
     protected int codeWidth = width / codeLength; // 验证码显示宽度
+
     @Getter
     protected String[] codes = CodeUtil.getCode(codeLength);
+
     protected Color[] colors = ColorUtil.getColors(bgColor, codeLength);
+
     private boolean isRun = false;
 
     /**

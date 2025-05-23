@@ -25,14 +25,16 @@ import java.io.Serializable;
 @Data
 public class TenantDomain extends BaseDomainRecordTs<TenantDomain> implements Serializable, ApplicationIdAware {
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("baseTenantCreate")
     @RequestFieldException("baseTenantUpdate")
     private Long id;
+
     private Long applicationId;
+
     @Column("name")
     @Length(max = 32)
     private String name;

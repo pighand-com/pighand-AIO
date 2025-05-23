@@ -14,6 +14,7 @@ public class QuestionSetVO extends QuestionSetDomain {
 
     // relation table: begin
     private QuestionBankVO questionBank;
+
     private QuestionAnswerVO questionAnswer;
     // relation table: end
 }

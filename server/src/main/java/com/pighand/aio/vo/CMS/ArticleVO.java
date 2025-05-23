@@ -16,6 +16,7 @@ public class ArticleVO extends ArticleDomain {
 
     // relation table: begin
     private ArticleCategoryVO articleCategory;
+
     private List<ArticleCategoryRelevanceVO> articleCategoryRelevance;
     // relation table: end
 

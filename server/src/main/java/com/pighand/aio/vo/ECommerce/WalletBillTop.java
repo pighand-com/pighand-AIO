@@ -15,13 +15,16 @@ public class WalletBillTop {
     private BigDecimal amount;
 
     private Integer userCount;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long sessionGroupId;
+
     private String sessionGroupName;
 
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
+
     private String userName;
 }

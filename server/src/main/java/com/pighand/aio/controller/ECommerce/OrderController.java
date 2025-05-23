@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class OrderController extends BaseController<OrderService> {
 
     private final OrderService orderService;
+
     private final OrderTradeService orderTradeService;
 
     // @Post(path = "price", docSummary = "价格试算", fieldGroup = "orderPrice")

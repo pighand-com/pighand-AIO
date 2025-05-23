@@ -22,18 +22,22 @@ import java.io.Serializable;
 @Data
 public class WalletTransferDomain extends BaseDomainRecord<WalletTransferDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("walletTransferCreate")
     @RequestFieldException("walletTransferUpdate")
     private Long id;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long applicationId;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long fromUserId;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long toUserId;

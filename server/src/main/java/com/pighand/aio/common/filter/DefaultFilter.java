@@ -34,6 +34,7 @@ public class DefaultFilter extends OncePerRequestFilter {
 
     @Resource
     RequestMappingHandlerMapping requestMappingHandlerMapping;
+
     @Resource
     private VerificationCache verificationCache;
 

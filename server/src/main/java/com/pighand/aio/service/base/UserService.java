@@ -1,9 +1,9 @@
 package com.pighand.aio.service.base;
 
-import com.pighand.framework.spring.base.BaseService;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.domain.base.UserDomain;
 import com.pighand.aio.vo.base.UserVO;
+import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.page.PageOrList;
 
 /**
  * 用户关键信息表，主要保存登录所用信息

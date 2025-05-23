@@ -8,8 +8,6 @@ import com.pighand.aio.mapper.MKT.LotteryParticipatePrizeMapper;
 import com.pighand.aio.vo.MKT.LotteryParticipateVO;
 import com.pighand.aio.vo.MKT.LotteryVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
-import com.pighand.framework.spring.exception.ThrowException;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +21,6 @@ public class LotteryTypeParticipateService extends BaseServiceImpl<LotteryPartic
     implements LotteryTypeService<LotteryParticipateVO, LotteryParticipatePrizeDomain> {
 
     private final LotteryParticipatePrizeMapper lotteryParticipatePrizeMapper;
-
 
     @Override
     public LotteryParticipateVO getLotteryObject(LotteryVO lotteryVO) {
@@ -41,7 +38,8 @@ public class LotteryTypeParticipateService extends BaseServiceImpl<LotteryPartic
     }
 
     @Override
-    public void setLotteryPrizes(LotteryParticipateVO lotteryObject, List<LotteryParticipatePrizeDomain> lotteryPrizes) {
+    public void setLotteryPrizes(LotteryParticipateVO lotteryObject,
+        List<LotteryParticipatePrizeDomain> lotteryPrizes) {
         lotteryObject.setPrizes(lotteryPrizes);
     }
 
@@ -83,7 +81,7 @@ public class LotteryTypeParticipateService extends BaseServiceImpl<LotteryPartic
 
     @Override
     public void createOrUpdatePrize(LotteryParticipateVO lotteryObject, LotteryParticipatePrizeDomain prize) {
-        if(prize.getId() != null) {
+        if (prize.getId() != null) {
             lotteryParticipatePrizeMapper.update(prize);
         } else {
             prize.setLotteryParticipateId(lotteryObject.getId());

@@ -13,6 +13,7 @@ import com.pighand.aio.domain.base.UserDomain;
 import com.pighand.aio.mapper.base.UserMapper;
 import com.pighand.aio.service.base.UserExtensionService;
 import com.pighand.aio.service.base.UserService;
+import com.pighand.aio.service.common.UploadService;
 import com.pighand.aio.vo.base.CheckUserExist;
 import com.pighand.aio.vo.base.UserVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
@@ -41,6 +42,9 @@ import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> implements UserService {
 
     private final UserExtensionService userExtensionService;
+
+    private final UploadService uploadService;
+
     ObjectMapper om = new ObjectMapper();
 
     /**
@@ -242,6 +246,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
         if (isUpdateExtension) {
             userVO.getExtension().setId(userVO.getId());
             userExtensionService.updateById(userVO.getExtension());
+
+            // 取消临时头像
+            String profile = userVO.getExtension().getProfile();
+            if (VerifyUtils.isNotEmpty(profile)) {
+                uploadService.updateFileOfficial(profile);
+            }
         }
     }
 

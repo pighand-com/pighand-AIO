@@ -8,7 +8,7 @@ public enum ModeEnum {
      * 总是
      */
     ALWAYS,
-    
+
     /**
      * 重试
      */

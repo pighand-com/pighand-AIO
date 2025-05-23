@@ -24,20 +24,25 @@ import java.math.BigDecimal;
 @Data
 public class WalletDomain extends BaseDomainRecord<WalletDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("walletCreate")
     @RequestFieldException("walletUpdate")
     private Long id;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long applicationId;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
+
     @Schema(description = "代币/点券")
     private BigDecimal tokens;
+
     @Schema(description = "冻结代币/点券")
     private BigDecimal freezeTokens;
 }

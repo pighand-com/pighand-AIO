@@ -10,6 +10,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class CheckUserExist {
     private boolean isUserNameExist;
+
     private boolean isPhoneExist;
+
     private boolean isEmailExist;
 }

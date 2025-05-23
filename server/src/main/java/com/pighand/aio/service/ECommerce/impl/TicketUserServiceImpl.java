@@ -45,7 +45,9 @@ public class TicketUserServiceImpl extends BaseServiceImpl<TicketUserMapper, Tic
     implements TicketUserService {
 
     private final DeviceService deviceService;
+
     private final DeviceTaskService deviceTaskService;
+
     private final TicketUserValidityService ticketUserValidityService;
 
     /**

@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 @AllArgsConstructor
 public class TcpServerHandler extends ChannelInboundHandlerAdapter {
     private final DeviceService deviceService;
+
     private final DeviceTaskService deviceTaskService;
 
     @Override

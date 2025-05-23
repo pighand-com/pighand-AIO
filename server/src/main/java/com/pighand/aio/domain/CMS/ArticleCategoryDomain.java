@@ -24,13 +24,16 @@ import java.io.Serializable;
 @Data
 public class ArticleCategoryDomain extends BaseDomainRecord<ArticleCategoryDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("articleCategoryCreate")
     @RequestFieldException("articleCategoryUpdate")
     private Long id;
+
     private Long parentId;
+
     @Column("name")
     @Length(max = 32)
     private String name;

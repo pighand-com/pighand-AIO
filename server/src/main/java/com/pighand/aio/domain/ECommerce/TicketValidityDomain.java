@@ -27,18 +27,23 @@ import java.util.List;
 @Data
 public class TicketValidityDomain extends BaseDomainRecord<TicketValidityDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("ticketValidityCreate")
     @RequestFieldException("ticketValidityUpdate")
     private Long id;
+
     private Long ticketId;
+
     @Schema(description = "核销次数")
     private Integer validationCount;
+
     @Schema(description = "可用范围", implementation = EmptyObject.class)
     @Column(typeHandler = JacksonTypeHandler.class)
     private List<Long> validityIds;
+
     @Schema(description = "可用范围配置", implementation = EmptyObject.class)
     @Column(typeHandler = JacksonTypeHandler.class)
     private List<String> validityConfig;

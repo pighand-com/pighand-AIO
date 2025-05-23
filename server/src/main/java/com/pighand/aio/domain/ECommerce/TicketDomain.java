@@ -24,19 +24,41 @@ import java.io.Serializable;
 @Data
 public class TicketDomain extends GoodsBaseInfo implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("ticketCreate")
     @RequestFieldException("ticketUpdate")
     private Long id;
+
+    private Long applicationId;
+
+    @Schema(description = "商户id")
+    private Long businessId;
+
+    @Schema(description = "门店id")
+    private Long storeId;
+
     @Column("name")
     @Length(max = 32)
+    @Schema(description = "原价（分）")
+    private Long originalPrice;
+
+    @Schema(description = "现价（分）")
+    private Long currentPrice;
+
+    @Schema(description = "库存")
+    private Integer stock;
+
     private String name;
+
     @Length(max = 65535)
     @Schema(description = "描述")
     private String details;
+
     @Schema(description = "核销次数")
     private Integer validationCount;
+
     private Integer deleted;
 }

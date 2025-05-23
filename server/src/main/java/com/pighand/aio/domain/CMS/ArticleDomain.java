@@ -26,36 +26,49 @@ import java.util.Date;
 @Data
 public class ArticleDomain extends BaseDomainRecord<ArticleDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("articleCreate")
     @RequestFieldException("articleUpdate")
     private Long id;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long categoryId;
+
     @Length(max = 65535)
     private String bannerUrl;
+
     @Length(max = 32)
     private String title;
+
     @Column("type")
     @Schema(description = "类型 10图片 20视频 30文件")
     private Integer type;
+
     @Length(max = 65535)
     private String fileUrl;
+
     @Column("description")
     @Length(max = 65535)
     private String description;
+
     @Column("status")
     @Schema(description = "状态 10上架 20下架")
     private Integer status;
+
     private Long creatorId;
+
     private Date createdAt;
+
     @Schema(description = "浏览量")
     private Integer viewCount;
+
     @Schema(description = "下载量")
     private Integer downloadCount;
+
     @Schema(description = "删除")
     private Boolean deleted;
 }

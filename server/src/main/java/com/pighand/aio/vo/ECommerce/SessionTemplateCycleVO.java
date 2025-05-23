@@ -1,7 +1,7 @@
 package com.pighand.aio.vo.ECommerce;
 
-import lombok.Data;
 import com.pighand.aio.domain.ECommerce.SessionTemplateCycleDomain;
+import lombok.Data;
 
 /**
  * 电商 - 场次模板 - 按周期

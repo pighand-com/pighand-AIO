@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 public class GoodsSkuVO extends GoodsSkuDomain {
     private List<OrderSkuVO> orderSku;
-    
+
     private GoodsSpuVO goodsSpu;
 
     // 购买数量

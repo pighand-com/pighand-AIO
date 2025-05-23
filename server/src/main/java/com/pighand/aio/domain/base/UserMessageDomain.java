@@ -26,6 +26,7 @@ import java.util.Date;
 @Data
 public class UserMessageDomain extends BaseDomainRecord<UserMessageDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
@@ -40,18 +41,23 @@ public class UserMessageDomain extends BaseDomainRecord<UserMessageDomain> imple
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long senderId;
+
     @Schema(description = "收件人")
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long receiverId;
+
     @Length(max = 32)
     @Schema(description = "标题")
     private String title;
+
     @Length(max = 65535)
     @Schema(description = "消息内容")
     private String content;
+
     @Schema(description = "发送时间")
     private Date sendAt;
+
     @Schema(description = "是否已读")
     private Boolean read;
 

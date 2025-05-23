@@ -1,7 +1,6 @@
 package com.pighand.aio.vo.base;
 
 import com.pighand.aio.domain.base.UserWechatDomain;
-
 import lombok.Data;
 
 /**

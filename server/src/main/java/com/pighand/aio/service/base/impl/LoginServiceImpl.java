@@ -32,9 +32,11 @@ import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 public class LoginServiceImpl implements LoginService {
 
     private final UserEntityMapper userEntityMapper;
+
     private final ApplicationService applicationService;
 
     private final UserService userService;
+
     private final AuthorizationService authorizationService;
 
     /**

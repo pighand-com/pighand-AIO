@@ -25,6 +25,7 @@ import java.io.Serializable;
 @Data
 public class GoodsCategoryDomain extends BaseDomainRecord<GoodsCategoryDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)

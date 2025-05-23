@@ -1,7 +1,6 @@
 package com.pighand.aio.common.sdk.douyin.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Data;
 
 /**

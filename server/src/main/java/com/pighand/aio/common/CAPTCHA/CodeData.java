@@ -10,6 +10,8 @@ import lombok.Data;
 @JsonIgnoreProperties({"code"})
 public class CodeData {
     private String captchaId;
+
     private String code;
+
     private String base64;
 }

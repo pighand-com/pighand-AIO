@@ -40,7 +40,9 @@ import static com.pighand.aio.domain.base.table.ApplicationDefaultTableDef.APPLI
 public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomain> implements TicketService {
 
     private final TicketValidityService ticketValidityService;
+
     private final DeviceService deviceService;
+
     private final ApplicationDefaultService projectDefaultService;
 
     /**

@@ -24,17 +24,21 @@ public class UserPlatformInfo {
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long dbId;
+
     /**
      * 系统用户id
      */
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
+
     /**
      * 三方平台信息
      */
     private String dbOpenid;
+
     private String dbAnonymousOpenid;
+
     private String dbUnionid;
 
     public UserPlatformInfo(Long dbId) {

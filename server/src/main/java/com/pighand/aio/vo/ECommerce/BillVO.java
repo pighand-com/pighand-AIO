@@ -14,7 +14,9 @@ public class BillVO extends BillDomain {
 
     // relation table: begin
     private OrderVO order;
+
     private OrderTradeVO orderTrade;
+
     private OrderSkuVO orderSku;
     // relation table: end
 }

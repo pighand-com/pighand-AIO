@@ -13,5 +13,6 @@ public class CalculatePriceEstimateVO {
     private List<OrderVO> order;
 
     private BigDecimal amountPayable;
+
     private BigDecimal amountPaid;
 }

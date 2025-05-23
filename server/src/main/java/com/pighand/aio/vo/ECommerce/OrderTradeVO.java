@@ -16,7 +16,9 @@ public class OrderTradeVO extends OrderTradeDomain {
 
     // relation table: begin
     private List<OrderVO> order;
+
     private List<OrderSkuVO> orderSku;
+
     private List<BillVO> bill;
     // relation table: end
 }

@@ -23,26 +23,34 @@ import java.util.Date;
 @Table("ec_session")
 public class SessionDomain extends BaseDomainRecord<SessionDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("sessionCreate")
     @RequestFieldException("sessionUpdate")
     private Long id;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long applicationId;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long storeId;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long themeId;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long sessionTemplateId;
+
     private Date beginTime;
+
     private Date endTime;
+
     private Date createdAt;
 
 }

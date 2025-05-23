@@ -3,8 +3,8 @@ package com.pighand.aio.vo.ECommerce;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.aio.domain.ECommerce.WalletBillDomain;
+import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

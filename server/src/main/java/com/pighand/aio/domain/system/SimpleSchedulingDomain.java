@@ -25,20 +25,25 @@ import java.io.Serializable;
 @Data
 public class SimpleSchedulingDomain extends BaseDomain implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("simpleSchedulingCreate")
     @RequestFieldException("simpleSchedulingUpdate")
     private Long id;
+
     @Length(max = 24)
     private String corn;
+
     @Column("enable")
     @Schema(description = "是否启动")
     private Boolean enable;
+
     @Length(max = 255)
     @Schema(description = "调用的方法名")
     private String functionName;
+
     @Schema(description = "描述")
     private String description;
 }

@@ -23,6 +23,7 @@ import java.util.Date;
 @Data
 public class SessionUserGroupDomain extends BaseDomainRecord<SessionUserGroupDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
@@ -41,5 +42,6 @@ public class SessionUserGroupDomain extends BaseDomainRecord<SessionUserGroupDom
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
+
     private Date createdAt;
 }

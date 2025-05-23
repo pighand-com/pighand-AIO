@@ -19,5 +19,6 @@ public class QuestionAnswerVO extends QuestionAnswerDomain {
     // relation table: end
 
     private Long deviceId;
+
     private List<QuestionAnswerDomain> answers;
 }

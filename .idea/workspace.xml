@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f026046d-c1a4-45fa-aa52-c60c553862cd" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dashboard/src/components/DataManager.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dashboard/src/main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/dashboard/src/main.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dashboard/src/pages/Login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/dashboard/src/pages/Login.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../pighand-framework-spring/src/main/java/com/pighand/framework/spring/exception/ExceptionHandle.java" beforeDir="false" afterPath="$PROJECT_DIR$/../pighand-framework-spring/src/main/java/com/pighand/framework/spring/exception/ExceptionHandle.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -34,6 +31,10 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "模块",
     "project.structure.proportion": "0.0",
@@ -61,6 +62,7 @@
       <workItem from="1731143007872" duration="31000" />
       <workItem from="1731143165603" duration="5000" />
       <workItem from="1731997448365" duration="38000" />
+      <workItem from="1732520545358" duration="317000" />
     </task>
     <servers />
   </component>

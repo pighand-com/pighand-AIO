@@ -26,32 +26,43 @@ import java.io.Serializable;
 @Data
 public class OrderSkuDomain extends BaseDomainRecord<OrderSkuDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("orderSkuCreate")
     @RequestFieldException("orderSkuUpdate")
     private Long id;
+
     @Schema(description = "订单ID")
     private Long orderId;
+
     @Length(max = 32)
     @Schema(description = "交易单ID")
     private Long orderTradeId;
+
     @Schema(description = "SPU ID")
     private Long spuId;
+
     @Schema(description = "SKU ID")
     private Long skuId;
+
     @Schema(description = "票务ID")
     private Long ticketId;
+
     @Schema(description = "场次ID")
     private Long sessionId;
+
     @Column("type")
     @Schema(description = "类型 10-SPU 11-SKU 20-票务 30-场次")
     private OrderSKUTypeEnum type;
+
     @Schema(description = "购买数量")
     private Integer quantity;
+
     @Schema(description = "应付金额（分）")
     private Long amountPayable;
+
     @Schema(description = "实付金额（分）")
     private Long amountPaid;
 }

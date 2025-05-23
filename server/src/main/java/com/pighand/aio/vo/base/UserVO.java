@@ -20,6 +20,7 @@ public class UserVO extends UserDomain {
 
     // relation table: begin
     private UserExtensionDomain extension;
+
     private ApplicationDomain application;
     // relation table: end
 

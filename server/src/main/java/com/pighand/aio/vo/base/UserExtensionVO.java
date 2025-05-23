@@ -3,7 +3,6 @@ package com.pighand.aio.vo.base;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.pighand.aio.domain.base.UserExtensionDomain;
 import com.pighand.aio.domain.base.UserWechatDomain;
-
 import lombok.Data;
 
 import java.util.List;

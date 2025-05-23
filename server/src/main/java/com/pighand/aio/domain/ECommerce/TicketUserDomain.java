@@ -24,21 +24,28 @@ import java.util.Date;
 @Data
 public class TicketUserDomain extends BaseDomainRecord<TicketUserDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("ticketUserCreate")
     @RequestFieldException("ticketUserUpdate")
     private Long id;
+
     private Long ticketId;
+
     @Schema(description = "订单id")
     private Long orderId;
+
     @Schema(description = "剩余核销次数")
     private Integer remainingValidationCount;
+
     @Schema(description = "创建时间")
     private Date createdAt;
+
     @Schema(description = "创建人")
     private Long creatorId;
+
     @Schema(description = "核销时间")
     private Date validationAt;
 }

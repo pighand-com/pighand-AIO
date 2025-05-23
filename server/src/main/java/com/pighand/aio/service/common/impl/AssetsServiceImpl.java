@@ -35,7 +35,9 @@ import static com.pighand.aio.domain.common.table.AssetsTableDef.ASSETS;
 public class AssetsServiceImpl extends BaseServiceImpl<AssetsMapper, AssetsDomain> implements AssetsService {
 
     private final UploadService uploadService;
+
     private final ApplicationPlatformKeyService projectPlatformKeyService;
+
     private final TencentCloudSDK tencentCloudSDK;
 
     /**

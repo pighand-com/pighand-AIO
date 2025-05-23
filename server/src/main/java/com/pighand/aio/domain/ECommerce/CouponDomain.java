@@ -29,19 +29,24 @@ public class CouponDomain extends BaseDomainRecord<CouponDomain> implements Seri
     @RequestFieldException("couponCreate")
     @RequestFieldException("couponUpdate")
     private Long id;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long applicationId;
+
     @Schema(description = "店铺id")
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long storeId;
+
     @Length(max = 16)
     @Schema(description = "名称")
     private String name;
+
     @Length(max = 255)
     @Schema(description = "logo")
     private String logo;
+
     @Schema(description = "类型 10核销券")
     private Boolean type;
 }

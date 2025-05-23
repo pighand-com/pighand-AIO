@@ -28,27 +28,35 @@ import java.util.List;
 @Data
 public class QuestionSetDomain extends BaseDomainRecord<QuestionSetDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("questionSetCreate")
     @RequestFieldException("questionSetUpdate")
     private Long id;
+
     private Long questionBankId;
+
     @Column("type")
     @Schema(description = "题目类型 10文本回答 20单选 21多选")
     private Integer type;
+
     @Schema(description = "所属分页")
     private Integer page;
+
     @Length(max = 255)
     @Schema(description = "题目")
     private String question;
+
     @Length(max = 255)
     @Schema(description = "提示信息")
     private String prompt;
+
     @Schema(description = "选项 json数组结构", implementation = EmptyObject.class)
     @Column(typeHandler = JacksonTypeHandler.class)
     private List<String> options;
+
     @Schema(description = "选择题的答案索引", implementation = EmptyObject.class)
     @Column(typeHandler = JacksonTypeHandler.class)
     private List<Integer> answer;

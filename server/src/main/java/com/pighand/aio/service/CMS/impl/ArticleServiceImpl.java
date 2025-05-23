@@ -38,6 +38,7 @@ import static com.pighand.aio.domain.CMS.table.ArticleTableDef.ARTICLE;
 public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, ArticleDomain> implements ArticleService {
 
     private final ArticleCategoryService articleCategoryService;
+
     private final ArticleCategoryRelevanceService articleCategoryRelevanceService;
 
     @Value("${upload.path}")

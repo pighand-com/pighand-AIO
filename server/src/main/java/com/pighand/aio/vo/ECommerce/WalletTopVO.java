@@ -19,8 +19,10 @@ public class WalletTopVO {
 
     @Schema(description = "姓名")
     private String name;
+
     @Schema(description = "手机号")
     private String phone;
+
     @Schema(description = "tokens")
     private BigDecimal tokens;
 }

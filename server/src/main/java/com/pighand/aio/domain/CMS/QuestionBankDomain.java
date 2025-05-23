@@ -25,24 +25,31 @@ import java.io.Serializable;
 @Data
 public class QuestionBankDomain extends BaseDomainRecord<QuestionBankDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("questionBankCreate")
     @RequestFieldException("questionBankUpdate")
     private Long id;
+
     @Column("name")
     @Length(max = 32)
     private String name;
+
     @Column("description")
     @Length(max = 255)
     private String description;
+
     @Schema(description = "选题类型 10按顺序 20随机")
     private Integer selectType;
+
     @Schema(description = "随机提数 - select_type=20必填")
     private Integer randomNumber;
+
     @Schema(description = "频率 10一次 20不限次数-有间隔 21不限次数-无间隔")
     private Integer frequencyType;
+
     @Schema(description = "频率间隙（秒）。frequency_type=20时生效")
     private Long frequencyGap;
 }

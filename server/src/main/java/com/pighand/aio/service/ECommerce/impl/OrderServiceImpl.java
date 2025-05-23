@@ -63,16 +63,27 @@ import static com.pighand.aio.domain.base.table.UserWechatTableDef.USER_WECHAT;
 public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> implements OrderService {
 
     private final GoodsSkuService goodsSkuService;
+
     private final GoodsSpuService goodsSpuService;
+
     private final OrderTradeService orderTradeService;
+
     private final OrderSkuService orderSkuService;
+
     private final Wechat wechat;
+
     private final ApplicationPlatformPayService projectPlatformPayService;
+
     private final ApplicationPlatformKeyService projectPlatformKeyService;
+
     private final UserWechatService wechatService;
+
     private final TicketService ticketService;
+
     private final TicketValidityService ticketValidityService;
+
     private final TicketUserService ticketUserService;
+
     private final TicketUserValidityService ticketUserValidityService;
 
     @Value("${upload.path}")

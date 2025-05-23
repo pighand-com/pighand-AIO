@@ -1,7 +1,6 @@
 package com.pighand.aio.common.sdk.wechat.entity;
 
 import com.pighand.aio.common.sdk.ResponseEntity;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +21,7 @@ public class WechatResponse extends ResponseEntity {
     private String errmsg;
 
     private String openid;
+
     private String unionid;
 
     public WechatResponse(String tip) {

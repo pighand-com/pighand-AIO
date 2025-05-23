@@ -20,5 +20,6 @@ public class ThemeVO extends ThemeDomain {
     // relation table: end
 
     private List<SessionVO> session;
+
     private List<SessionTemplateVO> sessionTemplate;
 }

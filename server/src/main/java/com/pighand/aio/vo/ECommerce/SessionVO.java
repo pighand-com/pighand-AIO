@@ -11,11 +11,13 @@ import java.util.List;
 
 @Data
 public class SessionVO extends SessionDomain {
-    
+
     private List<SessionUserGroupVO> sessionUserGroup;
+
     private List<SessionUserCycleVO> sessionUserCycle;
+
     private List<OrderSkuVO> orderSku;
-    
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long sessionGroupId;

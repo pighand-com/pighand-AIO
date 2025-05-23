@@ -25,23 +25,30 @@ import java.time.LocalTime;
 @Data
 public class SessionTemplateCycleDomain extends BaseDomainRecord<SessionTemplateCycleDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("sessionTemplateCycleCreate")
     @RequestFieldException("sessionTemplateCycleUpdate")
     private Long id;
+
     private Long sessionTemplateId;
+
     @Schema(description = "周期类型 10星期 20月")
     private Integer cycleType;
+
     @Column("week")
     @Schema(description = "星期数")
     private Integer week;
+
     @Column("day")
     @Schema(description = "日期数")
     private Integer day;
+
     @Schema(description = "场次开始时间")
     private LocalTime beginTime;
+
     @Schema(description = "场次结束时间")
     private LocalTime endTime;
 }

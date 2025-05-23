@@ -28,6 +28,12 @@ public interface UploadService {
      */
     UploadResponseVO byAuthUrl(List<UploadRequestVO> uploads);
 
+    /**
+     * 将临时文件改为正式文件
+     *
+     * @param fileUrl
+     * @return
+     */
     void updateFileOfficial(String fileUrl);
 
     /**

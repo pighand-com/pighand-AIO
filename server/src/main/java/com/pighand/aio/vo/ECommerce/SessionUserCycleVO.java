@@ -15,6 +15,7 @@ public class SessionUserCycleVO extends SessionUserCycleDomain {
 
     // relation table: begin
     private SessionVO session;
+
     private UserVO user;
     // relation table: end
 }

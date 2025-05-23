@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "tui-tabbar": "../thorui/tui-tabbar/tui-tabbar"
+  }
+}

@@ -16,31 +16,32 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
- * 登录
+ * 授权相关
+ * 包含登录、三方平台信息获取
  *
  * @author wangshuli
  * @createDate 2023-03-25 18:45:58
  */
 @RequiredArgsConstructor
-@RestController(path = "login", docName = "用户关键信息表，主要保存登录所用信息")
-public class LoginController extends BaseController<UserService> {
+@RestController(docName = "授权相关。包含登录、三方平台信息获取")
+public class OAuthController extends BaseController<UserService> {
 
     private final AppletImpl wechatAppletService;
+
     private final LoginService loginService;
 
-    @Post()
+    @Post(value = "login", docDescription = "密码登录")
     @CAPTCHA(key = "username")
-    public Result<UserVO> password(@RequestBody Login login) {
+    public Result<UserVO> passwordLogin(@RequestBody Login login) {
         UserVO user = loginService.loginByPassword(login.getUsername(), login.getPassword());
         return new Result(user);
     }
 
     @ApplicationId
-    @Post("wechat/applet")
-    public Result wechatApplet(@RequestBody Login login) {
+    @Post(value = "login/wechat/applet", docDescription = "微信小程序登录")
+    public Result wechatAppletLogin(@RequestBody Login login) {
         Long applicationId = Context.applicationId();
-        UserVO userVO = wechatAppletService.signInByCode(applicationId, login.getCode());
+        UserVO userVO = wechatAppletService.loginInByCode(applicationId, login.getCode());
         return new Result(userVO);
     }
-
 }

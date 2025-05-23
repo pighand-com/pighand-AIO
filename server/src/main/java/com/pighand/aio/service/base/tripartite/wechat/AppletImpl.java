@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,11 +69,8 @@ public class AppletImpl extends AbstractWechat<UserInfo> implements TripartitePl
     protected String bindPhone(Long applicationId, EncryptedData encryptedData) {
         ApplicationPlatformKeyDomain key = platformKeyService.findByPlatform(PlatformEnum.WECHAT_APPLET);
 
-        Map<String, String> params = new HashMap<>();
-        params.put("appid", key.getAppid());
-        params.put("secret", key.getSecret());
-        params.put("grant_type", "client_credential");
-        String result = WechatSDK.MINI_APPLET.accessToken(params);
+        // TODO: 统一管理
+        String result = WechatSDK.MINI_APPLET.accessToken(key.getAppid(), key.getSecret(), "client_credential");
 
         String patternString = "\"access_token\":\"(.*?)\"";
         Pattern pattern = Pattern.compile(patternString);
@@ -87,7 +83,7 @@ public class AppletImpl extends AbstractWechat<UserInfo> implements TripartitePl
             throw new ThrowException("解析微信返回的accessToken失败");
         }
 
-        params = new HashMap<>();
+        HashMap params = new HashMap<>(1);
         params.put("code", encryptedData.getCode());
         String userInfo = WechatSDK.MINI_APPLET.getPhone(token, params);
 

@@ -17,5 +17,5 @@ public interface TripartitePlatformService {
      * @param anonymousCode 匿名code
      * @return token
      */
-    UserVO signInByCode(Long applicationId, String code, String anonymousCode);
+    UserVO loginInByCode(Long applicationId, String code, String anonymousCode);
 }

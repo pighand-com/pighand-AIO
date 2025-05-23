@@ -1,12 +1,12 @@
 package com.pighand.aio.service.base.impl;
 
-import com.pighand.framework.spring.base.BaseServiceImpl;
-import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.aio.common.enums.UserStatusEnum;
 import com.pighand.aio.domain.base.UserWechatDomain;
 import com.pighand.aio.mapper.base.UserWechatMapper;
 import com.pighand.aio.service.base.UserWechatService;
 import com.pighand.aio.vo.base.UserWechatVO;
+import com.pighand.framework.spring.base.BaseServiceImpl;
+import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
 
 /**

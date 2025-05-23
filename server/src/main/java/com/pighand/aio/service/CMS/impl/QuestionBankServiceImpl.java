@@ -44,8 +44,11 @@ public class QuestionBankServiceImpl extends BaseServiceImpl<QuestionBankMapper,
     implements QuestionBankService {
 
     private final DeviceService deviceService;
+
     private final DeviceTaskService deviceTaskService;
+
     private final QuestionSetService questionSetService;
+
     private final QuestionAnswerService questionAnswerService;
 
     /**

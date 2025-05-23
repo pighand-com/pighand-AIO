@@ -1,7 +1,6 @@
 package com.pighand.aio.common.sdk.douyin.entity;
 
 import com.pighand.aio.common.sdk.ResponseEntity;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,6 +21,7 @@ public class DouyinResponse extends ResponseEntity {
     private String errmsg;
 
     private String openid;
+
     private String unionid;
 
     public DouyinResponse(String tip) {

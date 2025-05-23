@@ -22,7 +22,9 @@ public class TicketUserValidityVO extends TicketUserValidityDomain {
     // 可用范围
     @Column(typeHandler = JacksonTypeHandler.class)
     private List<Long> validityIds;
+
     @Column(typeHandler = JacksonTypeHandler.class)
     private List<String> validityConfig;
+
     private List<TicketValidityDetailEntity> validityDetail;
 }

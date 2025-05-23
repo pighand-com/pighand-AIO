@@ -95,6 +95,7 @@ public class Application {
     public class CorsConfig implements WebMvcConfigurer {
 
         private static final Logger logger = LoggerFactory.getLogger("mybatis-flex-sql");
+
         @Resource
         private AuthorizationInterceptor authorizationInterceptor;
 

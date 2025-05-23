@@ -38,7 +38,9 @@ import static com.pighand.aio.domain.base.table.ApplicationDefaultTableDef.APPLI
 public class GoodsSpuServiceImpl extends BaseServiceImpl<GoodsSpuMapper, GoodsSpuDomain> implements GoodsSpuService {
 
     private final GoodsSkuMapper goodsSkuMapper;
+
     private final GoodsSkuEntityMapper goodsSkuEntityMapper;
+
     private final ApplicationDefaultService projectDefaultService;
 
     /**

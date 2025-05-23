@@ -27,26 +27,34 @@ import java.io.Serializable;
 @Data
 public class UserDouyinDomain extends BaseDomainRecord<UserDouyinDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("userDouyinCreate")
     @RequestFieldException("userDouyinUpdate")
     private Long id;
+
     @NotNull(groups = {ValidationGroup.Create.class})
     @Schema(description = "应用id")
     private Long applicationId;
+
     @NotNull(groups = {ValidationGroup.Create.class})
     @Schema(description = "用户id")
     private Long userId;
+
     @Length(max = 40)
     private String openid;
+
     @Length(max = 40)
     private String unionid;
+
     @Length(max = 40)
     private String anonymousOpenid;
+
     @Schema(description = "来源平台 32抖音小程序 33抖音小游戏")
     private Integer sourcePlatform;
+
     @Column("status")
     @Schema(description = "状态 10正常 20停用")
     private Integer status;

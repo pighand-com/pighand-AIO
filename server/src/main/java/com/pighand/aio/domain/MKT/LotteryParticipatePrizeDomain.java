@@ -28,26 +28,32 @@ import java.io.Serializable;
 public class LotteryParticipatePrizeDomain extends BaseDomainRecord<LotteryParticipatePrizeDomain>
     implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("mktLotteryParticipatePrizeCreate")
     @RequestFieldException("mktLotteryParticipatePrizeUpdate")
     private Long id;
+
     @NotNull(groups = {ValidationGroup.Create.class})
     private Long lotteryParticipateId;
+
     @Column("name")
     @NotNull(groups = {ValidationGroup.Create.class})
     @Length(max = 16)
     @Schema(description = "奖品名称")
     private String name;
+
     @Column("description")
     @Length(max = 32)
     @Schema(description = "简介")
     private String description;
+
     @Length(max = 255)
     @Schema(description = "奖品图片")
     private String imageUrl;
+
     @NotNull(groups = {ValidationGroup.Create.class})
     @Schema(description = "中奖名额")
     private Integer lotteryQuota;

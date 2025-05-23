@@ -25,6 +25,7 @@ import java.io.Serializable;
 public class ApplicationPlatformPayDomain extends BaseDomainRecord<ApplicationPlatformPayDomain>
     implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
@@ -32,18 +33,23 @@ public class ApplicationPlatformPayDomain extends BaseDomainRecord<ApplicationPl
     @RequestFieldException("projectPlatformPayUpdate")
     @Schema(description = "项目id")
     private Long id;
+
     @Length(max = 10)
     @Schema(description = "微信支付 - 商户id")
     private String wechatMerchantId;
+
     @Length(max = 16)
     @Schema(description = "微信支付 - 私钥文件名(apiclient_key.pem)，默认商户id_key.pem")
     private String wechatMerchantPrivateKey;
+
     @Length(max = 16)
     @Schema(description = "微信支付 - 证书名(apiclient_cert.pem)，默认商户id_cert.pem")
     private String wechatMerchantCertificate;
+
     @Length(max = 41)
     @Schema(description = "微信支付 - 证书(apiclient_cert.pem)序列号。查看方式：openssl x509 -in apiclient_cert.pem -noout -serial")
     private String wechatMerchantCertificateSerial;
+
     @Length(max = 40)
     @Schema(description = "微信支付 - APIV3密钥")
     private String wechatMerchantV3;

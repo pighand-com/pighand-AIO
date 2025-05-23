@@ -23,20 +23,25 @@ import java.util.Date;
 @Data
 public class CouponUserTransferDomain extends BaseDomainRecord<CouponUserTransferDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("couponUserTransferCreate")
     @RequestFieldException("couponUserTransferUpdate")
     private Long id;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long couponUserId;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long fromUserId;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long toUserId;
+
     private Date createdAt;
 }

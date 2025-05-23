@@ -8,9 +8,13 @@ public class NotifyVO {
 
     @JsonProperty("original_type")
     private String originalType;
+
     private String algorithm;
+
     private String ciphertext;
+
     private String nonce;
+
     @JsonProperty("associated_data")
     private String associatedData;
 }

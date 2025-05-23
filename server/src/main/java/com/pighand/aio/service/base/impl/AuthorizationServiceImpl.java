@@ -44,8 +44,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Value("spring.profiles.active")
     private String env;
+
     @Autowired
     private StringRedisTemplate redisTemplate;
+
     @Autowired
     private ApplicationAuthorizationService projectAuthorizationService;
 

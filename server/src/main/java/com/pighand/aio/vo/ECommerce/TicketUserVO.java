@@ -23,10 +23,13 @@ public class TicketUserVO extends TicketUserDomain {
 
     // 适用信息
     List<TicketUserValidityVO> validity;
+
     // 查询可用票务
     private Boolean usable;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long deviceId;
+
     private String message;
 }

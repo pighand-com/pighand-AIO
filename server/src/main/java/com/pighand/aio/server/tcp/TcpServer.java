@@ -16,7 +16,9 @@ public class TcpServer {
     private final TcpServerInitializer tcpServerInitializer;
 
     private EventLoopGroup bossGroup;
+
     private EventLoopGroup workerGroup;
+
     @Value("${server.tcp.port}")
     private int port;
 

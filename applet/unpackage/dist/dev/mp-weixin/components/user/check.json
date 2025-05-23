@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "user-login": "./login",
+    "user-phone": "./phone",
+    "user-avatar": "./avatar"
+  }
+}

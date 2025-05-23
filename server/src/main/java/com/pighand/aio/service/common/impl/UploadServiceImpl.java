@@ -34,10 +34,12 @@ import java.util.*;
 public class UploadServiceImpl implements UploadService {
 
     private final ApplicationPlatformKeyService projectPlatformKeyService;
+
     private final TencentCloudSDK tencentCloudSDK;
 
     // COS临时文件TAG
     private final String COS_TMP_FILE_KEY = "x-cos-tagging";
+
     private final String COS_TMP_FILE_VALUE = "tmp=true";
 
     // 过期时间
@@ -45,8 +47,10 @@ public class UploadServiceImpl implements UploadService {
 
     @Value("${upload.path}")
     private String uploadPath;
+
     @Value("${upload.web-path}")
     private String webPath;
+
     @Value("${server.domain}")
     private String domain;
 

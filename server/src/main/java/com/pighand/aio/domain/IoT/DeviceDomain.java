@@ -30,26 +30,33 @@ import java.util.List;
 @Data
 public class DeviceDomain extends BaseDomainRecord<DeviceDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("deviceCreate")
     @RequestFieldException("deviceUpdate")
     private Long id;
+
     @Length(max = 128)
     @Schema(description = "设备编号")
     private String sn;
+
     @Length(max = 32)
     @Schema(description = "服务器客户端id，用于发信息使用")
     private String clientId;
+
     @Length(max = 32)
     @Schema(description = "分组")
     private String group;
+
     @Length(max = 128)
     @Schema(description = "描述")
     private String description;
+
     @Schema(description = "连接状态 10未连接 20连接中 30已连接")
     private Integer linkStatus;
+
     @Schema(description = "运行状态 10未运行 20运行中")
     private Integer runningStatus;
 

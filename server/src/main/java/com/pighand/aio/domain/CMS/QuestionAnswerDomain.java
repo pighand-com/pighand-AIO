@@ -28,19 +28,26 @@ import java.util.List;
 @Data
 public class QuestionAnswerDomain extends BaseDomainRecord<QuestionAnswerDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("questionAnswerCreate")
     @RequestFieldException("questionAnswerUpdate")
     private Long id;
+
     private Long questionBankId;
+
     private Long questionSetId;
+
     @Schema(description = "答案 - 文本")
     private String answerText;
+
     @Schema(description = "答案 - 选项索引", implementation = EmptyObject.class)
     @Column(typeHandler = JacksonTypeHandler.class)
     private List<Integer> answerOption;
+
     private Long creatorId;
+
     private Date createdAt;
 }

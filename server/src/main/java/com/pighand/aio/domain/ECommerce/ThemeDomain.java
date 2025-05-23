@@ -24,34 +24,46 @@ import java.io.Serializable;
 @Data
 public class ThemeDomain extends BaseDomainRecord<ThemeDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("themeCreate")
     @RequestFieldException("themeUpdate")
     private Long id;
+
     private Long applicationId;
+
     private Long storeId;
+
     @Length(max = 32)
     @Schema(description = "主题名称")
     private String themeName;
+
     @Length(max = 65535)
     @Schema(description = "主题简介")
     private String themeIntroductione;
+
     @Length(max = 255)
     @Schema(description = "主题封面")
     private String posterUrl;
+
     @Length(max = 65535)
     @Schema(description = "主题描述")
     private String pictureDescription;
+
     @Schema(description = "原价（分）")
     private Long originalPrice;
+
     @Schema(description = "现价（分）")
     private Long presentPrice;
+
     @Schema(description = "最少人数/起玩人数")
     private Integer minPeople;
+
     @Schema(description = "最大人数")
     private Integer maxPeople;
+
     @Schema(description = "时长(分钟)")
     private Integer duration;
 }

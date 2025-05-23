@@ -23,21 +23,26 @@ import java.io.Serializable;
 @Data
 public class TicketUserValidityDomain extends BaseDomainRecord<TicketUserValidityDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("ticketUserValidityCreate")
     @RequestFieldException("ticketUserValidityUpdate")
     private Long id;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long ticketId;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long ticketUserId;
+
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long ticketValidityId;
+
     @Schema(description = "核销次数")
     private Integer validationCount;
 }

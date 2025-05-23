@@ -1,10 +1,8 @@
 package com.pighand.aio.common.sdk;
 
 import com.pighand.framework.spring.exception.ThrowException;
-
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-
 import org.springframework.util.StringUtils;
 
 /**
@@ -17,6 +15,7 @@ import org.springframework.util.StringUtils;
 public class ResponseEntity {
 
     private String successCode;
+
     private String tip;
 
     protected void checkError(Integer code, String message) {

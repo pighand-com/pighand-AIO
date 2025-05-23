@@ -32,8 +32,9 @@ public interface MiniApplet {
     String code2Session(@RequestParam String appid, @RequestParam String secret, @RequestParam String js_code,
         @RequestParam(defaultValue = "authorization_code") String grant_type);
 
-    @PostExchange("cgi-bin/stable_token")
-    String accessToken(@RequestBody Map<String, String> params);
+    @GetExchange("cgi-bin/token")
+    String accessToken(@RequestParam String appid, @RequestParam String secret,
+        @RequestParam(defaultValue = "client_credential") String grant_type);
 
     @PostExchange("wxa/business/getuserphonenumber")
     String getPhone(@RequestParam String access_token, @RequestBody Map<String, String> params);

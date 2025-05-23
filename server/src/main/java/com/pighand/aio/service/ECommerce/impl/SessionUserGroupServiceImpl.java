@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,11 +102,7 @@ public class SessionUserGroupServiceImpl extends BaseServiceImpl<SessionUserGrou
     public String getWechatAppletQrcode(Long money) {
         ApplicationPlatformKeyDomain key = projectPlatformKeyService.findByPlatform(PlatformEnum.WECHAT_APPLET);
 
-        Map<String, String> params = new HashMap<>();
-        params.put("appid", key.getAppid());
-        params.put("secret", key.getSecret());
-        params.put("grant_type", "client_credential");
-        String accessToken = WechatSDK.MINI_APPLET.accessToken(params);
+        String accessToken = WechatSDK.MINI_APPLET.accessToken(key.getAppid(), key.getSecret(), "client_credential");
 
         String patternString = "\"access_token\":\"(.*?)\"";
         Pattern pattern = Pattern.compile(patternString);
@@ -135,7 +130,7 @@ public class SessionUserGroupServiceImpl extends BaseServiceImpl<SessionUserGrou
         long currentTimeMillis = System.currentTimeMillis() + 1000 * 60 * 3;
         long roundedSeconds = currentTimeMillis / 1000;
 
-        params = new HashMap<>();
+        HashMap params = new HashMap<>(3);
         params.put("page", "pages/my-order/my-order");
         params.put("scene", Context.loginUser().getId().toString() + "_" + roundedSeconds + "_" + money);
         params.put("env_version", qrcodeEnv);

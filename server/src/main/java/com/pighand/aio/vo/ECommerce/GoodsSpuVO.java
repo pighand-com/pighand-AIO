@@ -22,6 +22,7 @@ public class GoodsSpuVO extends GoodsSpuDomain {
     private GoodsCategoryVO goodsCategory;
 
     private List<GoodsSkuVO> goodsSku;
+
     private List<OrderSkuVO> orderSku;
     // relation table: end
 
@@ -29,6 +30,7 @@ public class GoodsSpuVO extends GoodsSpuDomain {
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long storeId;
+
     // 购买数量
     private Integer quantity;
 

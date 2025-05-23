@@ -23,15 +23,21 @@ import java.util.Date;
 @Data
 public class SessionUserCycleDomain extends BaseDomainRecord<SessionUserCycleDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
+
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     @RequestFieldException("sessionUserCycleCreate")
     @RequestFieldException("sessionUserCycleUpdate")
     private Long id;
+
     private Long sessionId;
+
     private Long sessionTemplateCycleId;
+
     private Long orderId;
+
     private Long userId;
+
     private Date createdAt;
 }

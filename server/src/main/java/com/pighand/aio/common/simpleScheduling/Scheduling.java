@@ -25,6 +25,7 @@ public class Scheduling implements SchedulingConfigurer {
     private final SimpleSchedulingService simpleSchedulingService;
 
     private final SessionService sessionService;
+
     private final DeviceTaskService deviceTaskService;
 
     @Override

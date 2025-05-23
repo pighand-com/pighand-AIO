@@ -1,7 +1,7 @@
 package com.pighand.aio.vo.MKT;
 
-import lombok.Data;
 import com.pighand.aio.domain.MKT.LotteryParticipatePrizeDomain;
+import lombok.Data;
 
 /**
  * 营销 - 抽奖 - 参与类型 - 奖品

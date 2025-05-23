@@ -17,7 +17,9 @@ import java.util.Base64;
  */
 public class AesUtil {
     static final int KEY_LENGTH_BYTE = 32;
+
     static final int TAG_LENGTH_BIT = 128;
+
     private final byte[] aesKey;
 
     public AesUtil(byte[] key) {

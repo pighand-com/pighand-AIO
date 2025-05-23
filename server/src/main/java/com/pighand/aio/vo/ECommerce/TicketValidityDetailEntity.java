@@ -16,7 +16,9 @@ import lombok.Data;
 public class TicketValidityDetailEntity {
 
     private Long id;
+
     private String name;
+
     @Schema(description = "配置信息", implementation = EmptyObject.class)
     @Column(typeHandler = JacksonTypeHandler.class)
     private Object config;

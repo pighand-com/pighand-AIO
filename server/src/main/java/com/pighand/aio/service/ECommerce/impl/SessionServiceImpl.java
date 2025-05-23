@@ -45,8 +45,10 @@ public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, SessionDo
 
     @Autowired
     private SessionTemplateGourpService sessionTemplateGourpService;
+
     @Autowired
     private SessionUserGroupService sessionUserGroupService;
+
     @Autowired
     private WalletMapper walletMapper;
 

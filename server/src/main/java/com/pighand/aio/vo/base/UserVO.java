@@ -5,6 +5,7 @@ import com.pighand.aio.domain.base.ApplicationDomain;
 import com.pighand.aio.domain.base.UserDomain;
 import com.pighand.aio.domain.base.UserExtensionDomain;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  */
 @TableRef(UserDomain.class)
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class UserVO extends UserDomain {
 
     // relation table: begin

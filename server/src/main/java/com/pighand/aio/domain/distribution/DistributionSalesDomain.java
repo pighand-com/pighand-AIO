@@ -13,6 +13,7 @@ import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ import java.math.BigDecimal;
  */
 @Table(value = "dist_distribution_sales")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class DistributionSalesDomain extends BaseDomainRecord<DistributionSalesDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

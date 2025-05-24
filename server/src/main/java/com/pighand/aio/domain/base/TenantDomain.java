@@ -11,6 +11,7 @@ import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecordTs;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -22,6 +23,7 @@ import java.io.Serializable;
  * @createDate 2024-12-31 19:04:50
  */
 @Table(value = "base_tenant")
+@EqualsAndHashCode(callSuper = false)
 @Data
 public class TenantDomain extends BaseDomainRecordTs<TenantDomain> implements Serializable, ApplicationIdAware {
     private static final long serialVersionUID = 1L;

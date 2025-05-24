@@ -12,6 +12,7 @@ import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
@@ -23,6 +24,7 @@ import java.io.Serializable;
  */
 @Table(value = "mkt_lottery_common_user")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class LotteryCommonUserDomain extends BaseDomainRecord<LotteryCommonUserDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

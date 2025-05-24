@@ -13,6 +13,7 @@ import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -24,6 +25,7 @@ import java.io.Serializable;
  * @createDate 2023-03-25 18:45:58
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Table("base_application_platform_key")
 public class ApplicationPlatformKeyDomain extends BaseDomainRecord<ApplicationPlatformKeyDomain>
     implements Serializable {

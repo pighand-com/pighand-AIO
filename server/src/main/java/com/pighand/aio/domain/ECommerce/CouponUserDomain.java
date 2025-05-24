@@ -11,6 +11,7 @@ import com.pighand.framework.spring.api.annotation.serialization.ToLongSerialize
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -23,6 +24,7 @@ import java.util.Date;
  */
 @Table("ec_coupon_user")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class CouponUserDomain extends BaseDomainRecord<CouponUserDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

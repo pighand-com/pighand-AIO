@@ -5,6 +5,7 @@ import com.mybatisflex.core.handler.JacksonTypeHandler;
 import com.pighand.framework.spring.api.springdoc.dataType.EmptyObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 电商 - 票务 - 使用范围
@@ -13,6 +14,7 @@ import lombok.Data;
  * @createDate 2024-04-28 11:36:03
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class TicketValidityDetailEntity {
 
     private Long id;

@@ -4,6 +4,7 @@ import com.pighand.aio.domain.ECommerce.CouponDomain;
 import com.pighand.aio.domain.ECommerce.CouponUserDomain;
 import com.pighand.aio.vo.base.UserVO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * @createDate 2023-12-04 16:37:26
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class CouponUserVO extends CouponUserDomain {
     private List<CouponUserTransferVO> couponUserTransfer;
 

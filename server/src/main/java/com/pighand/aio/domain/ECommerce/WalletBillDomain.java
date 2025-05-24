@@ -10,6 +10,7 @@ import com.pighand.framework.spring.api.annotation.serialization.ToLongSerialize
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -23,6 +24,7 @@ import java.util.Date;
  */
 @Table("ec_wallet_bill")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class WalletBillDomain extends BaseDomainRecord<WalletBillDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

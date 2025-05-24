@@ -2,6 +2,7 @@ package com.pighand.aio.vo.base;
 
 import com.pighand.aio.domain.base.ApplicationDomain;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 登录用户可使用的应用
@@ -10,6 +11,7 @@ import lombok.Data;
  * @createDate 2023-03-25 18:45:58
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class LoginApplicationsVO extends ApplicationDomain {
 
     private String password;

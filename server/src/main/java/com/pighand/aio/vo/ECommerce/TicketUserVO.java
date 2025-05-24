@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.pighand.aio.domain.ECommerce.TicketUserDomain;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @createDate 2024-04-26 14:52:18
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class TicketUserVO extends TicketUserDomain {
 
     // relation table: begin

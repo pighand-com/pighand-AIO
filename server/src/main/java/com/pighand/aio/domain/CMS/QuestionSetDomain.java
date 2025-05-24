@@ -13,6 +13,7 @@ import com.pighand.framework.spring.api.springdoc.dataType.EmptyObject;
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -26,6 +27,7 @@ import java.util.List;
  */
 @Table("cms_question_set")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class QuestionSetDomain extends BaseDomainRecord<QuestionSetDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -4,6 +4,7 @@ import com.mybatisflex.annotation.Column;
 import com.mybatisflex.core.handler.JacksonTypeHandler;
 import com.pighand.aio.domain.ECommerce.TicketUserValidityDomain;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * @createDate 2024-04-28 11:36:03
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class TicketUserValidityVO extends TicketUserValidityDomain {
 
     // relation table: begin

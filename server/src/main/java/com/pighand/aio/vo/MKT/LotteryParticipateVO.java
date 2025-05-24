@@ -3,6 +3,7 @@ package com.pighand.aio.vo.MKT;
 import com.pighand.aio.domain.MKT.LotteryParticipateDomain;
 import com.pighand.aio.domain.MKT.LotteryParticipatePrizeDomain;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @createDate 2024-11-28 17:21:35
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class LotteryParticipateVO extends LotteryParticipateDomain {
 
     /**

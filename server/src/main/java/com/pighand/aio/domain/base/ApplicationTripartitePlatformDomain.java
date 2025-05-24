@@ -10,6 +10,7 @@ import com.pighand.framework.spring.api.annotation.serialization.ToLongSerialize
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -21,6 +22,7 @@ import java.io.Serializable;
  * @createDate 2023-03-25 18:45:58
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Table("base_application_tripartite_platform")
 public class ApplicationTripartitePlatformDomain extends BaseDomainRecord<ApplicationTripartitePlatformDomain>
     implements Serializable {

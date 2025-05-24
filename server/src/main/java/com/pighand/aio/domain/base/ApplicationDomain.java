@@ -11,6 +11,7 @@ import com.pighand.framework.spring.api.annotation.serialization.ToLongSerialize
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import java.io.Serializable;
  */
 @Table(value = "base_application")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class ApplicationDomain extends BaseDomainRecord<ApplicationDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

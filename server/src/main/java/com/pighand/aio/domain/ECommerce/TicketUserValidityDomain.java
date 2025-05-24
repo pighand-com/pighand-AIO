@@ -10,6 +10,7 @@ import com.pighand.framework.spring.api.annotation.serialization.ToLongSerialize
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
@@ -21,6 +22,7 @@ import java.io.Serializable;
  */
 @Table("ec_ticket_user_validity")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class TicketUserValidityDomain extends BaseDomainRecord<TicketUserValidityDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

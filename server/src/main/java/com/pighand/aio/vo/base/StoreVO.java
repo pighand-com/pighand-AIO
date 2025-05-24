@@ -7,6 +7,7 @@ import com.pighand.aio.domain.base.StoreDomain;
 import com.pighand.aio.domain.base.TenantDomain;
 import com.pighand.aio.domain.base.UserExtensionDomain;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 门店
@@ -16,6 +17,7 @@ import lombok.Data;
  */
 @TableRef(StoreDomain.class)
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class StoreVO extends StoreDomain {
 
     // relation table: begin

@@ -1,11 +1,13 @@
 package com.pighand.aio.vo.base;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 登录相关参数
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class Login {
     // 三方平台登录 - code
     private String code;

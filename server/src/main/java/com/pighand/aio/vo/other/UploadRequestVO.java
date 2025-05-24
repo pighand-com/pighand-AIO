@@ -1,6 +1,7 @@
 package com.pighand.aio.vo.other;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 上传请求
@@ -8,6 +9,7 @@ import lombok.Data;
  * @author wangshuli
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class UploadRequestVO {
     /**
      * 扩展名

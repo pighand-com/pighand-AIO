@@ -9,6 +9,7 @@ import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -21,6 +22,7 @@ import java.util.Date;
  */
 @Table("ec_session_user_group")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class SessionUserGroupDomain extends BaseDomainRecord<SessionUserGroupDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.pighand.aio.domain.ECommerce.GoodsSpuDomain;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @createDate 2024-01-08 11:05:18
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class GoodsSpuVO extends GoodsSpuDomain {
 
     // relation table: begin

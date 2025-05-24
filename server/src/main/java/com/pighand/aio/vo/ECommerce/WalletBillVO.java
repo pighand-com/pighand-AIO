@@ -7,6 +7,7 @@ import com.pighand.aio.domain.ECommerce.WalletBillDomain;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 电商 - 钱包账单
@@ -15,6 +16,7 @@ import lombok.Data;
  * @createDate 2023-12-04 16:37:26
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class WalletBillVO extends WalletBillDomain {
     private WalletTransferVO walletTransfer;
 

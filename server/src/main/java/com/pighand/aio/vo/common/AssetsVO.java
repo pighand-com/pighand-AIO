@@ -9,6 +9,7 @@ import com.pighand.aio.domain.common.AssetsDomain;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToListLongSerializer;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ import java.util.List;
  */
 @TableRef(AssetsDomain.class)
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class AssetsVO extends AssetsDomain {
 
     // relation table: begin

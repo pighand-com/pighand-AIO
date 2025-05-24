@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.pighand.aio.domain.ECommerce.OrderDomain;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * @createDate 2024-04-18 14:35:34
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class OrderVO extends OrderDomain {
 
     // relation table: begin

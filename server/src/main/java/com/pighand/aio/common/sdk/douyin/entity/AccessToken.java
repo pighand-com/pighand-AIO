@@ -2,6 +2,7 @@ package com.pighand.aio.common.sdk.douyin.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 公众平台 - userinfo
@@ -9,6 +10,7 @@ import lombok.Data;
  * @author wangshuli
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class AccessToken extends DouyinResponse {
 
     @JsonProperty("openid")

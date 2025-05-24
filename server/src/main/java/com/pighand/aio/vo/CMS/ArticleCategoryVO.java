@@ -2,6 +2,7 @@ package com.pighand.aio.vo.CMS;
 
 import com.pighand.aio.domain.CMS.ArticleCategoryDomain;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @createDate 2024-04-22 15:11:06
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class ArticleCategoryVO extends ArticleCategoryDomain {
 
     // relation table: begin

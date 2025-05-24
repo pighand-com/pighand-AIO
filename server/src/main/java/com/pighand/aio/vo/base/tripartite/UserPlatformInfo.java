@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 用户平台信息
@@ -15,6 +16,7 @@ import lombok.Data;
  * @author wangshuli
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 public class UserPlatformInfo {
 

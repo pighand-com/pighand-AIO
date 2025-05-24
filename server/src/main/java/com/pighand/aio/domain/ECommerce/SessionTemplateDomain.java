@@ -10,6 +10,7 @@ import com.pighand.framework.spring.api.annotation.serialization.ToLongSerialize
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
@@ -19,7 +20,8 @@ import java.io.Serializable;
  * @author wangshuli
  * @createDate 2023-12-05 16:13:27
  */
-@Data()
+@Data
+@EqualsAndHashCode(callSuper = false)
 @Table("ec_session_template")
 public class SessionTemplateDomain extends BaseDomainRecord<SessionTemplateDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

@@ -11,6 +11,7 @@ import com.pighand.framework.spring.api.annotation.serialization.ToLongSerialize
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.time.LocalTime;
@@ -23,6 +24,7 @@ import java.time.LocalTime;
  */
 @Table("ec_session_template_cycle")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class SessionTemplateCycleDomain extends BaseDomainRecord<SessionTemplateCycleDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -2,6 +2,7 @@ package com.pighand.aio.vo.IoT;
 
 import com.pighand.aio.domain.IoT.DeviceTaskDomain;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * IoT - 设备任务
@@ -10,6 +11,7 @@ import lombok.Data;
  * @createDate 2024-04-10 23:45:23
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class DeviceTaskVO extends DeviceTaskDomain {
 
     // relation table: begin

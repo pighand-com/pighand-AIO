@@ -3,6 +3,7 @@ package com.pighand.aio.vo.ECommerce;
 import com.pighand.aio.domain.ECommerce.SessionUserCycleDomain;
 import com.pighand.aio.vo.base.UserVO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 电商 - 场次 - 用户周期
@@ -11,6 +12,7 @@ import lombok.Data;
  * @createDate 2024-05-23 15:01:58
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class SessionUserCycleVO extends SessionUserCycleDomain {
 
     // relation table: begin

@@ -2,6 +2,7 @@ package com.pighand.aio.vo.IoT;
 
 import com.pighand.aio.domain.IoT.DeviceDomain;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @createDate 2024-04-10 23:45:23
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class DeviceVO extends DeviceDomain {
 
     // relation table: begin

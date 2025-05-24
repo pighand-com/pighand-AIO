@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.pighand.aio.domain.base.UserExtensionDomain;
 import com.pighand.aio.domain.base.UserWechatDomain;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * @createDate 2023-03-25 18:45:58
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class UserExtensionVO extends UserExtensionDomain {
     @JsonIgnoreProperties(value = {"id"})
     private UserVO user;

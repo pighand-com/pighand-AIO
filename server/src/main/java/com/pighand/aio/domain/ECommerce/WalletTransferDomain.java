@@ -9,6 +9,7 @@ import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
@@ -20,6 +21,7 @@ import java.io.Serializable;
  */
 @Table("ec_wallet_transfer")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class WalletTransferDomain extends BaseDomainRecord<WalletTransferDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

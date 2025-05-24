@@ -6,10 +6,12 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.pighand.aio.domain.ECommerce.SessionDomain;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class SessionVO extends SessionDomain {
 
     private List<SessionUserGroupVO> sessionUserGroup;

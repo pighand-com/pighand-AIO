@@ -14,6 +14,7 @@ import com.pighand.framework.spring.api.springdoc.dataType.EmptyObject;
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -27,6 +28,7 @@ import java.util.List;
  */
 @Table("ec_goods_spu")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class GoodsSpuDomain extends BaseDomainRecord<GoodsSpuDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

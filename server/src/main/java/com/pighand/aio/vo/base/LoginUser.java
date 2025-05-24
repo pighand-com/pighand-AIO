@@ -6,12 +6,14 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
  * 登录用户信息
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginUser {

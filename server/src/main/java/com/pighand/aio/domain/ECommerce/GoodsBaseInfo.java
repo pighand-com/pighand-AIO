@@ -3,6 +3,7 @@ package com.pighand.aio.domain.ECommerce;
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * @createDate 2024-01-07 19:55:48
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class GoodsBaseInfo extends BaseDomainRecord<GoodsBaseInfo> implements Serializable {
     private static final long serialVersionUID = 1L;
 

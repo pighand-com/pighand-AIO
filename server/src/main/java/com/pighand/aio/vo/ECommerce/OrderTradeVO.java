@@ -2,6 +2,7 @@ package com.pighand.aio.vo.ECommerce;
 
 import com.pighand.aio.domain.ECommerce.OrderTradeDomain;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @createDate 2024-04-18 14:35:34
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class OrderTradeVO extends OrderTradeDomain {
 
     // relation table: begin

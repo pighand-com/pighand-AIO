@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * 问题答案结果
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class QuestionAnswerResultVO {
     // 成功id
     private List<Long> correctIds;

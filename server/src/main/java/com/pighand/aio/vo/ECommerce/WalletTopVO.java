@@ -2,6 +2,7 @@ package com.pighand.aio.vo.ECommerce;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
  * @createDate 2023-12-04 16:37:26
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class WalletTopVO {
 
     @Schema(description = "查询的top数")

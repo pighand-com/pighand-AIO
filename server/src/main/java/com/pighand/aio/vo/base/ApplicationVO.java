@@ -3,6 +3,7 @@ package com.pighand.aio.vo.base;
 import com.mybatisflex.annotation.TableRef;
 import com.pighand.aio.domain.base.ApplicationDomain;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  */
 @TableRef(ApplicationDomain.class)
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class ApplicationVO extends ApplicationDomain {
 
     private List<ApplicationPlatformKeyVO> ApplicationPlatformKey;

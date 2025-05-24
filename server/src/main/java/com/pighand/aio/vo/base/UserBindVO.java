@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.pighand.aio.domain.base.UserBindDomain;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 用户 - 绑定信息
@@ -14,6 +15,7 @@ import lombok.Data;
  * @createDate 2023-12-04 16:37:26
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class UserBindVO extends UserBindDomain {
     private UserVO user;
 

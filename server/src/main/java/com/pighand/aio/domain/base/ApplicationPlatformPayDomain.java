@@ -10,6 +10,7 @@ import com.pighand.framework.spring.api.annotation.serialization.ToLongSerialize
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -22,6 +23,7 @@ import java.io.Serializable;
  */
 @Table("base_application_platform_pay")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class ApplicationPlatformPayDomain extends BaseDomainRecord<ApplicationPlatformPayDomain>
     implements Serializable {
     private static final long serialVersionUID = 1L;

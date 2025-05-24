@@ -2,6 +2,7 @@ package com.pighand.aio.common.sdk.douyin.entity;
 
 import com.pighand.aio.common.sdk.ResponseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
  * @author wangshuli
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public class DouyinResponse extends ResponseEntity {
 

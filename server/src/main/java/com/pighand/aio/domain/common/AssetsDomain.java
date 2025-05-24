@@ -11,6 +11,7 @@ import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecordTs;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import java.io.Serializable;
  */
 @Table(value = "com_assets")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class AssetsDomain extends BaseDomainRecordTs<AssetsDomain> implements Serializable, ApplicationIdAware {
     private static final long serialVersionUID = 1L;
 

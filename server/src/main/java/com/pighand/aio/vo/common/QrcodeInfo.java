@@ -6,11 +6,13 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.pighand.aio.common.enums.QrcodeType;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 二维码信息
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class QrcodeInfo {
     // 二维码类型
     private QrcodeType type;

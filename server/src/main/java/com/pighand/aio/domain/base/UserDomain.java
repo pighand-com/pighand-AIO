@@ -14,6 +14,7 @@ import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -25,6 +26,7 @@ import java.io.Serializable;
  * @createDate 2023-03-25 18:45:58
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Table("base_user")
 public class UserDomain extends BaseDomainRecord<UserDomain> implements Serializable {
     private static final long serialVersionUID = 1L;

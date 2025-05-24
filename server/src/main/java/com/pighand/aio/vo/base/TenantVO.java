@@ -6,6 +6,7 @@ import com.pighand.aio.domain.base.ApplicationDomain;
 import com.pighand.aio.domain.base.TenantDomain;
 import com.pighand.aio.domain.base.UserExtensionDomain;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 租户
@@ -15,6 +16,7 @@ import lombok.Data;
  */
 @TableRef(TenantDomain.class)
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class TenantVO extends TenantDomain {
 
     // relation table: begin

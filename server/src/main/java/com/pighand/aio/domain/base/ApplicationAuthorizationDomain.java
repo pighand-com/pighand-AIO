@@ -17,6 +17,7 @@ import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -29,6 +30,7 @@ import java.util.Map;
  * @createDate 2023-03-25 18:45:58
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Table("base_application_authorization")
 public class ApplicationAuthorizationDomain extends BaseDomainRecord<ApplicationAuthorizationDomain>
     implements Serializable {

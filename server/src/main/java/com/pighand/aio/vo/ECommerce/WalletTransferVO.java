@@ -3,6 +3,7 @@ package com.pighand.aio.vo.ECommerce;
 import com.mybatisflex.annotation.Column;
 import com.pighand.aio.domain.ECommerce.WalletTransferDomain;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
  * @createDate 2023-12-04 16:37:26
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class WalletTransferVO extends WalletTransferDomain {
     @Column(ignore = true)
     private WalletBillVO walletBill;

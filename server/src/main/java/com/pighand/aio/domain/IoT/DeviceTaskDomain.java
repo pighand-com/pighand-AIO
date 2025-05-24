@@ -12,6 +12,7 @@ import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -25,6 +26,7 @@ import java.util.Date;
  */
 @Table("iot_device_task")
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class DeviceTaskDomain extends BaseDomainRecord<DeviceTaskDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 

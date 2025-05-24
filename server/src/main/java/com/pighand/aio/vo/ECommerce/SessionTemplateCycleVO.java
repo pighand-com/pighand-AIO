@@ -2,6 +2,7 @@ package com.pighand.aio.vo.ECommerce;
 
 import com.pighand.aio.domain.ECommerce.SessionTemplateCycleDomain;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 电商 - 场次模板 - 按周期
@@ -10,6 +11,7 @@ import lombok.Data;
  * @createDate 2024-05-23 15:01:58
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class SessionTemplateCycleVO extends SessionTemplateCycleDomain {
 
     // relation table: begin

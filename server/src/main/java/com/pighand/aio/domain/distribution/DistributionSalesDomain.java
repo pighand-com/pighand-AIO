@@ -1,0 +1,62 @@
+package com.pighand.aio.domain.distribution;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.mybatisflex.annotation.Column;
+import com.mybatisflex.annotation.Id;
+import com.mybatisflex.annotation.Table;
+import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
+import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
+import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
+import com.pighand.framework.spring.base.BaseDomainRecord;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+/**
+ * 分销 - 销售记录
+ *
+ * @author wangshuli
+ * @createDate 2025-05-24 14:35:05
+ */
+@Table(value = "dist_distribution_sales")
+@Data
+public class DistributionSalesDomain extends BaseDomainRecord<DistributionSalesDomain> implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    @RequestFieldException("distDistributionSalesCreate")
+    @RequestFieldException("distDistributionSalesUpdate")
+    @Schema(description = "主键ID")
+    private Long id;
+
+    @NotNull(groups = {ValidationGroup.Create.class})
+    @Schema(description = "销售用户ID（推广人）")
+    private Long userId;
+
+    @NotNull(groups = {ValidationGroup.Create.class})
+    @Schema(description = "订单ID")
+    private Long orderId;
+
+    @Schema(description = "结算单id")
+    private Long settlementId;
+
+    @NotNull(groups = {ValidationGroup.Create.class})
+    @Schema(description = "实际分成金额")
+    private BigDecimal amount;
+
+    @Column("type")
+    @Schema(description = "类型 10-销售单 20-结算单")
+    private Integer type;
+
+    @Column("status")
+    @NotNull(groups = {ValidationGroup.Create.class})
+    @Schema(description = "状态：0=冻结中 10=待结算，20=已结算, 90=订单退款")
+    private Integer status;
+}

@@ -1,10 +1,12 @@
 # 服务实现层 (ServiceImpl)
 
 ## 命名规范
+
 - 类名：使用 `ServiceImpl` 作为后缀，例如 `UserServiceImpl`
 - 方法名：与服务接口对应，例如 `create`、`find`、`update`、`delete`、`query`
 
 ## 代码结构
+
 ```java
 @Service
 @RequiredArgsConstructor
@@ -128,6 +130,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
 ```
 
 ## 注意事项
+
 - 服务实现类继承 `BaseServiceImpl<M, T>` 类，泛型参数分别为对应的 Mapper 接口和 Domain 类
 - 实现对应的服务接口
 - 使用 `@Service` 注解标记为服务类
@@ -142,6 +145,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
 ## 关联查询
 
 ### 一对一关联
+
 ```java
 // 查询关联数据
 UserExtensionDomain extension = userExtensionService.findByUserId(id);
@@ -149,6 +153,7 @@ userVO.setExtension(extension);
 ```
 
 ### 一对多关联
+
 ```java
 // 查询关联数据
 List<UserRoleDomain> roles = userRoleService.findByUserId(id);
@@ -156,6 +161,7 @@ userVO.setRoles(roles);
 ```
 
 ### 多对多关联
+
 ```java
 // 查询关联数据
 List<Long> userIds = userVOList.stream().map(UserVO::getId).collect(Collectors.toList());

@@ -1,10 +1,12 @@
 # 控制层 (Controller)
 
 ## 命名规范
+
 - 类名：使用 `Controller` 作为后缀，例如 `UserController`
 - 方法名：使用 HTTP 方法对应的动作，例如 `create`、`find`、`update`、`delete`、`query`
 
 ## 代码结构
+
 ```java
 @RequiredArgsConstructor
 @RestController(path = "user", docName = "用户关键信息表，主要保存登录所用信息")
@@ -65,6 +67,7 @@ public class UserController extends BaseController<UserService> {
 ```
 
 ## 注意事项
+
 - 控制层继承 `BaseController<T>` 类，泛型参数为对应的 Service 接口
 - 使用自定义注解 `@RestController` 替代 Spring 的注解，增加了文档相关属性
 - 使用自定义注解 `@Post`、`@Get`、`@Put`、`@Delete` 替代 Spring 的注解，简化 RESTful API 开发
@@ -77,6 +80,7 @@ public class UserController extends BaseController<UserService> {
 ## 特殊接口
 
 ### 自定义操作
+
 ```java
 @Authorization
 @Post(value = "bind/phone/wechat", docSummary = "绑定手机号")
@@ -92,6 +96,7 @@ public Result<UserVO> bindPhone(@RequestBody EncryptedData encryptedData) {
 ```
 
 ### 上下文使用
+
 ```java
 @Authorization
 @Put(path = "self", docSummary = "修改自己的信息")

@@ -1,13 +1,16 @@
 # 实体映射器 (EntityMapper)
 
 ## 概述
+
 实体映射器是一种用于处理实体对象之间转换的工具类，在PigHand-AIO项目中主要用于Domain对象和VO对象之间的转换。
 
 ## 命名规范
+
 - 类名：使用 `EntityMapper` 作为后缀，例如 `UserEntityMapper`
 - 方法名：使用 `toXXX` 作为前缀，例如 `toVO`、`toDomain`
 
 ## 代码结构
+
 ```java
 /**
  * 用户实体映射器
@@ -85,6 +88,7 @@ public class UserEntityMapper {
 ```
 
 ## 注意事项
+
 - 使用 `@Component` 注解标记为Spring组件
 - 使用 `BeanUtils.copyProperties` 进行对象属性复制
 - 提供单个对象转换和列表对象转换的方法
@@ -94,6 +98,7 @@ public class UserEntityMapper {
 ## 使用示例
 
 ### 在Service中使用
+
 ```java
 @Service
 @RequiredArgsConstructor
@@ -130,6 +135,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
 ```
 
 ## 复杂属性处理
+
 ```java
 public UserVO toVO(UserDomain domain) {
     if (domain == null) {

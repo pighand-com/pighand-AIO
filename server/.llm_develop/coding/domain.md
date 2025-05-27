@@ -1,10 +1,12 @@
 # 领域模型 (Domain)
 
 ## 命名规范
+
 - 类名：使用 `Domain` 作为后缀，例如 `UserDomain`
 - 字段名：驼峰命名，与数据库字段对应
 
 ## 代码结构
+
 ```java
 @Data
 @Table("base_user")
@@ -60,6 +62,7 @@ public class UserDomain extends BaseDomainRecord<UserDomain> implements Serializ
 ```
 
 ## 注意事项
+
 - 领域模型继承 `BaseDomainRecord<T>` 类，泛型参数为当前类
 - 实现 `Serializable` 接口
 - 使用 `@Data` 注解自动生成 getter/setter 方法

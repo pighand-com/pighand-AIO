@@ -1,13 +1,16 @@
 ### 路由层(router)
+
 - 放在单独的文件夹中，文件名：表名。然后在路由中注册
 - 文件夹中包含文件：
-  - index.ts：路由文件
-  - openapi.ts：接口文档
+    - index.ts：路由文件
+    - openapi.ts：接口文档
 
 #### 接口文档
+
 - 接口文档使用openapi格式
 
 代码举例：
+
 ```ts
 import * as v from 'valibot';
 import { describeRoute } from 'hono-openapi'
@@ -48,6 +51,7 @@ export default describeRoute({
 ```
 
 #### 路由文件
+
 - 请求类型选择
     - 创建用POST
     - 查询用GET
@@ -56,6 +60,7 @@ export default describeRoute({
 - 鉴权中间件：如果接口需要鉴权，使用中间件：authRequiredMiddleware()
 
 代码举例：
+
 ```ts
 import { Hono } from "hono";
 
@@ -71,10 +76,12 @@ export default api;
 ```
 
 #### 路由注册
+
 - 路由注册在router根目录的index.ts中
 - 路由注册方式：app.route('/api/user', userRouter);
 
 代码举例：
+
 ```ts
 import { Hono } from "hono";
 import userRouter from "./user";

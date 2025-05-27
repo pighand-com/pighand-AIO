@@ -3,10 +3,12 @@
 ## 控制层 (Controller)
 
 ### 命名规范
+
 - 类名：使用 `Controller` 作为后缀，例如 `UserController`
 - 方法名：使用 HTTP 方法前缀，例如 `create`、`find`、`update`、`delete`、`query`
 
 ### 代码结构
+
 ```java
 @RestController
 @RequestMapping("/api/user")
@@ -48,6 +50,7 @@ public class UserController {
 ```
 
 ### 注意事项
+
 - 控制层只负责参数校验和结果返回，不包含业务逻辑
 - 使用 `@Validated` 注解进行参数校验
 - 统一使用 `ResponseEntity` 封装返回结果
@@ -57,11 +60,13 @@ public class UserController {
 ## 服务层 (Service)
 
 ### 命名规范
+
 - 接口名：使用 `Service` 作为后缀，例如 `UserService`
 - 实现类名：使用 `ServiceImpl` 作为后缀，例如 `UserServiceImpl`
 - 方法名：与控制层对应，例如 `create`、`find`、`update`、`delete`、`query`
 
 ### 代码结构
+
 ```java
 // 接口定义
 public interface UserService extends BaseService<UserDomain> {
@@ -96,6 +101,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
 ```
 
 ### 注意事项
+
 - 服务层负责实现业务逻辑
 - 使用 `@Transactional` 注解管理事务
 - 继承 `BaseService` 和 `BaseServiceImpl` 获取通用方法
@@ -105,10 +111,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
 ## 领域模型 (Domain)
 
 ### 命名规范
+
 - 类名：使用 `Domain` 作为后缀，例如 `UserDomain`
 - 字段名：驼峰命名，与数据库字段对应
 
 ### 代码结构
+
 ```java
 @Data
 @TableName("user")
@@ -141,6 +149,7 @@ public class UserDomain {
 ```
 
 ### 注意事项
+
 - 使用 Lombok 注解简化代码
 - 使用 MyBatis-Flex 注解映射数据库表和字段
 - 领域模型应该与数据库表结构一一对应
@@ -149,10 +158,12 @@ public class UserDomain {
 ## 视图对象 (VO)
 
 ### 命名规范
+
 - 类名：使用 `VO` 作为后缀，例如 `UserVO`
 - 字段名：与领域模型保持一致，可以添加额外字段
 
 ### 代码结构
+
 ```java
 @Data
 public class UserVO extends UserDomain {
@@ -177,6 +188,7 @@ public class UserVO extends UserDomain {
 ```
 
 ### 注意事项
+
 - 通常继承自对应的领域模型
 - 添加参数校验注解
 - 可以定义验证分组，用于不同场景的验证
@@ -186,10 +198,12 @@ public class UserVO extends UserDomain {
 ## 数据访问层 (Mapper)
 
 ### 命名规范
+
 - 接口名：使用 `Mapper` 作为后缀，例如 `UserMapper`
 - 方法名：遵循 MyBatis-Flex 的命名规范
 
 ### 代码结构
+
 ```java
 @Mapper
 public interface UserMapper extends BaseMapper<UserDomain> {
@@ -203,6 +217,7 @@ public interface UserMapper extends BaseMapper<UserDomain> {
 ```
 
 ### 注意事项
+
 - 继承 `BaseMapper` 获取通用的 CRUD 方法
 - 简单查询可以使用注解方式
 - 复杂查询建议使用 XML 配置
@@ -211,6 +226,7 @@ public interface UserMapper extends BaseMapper<UserDomain> {
 ## 异常处理
 
 ### 全局异常处理
+
 ```java
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -232,10 +248,11 @@ public class GlobalExceptionHandler {
 ```
 
 ### 自定义异常
+
 ```java
 public class BusinessException extends RuntimeException {
 
-    private int code;
+    private final int code;
 
     public BusinessException(int code, String message) {
         super(message);
@@ -251,11 +268,13 @@ public class BusinessException extends RuntimeException {
 ## 日志规范
 
 ### 日志配置
+
 - 使用 SLF4J + Logback 作为日志框架
 - 按照环境区分日志级别
 - 生产环境日志文件按天滚动
 
 ### 日志使用
+
 ```java
 private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -272,11 +291,13 @@ logger.error("系统异常", e);
 ## 单元测试
 
 ### 测试规范
+
 - 使用 JUnit 5 + Mockito 进行单元测试
 - 测试类名：被测试类名 + `Test`，例如 `UserServiceTest`
 - 测试方法名：`test` + 被测试方法名 + 测试场景，例如 `testCreateUserSuccess`
 
 ### 测试示例
+
 ```java
 @SpringBootTest
 public class UserServiceTest {

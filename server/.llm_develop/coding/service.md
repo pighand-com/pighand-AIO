@@ -1,11 +1,13 @@
 # 服务层 (Service)
 
 ## 命名规范
+
 - 接口名：使用 `Service` 作为后缀，例如 `UserService`
 - 实现类名：使用 `ServiceImpl` 作为后缀，例如 `UserServiceImpl`
 - 方法名：与控制层对应，例如 `create`、`find`、`update`、`delete`、`query`
 
 ## 接口定义
+
 ```java
 public interface UserService extends BaseService<UserDomain> {
 
@@ -50,6 +52,7 @@ public interface UserService extends BaseService<UserDomain> {
 ```
 
 ## 注意事项
+
 - 服务层接口继承 `BaseService<T>` 接口，泛型参数为对应的 Domain 类
 - 定义与控制层对应的业务方法
 - 方法参数和返回值通常使用 VO 对象

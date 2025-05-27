@@ -1,10 +1,12 @@
 # 视图对象 (VO)
 
 ## 命名规范
+
 - 类名：使用 `VO` 作为后缀，例如 `UserVO`
 - 字段名：与领域模型保持一致，可以添加额外字段
 
 ## 代码结构
+
 ```java
 @TableRef(UserDomain.class)
 @Data
@@ -25,6 +27,7 @@ public class UserVO extends UserDomain {
 ```
 
 ## 注意事项
+
 - 视图对象通常继承自对应的领域模型
 - 使用 `@TableRef` 注解指定对应的领域模型类
 - 使用 `@Data` 注解自动生成 getter/setter 方法
@@ -34,6 +37,7 @@ public class UserVO extends UserDomain {
 - 可以定义验证分组，用于不同场景的验证
 
 ## 验证分组示例
+
 ```java
 @Data
 public class UserVO extends UserDomain {
@@ -51,6 +55,7 @@ public class UserVO extends UserDomain {
 ```
 
 ## 分页参数示例
+
 ```java
 @Data
 public class UserVO extends UserDomain {

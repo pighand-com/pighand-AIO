@@ -1,10 +1,12 @@
 # 数据访问层 (Mapper)
 
 ## 命名规范
+
 - 接口名：使用 `Mapper` 作为后缀，例如 `UserMapper`
 - 方法名：遵循 MyBatis-Flex 的命名规范
 
 ## 代码结构
+
 ```java
 /**
  * 用户 - 关键信息表，主要保存登录所用信息
@@ -45,6 +47,7 @@ public interface UserMapper extends BaseMapper<UserDomain> {
 ```
 
 ## 注意事项
+
 - 数据访问层接口继承 `BaseMapper<T>` 接口，泛型参数为对应的 Domain 类
 - 使用 `@Mapper` 注解标记为 MyBatis 的 Mapper 接口
 - 继承 `BaseMapper` 接口后，自动获得常用的 CRUD 方法
@@ -53,6 +56,7 @@ public interface UserMapper extends BaseMapper<UserDomain> {
 - 可以使用 MyBatis-Flex 的查询构造器进行动态查询
 
 ## XML 配置示例
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
@@ -86,6 +90,7 @@ public interface UserMapper extends BaseMapper<UserDomain> {
 ```
 
 ## 动态查询示例
+
 ```java
 // 在 ServiceImpl 中使用
 public PageOrList<UserVO> query(UserVO userVO) {

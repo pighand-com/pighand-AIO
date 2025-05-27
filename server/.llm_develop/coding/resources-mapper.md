@@ -1,14 +1,17 @@
 # XML 映射文件 (Mapper XML)
 
 ## 命名规范
+
 - 文件名：与 Mapper 接口对应，例如 `UserMapper.xml`
 - 命名空间：与 Mapper 接口的全限定名一致
 
 ## 文件位置
+
 - 位于 `src/main/resources/mapper` 目录下
 - 按模块分子目录，例如 `base`、`CMS`、`ECommerce` 等
 
 ## 代码结构
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
@@ -44,6 +47,7 @@
 ```
 
 ## 注意事项
+
 - 命名空间必须与对应的 Mapper 接口全限定名一致
 - 使用 `<sql>` 标签定义可重用的 SQL 片段
 - 使用 `<resultMap>` 标签定义复杂的结果映射
@@ -54,6 +58,7 @@
 ## 常用标签
 
 ### SQL 片段
+
 ```xml
 <sql id="Base_Column_List">
     `id`,`application_id`,`password`,`username`,`email`,`email_verified`,`phone_area`,`phone`,`phone_verified`,`initial_source_platform`,`status`
@@ -61,6 +66,7 @@
 ```
 
 ### 结果映射
+
 ```xml
 <resultMap id="UserMap" type="com.pighand.aio.domain.base.UserDomain">
     <id property="id" column="id"/>
@@ -73,6 +79,7 @@
 ```
 
 ### 一对一关联
+
 ```xml
 <resultMap id="UserWithExtensionMap" type="com.pighand.aio.vo.base.UserVO">
     <id property="id" column="id"/>
@@ -90,6 +97,7 @@
 ```
 
 ### 一对多关联
+
 ```xml
 <resultMap id="UserWithRolesMap" type="com.pighand.aio.vo.base.UserVO">
     <id property="id" column="id"/>
@@ -105,6 +113,7 @@
 ```
 
 ### 动态 SQL
+
 ```xml
 <select id="findByCondition" resultMap="UserMap">
     SELECT <include refid="Base_Column_List"/>

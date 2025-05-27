@@ -1,10 +1,14 @@
 ### 模型层(model)
+
 - 文件名：表名-model.ts
 - 包含数据库字段映射、索引、和先关操作
-- IBaseCacheModel已包含id、createdAt、updatedAt、isDelete字段，如果表中全部包含这几个字段，模型层只需继承IBaseCacheModel。否则需要集成Model（sequelize-typescript）
+-
+
+IBaseCacheModel已包含id、createdAt、updatedAt、isDelete字段，如果表中全部包含这几个字段，模型层只需继承IBaseCacheModel。否则需要集成Model（sequelize-typescript）
+
 - 索引命名规则：
-  - 普通索引：idx_表名_字段名
-  - 唯一索引：uniq_表名_字段名
+    - 普通索引：idx_表名_字段名
+    - 唯一索引：uniq_表名_字段名
 
 ```ts
 import IBaseCacheModel from './base-model';
@@ -37,9 +41,11 @@ export default UserModel;
 ```
 
 ### 关联查询
+
 - 一对多：在业务逻辑层处理
 - 多对多：在业务逻辑层处理，先整理从表的外键set，批量查询，根据外键整理成map，回填的主表数据中
 - 一对一：使用数据库关联查询
+
 ```ts
 // 一对一需要修改model，增加关联字段
 @Table({

@@ -34,7 +34,16 @@ const { detailFormModel } = provideForm([
         prop: 'username',
         isSearch: true,
         isSearchMore: false,
-        isTable: true
+        isTable: true,
+        isDetail: true,
+        domType: 'input'
+    },
+    {
+        label: '密码',
+        prop: 'password',
+        isDetail: true,
+        domType: 'input',
+        isUpdate: false
     }
 ]);
 </script>

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @createDate 2023-03-25 18:45:58
  */
 @RequiredArgsConstructor
-@RestController(path = "project/authorization", docName = "Authorization配置")
+@RestController(path = "dashboard/project/authorization", docName = "Authorization配置")
 public class ApplicationAuthorizationController extends BaseController<ApplicationAuthorizationService> {
 
     /**

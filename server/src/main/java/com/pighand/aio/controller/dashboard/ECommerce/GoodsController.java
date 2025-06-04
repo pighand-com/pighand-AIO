@@ -2,10 +2,7 @@ package com.pighand.aio.controller.dashboard.ECommerce;
 
 import com.pighand.aio.service.ECommerce.GoodsSpuService;
 import com.pighand.aio.vo.ECommerce.GoodsSpuVO;
-import com.pighand.framework.spring.api.annotation.Delete;
-import com.pighand.framework.spring.api.annotation.Get;
-import com.pighand.framework.spring.api.annotation.Post;
-import com.pighand.framework.spring.api.annotation.Put;
+import com.pighand.framework.spring.api.annotation.*;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.base.BaseController;
 import com.pighand.framework.spring.page.PageOrList;
@@ -20,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wangshuli
  * @createDate 2024-01-08 11:05:18
  */
-@com.pighand.framework.spring.api.annotation.RestController(path = "goods", docName = "电商 - 商品")
+@RestController(path = "dashboard/goods", docName = "电商 - 商品")
 public class GoodsController extends BaseController<GoodsSpuService> {
 
     /**

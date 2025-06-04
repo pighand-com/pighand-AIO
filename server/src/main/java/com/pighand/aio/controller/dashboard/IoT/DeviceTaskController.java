@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @createDate 2024-04-10 23:45:23
  */
 //@Authorization
-@RestController(path = "device/task", docName = "IoT - 设备任务")
+@RestController(path = "dashboard/device/task", docName = "IoT - 设备任务")
 public class DeviceTaskController extends BaseController<DeviceTaskService> {
 
     /**

@@ -24,7 +24,7 @@ import java.util.List;
  * @author wangshuli
  * @createDate 2024-04-10 23:45:23
  */
-@RestController(path = "question/bank", docName = "CMS - 题库")
+@RestController(path = "dashboard/question/bank", docName = "CMS - 题库")
 public class QuestionBankController extends BaseController<QuestionBankService> {
 
     /**

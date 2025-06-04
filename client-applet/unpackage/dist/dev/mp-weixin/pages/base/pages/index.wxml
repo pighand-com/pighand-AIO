@@ -1,1 +1,1 @@
-<view class="content"><image class="logo" src="{{a}}"></image><user-check u-s="{{['d']}}" u-i="29c8604e-0" bind:__l="__l"><button bindtap="{{b}}">登录</button></user-check></view><tab-bar u-i="29c8604e-1" bind:__l="__l"/>
+<view class="content"><image class="logo" src="{{a}}"></image><user-check u-s="{{['d']}}" u-i="3a6cd336-0" bind:__l="__l"><button bindtap="{{b}}">登录</button></user-check></view><tab-bar u-i="3a6cd336-1" bind:__l="__l"/>

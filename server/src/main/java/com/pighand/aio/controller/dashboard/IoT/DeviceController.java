@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @createDate 2024-04-10 23:45:23
  */
 @Authorization
-@RestController(path = "device", docName = "IoT - 设备")
+@RestController(path = "dashboard/device", docName = "IoT - 设备")
 public class DeviceController extends BaseController<DeviceService> {
 
     /**

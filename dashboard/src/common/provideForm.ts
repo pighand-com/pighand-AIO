@@ -124,7 +124,7 @@ export interface FormColumnsInterface {
     rules?: Array<any>;
 
     /** input组件类型 */
-    inputType?: 'text' | 'password';
+    inputType?: 'text' | 'password' | 'textarea';
 
     /** 上传路径 */
     uploadPath?: string;

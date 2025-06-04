@@ -22,7 +22,7 @@ import java.util.List;
  */
 @Authorization()
 @RequiredArgsConstructor
-@RestController(path = "upload", docName = "上传接口")
+@RestController(path = {"client/upload", "dashboard/upload"}, docName = "上传接口")
 public class UploadController {
 
     private final UploadService uploadService;

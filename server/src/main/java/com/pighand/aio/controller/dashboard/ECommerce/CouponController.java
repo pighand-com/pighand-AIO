@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @createDate 2023-12-04 16:37:26
  */
 @RequiredArgsConstructor
-@RestController(path = "coupon", docName = "电商 - 优惠券")
+@RestController(path = "dashboard/coupon", docName = "电商 - 优惠券")
 public class CouponController extends BaseController<CouponService> {
 
     private final CouponUserServiceImpl couponUserService;

@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 @Authorization
 @ApplicationId
-@RestController(path = "tenant", docName = "租户")
+@RestController(path = "dashboard/tenant", docName = "租户")
 public class TenantController extends BaseController<TenantService> {
 
     /**

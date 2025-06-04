@@ -7,6 +7,9 @@ import lottery from './lottery';
 import tenant from './tenant';
 import store from './store';
 import assets from './assets';
+import theme from './theme';
+import ticket from './ticket';
+import order from './order';
 
 export {
     common,
@@ -17,5 +20,8 @@ export {
     lottery,
     tenant,
     store,
-    assets
+    assets,
+    theme,
+    ticket,
+    order
 };

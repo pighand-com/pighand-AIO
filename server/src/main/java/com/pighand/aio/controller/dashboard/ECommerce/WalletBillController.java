@@ -22,7 +22,7 @@ import java.util.List;
  * @createDate 2023-12-04 16:37:26
  */
 @RequiredArgsConstructor
-@RestController(path = "wallet/bill", docName = "电商 - 钱包账单")
+@RestController(path = "dashboard/wallet/bill", docName = "电商 - 钱包账单")
 public class WalletBillController extends BaseController<WalletBillService> {
 
     /**

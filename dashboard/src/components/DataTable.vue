@@ -1,24 +1,38 @@
 <!-- eslint-disable vue/no-use-v-if-with-v-for -->
 <template>
     <div class="table-form">
-        <el-button type="primary" :icon="Plus" v-if="add" @click="onOpenAdd">添加</el-button>
+        <el-button type="primary" :icon="Plus" v-if="add" @click="onOpenAdd"
+            >添加</el-button
+        >
 
         <slot name="operation" />
 
         <!-- 根据批量操作数组显示对应的按钮或下拉菜单 -->
         <template v-if="batchActions && batchActions.length > 0">
             <!-- 当只有一个批量操作时显示单个按钮 -->
-            <el-button v-if="batchActions.length === 1" type="default" class="ml-4"
-                :disabled="!multipleSelection.length" @click="batchActions[0].handler(multipleSelection)">
+            <el-button
+                v-if="batchActions.length === 1"
+                type="default"
+                class="ml-4"
+                :disabled="!multipleSelection.length"
+                @click="batchActions[0].handler(multipleSelection)">
                 {{ batchActions[0].name }}
             </el-button>
 
             <!-- 当有多个批量操作时显示下拉菜单 -->
-            <el-dropdown v-else placement="bottom-start" class="ml-4" :disabled="!multipleSelection.length">
-                <el-button type="default" :disabled="!multipleSelection.length">批量操作</el-button>
+            <el-dropdown
+                v-else
+                placement="bottom-start"
+                class="ml-4"
+                :disabled="!multipleSelection.length">
+                <el-button type="default" :disabled="!multipleSelection.length"
+                    >批量操作</el-button
+                >
                 <template #dropdown>
                     <el-dropdown-menu>
-                        <el-dropdown-item v-for="action in batchActions" :key="action.name"
+                        <el-dropdown-item
+                            v-for="action in batchActions"
+                            :key="action.name"
                             @click="action.handler(multipleSelection)">
                             {{ action.name }}
                         </el-dropdown-item>
@@ -27,39 +41,89 @@
             </el-dropdown>
         </template>
 
-        <el-table v-loading="isTableDataLoading" v-bind="tableAttrs" :data="tableDataModel.data"
-            @selection-change="handleSelectionChange" class="data-table" header-cell-class-name="table-header">
-
+        <el-table
+            v-loading="isTableDataLoading"
+            v-bind="tableAttrs"
+            :data="tableDataModel.data"
+            @selection-change="handleSelectionChange"
+            class="data-table"
+            header-cell-class-name="table-header">
             <!-- 根据是否有批量操作显示复选框 -->
-            <el-table-column v-if="batchActions && batchActions.length > 0" type="selection" width="42" />
+            <el-table-column
+                v-if="batchActions && batchActions.length > 0"
+                type="selection"
+                width="42" />
 
-            <el-table-column v-for="(item, index) in formColumns.filter(
-                (item) => item.isTable
-            )" :key="index" :label="item.label" :prop="item.prop" :width="item.tableWidth"
+            <el-table-column
+                v-for="(item, index) in formColumns.filter(
+                    (item) => item.isTable
+                )"
+                :key="index"
+                :label="item.label"
+                :prop="item.prop"
+                :width="item.tableWidth"
                 :align="item.tableAlign || 'left'">
                 <template #default="scope">
-                    <el-tooltip content="复制连接" placement="top"
-                        v-if="item.isTableCopyValue && scope.row[item.prop] && ['image', 'link'].includes(item.tableType)">
-                        <el-button type="primary" link @click="onCopy(scope.row, item)">
+                    <el-tooltip
+                        content="复制连接"
+                        placement="top"
+                        v-if="
+                            item.isTableCopyValue &&
+                            scope.row[item.prop] &&
+                            ['image', 'link'].includes(item.tableType)
+                        ">
+                        <el-button
+                            type="primary"
+                            link
+                            @click="onCopy(scope.row, item)">
                             <CopyLink />
                         </el-button>
                     </el-tooltip>
 
-                    <img v-if="item.tableType === 'image'" v-for="(imageItem, imageIndex) in Array.isArray(
-                        scope.row[item.prop]
-                    )
-                        ? scope.row[item.prop]
-                        : [scope.row[item.prop]]" :key="'image_' + imageIndex" :src="imageItem"
-                        @click="onPreviewImage(imageItem)" class="table-image" />
+                    <img
+                        v-if="item.tableType === 'image'"
+                        v-for="(imageItem, imageIndex) in Array.isArray(
+                            scope.row[item.prop]
+                        )
+                            ? scope.row[item.prop]
+                            : [scope.row[item.prop]]"
+                        :key="'image_' + imageIndex"
+                        :src="imageItem"
+                        @click="onPreviewImage(imageItem)"
+                        class="table-image" />
 
-                    <a v-else-if="item.tableType === 'link'" :href="scope.row[item.prop]" target="_blank"
-                        class="table-link">{{ scope.row[item.prop] }}</a>
+                    <a
+                        v-else-if="item.tableType === 'link'"
+                        :href="scope.row[item.prop]"
+                        target="_blank"
+                        class="table-link"
+                        >{{ scope.row[item.prop] }}</a
+                    >
 
-                    <span v-dompurify-html="dataFormat(scope.row, item)" v-else></span>
+                    <component
+                        v-if="
+                            item.tableFormat &&
+                            typeof item.tableFormat === 'function' &&
+                            isVNode(dataFormat(scope.row, item))
+                        "
+                        :is="dataFormat(scope.row, item)" />
 
-                    <el-tooltip content="复制" placement="top"
-                        v-if="item.isTableCopyValue && scope.row[item.prop] && !['image', 'link'].includes(item.tableType)">
-                        <el-button type="primary" link @click="onCopy(scope.row, item)">
+                    <span
+                        v-dompurify-html="dataFormat(scope.row, item)"
+                        v-else></span>
+
+                    <el-tooltip
+                        content="复制"
+                        placement="top"
+                        v-if="
+                            item.isTableCopyValue &&
+                            scope.row[item.prop] &&
+                            !['image', 'link'].includes(item.tableType)
+                        ">
+                        <el-button
+                            type="primary"
+                            link
+                            @click="onCopy(scope.row, item)">
                             <Copy />
                         </el-button>
                     </el-tooltip>
@@ -68,31 +132,56 @@
 
             <slot />
 
-            <el-table-column fixed="right" v-if="Array.isArray(tableOperation)" label="操作" align="center"
+            <el-table-column
+                fixed="right"
+                v-if="Array.isArray(tableOperation)"
+                label="操作"
+                align="center"
                 :width="operationWidth || 180">
                 <template #default="scope">
                     <slot name="table-operation" :row="scope.row" />
 
-                    <el-button v-if="tableOperation.includes('edit')" size="small" :icon="Edit" type="primary"
-                        @click="onEdit(scope.row)">编辑</el-button>
+                    <el-button
+                        v-if="tableOperation.includes('edit')"
+                        size="small"
+                        :icon="Edit"
+                        type="primary"
+                        @click="onEdit(scope.row)"
+                        >编辑</el-button
+                    >
 
-                    <el-popconfirm v-if="tableOperation.includes('delete')" icon-color="rgb(245, 108, 108)"
-                        title="是否确认删除?" @confirm="onDel(scope.row)">
+                    <el-popconfirm
+                        v-if="tableOperation.includes('delete')"
+                        icon-color="rgb(245, 108, 108)"
+                        title="是否确认删除?"
+                        @confirm="onDel(scope.row)">
                         <template #reference>
-                            <el-button size="small" :icon="Delete" type="danger">删除</el-button>
+                            <el-button size="small" :icon="Delete" type="danger"
+                                >删除</el-button
+                            >
                         </template>
                     </el-popconfirm>
                 </template>
             </el-table-column>
         </el-table>
 
-        <el-pagination class="pagination" :disabled="isTableDataLoading" :current-page="pageNumber"
-            :page-size="pageSize" :page-sizes="[10, 20, 50, 100]" :background="true" :total="tableDataModel.totalRow"
-            size="small" layout="total, sizes, prev, pager, next, jumper" @update:page-size="handleChangePageSize"
+        <el-pagination
+            class="pagination"
+            :disabled="isTableDataLoading"
+            :current-page="pageNumber"
+            :page-size="pageSize"
+            :page-sizes="[10, 20, 50, 100]"
+            :background="true"
+            :total="tableDataModel.totalRow"
+            size="small"
+            layout="total, sizes, prev, pager, next, jumper"
+            @update:page-size="handleChangePageSize"
             @update:current-page="handleChangeCurrentPage" />
     </div>
 
-    <PImageView :image-url="dialogImageUrl" v-model:image-visible="dialogImageVisible"></PImageView>
+    <PImageView
+        :image-url="dialogImageUrl"
+        v-model:image-visible="dialogImageVisible"></PImageView>
 </template>
 
 <script lang="ts" setup>
@@ -101,6 +190,7 @@ import { ref, inject, onMounted, useAttrs, computed, PropType } from 'vue';
 import { Plus, Edit, Delete, Copy, CopyLink } from '@icon-park/vue-next';
 
 import { ProvideFormInterface } from '@/common/provideForm';
+import { isVNode } from 'vue';
 
 const attrs = useAttrs();
 
@@ -250,7 +340,8 @@ const onPreviewImage = (src) => {
  * @param item
  */
 const onCopy = (row, item) => {
-    navigator.clipboard.writeText(row[item.prop])
+    navigator.clipboard
+        .writeText(row[item.prop])
         .then(() => ElMessage.success('复制成功'))
         .catch(() => ElMessage.error('复制失败'));
 };
@@ -273,9 +364,7 @@ const dataFormat = (row, item) => {
     if (tableFormat && typeof tableFormat === 'function') {
         value = tableFormat(value, row, item);
     } else if (
-        ['dateTimePicker', 'dateTimePickerRange'].includes(
-            domType
-        ) &&
+        ['dateTimePicker', 'dateTimePickerRange'].includes(domType) &&
         value
     ) {
         value = moment(value).format('YYYY-MM-DD HH:mm:ss');
@@ -310,9 +399,11 @@ const handleSelectionChange = (selection: any[]) => {
     border-radius: 8px;
     margin-top: 24px;
     padding: 18px 24px;
-    background: linear-gradient(135deg,
-            rgba(255, 255, 255, 0.9) 0%,
-            rgba(255, 255, 255, 0.6) 100%);
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(255, 255, 255, 0.6) 100%
+    );
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);

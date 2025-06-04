@@ -20,7 +20,7 @@ import java.util.List;
  * @author wangshuli
  * @createDate 2024-04-22 15:11:06
  */
-@RestController(path = "article/category", docName = "CMS - 文章分类")
+@RestController(path = "dashboard/article/category", docName = "CMS - 文章分类")
 public class ArticleCategoryController extends BaseController<ArticleCategoryService> {
 
     /**

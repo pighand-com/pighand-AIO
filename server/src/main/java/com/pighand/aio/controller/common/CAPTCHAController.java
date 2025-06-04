@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * 人机验证
  */
 @RequiredArgsConstructor
-@RestController(path = "CAPTCHA", docName = "人机验证")
+@RestController(path = {"client/CAPTCHA", "dashboard/CAPTCHA"}, docName = "人机验证")
 public class CAPTCHAController {
 
     private final VerificationCache verificationCache;

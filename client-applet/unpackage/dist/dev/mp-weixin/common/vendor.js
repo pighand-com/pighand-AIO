@@ -68,8 +68,8 @@ const capitalize = cacheStringFunction((str) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 });
 const toHandlerKey = cacheStringFunction((str) => {
-  const s = str ? `on${capitalize(str)}` : ``;
-  return s;
+  const s2 = str ? `on${capitalize(str)}` : ``;
+  return s2;
 });
 const hasChanged = (value, oldValue) => !Object.is(value, oldValue);
 const invokeArrayFns$1 = (fns, arg) => {
@@ -88,6 +88,36 @@ const looseToNumber = (val) => {
   const n2 = parseFloat(val);
   return isNaN(n2) ? val : n2;
 };
+function normalizeStyle(value) {
+  if (isArray(value)) {
+    const res = {};
+    for (let i = 0; i < value.length; i++) {
+      const item = value[i];
+      const normalized = isString(item) ? parseStringStyle(item) : normalizeStyle(item);
+      if (normalized) {
+        for (const key in normalized) {
+          res[key] = normalized[key];
+        }
+      }
+    }
+    return res;
+  } else if (isString(value) || isObject(value)) {
+    return value;
+  }
+}
+const listDelimiterRE = /;(?![^(]*\))/g;
+const propertyDelimiterRE = /:([^]+)/;
+const styleCommentRE = /\/\*[^]*?\*\//g;
+function parseStringStyle(cssText) {
+  const ret = {};
+  cssText.replace(styleCommentRE, "").split(listDelimiterRE).forEach((item) => {
+    if (item) {
+      const tmp = item.split(propertyDelimiterRE);
+      tmp.length > 1 && (ret[tmp[0].trim()] = tmp[1].trim());
+    }
+  });
+  return ret;
+}
 function normalizeClass(value) {
   let res = "";
   if (isString(value)) {
@@ -4786,7 +4816,7 @@ function unmountComponent(instance) {
   }
 }
 const oldCreateApp = createAppAPI();
-function getTarget$1() {
+function getTarget() {
   if (typeof window !== "undefined") {
     return window;
   }
@@ -4801,7 +4831,7 @@ function getTarget$1() {
   }
 }
 function createVueApp(rootComponent, rootProps = null) {
-  const target = getTarget$1();
+  const target = getTarget();
   target.__VUE__ = true;
   {
     setDevtoolsHook(target.__VUE_DEVTOOLS_GLOBAL_HOOK__, target);
@@ -5037,6 +5067,22 @@ function getCreateApp() {
     return my[method];
   }
 }
+function stringifyStyle(value) {
+  if (isString(value)) {
+    return value;
+  }
+  return stringify(normalizeStyle(value));
+}
+function stringify(styles) {
+  let ret = "";
+  if (!styles || isString(styles)) {
+    return ret;
+  }
+  for (const key in styles) {
+    ret += `${key.startsWith(`--`) ? key : hyphenate(key)}:${styles[key]};`;
+  }
+  return ret;
+}
 function vOn(value, key) {
   const instance = getCurrentInstance();
   const ctx = instance.ctx;
@@ -5165,6 +5211,7 @@ function vFor(source, renderItem) {
 }
 const o = (value, key) => vOn(value, key);
 const f = (source, renderItem) => vFor(source, renderItem);
+const s = (value) => stringifyStyle(value);
 const e = (target, ...sources) => extend(target, ...sources);
 const n = (value) => normalizeClass(value);
 const t = (val) => toDisplayString(val);
@@ -6461,10 +6508,10 @@ var protocols = /* @__PURE__ */ Object.freeze({
 });
 const wx$1 = initWx();
 var index = initUni(shims, protocols, wx$1);
-function initRuntimeSocket(hosts2, port, id) {
-  if (hosts2 == "" || port == "" || id == "")
+function initRuntimeSocket(hosts, port, id) {
+  if (hosts == "" || port == "" || id == "")
     return Promise.resolve(null);
-  return hosts2.split(",").reduce((promise, host2) => {
+  return hosts.split(",").reduce((promise, host2) => {
     return promise.then((socket) => {
       if (socket != null)
         return Promise.resolve(socket);
@@ -6930,9 +6977,9 @@ function initOnError() {
   };
 }
 function initRuntimeSocketService() {
-  const hosts2 = "127.0.0.1,172.16.0.155,0.0.1.1,192.168.64.1";
+  const hosts = "127.0.0.1,172.16.0.155,0.0.1.1";
   const port = "8090";
-  const id = "mp-weixin__qhbmv";
+  const id = "mp-weixin_CxSdh7";
   const lazy = typeof swan !== "undefined";
   let restoreError = lazy ? () => {
   } : initOnError();
@@ -6943,7 +6990,7 @@ function initRuntimeSocketService() {
       restoreError = initOnError();
       restoreConsole = rewriteConsole();
     }
-    return initRuntimeSocket(hosts2, port, id).then((socket) => {
+    return initRuntimeSocket(hosts, port, id).then((socket) => {
       if (!socket) {
         restoreError();
         restoreConsole();
@@ -7000,158 +7047,6 @@ function initMiniProgramGlobalFlag() {
   }
 }
 initRuntimeSocketService();
-function getTarget() {
-  if (typeof window !== "undefined") {
-    return window;
-  }
-  if (typeof globalThis !== "undefined") {
-    return globalThis;
-  }
-  if (typeof global !== "undefined") {
-    return global;
-  }
-  if (typeof my !== "undefined") {
-    return my;
-  }
-}
-class Socket {
-  constructor(host2) {
-    this.sid = "";
-    this.ackTimeout = 5e3;
-    this.closed = false;
-    this._ackTimer = 0;
-    this._onCallbacks = {};
-    this.host = host2;
-    setTimeout(() => {
-      this.connect();
-    }, 50);
-  }
-  connect() {
-    this._socket = index.connectSocket({
-      url: `ws://${this.host}/socket.io/?EIO=4&transport=websocket`,
-      multiple: true,
-      complete(res) {
-      }
-    });
-    this._socket.onOpen((res) => {
-    });
-    this._socket.onMessage(({ data }) => {
-      if (typeof my !== "undefined") {
-        data = data.data;
-      }
-      if (typeof data !== "string") {
-        return;
-      }
-      if (data[0] === "0") {
-        this._send("40");
-        const res = JSON.parse(data.slice(1));
-        this.sid = res.sid;
-      } else if (data[0] + data[1] === "40") {
-        this.sid = JSON.parse(data.slice(2)).sid;
-        this._trigger("connect");
-      } else if (data === "3") {
-        this._send("2");
-      } else if (data === "2") {
-        this._send("3");
-      } else {
-        const match = /\[.*\]/.exec(data);
-        if (!match)
-          return;
-        try {
-          const [event, args] = JSON.parse(match[0]);
-          this._trigger(event, args);
-        } catch (err) {
-          console.error("Vue DevTools onMessage: ", err);
-        }
-      }
-    });
-    this._socket.onClose((res) => {
-      this.closed = true;
-      this._trigger("disconnect", res);
-    });
-    this._socket.onError((res) => {
-      console.error(res.errMsg);
-    });
-  }
-  on(event, callback) {
-    (this._onCallbacks[event] || (this._onCallbacks[event] = [])).push(callback);
-  }
-  emit(event, data) {
-    if (this.closed) {
-      return;
-    }
-    this._heartbeat();
-    this._send(`42${JSON.stringify(typeof data !== "undefined" ? [event, data] : [event])}`);
-  }
-  disconnect() {
-    clearTimeout(this._ackTimer);
-    if (this._socket && !this.closed) {
-      this._send("41");
-      this._socket.close({});
-    }
-  }
-  _heartbeat() {
-    clearTimeout(this._ackTimer);
-    this._ackTimer = setTimeout(() => {
-      this._socket && this._socket.send({ data: "3" });
-    }, this.ackTimeout);
-  }
-  _send(data) {
-    this._socket && this._socket.send({ data });
-  }
-  _trigger(event, args) {
-    const callbacks = this._onCallbacks[event];
-    if (callbacks) {
-      callbacks.forEach((callback) => {
-        callback(args);
-      });
-    }
-  }
-}
-let socketReadyCallback;
-getTarget().__VUE_DEVTOOLS_ON_SOCKET_READY__ = (callback) => {
-  socketReadyCallback = callback;
-};
-let targetHost = "";
-const hosts = "172.16.0.155,0.0.1.1,192.168.64.1".split(",");
-setTimeout(() => {
-  index.request({
-    url: `http://${"localhost"}:${9500}`,
-    timeout: 1e3,
-    success() {
-      targetHost = "localhost";
-      initSocket();
-    },
-    fail() {
-      if (!targetHost && hosts.length) {
-        hosts.forEach((host2) => {
-          index.request({
-            url: `http://${host2}:${9500}`,
-            timeout: 1e3,
-            success() {
-              if (!targetHost) {
-                targetHost = host2;
-                initSocket();
-              }
-            }
-          });
-        });
-      }
-    }
-  });
-}, 0);
-throwConnectionError();
-function throwConnectionError() {
-  setTimeout(() => {
-    if (!targetHost) {
-      throw new Error("未能获取局域网地址，本地调试服务不可用");
-    }
-  }, (hosts.length + 1) * 1100);
-}
-function initSocket() {
-  getTarget().__VUE_DEVTOOLS_SOCKET__ = new Socket(targetHost + ":8098");
-  socketReadyCallback();
-}
 const _export_sfc = (sfc, props) => {
   const target = sfc.__vccOpts || sfc;
   for (const [key, val] of props) {
@@ -7438,13 +7333,6 @@ const HOOKS = [
 ];
 function parseApp(instance, parseAppOptions) {
   const internalInstance = instance.$;
-  {
-    Object.defineProperty(internalInstance.ctx, "$children", {
-      get() {
-        return getCurrentPages().map((page) => page.$vm);
-      }
-    });
-  }
   const appOptions = {
     globalData: instance.$options && instance.$options.globalData || {},
     $vm: instance,
@@ -7811,9 +7699,6 @@ function parseComponent(vueOptions, { parse, mocks: mocks2, isPage: isPage2, isP
     lifetimes: initLifetimes2({ mocks: mocks2, isPage: isPage2, initRelation: initRelation2, vueOptions }),
     pageLifetimes: {
       show() {
-        {
-          devtoolsComponentAdded(this.$vm.$);
-        }
         this.$vm && this.$vm.$callHook("onPageShow");
       },
       hide() {
@@ -8041,10 +7926,13 @@ exports.f = f;
 exports.index = index;
 exports.n = n;
 exports.o = o;
+exports.onMounted = onMounted;
 exports.onUnmounted = onUnmounted;
 exports.p = p;
 exports.ref = ref;
 exports.resolveComponent = resolveComponent;
+exports.s = s;
 exports.t = t;
 exports.unref = unref;
+exports.wx$1 = wx$1;
 //# sourceMappingURL=../../.sourcemap/mp-weixin/common/vendor.js.map

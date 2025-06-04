@@ -2,89 +2,150 @@
 <template>
     <PDivider :config="formColumnItem.divider" />
 
-    <el-form-item :style="{ width: '100%' }" v-show="!formColumnItem.hidden" :label="formColumnItem.label"
+    <el-form-item
+        :style="{ width: '100%' }"
+        v-show="!formColumnItem.hidden"
+        :label="formColumnItem.label"
         :prop="formColumnItem.prop">
+        <el-input
+            v-if="!formColumnItem.domType || formColumnItem.domType === 'input'"
+            v-bind="formColumnItem.componentProps || {}"
+            v-model="formModel[formColumnItem.prop]"
+            :type="formColumnItem.inputType || 'text'"
+            :show-password="formColumnItem.inputType === 'password'"
+            :placeholder="formColumnItem.placeholder"
+            autocomplete="off"
+            clearable />
 
-        <el-input v-if="!formColumnItem.domType || formColumnItem.domType === 'input'"
-            v-bind="formColumnItem.componentProps || {}" v-model="formModel[formColumnItem.prop]"
-            :type="formColumnItem.inputType || 'text'" :show-password="formColumnItem.inputType === 'password'"
-            :placeholder="formColumnItem.placeholder" autocomplete="off" clearable />
+        <el-input-number
+            v-if="formColumnItem.domType === 'number'"
+            v-bind="formColumnItem.componentProps || {}"
+            v-model="formModel[formColumnItem.prop]"
+            clearable />
 
-        <el-input-number v-if="formColumnItem.domType === 'number'" v-bind="formColumnItem.componentProps || {}"
-            v-model="formModel[formColumnItem.prop]" clearable />
-
-        <el-select v-if="formColumnItem.domType === 'select'" v-bind="formColumnItem.componentProps || {}"
-            v-model="formModel[formColumnItem.prop]" :placeholder="formColumnItem.placeholder"
-            :remote-method="getDomData[formColumnItem.label + formColumnItem.prop]"
+        <el-select
+            v-if="formColumnItem.domType === 'select'"
+            v-bind="formColumnItem.componentProps || {}"
+            v-model="formModel[formColumnItem.prop]"
+            :placeholder="formColumnItem.placeholder"
+            :remote-method="
+                getDomData[formColumnItem.label + formColumnItem.prop]
+            "
             :remote="!!getDomData[formColumnItem.label + formColumnItem.prop]"
-            :loading="domDataSetLoading[formColumnItem.label + formColumnItem.prop]" remote-show-suffix filterable
+            :loading="
+                domDataSetLoading[formColumnItem.label + formColumnItem.prop]
+            "
+            remote-show-suffix
+            filterable
             clearable>
-            <el-option v-for="domDataItem in domDataSet[formColumnItem.prop]" :key="domDataItem.value"
-                :label="domDataItem.label" :value="domDataItem.value" />
+            <el-option
+                v-for="domDataItem in domDataSet[formColumnItem.prop]"
+                :key="domDataItem.value"
+                :label="domDataItem.label"
+                :value="domDataItem.value" />
         </el-select>
 
-        <el-radio-group v-if="formColumnItem.domType === 'radio'" v-bind="formColumnItem.componentProps || {}"
+        <el-radio-group
+            v-if="formColumnItem.domType === 'radio'"
+            v-bind="formColumnItem.componentProps || {}"
             v-model="formModel[formColumnItem.prop]">
-            <el-radio v-for="domDataItem in domDataSet[formColumnItem.prop]" :key="domDataItem.value"
-                :label="domDataItem.label" :value="domDataItem.value">
+            <el-radio
+                v-for="domDataItem in domDataSet[formColumnItem.prop]"
+                :key="domDataItem.value"
+                :label="domDataItem.label"
+                :value="domDataItem.value">
                 {{ domDataItem.label }}
             </el-radio>
         </el-radio-group>
 
-        <el-date-picker v-if="
-            ['datePicker', 'datePickerRange', 'dateTimePickerRange', 'dateTimePicker'].includes(formColumnItem.domType)
-        " v-bind="formColumnItem.componentProps || {}" v-model="formModel[formColumnItem.prop]" :type="formColumnItem.domType === 'datePicker'
-            ? 'date'
-            : formColumnItem.domType === 'datePickerRange'
-                ? 'daterange'
-                : formColumnItem.domType === 'dateTimePicker'
+        <el-date-picker
+            v-if="
+                [
+                    'datePicker',
+                    'datePickerRange',
+                    'dateTimePickerRange',
+                    'dateTimePicker'
+                ].includes(formColumnItem.domType)
+            "
+            v-bind="formColumnItem.componentProps || {}"
+            v-model="formModel[formColumnItem.prop]"
+            :type="
+                formColumnItem.domType === 'datePicker'
+                    ? 'date'
+                    : formColumnItem.domType === 'datePickerRange'
+                    ? 'daterange'
+                    : formColumnItem.domType === 'dateTimePicker'
                     ? 'datetime'
-                    : 'datetimerange'" range-separator="-"
-            :value-format="formColumnItem.domType.startsWith('dateTime') ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'"
+                    : 'datetimerange'
+            "
+            range-separator="-"
+            :value-format="
+                formColumnItem.domType.startsWith('dateTime')
+                    ? 'YYYY-MM-DD HH:mm:ss'
+                    : 'YYYY-MM-DD'
+            "
             :placeholder="formColumnItem.placeholder"
-            :shortcuts="['datePickerRange', 'dateTimePickerRange'].includes(formColumnItem.domType) ? shortcuts : undefined"
+            :shortcuts="
+                ['datePickerRange', 'dateTimePickerRange'].includes(
+                    formColumnItem.domType
+                )
+                    ? shortcuts
+                    : undefined
+            "
             clearable>
         </el-date-picker>
 
-        <div v-for="(imageItem, imageIndex) in (
-            (formColumnItem.domType === 'uploadImage'
-                ? [formModel[formColumnItem.prop]]
-                : formColumnItem.domType === 'uploadImageList'
+        <div
+            v-for="(imageItem, imageIndex) in (
+                (formColumnItem.domType === 'uploadImage'
+                    ? [formModel[formColumnItem.prop]]
+                    : formColumnItem.domType === 'uploadImageList'
                     ? formModel[formColumnItem.prop]
                     : []) || []
-        ).filter((formImageItem) => formImageItem)" :key="'image_' + imageIndex" class="upload-image-list">
+            ).filter((formImageItem) => formImageItem)"
+            :key="'image_' + imageIndex"
+            class="upload-image-list">
             <img :src="imageItem" class="image" />
 
             <span class="upload-operation">
-                <span @click.stop @click="
-                    handlePictureCardPreview(
-                        formColumnItem.prop,
-                        imageIndex,
-                        formColumnItem.domType
-                    )
-                    " :style="{ cursor: 'pointer' }">
+                <span
+                    @click.stop
+                    @click="
+                        handlePictureCardPreview(
+                            formColumnItem.prop,
+                            imageIndex,
+                            formColumnItem.domType
+                        )
+                    "
+                    :style="{ cursor: 'pointer' }">
                     <el-icon>
                         <ZoomIn />
                     </el-icon>
                 </span>
-                <span @click.stop @click="
-                    handleDownload(
-                        formColumnItem.prop,
-                        imageIndex,
-                        formColumnItem.domType
-                    )
-                    " :style="{ cursor: 'pointer' }">
+                <span
+                    @click.stop
+                    @click="
+                        handleDownload(
+                            formColumnItem.prop,
+                            imageIndex,
+                            formColumnItem.domType
+                        )
+                    "
+                    :style="{ cursor: 'pointer' }">
                     <el-icon>
                         <Download />
                     </el-icon>
                 </span>
-                <span @click.stop @click="
-                    handleRemove(
-                        formColumnItem.prop,
-                        imageIndex,
-                        formColumnItem.domType
-                    )
-                    " :style="{ cursor: 'pointer' }">
+                <span
+                    @click.stop
+                    @click="
+                        handleRemove(
+                            formColumnItem.prop,
+                            imageIndex,
+                            formColumnItem.domType
+                        )
+                    "
+                    :style="{ cursor: 'pointer' }">
                     <el-icon>
                         <Delete />
                     </el-icon>
@@ -92,30 +153,60 @@
             </span>
         </div>
 
-        <el-upload v-if="
-            (formColumnItem.domType === 'uploadImage' &&
-                !formModel[formColumnItem.prop]) ||
-            formColumnItem.domType === 'uploadImageList'
-        " v-bind="formColumnItem.componentProps || {}" v-loading="uploadImageLoading[formColumnItem.prop]"
-            class="image-uploader" :show-file-list="false" :http-request="(options) => upload(options, formColumnItem.prop, formColumnItem.domType, formColumnItem.uploadPath)
-                " accept="image/png,image/jpeg,image/jpg">
+        <el-upload
+            v-if="
+                (formColumnItem.domType === 'uploadImage' &&
+                    !formModel[formColumnItem.prop]) ||
+                formColumnItem.domType === 'uploadImageList'
+            "
+            v-bind="formColumnItem.componentProps || {}"
+            v-loading="uploadImageLoading[formColumnItem.prop]"
+            class="image-uploader"
+            :show-file-list="false"
+            :http-request="
+                (options) =>
+                    upload(
+                        options,
+                        formColumnItem.prop,
+                        formColumnItem.domType,
+                        formColumnItem.uploadPath
+                    )
+            "
+            accept="image/png,image/jpeg,image/jpg">
             <el-icon class="image-uploader-icon">
                 <Plus />
             </el-icon>
         </el-upload>
 
-        <el-upload v-if="['uploadFile', 'uploadFileList'].includes(formColumnItem.domType)"
-            v-loading="uploadImageLoading[formColumnItem.prop]" v-bind="formColumnItem.componentProps || {}"
-            v-model:file-list="uploadFile[formColumnItem.prop]" :show-file-list="false"
+        <el-upload
+            v-if="
+                ['uploadFile', 'uploadFileList'].includes(
+                    formColumnItem.domType
+                )
+            "
+            v-loading="uploadImageLoading[formColumnItem.prop]"
+            v-bind="formColumnItem.componentProps || {}"
+            v-model:file-list="uploadFile[formColumnItem.prop]"
+            :show-file-list="false"
             :limit="formColumnItem.domType === 'uploadFileList' ? 0 : 1"
-            :drag="formColumnItem.domType === 'uploadFileList'" :multiple="formColumnItem.domType === 'uploadFileList'"
-            :accept="formColumnItem.uploadAcceptMap
-                ? formColumnItem.uploadAcceptMap.map[
-                formModel[formColumnItem.uploadAcceptMap.key]
-                ]
-                : '*'
-                "
-            :http-request="(options) => upload(options, formColumnItem.prop, formColumnItem.domType, formColumnItem.uploadPath)"
+            :drag="formColumnItem.domType === 'uploadFileList'"
+            :multiple="formColumnItem.domType === 'uploadFileList'"
+            :accept="
+                formColumnItem.uploadAcceptMap
+                    ? formColumnItem.uploadAcceptMap.map[
+                          formModel[formColumnItem.uploadAcceptMap.key]
+                      ]
+                    : '*'
+            "
+            :http-request="
+                (options) =>
+                    upload(
+                        options,
+                        formColumnItem.prop,
+                        formColumnItem.domType,
+                        formColumnItem.uploadPath
+                    )
+            "
             class="w-full">
             <div v-if="formColumnItem.domType === 'uploadFileList'">
                 <div class="el-icon--upload flex justify-center">
@@ -130,32 +221,67 @@
             </template>
             <template #tip>
                 <template v-if="uploadFile[formColumnItem.prop]?.length">
-                    <div v-for="file in uploadFile[formColumnItem.prop]" :key="file.uid"
+                    <div
+                        v-for="file in uploadFile[formColumnItem.prop]"
+                        :key="file.uid"
                         class="flex justify-center align-center items-center mt-1">
-                        <el-progress :text-inside="true" :stroke-width="20"
-                            :percentage="uploadProgress[formColumnItem.prop + '_' + file.uid]"
-                            :status="uploadProgress[formColumnItem.prop + '_' + file.uid] === 100 ? 'success' : ''"
+                        <el-progress
+                            :text-inside="true"
+                            :stroke-width="20"
+                            :percentage="
+                                uploadProgress[
+                                    formColumnItem.prop + '_' + file.uid
+                                ]
+                            "
+                            :status="
+                                uploadProgress[
+                                    formColumnItem.prop + '_' + file.uid
+                                ] === 100
+                                    ? 'success'
+                                    : ''
+                            "
                             class="upload-progress w-full mr-1">
                             <span class="flex items-center">
-                                <strong v-if="uploadProgress[formColumnItem.prop + '_' + file.uid] < 100">
-                                    ({{ uploadProgress[formColumnItem.prop + '_' + file.uid] }}%)
+                                <strong
+                                    v-if="
+                                        uploadProgress[
+                                            formColumnItem.prop + '_' + file.uid
+                                        ] < 100
+                                    ">
+                                    ({{
+                                        uploadProgress[
+                                            formColumnItem.prop + '_' + file.uid
+                                        ]
+                                    }}%)
                                 </strong>
                                 <span class="ml-1">{{ file.name }}</span>
                             </span>
                         </el-progress>
-                        <DeleteThree v-if="uploadProgress[formColumnItem.prop + '_' + file.uid] === 100"
-                            class="cursor-pointer" style="color: var(--p-color-danger)"
-                            @click="handleFileRemove(formColumnItem.prop, file)" />
+                        <DeleteThree
+                            v-if="
+                                uploadProgress[
+                                    formColumnItem.prop + '_' + file.uid
+                                ] === 100
+                            "
+                            class="cursor-pointer"
+                            style="color: var(--p-color-danger)"
+                            @click="
+                                handleFileRemove(formColumnItem.prop, file)
+                            " />
                     </div>
                 </template>
             </template>
         </el-upload>
 
-        <PEditor v-model="formModel[formColumnItem.prop]" v-if="formColumnItem.domType === 'editor'"
+        <PEditor
+            v-model="formModel[formColumnItem.prop]"
+            v-if="formColumnItem.domType === 'editor'"
             :upload-path="formColumnItem.uploadPath" />
     </el-form-item>
 
-    <PImageView :image-url="dialogImageUrl" v-model:image-visible="dialogVisible"></PImageView>
+    <PImageView
+        :image-url="dialogImageUrl"
+        v-model:image-visible="dialogVisible"></PImageView>
 </template>
 
 <script lang="ts" setup>
@@ -164,12 +290,18 @@ import {
     FormColumnsInterface,
     ProvideFormInterface
 } from '@/common/provideForm';
-import { Plus, Download, Delete, ZoomIn, UploadOne, DeleteThree } from '@icon-park/vue-next';
+import {
+    Plus,
+    Download,
+    Delete,
+    ZoomIn,
+    UploadOne,
+    DeleteThree
+} from '@icon-park/vue-next';
 
 import cos from '@/common/cos.ts';
 import { common } from '@/api';
 import { getApplicationInfo } from '@/common/storage';
-
 
 /**
  * 组件属性定义
@@ -177,8 +309,8 @@ import { getApplicationInfo } from '@/common/storage';
  * @property {Object} formModel - 表单数据模型,用于双向绑定表单数据
  */
 const props = defineProps<{
-    formColumnItem: FormColumnsInterface,
-    formModel: Object,
+    formColumnItem: FormColumnsInterface;
+    formModel: Object;
 }>();
 
 const dialogImageUrl = ref('');
@@ -194,18 +326,26 @@ const provideForm: ProvideFormInterface = inject('provideForm');
 const { domDataSet, getDomData, domDataSetLoading } = provideForm;
 
 // 监听 formModel 变化，当表单数据被清空时，清空上传相关状态
-watch(() => props.formModel[props.formColumnItem.prop], (newValue) => {
-    if (!newValue && ['uploadFile', 'uploadFileList'].includes(props.formColumnItem.domType)) {
-        // 清空上传文件列表
-        uploadFile.value[props.formColumnItem.prop] = [];
-        // 清空对应的上传进度
-        Object.keys(uploadProgress.value).forEach(key => {
-            if (key.startsWith(props.formColumnItem.prop + '_')) {
-                delete uploadProgress.value[key];
-            }
-        });
+watch(
+    () => props.formModel[props.formColumnItem.prop],
+    (newValue) => {
+        if (
+            !newValue &&
+            ['uploadFile', 'uploadFileList'].includes(
+                props.formColumnItem.domType
+            )
+        ) {
+            // 清空上传文件列表
+            uploadFile.value[props.formColumnItem.prop] = [];
+            // 清空对应的上传进度
+            Object.keys(uploadProgress.value).forEach((key) => {
+                if (key.startsWith(props.formColumnItem.prop + '_')) {
+                    delete uploadProgress.value[key];
+                }
+            });
+        }
     }
-});
+);
 
 if (props.formColumnItem.domType === 'uploadFile') {
     watch(
@@ -241,16 +381,21 @@ const upload = async (options, prop, domType, path) => {
     let fileUrls = [];
     if (applicationInfo.uploadType === 'system') {
         // 上传到server
-        fileUrls = await common.uploadToServer(options.file, (progress: number) => {
-            uploadProgress.value[prop + '_' + options.file.uid] = progress;
-        });
+        fileUrls = await common.uploadToServer(
+            options.file,
+            (progress: number) => {
+                uploadProgress.value[prop + '_' + options.file.uid] = progress;
+            }
+        );
     } else {
         // 上传到云服务
         // 获取上传url
-        const uploadUrlInfo = await common.getUploadUrls([{
-            extension: options.file.type.split('/')[1],
-            path: path
-        }]);
+        const uploadUrlInfo = await common.getUploadUrls([
+            {
+                extension: options.file.type.split('/')[1],
+                path: path
+            }
+        ]);
 
         // 上传失败
         if (!uploadUrlInfo || uploadUrlInfo.urls.length === 0) {
@@ -258,7 +403,7 @@ const upload = async (options, prop, domType, path) => {
             // 删除上传文件列表中的文件
             if (uploadFile.value[prop]) {
                 uploadFile.value[prop] = uploadFile.value[prop].filter(
-                    file => file.uid !== options.file.uid
+                    (file) => file.uid !== options.file.uid
                 );
             }
             return;
@@ -267,9 +412,16 @@ const upload = async (options, prop, domType, path) => {
         for (const uploadUrl of uploadUrlInfo.urls) {
             switch (applicationInfo.uploadType) {
                 case 'tencent_cloud_cos':
-                    await cos.upload(options.file, uploadUrl.uploadUrl, uploadUrlInfo.headers, (progress: number) => {
-                        uploadProgress.value[prop + '_' + options.file.uid] = progress;
-                    });
+                    await cos.upload(
+                        options.file,
+                        uploadUrl.uploadUrl,
+                        uploadUrlInfo.headers,
+                        (progress: number) => {
+                            uploadProgress.value[
+                                prop + '_' + options.file.uid
+                            ] = progress;
+                        }
+                    );
 
                     fileUrls.push(uploadUrl.url);
                     break;
@@ -289,7 +441,7 @@ const upload = async (options, prop, domType, path) => {
     }
 
     uploadImageLoading.value[prop] = false;
-}
+};
 
 const handlePictureCardPreview = (prop, index, domType) => {
     if (domType === 'uploadImageList') {
@@ -332,7 +484,7 @@ const handleDownload = (prop, index, domType) => {
 const handleFileRemove = (prop, file) => {
     if (uploadFile.value[prop]) {
         uploadFile.value[prop] = uploadFile.value[prop].filter(
-            item => item.uid !== file.uid
+            (item) => item.uid !== file.uid
         );
         // 同时清除对应的进度记录
         delete uploadProgress.value[prop + '_' + file.uid];
@@ -343,58 +495,58 @@ const shortcuts = [
     {
         text: '今天',
         value: () => {
-            const end = new Date()
-            const start = new Date()
-            return [start, end]
+            const end = new Date();
+            const start = new Date();
+            return [start, end];
         }
     },
     {
         text: '最近24小时',
         value: () => {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24)
-            return [start, end]
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24);
+            return [start, end];
         }
     },
     {
         text: '昨天',
         value: () => {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24)
-            end.setTime(end.getTime() - 3600 * 1000 * 24)
-            return [start, end]
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24);
+            end.setTime(end.getTime() - 3600 * 1000 * 24);
+            return [start, end];
         }
     },
     {
         text: '最近一周',
         value: () => {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            return [start, end]
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+            return [start, end];
         }
     },
     {
         text: '最近一月',
         value: () => {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            return [start, end]
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+            return [start, end];
         }
     },
     {
         text: '最近三月',
         value: () => {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            return [start, end]
+            const end = new Date();
+            const start = new Date();
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+            return [start, end];
         }
     }
-]
+];
 </script>
 
 <style lang="scss" scoped>

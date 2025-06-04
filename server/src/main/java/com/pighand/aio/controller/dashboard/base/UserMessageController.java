@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 @Authorization
 @RequiredArgsConstructor
-@RestController(path = "message", docName = "用户 - 消息")
+@RestController(path = "dashboard/message", docName = "用户 - 消息")
 public class UserMessageController extends BaseController<UserMessageService> {
 
     @Post(docSummary = "发送消息", fieldGroup = "userMessageCreate")

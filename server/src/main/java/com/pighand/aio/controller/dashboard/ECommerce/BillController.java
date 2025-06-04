@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wangshuli
  * @createDate 2024-04-18 14:35:34
  */
-@RestController(path = "bill", docName = "商城 - 账单")
+@RestController(path = "dashboard/bill", docName = "商城 - 账单")
 public class BillController extends BaseController<BillService> {
 
     /**

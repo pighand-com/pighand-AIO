@@ -1,0 +1,1 @@
+{"version":3,"file":"mine.js","sources":["pages/base/pages/mine.vue?type=page"],"sourcesContent":["import MiniProgramPage from '/Users/wangshuli/workspace/mine/pighand/pighand-AIO/client-applet/pages/base/pages/mine.vue'\nwx.createPage(MiniProgramPage)"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AACA,GAAG,WAAW,eAAe;"}

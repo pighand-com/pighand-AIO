@@ -3,19 +3,19 @@ Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
 const common_vendor = require("./common/vendor.js");
 if (!Math) {
   "./pages/base/pages/index.js";
+  "./pages/base/pages/mine.js";
 }
 const _sfc_main = {
   onLaunch: function() {
+    common_vendor.index.hideTabBar();
   },
   onShow: function() {
-    common_vendor.index.__f__("log", "at App.vue:10", "App Show");
+    common_vendor.index.__f__("log", "at App.vue:11", "App Show");
   },
   onHide: function() {
-    common_vendor.index.__f__("log", "at App.vue:13", "App Hide");
+    common_vendor.index.__f__("log", "at App.vue:14", "App Hide");
   }
 };
-require("./vue-devtools/hook.js");
-require("./vue-devtools/backend.js");
 function createApp() {
   const app = common_vendor.createSSRApp(_sfc_main);
   return {

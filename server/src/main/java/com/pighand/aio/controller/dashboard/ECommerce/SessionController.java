@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @createDate 2023-12-05 16:13:27
  */
 @RequiredArgsConstructor
-@RestController(path = "session", docName = "电商 - 场次")
+@RestController(path = "dashboard/session", docName = "电商 - 场次")
 public class SessionController extends BaseController<SessionService> {
 
     private final SessionUserGroupService sessionUserGroupService;

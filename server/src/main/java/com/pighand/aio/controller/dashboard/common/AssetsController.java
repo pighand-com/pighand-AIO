@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 @Authorization
 @ApplicationId
-@RestController(path = "assets", docName = "公共 - 素材")
+@RestController(path = "dashboard/assets", docName = "公共 - 素材")
 public class AssetsController extends BaseController<AssetsService> {
 
     /**

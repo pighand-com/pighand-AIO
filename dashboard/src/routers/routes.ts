@@ -9,7 +9,10 @@ import {
     UserBusiness,
     Shop,
     Components,
-    Material
+    Material,
+    MovieBoard,
+    Movie,
+    TicketOne
 } from '@icon-park/vue-next';
 
 const routes = [
@@ -38,6 +41,36 @@ const routes = [
             pageType: constant.page_type_single
         },
         component: () => import('@/pages/Article.vue')
+    },
+    {
+        path: '/theme',
+        name: 'theme',
+        title: '主题运营',
+        meta: {
+            requiresAuth: true,
+            icon: shallowRef(MovieBoard),
+            pageType: constant.page_type_single
+        },
+        children: [
+            {
+                path: 'theme',
+                name: 'theme',
+                title: '主题',
+                meta: {
+                    icon: shallowRef(Movie)
+                },
+                component: () => import('@/pages/Theme.vue')
+            },
+            {
+                path: 'ticket',
+                name: 'ticket',
+                title: '票务',
+                meta: {
+                    icon: shallowRef(TicketOne)
+                },
+                component: () => import('@/pages/Ticket.vue')
+            }
+        ]
     },
     {
         path: '/marketing',

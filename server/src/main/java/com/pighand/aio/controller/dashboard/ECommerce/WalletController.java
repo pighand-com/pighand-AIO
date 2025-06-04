@@ -24,7 +24,7 @@ import java.util.List;
  * @createDate 2023-12-04 16:37:26
  */
 @RequiredArgsConstructor
-@RestController(path = "wallet", docName = "电商 - 钱包")
+@RestController(path = "dashboard/wallet", docName = "电商 - 钱包")
 public class WalletController extends BaseController<WalletService> {
 
     /**

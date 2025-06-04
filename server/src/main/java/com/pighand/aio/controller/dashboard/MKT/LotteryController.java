@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wangshuli
  * @createDate 2024-11-28 17:21:35
  */
-@RestController(path = "lottery", docName = "营销 - 抽奖配置")
+@RestController(path = "dashboard/lottery", docName = "营销 - 抽奖配置")
 public class LotteryController extends BaseController<LotteryService> {
 
     /**

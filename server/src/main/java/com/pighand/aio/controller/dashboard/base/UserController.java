@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @createDate 2023-03-25 18:45:58
  */
 @RequiredArgsConstructor
-@RestController(path = "user", docName = "用户关键信息表，主要保存登录所用信息")
+@RestController(path = "dashboard/user", docName = "用户关键信息表，主要保存登录所用信息")
 public class UserController extends BaseController<UserService> {
 
     private final AppletImpl wechatAppletService;

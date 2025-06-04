@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "custom-navigation-bar": "../../../components/custom-navigation-bar/custom-navigation-bar",
+    "user-check": "../../../components/user/check",
+    "tab-bar": "../../../components/tab-bar/tab-bar"
+  }
+}

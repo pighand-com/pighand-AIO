@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @createDate 2023-03-25 18:45:58
  */
 @RequiredArgsConstructor
-@RestController(path = "project", docName = "项目")
+@RestController(path = "dashboard/project", docName = "项目")
 public class ApplicationController extends BaseController<ApplicationService> {
 
     /**

@@ -1,1 +1,1 @@
-<tui-tabbar wx:if="{{b}}" class="data-v-ffb3232c" bindclick="{{a}}" u-i="ffb3232c-0" bind:__l="__l" u-p="{{b}}"></tui-tabbar>
+<tui-tabbar wx:if="{{b}}" bindclick="{{a}}" u-i="e6607b20-0" bind:__l="__l" u-p="{{b}}"></tui-tabbar>

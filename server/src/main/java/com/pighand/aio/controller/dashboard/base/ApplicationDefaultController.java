@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @createDate 2023-03-25 18:45:58
  */
 @RequiredArgsConstructor
-@RestController(path = "project/default", docName = "项目默认设置")
+@RestController(path = "dashboard/project/default", docName = "项目默认设置")
 public class ApplicationDefaultController extends BaseController<ApplicationDefaultService> {
 
     /**

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @createDate 2023-03-25 18:45:58
  */
 @RequiredArgsConstructor
-@RestController(path = "platform/key", docName = "三方平台key")
+@RestController(path = "dashboard/platform/key", docName = "三方平台key")
 public class ApplicationPlatformKeyController extends BaseController<ApplicationPlatformKeyService> {
 
     /**

@@ -518,8 +518,6 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
         // equal
         queryWrapper.and(ORDER.CREATOR_ID.eq(orderVO.getCreatorId(), VerifyUtils::isNotEmpty));
 
-        queryWrapper.and(ORDER.TRADE_STATUS.ne(10));
-
         queryWrapper.orderBy(ORDER.ID.desc());
 
         PageOrList<OrderVO> result = super.mapper.query(orderVO, queryWrapper);

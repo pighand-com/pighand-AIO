@@ -1,10 +1,8 @@
 package com.pighand.aio.service.ECommerce.impl;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.ECommerce.TicketDomain;
 import com.pighand.aio.domain.IoT.DeviceDomain;
-import com.pighand.aio.domain.base.ApplicationDefaultDomain;
 import com.pighand.aio.mapper.ECommerce.TicketMapper;
 import com.pighand.aio.service.ECommerce.TicketService;
 import com.pighand.aio.service.ECommerce.TicketValidityService;
@@ -27,7 +25,6 @@ import java.util.stream.Collectors;
 import static com.pighand.aio.domain.ECommerce.table.TicketTableDef.TICKET;
 import static com.pighand.aio.domain.ECommerce.table.TicketValidityTableDef.TICKET_VALIDITY;
 import static com.pighand.aio.domain.IoT.table.DeviceTableDef.DEVICE;
-import static com.pighand.aio.domain.base.table.ApplicationDefaultTableDef.APPLICATION_DEFAULT;
 
 /**
  * 电商 - 票务
@@ -77,14 +74,6 @@ public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomai
      */
     @Override
     public PageOrList<TicketVO> query(TicketVO ticketVO) {
-        ApplicationDefaultDomain projectDefaultDomain =
-            projectDefaultService.queryChain().where(APPLICATION_DEFAULT.ID.eq(Context.applicationId())).one();
-
-        if (ticketVO.getSystem().equals("ios") && (projectDefaultDomain == null
-            || projectDefaultDomain.getDefaultNickname().equals("1"))) {
-            return null;
-        }
-
         QueryWrapper queryWrapper = QueryWrapper.create()
             .select(TICKET.ID, TICKET.NAME, TICKET.DETAILS, TICKET.ORIGINAL_PRICE, TICKET.CURRENT_PRICE,
                 TICKET.VALIDATION_COUNT)

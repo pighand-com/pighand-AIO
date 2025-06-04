@@ -3,7 +3,6 @@ package com.pighand.aio.domain.ECommerce;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
@@ -42,7 +41,15 @@ public class TicketDomain extends GoodsBaseInfo implements Serializable {
     @Schema(description = "门店id")
     private Long storeId;
 
-    @Column("name")
+    @Schema(description = "主题id")
+    private Long themeId;
+
+    private String name;
+
+    @Length(max = 65535)
+    @Schema(description = "描述")
+    private String details;
+
     @Length(max = 32)
     @Schema(description = "原价（分）")
     private Long originalPrice;
@@ -52,12 +59,6 @@ public class TicketDomain extends GoodsBaseInfo implements Serializable {
 
     @Schema(description = "库存")
     private Integer stock;
-
-    private String name;
-
-    @Length(max = 65535)
-    @Schema(description = "描述")
-    private String details;
 
     @Schema(description = "核销次数")
     private Integer validationCount;

@@ -1,6 +1,5 @@
 package com.pighand.aio.controller.dashboard.ECommerce;
 
-import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.common.interfaces.Authorization;
 import com.pighand.aio.service.ECommerce.OrderService;
 import com.pighand.aio.service.ECommerce.OrderTradeService;
@@ -25,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @createDate 2024-04-16 11:44:49
  */
 @Authorization
-@RestController(path = "order", docName = "电商 - 订单")
+@RestController(path = "dashboard/order", docName = "电商 - 订单")
 @AllArgsConstructor
 public class OrderController extends BaseController<OrderService> {
 
@@ -51,9 +50,8 @@ public class OrderController extends BaseController<OrderService> {
         return new Result(payId);
     }
 
-    @Get(path = "mine", docSummary = "我的订单")
+    @Get(docSummary = "订单列表")
     public Result<OrderVO> queryMine(OrderVO orderVO) {
-        orderVO.setCreatorId(Context.loginUser().getId());
         PageOrList<OrderVO> result = orderService.query(orderVO);
 
         return new Result(result);

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @createDate 2023-12-04 16:37:26
  */
 @RequiredArgsConstructor
-@RestController(path = "user/bind", docName = "用户 - 绑定信息")
+@RestController(path = "dashboard/user/bind", docName = "用户 - 绑定信息")
 public class UserBindController extends BaseController<UserBindService> {
 
     /**

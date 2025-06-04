@@ -1,5 +1,4 @@
 {
-  "navigationBarTitleText": "uni-app",
   "usingComponents": {
     "user-check": "../../../components/user/check",
     "tab-bar": "../../../components/tab-bar/tab-bar"

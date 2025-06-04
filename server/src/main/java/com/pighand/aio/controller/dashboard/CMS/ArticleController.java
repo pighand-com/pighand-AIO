@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wangshuli
  * @createDate 2024-04-22 15:11:06
  */
-@RestController(path = "article", docName = "CMS - 文章")
+@RestController(path = "dashboard/article", docName = "CMS - 文章")
 public class ArticleController extends BaseController<ArticleService> {
 
     /**

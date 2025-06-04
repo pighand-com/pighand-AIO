@@ -1,5 +1,7 @@
 <template>
-	<view class="navigation-bar" :style="'position: relative; height: ' + navigationBarHeight + 'px'">
+	<view class="navigation-bar" :style="'position: relative; height: ' + (navigationBarHeight + statusBarHeight) + 'px'">
+		<!-- 状态栏空位 -->
+		<view class="status-bar" :style="'height: ' + statusBarHeight + 'px'"></view>
 		
 		<view class="title"
 			:style="'height: ' + navigationBarHeight + 'px; line-height: ' + navigationBarHeight + 'px;'"
@@ -7,8 +9,8 @@
 			{{ title }}
 		</view>
 		
-		<view class="back" @click="onBack">
-			<image src="../static/images/back.png" mode="widthFix"></image>
+		<view class="back" @click="onBack" v-if="back">
+			<image src="./static/back.png" mode="widthFix"></image>
 		</view>
 	</view>
 </template>
@@ -16,29 +18,27 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
-// 定义 props
 const props = defineProps({
 	title: {
 		type: String,
 		default: ''
 	},
-	pages: {
-		type: Array,
-		default: () => []
+	back: {
+		type: Boolean,
+		default: false
 	}
 })
 
-// 响应式数据
 const navigationBarHeight = ref(0)
+const statusBarHeight = ref(0)
 
-// 生命周期钩子
 onMounted(() => {
-	const statusBarHeight = uni.getSystemInfoSync().statusBarHeight
+	const systemInfo = uni.getSystemInfoSync()
+	statusBarHeight.value = systemInfo.statusBarHeight
 	const MenuButton = wx.getMenuButtonBoundingClientRect()
-	navigationBarHeight.value = MenuButton.height + (MenuButton.top - statusBarHeight) * 2
+	navigationBarHeight.value = MenuButton.height + (MenuButton.top - statusBarHeight.value) * 2
 })
 
-// 方法
 const onBack = () => {
 	let pages = getCurrentPages()
 	
@@ -58,13 +58,18 @@ const onBack = () => {
 	.navigation-bar {
 		width: 100%;
 		
+		.status-bar {
+			width: 100%;
+			background-color: transparent;
+		}
+		
 		.title {
 			color: #242424ff;
 			font-size: 32rpx;
 			font-weight: 600;
 			position: absolute;
 			width: 100%;
-			top: 0;
+			top: var(--status-bar-height, 0px);
 			text-align: center;
 			pointer-events: none;
 		}
@@ -75,6 +80,8 @@ const onBack = () => {
 			display: flex;
 			align-items: center;
 			justify-content: center;
+			position: absolute;
+			top: var(--status-bar-height, 0px);
 			
 			image {
 				width: 40rpx;

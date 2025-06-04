@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 @Authorization
 @ApplicationId
-@RestController(path = "store", docName = "门店")
+@RestController(path = "dashboard/store", docName = "门店")
 public class StoreController extends BaseController<StoreService> {
 
     /**

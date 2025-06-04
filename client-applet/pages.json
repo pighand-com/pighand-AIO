@@ -1,26 +1,46 @@
 {
 	"pages": [
 		{
-			"path": "pages/base/pages/index",
-			"style": {
-				"navigationBarTitleText": "uni-app"
-			}
+			"path": "pages/base/pages/index"
+		},
+		{
+			"path": "pages/base/pages/mine"
 		}
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
+		"navigationStyle":"custom",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#777",
+		"selectedColor": "#AC9157",
+		"backgroundColor": "#f8f8f8",
+		"list": [
+			{
+				"pagePath": "pages/base/pages/index",
+				"text": "index",
+				"iconPath": "static/logo.png",
+				"selectedIconPath": "static/logo.png"
+			},
+			{
+				"pagePath": "pages/base/pages/mine",
+				"text": "mine",
+				"iconPath": "static/logo.png",
+				"selectedIconPath": "static/logo.png"
+			}
+		]
 	},
 	"uniIdRouter": {},
 	"easycom": {
 		"autoscan": true,
 		"custom": {
 			"tui-(.*)": "@/components/thorui/tui-$1/tui-$1.vue",
-			"user-(.*)": "@/components/user/$1.vue",
+			"user-(.*)": "@/components/user/$1.vue", 
 			"tab-bar": "@/components/tab-bar/tab-bar",
-			"navigation": "@/components/navigation/navigation"
+			"custom-navigation-bar": "@/components/custom-navigation-bar/custom-navigation-bar"
 		}
 	}
 }

@@ -3,6 +3,7 @@
 	
 	export default {
 		onLaunch: function() {
+			uni.hideTabBar();
 			// 默认登录
 			// login();
 		},

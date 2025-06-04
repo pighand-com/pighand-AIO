@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit;
  * @author wangshuli
  */
 @EnableAsync
-@SpringBootApplication
+@SpringBootApplication(nameGenerator = UniqueAnnotationBeanNameGenerator.class)
 @MapperScan("com.pighand.aio.mapper")
 @EnableConfigurationProperties({PighandFrameworkConfig.class})
 @Import({HttpExchangeRegister.class, JacksonSerializer.class})

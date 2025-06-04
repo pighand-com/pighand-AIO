@@ -1,9 +1,9 @@
 <template>
     <view class="login-wrapper">
-        <user-login v-if="!isLogin">1<slot/></user-login>
-        <user-phone v-else-if="!isPhone">2-{{ userInfo.phone }}<slot/></user-phone>
-        <user-avatar v-else-if="!isAvatar">3-{{ userInfo.avatar }}<slot/></user-avatar>
-		<view v-else>4<slot/></view>
+        <user-login v-if="!isLogin"><slot/></user-login>
+        <user-phone v-else-if="!isPhone">{{ userInfo.phone }}<slot/></user-phone>
+        <user-avatar v-else-if="!isAvatar">{{ userInfo.avatar }}<slot/></user-avatar>
+		<view v-else><slot/></view>
     </view>
 </template>
 

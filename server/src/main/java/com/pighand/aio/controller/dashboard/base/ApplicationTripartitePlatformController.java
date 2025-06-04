@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @createDate 2023-03-25 18:45:58
  */
 @RequiredArgsConstructor
-@RestController(path = "project/tripartite_platform", docName = "项目三方平台配置")
+@RestController(path = "dashboard/project/tripartite_platform", docName = "项目三方平台配置")
 public class ApplicationTripartitePlatformController extends BaseController<ApplicationTripartitePlatformService> {
 
     /**

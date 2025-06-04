@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wangshuli
  * @createDate 2025-05-24 14:35:05
  */
-@RestController(path = "distribution/goods/rule", docName = "分销 - 分销商品规则")
+@RestController(path = "dashboard/distribution/goods/rule", docName = "分销 - 分销商品规则")
 public class DistributionGoodsRuleController extends BaseController<DistributionGoodsRuleService> {
 
     /**

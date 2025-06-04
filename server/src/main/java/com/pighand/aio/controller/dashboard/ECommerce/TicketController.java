@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 //@Authorization
 @RequiredArgsConstructor
-@RestController(path = "ticket", docName = "电商 - 票务")
+@RestController(path = "dashboard/ticket", docName = "电商 - 票务")
 public class TicketController extends BaseController<TicketService> {
 
     private final TicketUserService ticketUserService;

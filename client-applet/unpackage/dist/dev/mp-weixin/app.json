@@ -1,12 +1,33 @@
 {
   "pages": [
-    "pages/base/pages/index"
+    "pages/base/pages/index",
+    "pages/base/pages/mine"
   ],
   "window": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "uni-app",
+    "navigationStyle": "custom",
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#777",
+    "selectedColor": "#AC9157",
+    "backgroundColor": "#f8f8f8",
+    "list": [
+      {
+        "pagePath": "pages/base/pages/index",
+        "text": "index",
+        "iconPath": "static/logo.png",
+        "selectedIconPath": "static/logo.png"
+      },
+      {
+        "pagePath": "pages/base/pages/mine",
+        "text": "mine",
+        "iconPath": "static/logo.png",
+        "selectedIconPath": "static/logo.png"
+      }
+    ]
   },
   "usingComponents": {}
 }

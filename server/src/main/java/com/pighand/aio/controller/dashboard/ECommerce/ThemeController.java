@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wangshuli
  * @createDate 2024-05-23 15:01:58
  */
-@RestController(path = "theme", docName = "电商 - 主题")
+@RestController(path = "dashboard/theme", docName = "电商 - 主题")
 public class ThemeController extends BaseController<ThemeService> {
 
     /**

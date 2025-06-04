@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wangshuli
  * @createDate 2024-04-22 15:11:06
  */
-@RestController(path = "project/platform/pay", docName = "项目 - 支付信息")
+@RestController(path = "dashboard/project/platform/pay", docName = "项目 - 支付信息")
 public class ApplicationPlatformPayController extends BaseController<ApplicationPlatformPayService> {
 
     /**

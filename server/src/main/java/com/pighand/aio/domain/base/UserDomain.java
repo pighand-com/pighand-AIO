@@ -9,10 +9,8 @@ import com.pighand.aio.common.enums.PlatformEnum;
 import com.pighand.aio.common.enums.UserStatusEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
@@ -38,13 +36,21 @@ public class UserDomain extends BaseDomainRecord<UserDomain> implements Serializ
     @RequestFieldException("userUpdate")
     private Long id;
 
-    @NotNull(groups = {ValidationGroup.Create.class})
-    @Schema(description = "应用id")
+    @Schema(description = "所属应用")
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
     private Long applicationId;
 
-    @NotNull(groups = {ValidationGroup.Create.class})
+    @Schema(description = "所属租户")
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long tenantId;
+
+    @Schema(description = "所属门店")
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long storeId;
+
     @Schema(description = "角色id")
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)

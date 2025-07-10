@@ -3,7 +3,10 @@ package com.pighand.aio.controller.dashboard.distribution;
 import com.pighand.aio.domain.distribution.DistributionSalespersonDomain;
 import com.pighand.aio.service.distribution.DistributionSalespersonService;
 import com.pighand.aio.vo.distribution.DistributionSalespersonVO;
-import com.pighand.framework.spring.api.annotation.*;
+import com.pighand.framework.spring.api.annotation.Delete;
+import com.pighand.framework.spring.api.annotation.Get;
+import com.pighand.framework.spring.api.annotation.Post;
+import com.pighand.framework.spring.api.annotation.RestController;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.base.BaseController;
 import com.pighand.framework.spring.page.PageOrList;
@@ -56,24 +59,39 @@ public class DistributionSalespersonController extends BaseController<Distributi
     }
 
     /**
-     * @param distDistributionSalespersonVO
-     */
-    @Put(path = "{id}", docSummary = "修改", fieldGroup = "distDistributionSalespersonUpdate")
-    public Result update(@PathVariable(name = "id") Long id,
-        @RequestBody DistributionSalespersonVO distDistributionSalespersonVO) {
-        distDistributionSalespersonVO.setId(id);
-
-        super.service.update(distDistributionSalespersonVO);
-
-        return new Result();
-    }
-
-    /**
      * @param id
      */
     @Delete(path = "{id}", docSummary = "删除")
     public Result delete(@PathVariable(name = "id") Long id) {
         super.service.delete(id);
         return new Result();
+    }
+
+    /**
+     * 启用
+     *
+     * @param id
+     */
+    @Post(path = "{id}/enable", docSummary = "启用")
+    public Result enable(@PathVariable(name = "id") Long id) {
+        super.service.enable(id);
+        return new Result();
+    }
+
+    /**
+     * 停用
+     *
+     * @param id
+     */
+    @Post(path = "{id}/disable", docSummary = "停用")
+    public Result disable(@PathVariable(name = "id") Long id) {
+        super.service.disable(id);
+        return new Result();
+    }
+
+    @Get(path = "{id}/qr_code", docSummary = "销售小程序二维码")
+    public Result QRCode(@PathVariable(name = "id") Long id) {
+        String imageBase64 = super.service.getWechatAppletQrcode(id);
+        return new Result(imageBase64);
     }
 }

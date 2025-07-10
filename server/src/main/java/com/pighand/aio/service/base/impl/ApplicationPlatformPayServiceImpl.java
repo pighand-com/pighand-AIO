@@ -43,7 +43,7 @@ public class ApplicationPlatformPayServiceImpl
      */
     @Override
     public ApplicationPlatformPayDomain find(Long id) {
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**

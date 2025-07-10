@@ -194,31 +194,33 @@ public class ArticleServiceImpl extends BaseServiceImpl<ArticleMapper, ArticleDo
             });
         });
 
-        List<ArticleCategoryDomain> category =
-            articleCategoryService.queryChain().where(ARTICLE_CATEGORY.ID.in(categorySet)).list();
-        Map<String, String> categoryMap = new HashMap<>();
-        category.forEach(item -> {
-            categoryMap.put(item.getId().toString(), item.getName());
-        });
+        if (VerifyUtils.isNotEmpty(categorySet)) {
+            List<ArticleCategoryDomain> category =
+                articleCategoryService.queryChain().where(ARTICLE_CATEGORY.ID.in(categorySet)).list();
+            Map<String, String> categoryMap = new HashMap<>();
+            category.forEach(item -> {
+                categoryMap.put(item.getId().toString(), item.getName());
+            });
 
-        result.getRecords().forEach(article -> {
-            List<String> categoryNames = new ArrayList<>();
+            result.getRecords().forEach(article -> {
+                List<String> categoryNames = new ArrayList<>();
 
-            if (article.getArticleCategoryRelevance() != null) {
-                article.getArticleCategoryRelevance().forEach(relevance -> {
-                    List<String> categoryNameItem = new ArrayList<>();
-                    Arrays.stream(relevance.getArticleCategoryPath().split(",")).toList().forEach(item -> {
-                        if (item != "") {
-                            categoryNameItem.add(categoryMap.get(item));
-                        }
+                if (article.getArticleCategoryRelevance() != null) {
+                    article.getArticleCategoryRelevance().forEach(relevance -> {
+                        List<String> categoryNameItem = new ArrayList<>();
+                        Arrays.stream(relevance.getArticleCategoryPath().split(",")).toList().forEach(item -> {
+                            if (item != "") {
+                                categoryNameItem.add(categoryMap.get(item));
+                            }
+                        });
+
+                        categoryNames.add(String.join(" - ", categoryNameItem));
                     });
+                }
 
-                    categoryNames.add(String.join(" - ", categoryNameItem));
-                });
-            }
-
-            article.setCategoryNames(categoryNames);
-        });
+                article.setCategoryNames(categoryNames);
+            });
+        }
 
         return result;
     }

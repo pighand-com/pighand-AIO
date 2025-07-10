@@ -72,7 +72,7 @@ public class QuestionBankServiceImpl extends BaseServiceImpl<QuestionBankMapper,
      */
     @Override
     public QuestionBankDomain find(Long id) {
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**

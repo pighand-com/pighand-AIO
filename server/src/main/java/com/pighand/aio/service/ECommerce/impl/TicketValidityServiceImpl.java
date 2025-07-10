@@ -42,7 +42,7 @@ public class TicketValidityServiceImpl extends BaseServiceImpl<TicketValidityMap
      */
     @Override
     public TicketValidityDomain find(Long id) {
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**

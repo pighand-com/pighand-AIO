@@ -17,6 +17,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 分销 - 销售记录
@@ -39,26 +40,27 @@ public class DistributionSalesDomain extends BaseDomainRecord<DistributionSalesD
     private Long id;
 
     @NotNull(groups = {ValidationGroup.Create.class})
-    @Schema(description = "销售用户ID（推广人）")
-    private Long userId;
+    @Schema(description = "销售ID")
+    private Long salespersonId;
 
-    @NotNull(groups = {ValidationGroup.Create.class})
     @Schema(description = "订单ID")
     private Long orderId;
 
     @Schema(description = "结算单id")
     private Long settlementId;
 
-    @NotNull(groups = {ValidationGroup.Create.class})
-    @Schema(description = "实际分成金额")
-    private BigDecimal amount;
+    @Schema(description = "冻结金额")
+    private BigDecimal frozenAmount;
+
+    @Schema(description = "结算金额")
+    private BigDecimal settledAmount;
+
+    @Schema(description = "退款金额")
+    private BigDecimal refundAmount;
 
     @Column("type")
     @Schema(description = "类型 10-销售单 20-结算单")
     private Integer type;
 
-    @Column("status")
-    @NotNull(groups = {ValidationGroup.Create.class})
-    @Schema(description = "状态：0=冻结中 10=待结算，20=已结算, 90=订单退款")
-    private Integer status;
+    private Date createdAt;
 }

@@ -40,8 +40,8 @@ public class DistributionGoodsRuleDomain extends BaseDomainRecord<DistributionGo
 
     @NotNull(groups = {ValidationGroup.Create.class})
     @Length(max = 20)
-    @Schema(description = "对象类型，如ticket、theme")
-    private String objectType;
+    @Schema(description = "类型 10-主题 20-票务")
+    private Integer objectType;
 
     @NotNull(groups = {ValidationGroup.Create.class})
     @Schema(description = "对象ID")

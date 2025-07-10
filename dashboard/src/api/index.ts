@@ -10,6 +10,11 @@ import assets from './assets';
 import theme from './theme';
 import ticket from './ticket';
 import order from './order';
+import banner from './banner';
+import distributionGoodsRule from './distributionGoodsRule';
+import distributionSalesperson from './distributionSalesperson';
+import distributionSales from './distributionSales';
+import role from './role';
 
 export {
     common,
@@ -23,5 +28,10 @@ export {
     assets,
     theme,
     ticket,
-    order
+    order,
+    banner,
+    distributionGoodsRule,
+    distributionSalesperson,
+    distributionSales,
+    role
 };

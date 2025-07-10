@@ -59,6 +59,10 @@ public class AuthorizationInterceptor extends RequestInterceptor {
     }
 
     public boolean handle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
+
         // 先清空，防止线程池复用，导致使用上一个线程的登录信息
         authorizationInfoLocal.remove();
         applicationIdLocal.remove();
@@ -98,6 +102,13 @@ public class AuthorizationInterceptor extends RequestInterceptor {
         if (VerifyUtils.isNotEmpty(authorization)) {
             try {
                 LoginUser loginUser = authorizationService.checkToken(authorization);
+
+                // token所属应用id与请求头不一致，判断为无效token
+                if (isLoginRequired && VerifyUtils.isNotEmpty(applicationId) && VerifyUtils.isNotEmpty(
+                    loginUser.getAId()) && !loginUser.getAId().toString().equals(applicationId)) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return false;
+                }
 
                 authorizationInfoLocal.set(loginUser);
             } catch (Exception e) {

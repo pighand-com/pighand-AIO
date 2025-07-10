@@ -1,7 +1,9 @@
 package com.pighand.aio.mapper.distribution;
 
 import com.mybatisflex.core.query.QueryWrapper;
+import com.pighand.aio.domain.ECommerce.OrderSkuDomain;
 import com.pighand.aio.domain.distribution.DistributionSalesDomain;
+import com.pighand.aio.vo.ECommerce.OrderSkuVO;
 import com.pighand.aio.vo.distribution.DistributionSalesVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
@@ -16,6 +18,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.pighand.aio.domain.ECommerce.table.OrderSkuTableDef.ORDER_SKU;
+import static com.pighand.aio.domain.ECommerce.table.OrderTableDef.ORDER;
 import static com.pighand.aio.domain.distribution.table.DistributionSalesTableDef.DISTRIBUTION_SALES;
 
 /**
@@ -41,6 +45,12 @@ public interface DistributionSalesMapper extends BaseMapper<DistributionSalesDom
             return queryWrapper;
         }
 
+        if (joinTables.contains(ORDER.getName())) {
+            queryWrapper.select(ORDER.SN).leftJoin(ORDER).on(ORDER.ID.eq(DISTRIBUTION_SALES.ORDER_ID));
+
+            joinTables.remove(ORDER.getName());
+        }
+
         return queryWrapper;
     }
 
@@ -56,6 +66,10 @@ public interface DistributionSalesMapper extends BaseMapper<DistributionSalesDom
 
         boolean isList = result instanceof List;
 
+        if (isList && ((List<?>)result).isEmpty()) {
+            return;
+        }
+
         List<Function<DistributionSalesVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
         List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());
         List<BiConsumer<DistributionSalesVO, List>> subResultSetter = new ArrayList<>(joinTables.size());
@@ -66,6 +80,24 @@ public interface DistributionSalesMapper extends BaseMapper<DistributionSalesDom
             subTableQueriesList = new ArrayList<>(joinTables.size());
         } else {
             subTableQueriesSingle = new ArrayList<>(joinTables.size());
+        }
+
+        // ORDER_SKU
+        if (joinTables.contains(ORDER_SKU.getTableName())) {
+            mainIdGetters.add(DistributionSalesVO::getOrderId);
+
+            if (subTableQueriesList != null) {
+                subTableQueriesList.add(
+                    ids -> new OrderSkuDomain().select(ORDER_SKU.DEFAULT_COLUMNS).where(ORDER_SKU.ORDER_ID.in(ids))
+                        .listAs(OrderSkuVO.class));
+            } else {
+                subTableQueriesSingle.add(
+                    id -> new OrderSkuDomain().select(ORDER_SKU.DEFAULT_COLUMNS).where(ORDER_SKU.ORDER_ID.eq(id))
+                        .listAs(OrderSkuVO.class));
+            }
+
+            subTableIdGetter.add(obj -> ((OrderSkuVO)obj).getOrderId());
+            subResultSetter.add((vo, list) -> vo.setOrderSku((List<OrderSkuDomain>)list));
         }
 
         if (result instanceof List) {

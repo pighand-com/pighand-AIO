@@ -42,7 +42,7 @@ public class SimpleSchedulingServiceImpl extends BaseServiceImpl<SimpleSchedulin
      */
     @Override
     public SimpleSchedulingDomain find(Long id) {
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**

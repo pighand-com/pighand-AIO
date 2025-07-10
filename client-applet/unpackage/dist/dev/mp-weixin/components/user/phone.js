@@ -1,16 +1,17 @@
 "use strict";
 const common_vendor = require("../../common/vendor.js");
-const common_storage = require("../../common/storage.js");
 const api_user = require("../../api/user.js");
+const common_storage = require("../../common/storage.js");
 const _sfc_main = {
   __name: "phone",
   setup(__props) {
     const phoneRef = common_vendor.ref(common_storage.getUserInfo().phone);
-    common_vendor.index.$on("storage-changed", () => {
+    const handleStorageChange = () => {
       phoneRef.value = common_storage.getUserInfo().phone;
-    });
+    };
+    common_vendor.index.$on("storage-changed", handleStorageChange);
     common_vendor.onUnmounted(() => {
-      common_vendor.index.$off("storage-changed");
+      common_vendor.index.$off("storage-changed", handleStorageChange);
     });
     const finishGetPhoneNumber = async (params) => {
       common_vendor.index.showLoading({

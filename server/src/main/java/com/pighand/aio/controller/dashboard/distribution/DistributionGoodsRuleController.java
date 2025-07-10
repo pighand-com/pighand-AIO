@@ -8,6 +8,7 @@ import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.base.BaseController;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.response.Result;
+import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,12 +23,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class DistributionGoodsRuleController extends BaseController<DistributionGoodsRuleService> {
 
     /**
+     * 重置分成金额
+     *
+     * @param distDistributionGoodsRuleVO
+     */
+    private void resetSharing(DistributionGoodsRuleVO distDistributionGoodsRuleVO) {
+        Integer sharingType = distDistributionGoodsRuleVO.getSharingType();
+        if (VerifyUtils.isNotEmpty(sharingType)) {
+            if (distDistributionGoodsRuleVO.getSharingType().equals(10)) {
+                distDistributionGoodsRuleVO.setSharingPrice(null);
+            } else if (distDistributionGoodsRuleVO.getSharingType().equals(20)) {
+                distDistributionGoodsRuleVO.setSharingRatio(null);
+            }
+        }
+    }
+
+    /**
      * @param distDistributionGoodsRuleVO
      * @return
      */
     @Post(docSummary = "创建", fieldGroup = "distDistributionGoodsRuleCreate")
     public Result<DistributionGoodsRuleVO> create(
         @Validated({ValidationGroup.Create.class}) @RequestBody DistributionGoodsRuleVO distDistributionGoodsRuleVO) {
+
+        this.resetSharing(distDistributionGoodsRuleVO);
+
         distDistributionGoodsRuleVO = super.service.create(distDistributionGoodsRuleVO);
 
         return new Result(distDistributionGoodsRuleVO);
@@ -61,6 +81,8 @@ public class DistributionGoodsRuleController extends BaseController<Distribution
     public Result update(@PathVariable(name = "id") Long id,
         @RequestBody DistributionGoodsRuleVO distDistributionGoodsRuleVO) {
         distDistributionGoodsRuleVO.setId(id);
+
+        this.resetSharing(distDistributionGoodsRuleVO);
 
         super.service.update(distDistributionGoodsRuleVO);
 

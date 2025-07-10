@@ -45,10 +45,18 @@ public class OrderTradeDomain extends BaseDomainRecord<OrderTradeDomain> impleme
     @Schema(description = "实付金额（分）")
     private Long amountPaid;
 
+    @Schema(description = "退款（分）")
+    private Long refundAmount;
+
     @Length(max = 32)
     @Schema(description = "创建人")
     private Long creatorId;
 
     @Schema(description = "创建时间")
     private Date createdAt;
+
+    // 分销ID
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long salespersonId;
 }

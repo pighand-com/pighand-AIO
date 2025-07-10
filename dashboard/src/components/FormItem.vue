@@ -35,6 +35,69 @@
             :loading="
                 domDataSetLoading[formColumnItem.label + formColumnItem.prop]
             "
+            :filter-method="
+                getDomData[formColumnItem.label + formColumnItem.prop]
+                    ? undefined
+                    : (_query) => {}
+            "
+            @focus="
+                () => {
+                    // 获得焦点时加载初始数据
+                    if (
+                        getDomData[
+                            formColumnItem.label + formColumnItem.prop
+                        ] &&
+                        (!domDataSet[formColumnItem.prop] ||
+                            domDataSet[formColumnItem.prop].length === 0)
+                    ) {
+                        getDomData[formColumnItem.label + formColumnItem.prop](
+                            ''
+                        );
+                    }
+                }
+            "
+            @change="
+                (value) => {
+                    // 执行用户自定义的change回调
+                    if (formColumnItem.onDetailChange) {
+                        formColumnItem.onDetailChange(value, formModel);
+                    }
+                }
+            "
+            @clear="
+                () => {
+                    if (
+                        clearDomDataCache[
+                            formColumnItem.label + formColumnItem.prop
+                        ]
+                    ) {
+                        clearDomDataCache[
+                            formColumnItem.label + formColumnItem.prop
+                        ]();
+                        // 清除后重新加载初始数据
+                        getDomData[formColumnItem.label + formColumnItem.prop](
+                            ''
+                        );
+                    }
+                }
+            "
+            @blur="
+                () => {
+                    // 失去焦点时清空搜索结果，重新加载初始数据
+                    if (
+                        clearDomDataCache[
+                            formColumnItem.label + formColumnItem.prop
+                        ]
+                    ) {
+                        clearDomDataCache[
+                            formColumnItem.label + formColumnItem.prop
+                        ]();
+                        getDomData[formColumnItem.label + formColumnItem.prop](
+                            ''
+                        );
+                    }
+                }
+            "
             remote-show-suffix
             filterable
             clearable>
@@ -277,6 +340,12 @@
             v-model="formModel[formColumnItem.prop]"
             v-if="formColumnItem.domType === 'editor'"
             :upload-path="formColumnItem.uploadPath" />
+
+        <span
+            v-if="formColumnItem.suffix && onWhere === 'detail'"
+            class="form-item-suffix"
+            >{{ formColumnItem.suffix }}</span
+        >
     </el-form-item>
 
     <PImageView
@@ -311,6 +380,7 @@ import { getApplicationInfo } from '@/common/storage';
 const props = defineProps<{
     formColumnItem: FormColumnsInterface;
     formModel: Object;
+    onWhere: 'search' | 'detail';
 }>();
 
 const dialogImageUrl = ref('');
@@ -323,7 +393,8 @@ const uploadFile = ref({});
 const uploadProgress = ref({});
 
 const provideForm: ProvideFormInterface = inject('provideForm');
-const { domDataSet, getDomData, domDataSetLoading } = provideForm;
+const { domDataSet, getDomData, domDataSetLoading, clearDomDataCache } =
+    provideForm;
 
 // 监听 formModel 变化，当表单数据被清空时，清空上传相关状态
 watch(
@@ -616,6 +687,10 @@ const shortcuts = [
     :deep(.el-progress-bar__inner) {
         text-align: left;
     }
+}
+
+.form-item-suffix {
+    padding-left: 12px;
 }
 </style>
 

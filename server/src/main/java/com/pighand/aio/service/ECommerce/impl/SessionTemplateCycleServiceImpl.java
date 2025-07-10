@@ -43,7 +43,7 @@ public class SessionTemplateCycleServiceImpl
      */
     @Override
     public SessionTemplateCycleDomain find(Long id) {
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**

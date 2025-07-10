@@ -1,5 +1,6 @@
 package com.pighand.aio.vo.ECommerce;
 
+import com.mybatisflex.annotation.TableRef;
 import com.pighand.aio.domain.ECommerce.OrderSkuDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import java.util.List;
  * @createDate 2024-04-18 14:35:34
  */
 @Data
+@TableRef(OrderSkuDomain.class)
 @EqualsAndHashCode(callSuper = false)
 public class OrderSkuVO extends OrderSkuDomain {
 

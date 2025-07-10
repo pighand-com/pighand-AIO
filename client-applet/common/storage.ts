@@ -16,6 +16,7 @@ const clearToken = () => {
 
 const clearUserInfo = () => {
     uni.removeStorageSync(constant.local_storage_user_info);
+    uni.$emit('storage-changed');
 };
 
 const clearApplicationInfo = () => {
@@ -23,10 +24,40 @@ const clearApplicationInfo = () => {
     uni.$emit('storage-changed');
 };
 
+const getSalespersonId = () => {
+    return uni.getStorageSync(constant.local_storage_salesperson_id);
+};
+
+const setSalespersonId = (salespersonId: string) => {
+    uni.setStorageSync(constant.local_storage_salesperson_id, salespersonId);
+    uni.$emit('storage-changed');
+};
+
+const clearSalespersonId = () => {
+    uni.removeStorageSync(constant.local_storage_salesperson_id);
+    uni.$emit('storage-changed');
+};
+
+const getFromSalesId = () => {
+    return uni.getStorageSync(constant.local_storage_from_sales_id);
+};
+
+const setFromSalesId = (fromSalesId: string) => {
+    uni.setStorageSync(constant.local_storage_from_sales_id, fromSalesId);
+    uni.$emit('storage-changed');
+};
+
+const clearFromSalesId = () => {
+    uni.removeStorageSync(constant.local_storage_from_sales_id);
+    uni.$emit('storage-changed');
+};
+
 const clearAll = () => {
     clearToken();
     clearUserInfo();
     clearApplicationInfo();
+    clearSalespersonId();
+    clearFromSalesId();
     uni.$emit('storage-changed');
 };
 
@@ -74,5 +105,11 @@ export {
     setUserInfo,
     getApplicationInfo,
     setApplicationInfo,
+    getSalespersonId,
+    setSalespersonId,
+    clearSalespersonId,
+    getFromSalesId,
+    setFromSalesId,
+    clearFromSalesId,
     clearAll
 };

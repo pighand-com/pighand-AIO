@@ -1,5 +1,6 @@
 package com.pighand.aio.vo.ECommerce;
 
+import com.mybatisflex.annotation.TableRef;
 import com.pighand.aio.domain.ECommerce.ThemeDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import java.util.List;
  * @createDate 2024-05-23 15:01:58
  */
 @Data
+@TableRef(ThemeDomain.class)
 @EqualsAndHashCode(callSuper = false)
 public class ThemeVO extends ThemeDomain {
 

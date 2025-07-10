@@ -1,0 +1,415 @@
+
+.content.data-v-8c51e834 {
+	background-color: #f5f5f5;
+	padding-bottom: 160rpx; /* 为底部操作栏留出空间 */
+}
+.theme-poster.data-v-8c51e834 {
+	width: 100%;
+	height: 720rpx;
+	position: relative;
+	overflow: hidden;
+}
+.poster-image.data-v-8c51e834 {
+	width: 100%;
+}
+.theme-content.data-v-8c51e834 {
+	padding: 30rpx 0;
+	background-color: #fff;
+	margin-top: 20rpx;
+	margin-bottom: 20rpx; /* 增加底部间距 */
+}
+.theme-title.data-v-8c51e834 {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 20rpx;
+}
+.theme-description.data-v-8c51e834 {
+	font-size: 28rpx;
+	line-height: 1.6;
+	display: block;
+}
+
+/* 底部操作栏 */
+.bottom-action-bar.data-v-8c51e834 {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: linear-gradient(135deg, #4a4a3a 0%, #6b6b4a 100%);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 30rpx 30rpx env(safe-area-inset-bottom);
+	box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
+	z-index: 1000;
+}
+.customer-service.data-v-8c51e834 {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: 180rpx;
+	height: 80rpx;
+}
+.service-icon.data-v-8c51e834 {
+	width: 64rpx;
+	height: 64rpx;
+	margin-right: 12rpx;
+}
+.service-text.data-v-8c51e834 {
+	font-size: 26rpx;
+	color: #d4c5a0;
+}
+.buy-button.data-v-8c51e834 {
+	width: 300rpx;
+	height: 80rpx;
+	background: linear-gradient(135deg, #d4c5a0 0%, #b8a082 100%);
+	border-radius: 40rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4rpx 15rpx rgba(212, 197, 160, 0.3);
+}
+.buy-text.data-v-8c51e834 {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #4a4a3a;
+}
+
+/* 购票弹窗 */
+.ticket-modal.data-v-8c51e834 {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: flex-end;
+	z-index: 2000;
+}
+.modal-content.data-v-8c51e834 {
+	width: 100%;
+	max-height: 80vh;
+	background: linear-gradient(135deg, #4a4a3a 0%, #6b6b4a 100%);
+	border-radius: 40rpx 40rpx 0 0;
+	padding: 40rpx 30rpx env(safe-area-inset-bottom);
+	color: #d4c5a0;
+	display: flex;
+	flex-direction: column;
+}
+.modal-title.data-v-8c51e834 {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #d4c5a0;
+}
+
+/* 票务选择容器 */
+.ticket-selection-container.data-v-8c51e834 {
+	flex: 1;
+	position: relative;
+	margin-bottom: 40rpx;
+}
+
+/* 票务选择 */
+.ticket-selection.data-v-8c51e834 {
+	height: 100%;
+	max-height: 50vh;
+	overflow-y: auto;
+	padding-right: 10rpx;
+}
+.ticket-item.data-v-8c51e834 {
+	background-color: rgba(212, 197, 160, 0.1);
+	border: 2rpx solid transparent;
+	border-radius: 20rpx;
+	padding: 30rpx;
+	margin-bottom: 20rpx;
+	transition: all 0.3s ease;
+}
+.ticket-item.selected.data-v-8c51e834 {
+	background-color: rgba(212, 197, 160, 0.2);
+	border-color: #d4c5a0;
+	box-shadow: 0 4rpx 15rpx rgba(212, 197, 160, 0.2);
+}
+.ticket-info.data-v-8c51e834 {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15rpx;
+}
+.ticket-name.data-v-8c51e834 {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #d4c5a0;
+}
+.ticket-price.data-v-8c51e834 {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #d4c5a0;
+}
+.ticket-desc-container.data-v-8c51e834 {
+	display: flex;
+	flex-direction: column;
+	gap: 8rpx;
+}
+.ticket-desc.data-v-8c51e834 {
+	font-size: 24rpx;
+	color: #b8a082;
+	line-height: 1.4;
+	word-break: break-all;
+	transition: all 0.3s ease;
+}
+.ticket-desc.expanded.data-v-8c51e834 {
+	max-height: none;
+}
+.expand-btn.data-v-8c51e834 {
+	font-size: 22rpx;
+	color: #d4c5a0;
+	text-decoration: underline;
+	align-self: flex-start;
+	padding: 4rpx 0;
+	transition: all 0.3s ease;
+}
+.expand-btn.data-v-8c51e834:active {
+	color: #b8a082;
+	transform: scale(0.95);
+}
+
+/* 购买数量 */
+.quantity-section.data-v-8c51e834 {
+	margin-bottom: 40rpx;
+	flex-shrink: 0;
+}
+.section-title.data-v-8c51e834 {
+	font-size: 28rpx;
+	color: #d4c5a0;
+	margin-bottom: 20rpx;
+	display: block;
+}
+.quantity-control.data-v-8c51e834 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 40rpx;
+}
+.quantity-btn.data-v-8c51e834 {
+	width: 60rpx;
+	height: 60rpx;
+	border-radius: 50%;
+	background-color: rgba(212, 197, 160, 0.2);
+	border: 2rpx solid #d4c5a0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.3s ease;
+}
+.quantity-btn.data-v-8c51e834:active {
+	background-color: rgba(212, 197, 160, 0.4);
+	transform: scale(0.95);
+}
+.btn-text.data-v-8c51e834 {
+	font-weight: bold;
+	color: #d4c5a0;
+}
+.quantity-text.data-v-8c51e834 {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #d4c5a0;
+	min-width: 60rpx;
+	text-align: center;
+}
+
+/* 底部操作 */
+.modal-footer.data-v-8c51e834 {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-top: 30rpx;
+	border-top: 2rpx solid rgba(212, 197, 160, 0.2);
+	flex-shrink: 0;
+}
+.total-price.data-v-8c51e834 {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+.price-label.data-v-8c51e834 {
+	font-size: 24rpx;
+	color: #b8a082;
+	margin-bottom: 8rpx;
+}
+.price-value.data-v-8c51e834 {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #d4c5a0;
+}
+.purchase-btn.data-v-8c51e834 {
+	width: 300rpx;
+	height: 80rpx;
+	background: linear-gradient(135deg, #d4c5a0 0%, #b8a082 100%);
+	border-radius: 40rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4rpx 15rpx rgba(212, 197, 160, 0.3);
+	transition: all 0.3s ease;
+}
+.purchase-btn.data-v-8c51e834:active {
+	transform: scale(0.98);
+}
+.purchase-btn.loading.data-v-8c51e834 {
+	opacity: 0.7;
+	pointer-events: none;
+	background: linear-gradient(135deg, #b8a082 0%, #a08f72 100%);
+}
+.purchase-text.data-v-8c51e834 {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #4a4a3a;
+}
+
+/* 客服二维码弹窗样式 */
+.qr-modal.data-v-8c51e834 {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 2000;
+}
+.qr-modal-content.data-v-8c51e834 {
+	width: 550rpx;
+	padding: 40rpx;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.qr-image-container.data-v-8c51e834 {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 30rpx;
+}
+.qr-image.data-v-8c51e834 {
+	width: 450rpx;
+	height: 450rpx;
+	border-radius: 20rpx;
+}
+.qr-tip.data-v-8c51e834 {
+	font-size: 28rpx;
+	color: #ffffff;
+	font-weight: bold;
+	text-align: center;
+	display: block;
+}
+
+/* 全屏loading遮罩样式 */
+.loading-overlay.data-v-8c51e834 {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.7);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 9999;
+}
+.loading-content.data-v-8c51e834 {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 200rpx;
+	height: 200rpx;
+	padding: 40rpx;
+	background-color: rgba(255, 255, 255, 0.95);
+	border-radius: 20rpx;
+	box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.3);
+}
+.loading-spinner.data-v-8c51e834 {
+	width: 80rpx;
+	height: 80rpx;
+	border: 6rpx solid #f3f3f3;
+	border-top: 6rpx solid #d4c5a0;
+	border-radius: 50%;
+	animation: spin-8c51e834 1s linear infinite;
+	margin-bottom: 30rpx;
+}
+@keyframes spin-8c51e834 {
+0% { transform: rotate(0deg);
+}
+100% { transform: rotate(360deg);
+}
+}
+.loading-text.data-v-8c51e834 {
+	font-size: 28rpx;
+	color: #333;
+	font-weight: 500;
+	text-align: center;
+}
+
+/* 滚动提示样式 */
+.scroll-indicator.data-v-8c51e834 {
+	position: absolute;
+	bottom: 20rpx;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: rgba(0, 0, 0, 0.6);
+	border-radius: 30rpx;
+	padding: 15rpx 25rpx;
+	z-index: 10;
+	animation: fadeInOut-8c51e834 3s ease-in-out;
+}
+.scroll-text.data-v-8c51e834 {
+	font-size: 22rpx;
+	color: #ffffff;
+	margin-bottom: 8rpx;
+}
+.scroll-arrow.data-v-8c51e834 {
+	font-size: 24rpx;
+	color: #ffffff;
+	animation: bounce-8c51e834 1.5s infinite;
+}
+
+/* 底部渐变遮罩 */
+.scroll-gradient.data-v-8c51e834 {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 60rpx;
+	background: linear-gradient(to top, rgba(74, 74, 58, 0.8) 0%, transparent 100%);
+	pointer-events: none;
+	z-index: 5;
+}
+
+/* 动画效果 */
+@keyframes fadeInOut-8c51e834 {
+0% { opacity: 0; transform: translateX(-50%) translateY(10rpx);
+}
+20% { opacity: 1; transform: translateX(-50%) translateY(0);
+}
+80% { opacity: 1; transform: translateX(-50%) translateY(0);
+}
+100% { opacity: 0; transform: translateX(-50%) translateY(-10rpx);
+}
+}
+@keyframes bounce-8c51e834 {
+0%, 20%, 50%, 80%, 100% { transform: translateY(0);
+}
+40% { transform: translateY(-8rpx);
+}
+60% { transform: translateY(-4rpx);
+}
+}

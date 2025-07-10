@@ -48,7 +48,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceMapper, DeviceDomai
     public DeviceDomain find(Long id) {
         //        Set<String> joinTables = List.of(DEVICE_TASK.getTableName());
 
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**

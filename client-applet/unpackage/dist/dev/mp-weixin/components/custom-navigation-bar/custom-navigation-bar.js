@@ -11,9 +11,18 @@ const _sfc_main = {
     back: {
       type: Boolean,
       default: false
+    },
+    backPath: {
+      type: String,
+      default: ""
+    },
+    position: {
+      type: String,
+      default: "absolute"
     }
   },
   setup(__props) {
+    const props = __props;
     const navigationBarHeight = common_vendor.ref(0);
     const statusBarHeight = common_vendor.ref(0);
     common_vendor.onMounted(() => {
@@ -23,6 +32,12 @@ const _sfc_main = {
       navigationBarHeight.value = MenuButton.height + (MenuButton.top - statusBarHeight.value) * 2;
     });
     const onBack = () => {
+      if (props.backPath) {
+        common_vendor.index.navigateTo({
+          url: props.backPath
+        });
+        return;
+      }
       let pages = getCurrentPages();
       if (pages.length > 1) {
         common_vendor.index.navigateBack({
@@ -44,10 +59,10 @@ const _sfc_main = {
       } : {}, {
         e: __props.back
       }, __props.back ? {
-        f: common_assets._imports_0$2,
+        f: common_assets._imports_0$3,
         g: common_vendor.o(onBack)
       } : {}, {
-        h: common_vendor.s("position: relative; height: " + (navigationBarHeight.value + statusBarHeight.value) + "px")
+        h: common_vendor.s("height: " + (navigationBarHeight.value + statusBarHeight.value) + "px; position: " + props.position + "; --status-bar-height: " + statusBarHeight.value + "px; --navigation-bar-height: " + navigationBarHeight.value + "px;")
       });
     };
   }

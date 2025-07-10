@@ -31,4 +31,8 @@ public class UserVO extends UserDomain {
     private Integer bindCount;
 
     private List<ApplicationDomain> relevanceApplications;
+
+    private List<UserRoleVO> roles;
+
+    private List<Long> roleIds;
 }

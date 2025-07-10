@@ -1,5 +1,6 @@
 package com.pighand.aio.vo.IoT;
 
+import com.mybatisflex.annotation.TableRef;
 import com.pighand.aio.domain.IoT.DeviceTaskDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,6 +12,7 @@ import lombok.EqualsAndHashCode;
  * @createDate 2024-04-10 23:45:23
  */
 @Data
+@TableRef(DeviceTaskDomain.class)
 @EqualsAndHashCode(callSuper = false)
 public class DeviceTaskVO extends DeviceTaskDomain {
 

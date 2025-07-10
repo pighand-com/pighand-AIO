@@ -2,14 +2,18 @@ package com.pighand.aio.service.ECommerce.impl;
 
 import com.github.houbb.sensitive.word.core.SensitiveWordHelper;
 import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.core.update.UpdateChain;
 import com.pighand.aio.common.interceptor.Context;
+import com.pighand.aio.domain.ECommerce.OrderDomain;
 import com.pighand.aio.domain.ECommerce.TicketUserDomain;
 import com.pighand.aio.domain.IoT.DeviceDomain;
+import com.pighand.aio.mapper.ECommerce.OrderMapper;
 import com.pighand.aio.mapper.ECommerce.TicketUserMapper;
 import com.pighand.aio.service.ECommerce.TicketUserService;
 import com.pighand.aio.service.ECommerce.TicketUserValidityService;
 import com.pighand.aio.service.IoT.DeviceService;
 import com.pighand.aio.service.IoT.DeviceTaskService;
+import com.pighand.aio.service.distribution.DistributionSalesService;
 import com.pighand.aio.vo.ECommerce.TicketUserVO;
 import com.pighand.aio.vo.ECommerce.TicketUserValidityVO;
 import com.pighand.aio.vo.ECommerce.TicketValidityDetailEntity;
@@ -23,10 +27,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.pighand.aio.domain.ECommerce.table.ThemeTableDef.THEME;
+import static com.pighand.aio.domain.ECommerce.table.TicketTableDef.TICKET;
 import static com.pighand.aio.domain.ECommerce.table.TicketUserTableDef.TICKET_USER;
 import static com.pighand.aio.domain.ECommerce.table.TicketUserValidityTableDef.TICKET_USER_VALIDITY;
 import static com.pighand.aio.domain.ECommerce.table.TicketValidityTableDef.TICKET_VALIDITY;
@@ -50,6 +55,10 @@ public class TicketUserServiceImpl extends BaseServiceImpl<TicketUserMapper, Tic
 
     private final TicketUserValidityService ticketUserValidityService;
 
+    private final DistributionSalesService distributionSalesService;
+
+    private final OrderMapper orderMapper;
+
     /**
      * 创建
      *
@@ -58,6 +67,11 @@ public class TicketUserServiceImpl extends BaseServiceImpl<TicketUserMapper, Tic
      */
     @Override
     public TicketUserVO create(TicketUserVO ticketUserVO) {
+        ticketUserVO.setStatus(10);
+        if (ticketUserVO.getValidationCount() == null) {
+            ticketUserVO.setValidationCount(1);
+        }
+
         super.mapper.insert(ticketUserVO);
 
         return ticketUserVO;
@@ -71,7 +85,7 @@ public class TicketUserServiceImpl extends BaseServiceImpl<TicketUserMapper, Tic
      */
     @Override
     public TicketUserDomain find(Long id) {
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**
@@ -82,8 +96,13 @@ public class TicketUserServiceImpl extends BaseServiceImpl<TicketUserMapper, Tic
      */
     @Override
     public PageOrList<TicketUserVO> query(TicketUserVO ticketUserVO) {
+        ticketUserVO.setJoinTables(TICKET.getTableName(), THEME.getTableName());
 
+        // TODO: TICKET.NAME 在mapper中查询无效
         QueryWrapper queryWrapper = QueryWrapper.create()
+            .select(TICKET_USER.ID, TICKET_USER.STATUS, TICKET_USER.VALIDATION_AT,
+                TICKET_USER.REMAINING_VALIDATION_COUNT, TICKET.NAME)
+
             // equal
             .and(TICKET_USER.TICKET_ID.eq(ticketUserVO.getTicketId()))
             .and(TICKET_USER.ORDER_ID.eq(ticketUserVO.getOrderId()))
@@ -91,72 +110,84 @@ public class TicketUserServiceImpl extends BaseServiceImpl<TicketUserMapper, Tic
             .and(TICKET_USER.CREATOR_ID.eq(ticketUserVO.getCreatorId()));
 
         // 查询可用票务
-        if (ticketUserVO.getUsable() != null && ticketUserVO.getUsable()) {
-            queryWrapper.and(TICKET_USER.REMAINING_VALIDATION_COUNT.gt(0));
+        if (ticketUserVO.getUsable() != null) {
+            if (ticketUserVO.getUsable()) {
+                queryWrapper.and(TICKET_USER.STATUS.eq(10));
+                queryWrapper.orderBy(TICKET_USER.ID.desc());
+            } else {
+                // TODO: 支持查询多次核销。取消核销时候也支持多次的情况
+                queryWrapper.and(TICKET_USER.STATUS.eq(20));
+                queryWrapper.orderBy(TICKET_USER.VALIDATION_AT.desc());
+            }
+        } else if (ticketUserVO.getUsed() != null && ticketUserVO.getUsed()) {
+            queryWrapper.and(TICKET_USER.STATUS.eq(20));
+            queryWrapper.orderBy(TICKET_USER.ID.desc());
+        } else {
+            queryWrapper.orderBy(TICKET_USER.STATUS.asc(), TICKET_USER.ID.desc());
         }
 
         PageOrList<TicketUserVO> result = super.mapper.query(ticketUserVO, queryWrapper);
-        log.info("---------1 result:{}", result);
 
         List<Long> ids = result.getRecords().stream().map(TicketUserVO::getId).collect(Collectors.toList());
-        log.info("---------2 result:{}", ids);
 
-        // 查询适用信息
-        List<TicketUserValidityVO> ticketValidities = ticketUserValidityService.queryChain()
-            .select(TICKET_USER_VALIDITY.ID, TICKET_USER_VALIDITY.TICKET_USER_ID, TICKET_USER_VALIDITY.TICKET_ID,
-                TICKET_USER_VALIDITY.VALIDATION_COUNT, TICKET_VALIDITY.VALIDITY_IDS, TICKET_VALIDITY.VALIDITY_CONFIG)
-            .leftJoin(TICKET_VALIDITY).on(TICKET_VALIDITY.ID.eq(TICKET_USER_VALIDITY.TICKET_VALIDITY_ID))
-            .where(TICKET_USER_VALIDITY.TICKET_USER_ID.in(ids)).and(TICKET_USER_VALIDITY.VALIDATION_COUNT.gt(0))
-            .listAs(TicketUserValidityVO.class);
+        if (ids.size() > 0) {
+            // 查询适用信息
+            List<TicketUserValidityVO> ticketValidities = ticketUserValidityService.queryChain()
+                .select(TICKET_USER_VALIDITY.ID, TICKET_USER_VALIDITY.TICKET_USER_ID, TICKET_USER_VALIDITY.TICKET_ID,
+                    TICKET_USER_VALIDITY.VALIDATION_COUNT, TICKET_VALIDITY.VALIDITY_IDS,
+                    TICKET_VALIDITY.VALIDITY_CONFIG).leftJoin(TICKET_VALIDITY)
+                .on(TICKET_VALIDITY.ID.eq(TICKET_USER_VALIDITY.TICKET_VALIDITY_ID))
+                .where(TICKET_USER_VALIDITY.TICKET_USER_ID.in(ids)).and(TICKET_USER_VALIDITY.VALIDATION_COUNT.gt(0))
+                .listAs(TicketUserValidityVO.class);
 
-        log.info("---------3 result:{}", ticketValidities);
-        List<Long> validyIds = new ArrayList<>();
-        ticketValidities.forEach(ticketValidity -> {
-            validyIds.addAll(ticketValidity.getValidityIds());
-        });
-        log.info("---------4 result:{}", ticketValidities);
-
-        // 查询适用信息
-        List<DeviceDomain> devices = deviceService.queryChain().select(DEVICE.ID, DEVICE.DESCRIPTION, DEVICE.CONFIG)
-            .where(DEVICE.ID.in(validyIds)).list();
-        log.info("---------5 result:{}", devices);
-        Map<Long, TicketValidityDetailEntity> deviceMap =
-            devices.stream().collect(Collectors.toMap(DeviceDomain::getId, device -> {
-                TicketValidityDetailEntity ticketValidityDetailEntity = new TicketValidityDetailEntity();
-                ticketValidityDetailEntity.setId(device.getId());
-                ticketValidityDetailEntity.setName(device.getDescription());
-                ticketValidityDetailEntity.setConfig(device.getConfig());
-
-                return ticketValidityDetailEntity;
-            }));
-
-        log.info("---------6 result:{}", deviceMap);
-        Map<Long, List<TicketUserValidityVO>> ticketValidityMap = new HashMap<>();
-        ticketValidities.forEach(ticketValidity -> {
-            // 回填适用信息
-            List<TicketValidityDetailEntity> ticketValidityDetailEntities = new ArrayList<>();
-            ticketValidity.getValidityIds().forEach(validityId -> {
-                TicketValidityDetailEntity ticketValidityDetailEntity = deviceMap.get(validityId);
-                if (ticketValidityDetailEntity != null) {
-                    ticketValidityDetailEntities.add(ticketValidityDetailEntity);
-                }
+            List<Long> validyIds = new ArrayList<>();
+            ticketValidities.forEach(ticketValidity -> {
+                validyIds.addAll(ticketValidity.getValidityIds());
             });
-            ticketValidity.setValidityDetail(ticketValidityDetailEntities);
 
-            List<TicketUserValidityVO> ticketValidityVOS = ticketValidityMap.get(ticketValidity.getTicketUserId());
-            if (ticketValidityVOS == null) {
-                ticketValidityVOS = new ArrayList<>();
+            // 查询适用信息
+            if (validyIds.size() > 0) {
+
+                List<DeviceDomain> devices =
+                    deviceService.queryChain().select(DEVICE.ID, DEVICE.DESCRIPTION, DEVICE.CONFIG)
+                        .where(DEVICE.ID.in(validyIds)).list();
+                Map<Long, TicketValidityDetailEntity> deviceMap =
+                    devices.stream().collect(Collectors.toMap(DeviceDomain::getId, device -> {
+                        TicketValidityDetailEntity ticketValidityDetailEntity = new TicketValidityDetailEntity();
+                        ticketValidityDetailEntity.setId(device.getId());
+                        ticketValidityDetailEntity.setName(device.getDescription());
+                        ticketValidityDetailEntity.setConfig(device.getConfig());
+
+                        return ticketValidityDetailEntity;
+                    }));
+
+                Map<Long, List<TicketUserValidityVO>> ticketValidityMap = new HashMap<>();
+                ticketValidities.forEach(ticketValidity -> {
+                    // 回填适用信息
+                    List<TicketValidityDetailEntity> ticketValidityDetailEntities = new ArrayList<>();
+                    ticketValidity.getValidityIds().forEach(validityId -> {
+                        TicketValidityDetailEntity ticketValidityDetailEntity = deviceMap.get(validityId);
+                        if (ticketValidityDetailEntity != null) {
+                            ticketValidityDetailEntities.add(ticketValidityDetailEntity);
+                        }
+                    });
+                    ticketValidity.setValidityDetail(ticketValidityDetailEntities);
+
+                    List<TicketUserValidityVO> ticketValidityVOS =
+                        ticketValidityMap.get(ticketValidity.getTicketUserId());
+                    if (ticketValidityVOS == null) {
+                        ticketValidityVOS = new ArrayList<>();
+                    }
+                    ticketValidityVOS.add(ticketValidity);
+
+                    ticketValidityMap.put(ticketValidity.getTicketUserId(), ticketValidityVOS);
+                });
+
+                result.getRecords().forEach(resultItem -> {
+                    resultItem.setValidity(ticketValidityMap.get(resultItem.getId()));
+                });
             }
-            ticketValidityVOS.add(ticketValidity);
-
-            ticketValidityMap.put(ticketValidity.getTicketUserId(), ticketValidityVOS);
-        });
-        log.info("---------7 result:{}", ticketValidityMap);
-
-        result.getRecords().forEach(resultItem -> {
-            resultItem.setValidity(ticketValidityMap.get(resultItem.getId()));
-        });
-        log.info("---------8 result:{}", result.getRecords());
+        }
 
         return result;
     }
@@ -188,19 +219,12 @@ public class TicketUserServiceImpl extends BaseServiceImpl<TicketUserMapper, Tic
     @Override
     public void validation(TicketUserVO ticketUserVO) {
         TicketUserDomain ticketUserDomain = this.getById(ticketUserVO.getId());
-        if (ticketUserDomain == null || !ticketUserDomain.getCreatorId().equals(Context.loginUser().getId())) {
+        if (ticketUserDomain == null) {
             throw new ThrowPrompt("票务不存在");
         }
 
         if (ticketUserDomain.getRemainingValidationCount() <= 0) {
             throw new ThrowPrompt("票务已核销");
-        }
-
-        LocalTime now = LocalTime.now();
-        LocalTime startTime = LocalTime.of(19, 29); // 7:30 PM
-        LocalTime endTime = LocalTime.of(21, 31); // 9:30 PM
-        if ((!now.isBefore(startTime) && !now.isAfter(endTime)) && ticketUserVO.getDeviceId().equals(1L)) {
-            throw new ThrowPrompt("19:30-21:30不可使用");
         }
 
         // 校验适配信息
@@ -233,30 +257,36 @@ public class TicketUserServiceImpl extends BaseServiceImpl<TicketUserMapper, Tic
                 return false;
             }).findFirst().orElse(null);
 
-            if (ticketUserValidityVO == null) {
-                throw new ThrowPrompt("无适配此设备的票");
-            }
+            if (ticketUserValidityVO != null) {
+                // TODO: 高并发，或开多端，需要加锁
+                boolean isUpdate = ticketUserValidityService.updateChain()
+                    .set(TICKET_USER_VALIDITY.VALIDATION_COUNT, TICKET_USER_VALIDITY.VALIDATION_COUNT.subtract(1))
+                    .where(TICKET_USER_VALIDITY.ID.eq(ticketUserValidityVO.getId()))
+                    .and(TICKET_USER_VALIDITY.VALIDATION_COUNT.gt(0)).update();
 
-            // TODO: 高并发，或开多端，需要加锁
-            boolean isUpdate = ticketUserValidityService.updateChain()
-                .set(TICKET_USER_VALIDITY.VALIDATION_COUNT, TICKET_USER_VALIDITY.VALIDATION_COUNT.subtract(1))
-                .where(TICKET_USER_VALIDITY.ID.eq(ticketUserValidityVO.getId()))
-                .and(TICKET_USER_VALIDITY.VALIDATION_COUNT.gt(0)).update();
-
-            if (!isUpdate) {
-                throw new ThrowPrompt("核销失败");
+                if (!isUpdate) {
+                    throw new ThrowPrompt("核销失败");
+                }
             }
         }
 
+        Integer validationCount = Optional.ofNullable(ticketUserVO.getValidationCount()).orElse(1);
         // 数量减一
-        boolean isUpdate = this.updateChain()
-            .set(TICKET_USER.REMAINING_VALIDATION_COUNT, TICKET_USER.REMAINING_VALIDATION_COUNT.subtract(1))
-            .set(TICKET_USER.VALIDATION_AT, new Date()).where(TICKET_USER.ID.eq(ticketUserVO.getId()))
-            .and(TICKET_USER.REMAINING_VALIDATION_COUNT.gt(0)).update();
+        UpdateChain updateChain = this.updateChain().set(TICKET_USER.REMAINING_VALIDATION_COUNT,
+                TICKET_USER.REMAINING_VALIDATION_COUNT.subtract(validationCount)).set(TICKET_USER.VALIDATION_AT, new Date())
+            .where(TICKET_USER.ID.eq(ticketUserVO.getId())).and(TICKET_USER.REMAINING_VALIDATION_COUNT.gt(0));
 
+        if (ticketUserDomain.getRemainingValidationCount().equals(1)) {
+            updateChain.set(TICKET_USER.STATUS, 20);
+        }
+
+        boolean isUpdate = updateChain.update();
         if (!isUpdate) {
             throw new ThrowPrompt("核销失败");
         }
+
+        // 处理分销
+        distributionSalesService.thawTicket(ticketUserDomain.getId());
 
         // 创建任务
         if (ticketUserVO.getDeviceId() != null) {
@@ -297,6 +327,52 @@ public class TicketUserServiceImpl extends BaseServiceImpl<TicketUserMapper, Tic
             deviceTaskVO.setRunningStatus(10);
 
             deviceTaskService.create(deviceTaskVO);
+        }
+
+        // 全部核销，更新订单退款状态
+        long notValidationCount =
+            this.queryChain().select(TICKET_USER.ID).where(TICKET_USER.ORDER_ID.eq(ticketUserDomain.getOrderId()))
+                .and(TICKET_USER.STATUS.eq(10)).count();
+
+        if (notValidationCount <= 0) {
+            OrderDomain orderDomain = new OrderDomain();
+            orderDomain.setId(ticketUserDomain.getOrderId());
+            orderDomain.setRefundStatus(10);
+            orderMapper.update(orderDomain);
+        }
+    }
+
+    /**
+     * 取消核销
+     *
+     * @param ticketUserVO
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void cancelValidation(TicketUserVO ticketUserVO) {
+        TicketUserDomain ticketUserDomain = this.getById(ticketUserVO.getId());
+        if (ticketUserDomain == null) {
+            throw new ThrowPrompt("票务不存在");
+        }
+
+        if (!ticketUserDomain.getStatus().equals(20)) {
+            throw new ThrowPrompt("票务未核销");
+        }
+
+        // 处理分销
+        distributionSalesService.freezeTicket(ticketUserDomain.getId());
+
+        // 还原票务
+        this.updateChain().set(TICKET_USER.REMAINING_VALIDATION_COUNT, TICKET_USER.REMAINING_VALIDATION_COUNT.add(1))
+            .set(TICKET_USER.VALIDATION_AT, null).set(TICKET_USER.STATUS, 10)
+            .where(TICKET_USER.ID.eq(ticketUserVO.getId())).update();
+
+        // 更新订单退款状态
+        OrderDomain order = orderMapper.find(ticketUserDomain.getOrderId());
+
+        if (order != null && order.getRefundStatus() == 10) {
+            order.setRefundStatus(11);
+            orderMapper.update(order);
         }
     }
 }

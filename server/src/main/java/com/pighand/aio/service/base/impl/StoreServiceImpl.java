@@ -46,7 +46,7 @@ public class StoreServiceImpl extends BaseServiceImpl<StoreMapper, StoreDomain> 
      */
     @Override
     public StoreDomain find(Long id) {
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**

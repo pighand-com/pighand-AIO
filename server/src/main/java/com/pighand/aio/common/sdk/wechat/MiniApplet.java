@@ -1,6 +1,7 @@
 package com.pighand.aio.common.sdk.wechat;
 
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
@@ -37,15 +38,29 @@ public interface MiniApplet {
         @RequestParam(defaultValue = "client_credential") String grant_type);
 
     @PostExchange("wxa/business/getuserphonenumber")
-    String getPhone(@RequestParam String access_token, @RequestBody Map<String, String> params);
+    String getPhone(@RequestParam String access_token, @RequestBody Map<String, String> params,
+        @RequestHeader Map<String, String> headers);
 
     /**
-     * 小程序码
+     * TODO： headers应该不用传，本地没问题，服务器报错，因为微信校验content-length
+     * 获取不限制的小程序码
+     * 该接口用于获取小程序码，适用于需要的码数量极多的业务场景。通过该接口生成的小程序码，永久有效，数量暂无限制。
      *
-     * @param access_token
-     * @param params       scene:参数 page:页面 env_version:正式版为 "release"，体验版为 "trial"，开发版为 "develop"
-     * @return
+     * @param access_token 接口调用凭证
+     * @param params       请求参数，包含以下字段：
+     *                     - scene: 最大32个可见字符，只支持数字，大小写英文以及部分特殊字符：!#$&'()*+,/:;=?@-._~
+     *                     - page: 页面路径，例如 pages/index/index，根路径前不要填加 /，不能携带参数
+     *                     - check_path: 检查page是否存在，默认true
+     *                     - env_version: 要打开的小程序版本。正式版为 "release"，体验版为 "trial"，开发版为 "develop"，默认正式版
+     *                     - width: 二维码的宽度，单位px，最小280px，最大1280px，默认430
+     *                     - auto_color: 自动配置线条颜色，默认false
+     *                     - line_color: 线条颜色，格式为{"r":"xxx","g":"xxx","b":"xxx"}，auto_color为false时生效
+     *                     - is_hyaline: 是否需要透明底色，默认false
+     * @return 图片二进制内容
+     * @see <a href="https://developers.weixin.qq.com/miniprogram/dev/OpenApiDoc/qrcode-link/qr-code/getUnlimitedQRCode.html">获取不限制的小程序码</a>
      */
     @PostExchange("wxa/getwxacodeunlimit")
-    byte[] getAppletQrcode(@RequestParam String access_token, @RequestBody Map<String, String> params);
+    byte[] getAppletQRCode(@RequestParam String access_token, @RequestBody Map<String, String> params,
+        @RequestHeader Map<String, String> headers);
+
 }

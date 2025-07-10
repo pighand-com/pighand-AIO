@@ -1,8 +1,11 @@
 package com.pighand.aio.controller.dashboard.ECommerce;
 
+import com.pighand.aio.common.interceptor.Context;
+import com.pighand.aio.common.interfaces.Authorization;
 import com.pighand.aio.domain.ECommerce.ThemeDomain;
 import com.pighand.aio.service.ECommerce.ThemeService;
 import com.pighand.aio.vo.ECommerce.ThemeVO;
+import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.framework.spring.api.annotation.*;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.base.BaseController;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wangshuli
  * @createDate 2024-05-23 15:01:58
  */
+@Authorization
 @RestController(path = "dashboard/theme", docName = "电商 - 主题")
 public class ThemeController extends BaseController<ThemeService> {
 
@@ -27,6 +31,10 @@ public class ThemeController extends BaseController<ThemeService> {
      */
     @Post(docSummary = "创建", fieldGroup = "themeCreate")
     public Result<ThemeVO> create(@Validated({ValidationGroup.Create.class}) @RequestBody ThemeVO themeVO) {
+        LoginUser loginUser = Context.loginUser();
+        themeVO.setApplicationId(loginUser.getAId());
+        themeVO.setStoreId(loginUser.getSId());
+
         themeVO = super.service.create(themeVO);
 
         return new Result(themeVO);
@@ -59,9 +67,6 @@ public class ThemeController extends BaseController<ThemeService> {
     @Put(path = "{id}", docSummary = "修改", fieldGroup = "themeUpdate")
     public Result update(@PathVariable(name = "id") Long id, @RequestBody ThemeVO themeVO) {
         themeVO.setId(id);
-
-        // Prohibit modifying fields
-        themeVO.setId(null);
 
         super.service.update(themeVO);
 

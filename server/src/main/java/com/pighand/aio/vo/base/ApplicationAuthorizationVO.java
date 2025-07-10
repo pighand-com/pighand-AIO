@@ -1,5 +1,6 @@
 package com.pighand.aio.vo.base;
 
+import com.mybatisflex.annotation.TableRef;
 import com.pighand.aio.domain.base.ApplicationAuthorizationDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,5 +13,6 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
+@TableRef(ApplicationAuthorizationDomain.class)
 public class ApplicationAuthorizationVO extends ApplicationAuthorizationDomain {
 }

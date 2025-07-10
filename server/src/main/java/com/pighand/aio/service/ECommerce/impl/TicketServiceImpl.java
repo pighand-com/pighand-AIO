@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.pighand.aio.domain.ECommerce.table.ThemeTableDef.THEME;
 import static com.pighand.aio.domain.ECommerce.table.TicketTableDef.TICKET;
 import static com.pighand.aio.domain.ECommerce.table.TicketValidityTableDef.TICKET_VALIDITY;
 import static com.pighand.aio.domain.IoT.table.DeviceTableDef.DEVICE;
@@ -50,6 +51,10 @@ public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomai
      */
     @Override
     public TicketVO create(TicketVO ticketVO) {
+        if (ticketVO.getValidationCount() == null) {
+            ticketVO.setValidationCount(1);
+        }
+
         super.mapper.insert(ticketVO);
 
         return ticketVO;
@@ -63,7 +68,7 @@ public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomai
      */
     @Override
     public TicketDomain find(Long id) {
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**
@@ -74,6 +79,8 @@ public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomai
      */
     @Override
     public PageOrList<TicketVO> query(TicketVO ticketVO) {
+        ticketVO.setJoinTables(THEME.getName());
+
         QueryWrapper queryWrapper = QueryWrapper.create()
             .select(TICKET.ID, TICKET.NAME, TICKET.DETAILS, TICKET.ORIGINAL_PRICE, TICKET.CURRENT_PRICE,
                 TICKET.VALIDATION_COUNT)
@@ -91,8 +98,11 @@ public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomai
         List<Long> ids = result.getRecords().stream().map(TicketVO::getId).collect(Collectors.toList());
 
         // 查询适用信息
-        List<TicketValidityVO> ticketValidities =
-            ticketValidityService.queryChain().where(TICKET_VALIDITY.TICKET_ID.in(ids)).listAs(TicketValidityVO.class);
+        List<TicketValidityVO> ticketValidities = new ArrayList<>(0);
+        if (!ids.isEmpty()) {
+            ticketValidities = ticketValidityService.queryChain().where(TICKET_VALIDITY.TICKET_ID.in(ids))
+                .listAs(TicketValidityVO.class);
+        }
 
         List<Long> validyIds = new ArrayList<>();
         ticketValidities.forEach(ticketValidity -> {
@@ -100,8 +110,12 @@ public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomai
         });
 
         // 查询适用信息
-        List<DeviceDomain> devices = deviceService.queryChain().select(DEVICE.ID, DEVICE.DESCRIPTION, DEVICE.CONFIG)
-            .where(DEVICE.ID.in(validyIds)).list();
+        List<DeviceDomain> devices = new ArrayList<>(0);
+        if (!validyIds.isEmpty()) {
+            devices = deviceService.queryChain().select(DEVICE.ID, DEVICE.DESCRIPTION, DEVICE.CONFIG)
+                .where(DEVICE.ID.in(validyIds)).list();
+        }
+
         Map<Long, TicketValidityDetailEntity> deviceMap =
             devices.stream().collect(Collectors.toMap(DeviceDomain::getId, device -> {
                 TicketValidityDetailEntity ticketValidityDetailEntity = new TicketValidityDetailEntity();

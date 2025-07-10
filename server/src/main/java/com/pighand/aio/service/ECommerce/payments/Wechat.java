@@ -26,7 +26,7 @@ public class Wechat {
     private String notifyUrl;
 
     public void refund(String merchantId, String privateKeyPath, String merchantSerialNumber, String apiV3Key,
-        Long total, String orderTradeSn, String refundSn) {
+        Long total, Long refund, String orderTradeSn, String refundSn) {
         Config config = getConfig(merchantId, privateKeyPath, merchantSerialNumber, apiV3Key);
 
         //构造申请退款对象
@@ -35,7 +35,7 @@ public class Wechat {
         CreateRequest request = new CreateRequest();
         //设置退款金额 根据自己的实际业务自行填写
         AmountReq amountReq = new AmountReq();
-        amountReq.setRefund(total);
+        amountReq.setRefund(refund);
         amountReq.setTotal(total);
         amountReq.setCurrency("CNY");
         request.setAmount(amountReq);
@@ -46,9 +46,7 @@ public class Wechat {
         //退款成功的回调地址
         //        request.setNotifyUrl(MtWeChatConstant.REFUND_NOTIFY_URL);
         //发起请求,申请退款
-        com.wechat.pay.java.service.refund.model.Refund refund = service.create(request);
-        //调用成功的响应数据
-        System.out.println(refund);
+        service.create(request);
     }
 
     public Config getConfig(String merchantId, String privateKeyPath, String merchantSerialNumber, String apiV3Key) {

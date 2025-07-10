@@ -38,6 +38,7 @@ public class UserController extends BaseController<UserService> {
      */
     @Post(docSummary = "创建", fieldGroup = "userCreate")
     public Result<UserVO> create(@Validated({ValidationGroup.Create.class}) @RequestBody UserVO userVO) {
+        userVO.setApplicationId(Context.applicationId());
         userVO = super.service.create(userVO);
 
         return new Result(userVO);

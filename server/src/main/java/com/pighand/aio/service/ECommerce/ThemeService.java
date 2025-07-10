@@ -27,7 +27,7 @@ public interface ThemeService extends BaseService<ThemeDomain> {
      * @param id
      * @return
      */
-    ThemeDomain find(Long id);
+    ThemeVO find(Long id);
 
     /**
      * 分页或列表
@@ -43,6 +43,8 @@ public interface ThemeService extends BaseService<ThemeDomain> {
      * @param themeVO
      */
     void update(ThemeVO themeVO);
+
+    void updateQueueDuration(Long id, Integer queueDuration);
 
     /**
      * 删除

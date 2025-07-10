@@ -38,7 +38,7 @@ public class GoodsSkuServiceImpl extends BaseServiceImpl<GoodsSkuMapper, GoodsSk
      */
     @Override
     public GoodsSkuDomain find(Long id) {
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**

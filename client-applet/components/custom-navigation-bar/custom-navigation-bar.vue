@@ -1,5 +1,6 @@
 <template>
-	<view class="navigation-bar" :style="'position: relative; height: ' + (navigationBarHeight + statusBarHeight) + 'px'">
+	<view class="navigation-bar" 
+		:style="'height: ' + (navigationBarHeight + statusBarHeight) + 'px; position: ' + props.position + '; --status-bar-height: ' + statusBarHeight + 'px; --navigation-bar-height: ' + navigationBarHeight + 'px;'">
 		<!-- 状态栏空位 -->
 		<view class="status-bar" :style="'height: ' + statusBarHeight + 'px'"></view>
 		
@@ -18,6 +19,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
+/**
+ * defineProps 入参说明：
+ * @property {String} title 导航栏标题文本
+ * @property {Boolean} back 是否显示返回按钮
+ * @property {String} backPath 自定义返回路径，优先跳转该路径
+ * @property {String} position 定位方式，默认 absolute，可选 fixed/static
+ */
 const props = defineProps({
 	title: {
 		type: String,
@@ -26,6 +34,14 @@ const props = defineProps({
 	back: {
 		type: Boolean,
 		default: false
+	},
+	backPath: {
+		type: String,
+		default: ''
+	},
+	position: {
+		type: String,
+		default: 'absolute'
 	}
 })
 
@@ -40,8 +56,14 @@ onMounted(() => {
 })
 
 const onBack = () => {
-	let pages = getCurrentPages()
+	if (props.backPath) {
+		uni.navigateTo({
+			url: props.backPath
+		})
+		return
+	}
 	
+	let pages = getCurrentPages()
 	if (pages.length > 1) {
 		uni.navigateBack({
 			delta: -1
@@ -57,6 +79,10 @@ const onBack = () => {
 <style lang="scss" scoped>
 	.navigation-bar {
 		width: 100%;
+		top: 0;
+		left: 0;
+		width: 100%;
+		z-index: 1000;
 		
 		.status-bar {
 			width: 100%;
@@ -75,13 +101,15 @@ const onBack = () => {
 		}
 		
 		.back {
-			height: 100%;
+			height: var(--navigation-bar-height, 44px);
 			width: 80rpx;
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			position: absolute;
 			top: var(--status-bar-height, 0px);
+			left: 0;
+			z-index: 1001;
 			
 			image {
 				width: 40rpx;

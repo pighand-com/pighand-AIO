@@ -68,4 +68,10 @@ public class ThemeDomain extends BaseDomainRecord<ThemeDomain> implements Serial
 
     @Schema(description = "时长(分钟)")
     private Integer duration;
+
+    @Schema(description = "客服二维码")
+    private String serviceQrUrl;
+
+    @Schema(description = "排队时长，单位分钟")
+    private Integer queueDuration;
 }

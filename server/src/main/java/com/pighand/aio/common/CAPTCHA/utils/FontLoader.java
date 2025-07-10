@@ -40,7 +40,7 @@ public class FontLoader {
             }
 
             for (Resource resource : resources) {
-                Font font = Font.createFont(Font.TRUETYPE_FONT, resource.getFile());
+                Font font = Font.createFont(Font.TRUETYPE_FONT, resource.getInputStream());
 
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
                 ge.registerFont(font);

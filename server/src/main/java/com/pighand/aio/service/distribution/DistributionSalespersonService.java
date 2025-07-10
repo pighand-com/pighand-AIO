@@ -29,6 +29,8 @@ public interface DistributionSalespersonService extends BaseService<Distribution
      */
     DistributionSalespersonDomain find(Long id);
 
+    DistributionSalespersonVO findByUserId(Long userId);
+
     /**
      * 分页或列表
      *
@@ -50,4 +52,20 @@ public interface DistributionSalespersonService extends BaseService<Distribution
      * @param id
      */
     void delete(Long id);
+
+    /**
+     * 启用
+     *
+     * @param id
+     */
+    void enable(Long id);
+
+    /**
+     * 停用
+     *
+     * @param id
+     */
+    void disable(Long id);
+
+    String getWechatAppletQrcode(Long userId);
 }

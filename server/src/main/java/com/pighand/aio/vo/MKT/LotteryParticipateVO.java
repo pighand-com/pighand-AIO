@@ -1,5 +1,6 @@
 package com.pighand.aio.vo.MKT;
 
+import com.mybatisflex.annotation.TableRef;
 import com.pighand.aio.domain.MKT.LotteryParticipateDomain;
 import com.pighand.aio.domain.MKT.LotteryParticipatePrizeDomain;
 import lombok.Data;
@@ -14,6 +15,7 @@ import java.util.List;
  * @createDate 2024-11-28 17:21:35
  */
 @Data
+@TableRef(LotteryParticipateDomain.class)
 @EqualsAndHashCode(callSuper = false)
 public class LotteryParticipateVO extends LotteryParticipateDomain {
 

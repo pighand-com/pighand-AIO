@@ -5,7 +5,8 @@
             >添加</el-button
         >
 
-        <slot name="operation" />
+        <!-- 表格头槽 -->
+        <slot name="header-operation" />
 
         <!-- 根据批量操作数组显示对应的按钮或下拉菜单 -->
         <template v-if="batchActions && batchActions.length > 0">
@@ -101,7 +102,7 @@
                     >
 
                     <component
-                        v-if="
+                        v-else-if="
                             item.tableFormat &&
                             typeof item.tableFormat === 'function' &&
                             isVNode(dataFormat(scope.row, item))
@@ -139,7 +140,7 @@
                 align="center"
                 :width="operationWidth || 180">
                 <template #default="scope">
-                    <slot name="table-operation" :row="scope.row" />
+                    <slot name="column-operation" :row="scope.row" />
 
                     <el-button
                         v-if="tableOperation.includes('edit')"
@@ -186,7 +187,16 @@
 
 <script lang="ts" setup>
 import moment from 'moment';
-import { ref, inject, onMounted, useAttrs, computed, PropType } from 'vue';
+import {
+    ref,
+    inject,
+    watch,
+    onMounted,
+    useAttrs,
+    computed,
+    PropType,
+    nextTick
+} from 'vue';
 import { Plus, Edit, Delete, Copy, CopyLink } from '@icon-park/vue-next';
 
 import { ProvideFormInterface } from '@/common/provideForm';
@@ -230,6 +240,7 @@ const props = defineProps({
     handleQuery: Function,
     handleFind: Function,
     handleDelete: Function,
+    handleFormatData: Function,
     batchActions: {
         type: Array as PropType<BatchAction[]>,
         default: () => []
@@ -237,7 +248,7 @@ const props = defineProps({
 });
 
 const provideForm: ProvideFormInterface = inject('provideForm');
-const {
+let {
     tableDataModel,
     isTableDataLoading,
     isDetailDataLoading,
@@ -249,6 +260,27 @@ const {
     detailFormModel,
     getDetailOperation
 } = provideForm;
+
+watch(
+    () => tableDataModel.data,
+    (newValue) => {
+        if (!newValue) {
+            return;
+        }
+
+        nextTick(() => {
+            if (!props.handleFormatData) {
+                return;
+            }
+
+            tableDataModel.data.forEach((item) => {
+                props.handleFormatData({
+                    queryData: item
+                });
+            });
+        });
+    }
+);
 
 /**
  * 点击添加按钮
@@ -309,6 +341,7 @@ const onEdit = async (row) => {
     isOpenDetail.value = true;
 
     const result = await props.handleFind(primaryValue);
+
     Object.assign(detailFormModel, result);
 
     isDetailDataLoading.value = false;
@@ -373,9 +406,12 @@ const dataFormat = (row, item) => {
     } else if (domData && Array.isArray(domData)) {
         const data = domData.find((item) => item.value == value);
         value = data ? data.label : value;
+    } else if (domType === 'select' && domData && Array.isArray(domData)) {
+        const data = domData.find((item) => item.value == value);
+        value = data ? data.label : value;
     }
 
-    return value;
+    return value || '-';
 };
 
 /**

@@ -6,6 +6,24 @@ const pages = [
   },
   {
     path: "pages/base/pages/mine"
+  },
+  {
+    path: "pages/ECommerce/pages/theme"
+  },
+  {
+    path: "pages/ECommerce/pages/order-list"
+  },
+  {
+    path: "pages/ECommerce/pages/order-detail"
+  },
+  {
+    path: "pages/ECommerce/pages/mine-ticket"
+  },
+  {
+    path: "pages/ECommerce/pages/distribution-list"
+  },
+  {
+    path: "pages/ECommerce/pages/queue-setting"
   }
 ];
 const globalStyle = {
@@ -22,15 +40,15 @@ const tabBar = {
   list: [
     {
       pagePath: "pages/base/pages/index",
-      text: "index",
-      iconPath: "static/logo.png",
-      selectedIconPath: "static/logo.png"
+      text: "首页",
+      iconPath: "static/tab-bar-index-inactive.png",
+      selectedIconPath: "static/tab-bar-index-activity.png"
     },
     {
       pagePath: "pages/base/pages/mine",
-      text: "mine",
-      iconPath: "static/logo.png",
-      selectedIconPath: "static/logo.png"
+      text: "我的",
+      iconPath: "static/tab-bar-mine-inactive.png",
+      selectedIconPath: "static/tab-bar-mine-activity.png"
     }
   ]
 };
@@ -41,7 +59,9 @@ const easycom = {
     "tui-(.*)": "@/components/thorui/tui-$1/tui-$1.vue",
     "user-(.*)": "@/components/user/$1.vue",
     "tab-bar": "@/components/tab-bar/tab-bar",
-    "custom-navigation-bar": "@/components/custom-navigation-bar/custom-navigation-bar"
+    "custom-navigation-bar": "@/components/custom-navigation-bar/custom-navigation-bar",
+    "custom-button": "@/components/custom-button/custom-button",
+    "status-bar-gradient": "@/components/status-bar-gradient/status-bar-gradient"
   }
 };
 const pageJson = {

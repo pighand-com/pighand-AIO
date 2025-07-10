@@ -16,6 +16,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 import static com.pighand.aio.domain.distribution.table.DistributionSalespersonTableDef.DISTRIBUTION_SALESPERSON;
 
 /**
@@ -39,6 +40,12 @@ public interface DistributionSalespersonMapper extends BaseMapper<DistributionSa
 
         if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
+        }
+
+        if (joinTables.contains(USER.getName())) {
+            queryWrapper.select(USER.PHONE).leftJoin(USER).on(USER.ID.eq(DISTRIBUTION_SALESPERSON.USER_ID));
+
+            joinTables.remove(USER.getName());
         }
 
         return queryWrapper;

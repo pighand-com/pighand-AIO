@@ -16,6 +16,7 @@ import com.pighand.framework.spring.util.VerifyUtils;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.http.HttpMethodName;
 import com.qcloud.cos.model.DeleteObjectTaggingRequest;
+import com.qcloud.cos.model.DeleteObjectsRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -147,26 +148,118 @@ public class UploadServiceImpl implements UploadService {
     /**
      * 将临时文件改为正式文件
      *
-     * @param fileUrl
+     * @param fileUrls
      * @return
      */
     @Override
-    public void updateFileOfficial(String fileUrl) {
+    public void updateFileOfficial(String... fileUrls) {
         ApplicationPlatformKeyDomain projectPlatformKey = projectPlatformKeyService.uploadKey();
 
-        String key = fileKeyByUrl(fileUrl);
+        List<String> keys = Arrays.stream(fileUrls).filter(fileUrl -> VerifyUtils.isNotEmpty(fileUrl))
+            .map(fileUrl -> fileKeyByUrl(fileUrl)).toList();
 
         COSClient cosClient = tencentCloudSDK.cosClient(projectPlatformKey.getAppid(), projectPlatformKey.getSecret(),
             projectPlatformKey.getRegion());
 
         switch (projectPlatformKey.getPlatform()) {
             case TENCENT_CLOUD_COS:
-                cosClient.deleteObjectTagging(new DeleteObjectTaggingRequest(projectPlatformKey.getBucket(), key));
+                keys.forEach(key -> cosClient.deleteObjectTagging(
+                    new DeleteObjectTaggingRequest(projectPlatformKey.getBucket(), key)));
                 break;
             default:
                 throw new ThrowPrompt("不支持上传类型");
         }
 
+    }
+
+    /**
+     * 删除文件
+     *
+     * @param fileUrls
+     */
+    @Override
+    public void deleteFileOfficial(String... fileUrls) {
+        if (VerifyUtils.isEmpty(fileUrls)) {
+            return;
+        }
+
+        ApplicationPlatformKeyDomain projectPlatformKey = projectPlatformKeyService.uploadKey();
+
+        String[] keys = Arrays.stream(fileUrls).filter(fileUrl -> VerifyUtils.isNotEmpty(fileUrl))
+            .map(fileUrl -> fileKeyByUrl(fileUrl)).toArray(String[]::new);
+
+        DeleteObjectsRequest deleteObjectsRequest =
+            new DeleteObjectsRequest(projectPlatformKey.getBucket()).withKeys(keys);
+
+        tencentCloudSDK.cosClient(projectPlatformKey.getAppid(), projectPlatformKey.getSecret(),
+            projectPlatformKey.getRegion()).deleteObjects(deleteObjectsRequest);
+    }
+
+    /**
+     * 替换文件：删除旧文件，将新文件改为正式文件
+     *
+     * @param fileUrls 成对的文件URL（旧url、新url、旧url、新url...）
+     */
+    @Override
+    public void replaceFileOfficial(String... fileUrls) {
+        if (VerifyUtils.isEmpty(fileUrls) || fileUrls.length % 2 != 0) {
+            throw new ThrowPrompt("参数必须是成对的URL（旧url、新url、旧url、新url...）");
+        }
+
+        ApplicationPlatformKeyDomain projectPlatformKey = projectPlatformKeyService.uploadKey();
+
+        List<String> urlsToDelete = new ArrayList<>();
+        List<String> urlsToUpdate = new ArrayList<>();
+
+        // 处理成对的URL
+        for (int i = 0; i < fileUrls.length; i += 2) {
+            String oldUrl = fileUrls[i];
+            String newUrl = fileUrls[i + 1];
+
+            // 如果旧URL和新URL都不存在。或旧URL和新URL都存在且相等，不做任何操作
+            if ((VerifyUtils.isEmpty(oldUrl) && VerifyUtils.isEmpty(newUrl)) || (VerifyUtils.isNotEmpty(oldUrl)
+                && VerifyUtils.isNotEmpty(newUrl) && oldUrl.equals(newUrl))) {
+                continue;
+            }
+
+            // 如果不相等，删除旧URL，新URL改为正式文件
+            if (VerifyUtils.isNotEmpty(oldUrl)) {
+                urlsToDelete.add(oldUrl);
+            }
+            if (VerifyUtils.isNotEmpty(newUrl)) {
+                urlsToUpdate.add(newUrl);
+            }
+        }
+
+        COSClient cosClient = tencentCloudSDK.cosClient(projectPlatformKey.getAppid(), projectPlatformKey.getSecret(),
+            projectPlatformKey.getRegion());
+
+        switch (projectPlatformKey.getPlatform()) {
+            case TENCENT_CLOUD_COS:
+                // 删除旧文件
+                if (!urlsToDelete.isEmpty()) {
+                    String[] keysToDelete = urlsToDelete.stream().filter(fileUrl -> VerifyUtils.isNotEmpty(fileUrl))
+                        .map(fileUrl -> fileKeyByUrl(fileUrl)).toArray(String[]::new);
+
+                    if (keysToDelete.length > 0) {
+                        DeleteObjectsRequest deleteObjectsRequest =
+                            new DeleteObjectsRequest(projectPlatformKey.getBucket()).withKeys(keysToDelete);
+                        cosClient.deleteObjects(deleteObjectsRequest);
+                    }
+                }
+
+                // 将新文件改为正式文件（删除临时标签）
+                if (!urlsToUpdate.isEmpty()) {
+                    List<String> keysToUpdate = urlsToUpdate.stream().filter(fileUrl -> VerifyUtils.isNotEmpty(fileUrl))
+                        .map(fileUrl -> fileKeyByUrl(fileUrl)).toList();
+
+                    keysToUpdate.forEach(key -> cosClient.deleteObjectTagging(
+                        new DeleteObjectTaggingRequest(projectPlatformKey.getBucket(), key)));
+                }
+                break;
+            default:
+                throw new ThrowPrompt("不支持上传类型");
+        }
     }
 
     @Override

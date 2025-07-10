@@ -101,11 +101,15 @@ public interface OrderMapper extends BaseMapper<OrderDomain> {
      * @return
      */
     default void relationMany(Set<String> joinTables, Object result) {
-        if (joinTables == null || joinTables.isEmpty()) {
+        if (joinTables == null || joinTables.isEmpty() || result == null) {
             return;
         }
 
         boolean isList = result instanceof List;
+
+        if (isList && ((List<?>)result).isEmpty()) {
+            return;
+        }
 
         List<Function<OrderVO, Long>> mainIdGetters = new ArrayList<>(joinTables.size());
         List<Function<Object, Long>> subTableIdGetter = new ArrayList<>(joinTables.size());

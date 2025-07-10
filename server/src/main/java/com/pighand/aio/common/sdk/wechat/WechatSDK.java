@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class WechatSDK {
+
+    public static Utils utils;
+
     /**
      * 公众平台
      */
@@ -24,7 +27,8 @@ public class WechatSDK {
     }
 
     @Autowired(required = false)
-    public WechatSDK(OfficiallyAccount officiallyAccount, MiniApplet miniApplet) {
+    public WechatSDK(Utils utils, OfficiallyAccount officiallyAccount, MiniApplet miniApplet) {
+        WechatSDK.utils = utils;
         WechatSDK.OFFICIALLY_ACCOUNT = officiallyAccount;
         WechatSDK.MINI_APPLET = miniApplet;
     }

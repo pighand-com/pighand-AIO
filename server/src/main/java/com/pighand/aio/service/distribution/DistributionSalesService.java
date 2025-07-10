@@ -1,9 +1,12 @@
 package com.pighand.aio.service.distribution;
 
+import com.pighand.aio.domain.distribution.DistributionSalesDetailDomain;
 import com.pighand.aio.domain.distribution.DistributionSalesDomain;
 import com.pighand.aio.vo.distribution.DistributionSalesVO;
 import com.pighand.framework.spring.base.BaseService;
 import com.pighand.framework.spring.page.PageOrList;
+
+import java.util.List;
 
 /**
  * 分销 - 销售记录
@@ -37,6 +40,8 @@ public interface DistributionSalesService extends BaseService<DistributionSalesD
      */
     PageOrList<DistributionSalesVO> query(DistributionSalesVO distDistributionSalesVO);
 
+    List<DistributionSalesDetailDomain> queryDetail(Long distributionSalesId);
+
     /**
      * 修改
      *
@@ -50,4 +55,19 @@ public interface DistributionSalesService extends BaseService<DistributionSalesD
      * @param id
      */
     void delete(Long id);
+
+    /**
+     * 根据结算ID统计各个状态的总数
+     *
+     * @return Map<String, Object> 状态统计结果
+     */
+    java.util.Map<String, Object> statistics(DistributionSalesVO distDistributionSalesVO);
+
+    void createTicket(Long salespersonId, Long orderId, Long ticketId, List<Long> ticketUserIds);
+
+    void thawTicket(Long ticketUserId);
+
+    void refundTicket(Long ticketUserId);
+
+    void freezeTicket(Long ticketUserId);
 }

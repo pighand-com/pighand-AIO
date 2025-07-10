@@ -31,10 +31,14 @@ public interface UploadService {
     /**
      * 将临时文件改为正式文件
      *
-     * @param fileUrl
+     * @param fileUrls
      * @return
      */
-    void updateFileOfficial(String fileUrl);
+    void updateFileOfficial(String... fileUrls);
+
+    void deleteFileOfficial(String... fileUrl);
+
+    void replaceFileOfficial(String... fileUrls);
 
     /**
      * 通过本地文件上传

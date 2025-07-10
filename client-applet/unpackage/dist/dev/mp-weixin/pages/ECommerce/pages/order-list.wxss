@@ -1,0 +1,245 @@
+
+/* 页面容器 */
+.page-container.data-v-ddfe69f5 {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+/* 标签栏容器 */
+.tabs-container.data-v-ddfe69f5 {
+  background: #ffffff;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.tabs.data-v-ddfe69f5 {
+  display: flex;
+  padding: 0 32rpx;
+}
+.tab.data-v-ddfe69f5 {
+  flex: 1;
+  position: relative;
+  padding: 32rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+.tab-text.data-v-ddfe69f5 {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #8a8a8a;
+  transition: all 0.3s ease;
+}
+.tab.active .tab-text.data-v-ddfe69f5 {
+  color: #007aff;
+  font-weight: 600;
+  transform: scale(1.05);
+}
+.tab-indicator.data-v-ddfe69f5 {
+  position: absolute;
+  bottom: 0;
+  width: 60rpx;
+  height: 6rpx;
+  background: linear-gradient(90deg, #007aff 0%, #5ac8fa 100%);
+  border-radius: 3rpx;
+  animation: slideIn-ddfe69f5 0.3s ease;
+}
+@keyframes slideIn-ddfe69f5 {
+from {
+    width: 0;
+    opacity: 0;
+}
+to {
+    width: 60rpx;
+    opacity: 1;
+}
+}
+
+/* 订单列表 */
+.order-list.data-v-ddfe69f5 {
+  padding: 32rpx 24rpx;
+  padding-top: 32rpx;
+}
+.order-item.data-v-ddfe69f5 {
+  position: relative;
+  background: #ffffff;
+  margin-bottom: 32rpx;
+  border-radius: 24rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.06);
+  padding: 32rpx;
+  border: 1rpx solid #f0f0f0;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+.order-item.data-v-ddfe69f5:hover {
+  transform: translateY(-4rpx);
+  box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.12);
+}
+
+
+
+/* 订单头部 */
+.order-header.data-v-ddfe69f5 {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24rpx;
+  padding-top: 16rpx;
+}
+.order-info.data-v-ddfe69f5 {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+.order-label.data-v-ddfe69f5 {
+  font-size: 24rpx;
+  color: #8a8a8a;
+  font-weight: 400;
+}
+.order-sn.data-v-ddfe69f5 {
+  font-size: 28rpx;
+  color: #007aff;
+  font-weight: 500;
+  font-family: 'SF Mono', Monaco, monospace;
+  cursor: pointer;
+}
+.order-date.data-v-ddfe69f5 {
+  font-size: 26rpx;
+  color: #8a8a8a;
+  font-weight: 400;
+}
+
+/* 商品信息 */
+.order-goods.data-v-ddfe69f5 {
+  margin-bottom: 24rpx;
+}
+.goods-item.data-v-ddfe69f5 {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f5f5f7;
+  height: 140rpx;
+}
+.goods-item.data-v-ddfe69f5:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.goods-img-container.data-v-ddfe69f5 {
+  margin-right: 24rpx;
+  width: 140rpx;
+  height: 140rpx;
+}
+.goods-img.data-v-ddfe69f5 {
+  width: 100%;
+  height: 100%;
+  border-radius: 16rpx;
+  background: #f5f5f7;
+  border: 1rpx solid #e5e5ea;
+}
+.goods-img-placeholder.data-v-ddfe69f5 {
+  border-radius: 16rpx;
+  background: linear-gradient(135deg, #f5f5f7 0%, #e5e5ea 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1rpx dashed #d1d1d6;
+}
+.placeholder-text.data-v-ddfe69f5 {
+  font-size: 22rpx;
+  color: #8a8a8a;
+}
+.goods-info.data-v-ddfe69f5 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 140rpx;
+}
+.goods-main.data-v-ddfe69f5 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 100%;
+}
+.goods-name.data-v-ddfe69f5 {
+  font-size: 30rpx;
+  color: #1d1d1f;
+  font-weight: 500;
+  line-height: 1.4;
+  max-width: 400rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.goods-meta.data-v-ddfe69f5 {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+.goods-qty.data-v-ddfe69f5 {
+  font-size: 26rpx;
+  color: #8a8a8a;
+  background: #f5f5f7;
+  padding: 6rpx 12rpx;
+  border-radius: 8rpx;
+}
+
+/* 订单底部 */
+.order-footer.data-v-ddfe69f5 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24rpx;
+  border-top: 1rpx solid #f5f5f7;
+}
+.order-actions.data-v-ddfe69f5 {
+  display: flex;
+  gap: 16rpx;
+}
+.order-amount-container.data-v-ddfe69f5 {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4rpx;
+}
+.amount-label.data-v-ddfe69f5 {
+  font-size: 24rpx;
+  color: #8a8a8a;
+}
+.order-amount.data-v-ddfe69f5 {
+  font-size: 36rpx;
+  font-weight: 600;
+  font-family: 'SF Pro Display', -apple-system, sans-serif;
+}
+
+/* 金额颜色统一规范 */
+.refund-amount.data-v-ddfe69f5 {
+  color: #34c759 !important; /* 退款金额：绿色 */
+}
+.paid-amount.data-v-ddfe69f5 {
+  color: #ff3b30 !important; /* 实付金额：红色 */
+}
+
+/* 空状态 */
+.empty-state.data-v-ddfe69f5 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 40rpx;
+  text-align: center;
+}
+.empty-text.data-v-ddfe69f5 {
+  font-size: 32rpx;
+  color: #1d1d1f;
+  font-weight: 500;
+  margin-bottom: 16rpx;
+}
+.empty-desc.data-v-ddfe69f5 {
+  font-size: 28rpx;
+  color: #8a8a8a;
+  line-height: 1.5;
+}
+

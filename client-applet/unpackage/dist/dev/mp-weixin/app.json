@@ -1,7 +1,13 @@
 {
   "pages": [
     "pages/base/pages/index",
-    "pages/base/pages/mine"
+    "pages/base/pages/mine",
+    "pages/ECommerce/pages/theme",
+    "pages/ECommerce/pages/order-list",
+    "pages/ECommerce/pages/order-detail",
+    "pages/ECommerce/pages/mine-ticket",
+    "pages/ECommerce/pages/distribution-list",
+    "pages/ECommerce/pages/queue-setting"
   ],
   "window": {
     "navigationBarTextStyle": "black",
@@ -17,15 +23,15 @@
     "list": [
       {
         "pagePath": "pages/base/pages/index",
-        "text": "index",
-        "iconPath": "static/logo.png",
-        "selectedIconPath": "static/logo.png"
+        "text": "首页",
+        "iconPath": "static/tab-bar-index-inactive.png",
+        "selectedIconPath": "static/tab-bar-index-activity.png"
       },
       {
         "pagePath": "pages/base/pages/mine",
-        "text": "mine",
-        "iconPath": "static/logo.png",
-        "selectedIconPath": "static/logo.png"
+        "text": "我的",
+        "iconPath": "static/tab-bar-mine-inactive.png",
+        "selectedIconPath": "static/tab-bar-mine-activity.png"
       }
     ]
   },

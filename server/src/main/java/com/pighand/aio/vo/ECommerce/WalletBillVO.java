@@ -3,6 +3,7 @@ package com.pighand.aio.vo.ECommerce;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.mybatisflex.annotation.TableRef;
 import com.pighand.aio.domain.ECommerce.WalletBillDomain;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,6 +17,7 @@ import lombok.EqualsAndHashCode;
  * @createDate 2023-12-04 16:37:26
  */
 @Data
+@TableRef(WalletBillDomain.class)
 @EqualsAndHashCode(callSuper = false)
 public class WalletBillVO extends WalletBillDomain {
     private WalletTransferVO walletTransfer;

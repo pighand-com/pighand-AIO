@@ -36,6 +36,10 @@ public class GoodsSkuDomain extends GoodsBaseInfo implements Serializable {
 
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
+    private Long spuId;
+
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long applicationId;
 
     @Length(max = 32)

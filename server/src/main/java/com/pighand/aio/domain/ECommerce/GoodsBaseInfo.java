@@ -20,8 +20,6 @@ public class GoodsBaseInfo extends BaseDomainRecord<GoodsBaseInfo> implements Se
 
     private Long id;
 
-    private Long spuId;
-
     @Schema(description = "门店id")
     private Long storeId;
 

@@ -1,35 +1,62 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
     <div>
-        <el-drawer :model-value="isOpenDetail" :title="title" :before-close="onClose" :size="size" direction="rtl">
+        <el-drawer
+            :model-value="isOpenDetail"
+            :title="title"
+            :before-close="onClose"
+            :size="size"
+            direction="rtl">
             <div class="drawer-bg"></div>
-            <el-form v-loading="isDetailDataLoading" :model="detailFormModel" :disabled="loading" :rules="formRules"
-                ref="detailForm" label-position="right" label-width="auto">
+            <el-form
+                v-loading="isDetailDataLoading"
+                :model="detailFormModel"
+                :disabled="loading"
+                :rules="formRules"
+                ref="detailForm"
+                label-position="right"
+                label-width="auto">
                 <div class="detail-content">
                     <div>
-                        <FormItems :form-model="detailFormModel" :form-columns="formColumns.filter((item) => getIsDetail(item))
-                            " :on-where="'detail'">
-                            <template v-for="(item, index) in formColumns.filter(
-                                (item) => getIsDetail(item)
-                            )" :key="index" #[`detail-${index}-before`]>
+                        <FormItems
+                            :form-model="detailFormModel"
+                            :form-columns="
+                                formColumns.filter((item) => getIsDetail(item))
+                            "
+                            :on-where="'detail'">
+                            <template
+                                v-for="(item, index) in formColumns.filter(
+                                    (item) => getIsDetail(item)
+                                )"
+                                :key="index"
+                                #[`detail-${index}-before`]>
                                 <slot :name="`${index}-before`" />
                             </template>
 
-                            <template v-for="(item, index) in formColumns.filter(
-                                (item) => getIsDetail(item)
-                            )" :key="index" #[`detail-${item.prop}-before`]>
+                            <template
+                                v-for="(item, index) in formColumns.filter(
+                                    (item) => getIsDetail(item)
+                                )"
+                                :key="index"
+                                #[`detail-${item.prop}-before`]>
                                 <slot :name="`${item.prop}-before`" />
                             </template>
 
-                            <template v-for="(item, index) in formColumns.filter(
-                                (item) => getIsDetail(item)
-                            )" :key="index" #[`detail-${item.prop}-after`]>
+                            <template
+                                v-for="(item, index) in formColumns.filter(
+                                    (item) => getIsDetail(item)
+                                )"
+                                :key="index"
+                                #[`detail-${item.prop}-after`]>
                                 <slot :name="`${item.prop}-after`" />
                             </template>
 
-                            <template v-for="(item, index) in formColumns.filter(
-                                (item) => getIsDetail(item)
-                            )" :key="index" #[`detail-${index}-after`]>
+                            <template
+                                v-for="(item, index) in formColumns.filter(
+                                    (item) => getIsDetail(item)
+                                )"
+                                :key="index"
+                                #[`detail-${index}-after`]>
                                 <slot :name="`${index}-after`" />
                             </template>
 
@@ -47,9 +74,18 @@
                 <slot />
             </el-form>
             <template #footer>
-                <el-button v-if="!isDetailDataLoading && !loading" @click="onClose">取消</el-button>
-                <el-button v-if="!isDetailDataLoading" type="primary" :loading="loading"
-                    @click="onSubmit()">保存</el-button>
+                <el-button
+                    v-if="!isDetailDataLoading && !loading"
+                    @click="onClose"
+                    >取消</el-button
+                >
+                <el-button
+                    v-if="!isDetailDataLoading"
+                    type="primary"
+                    :loading="loading"
+                    @click="onSubmit()"
+                    >保存</el-button
+                >
             </template>
         </el-drawer>
     </div>
@@ -73,6 +109,7 @@ const props = defineProps({
     handleCreate: Function,
     handleUpdate: Function,
     handleQuery: Function,
+    handleFormatData: Function,
     size: {
         type: String,
         default: '30%'
@@ -110,8 +147,34 @@ watch(
 
         // 设置默认值
         nextTick(() => {
+            if (props.handleFormatData) {
+                props.handleFormatData({
+                    queryData: detailFormModel
+                });
+            }
+
             Object.keys(detailDefaultValue).forEach((key) => {
                 detailFormModel[key] = detailDefaultValue[key];
+            });
+
+            // 为有远程数据源且已有值的字段加载初始数据
+            formColumns.forEach((column) => {
+                const { label, prop, domData, domType } = column;
+                const fieldValue = detailFormModel[prop];
+                
+                // 如果是select类型，有远程数据源，且字段有值，但选项数据还未加载
+                if (
+                    domType === 'select' &&
+                    typeof domData === 'function' &&
+                    fieldValue !== null &&
+                    fieldValue !== undefined &&
+                    fieldValue !== '' &&
+                    getDomData[label + prop] &&
+                    (!domDataSet[prop] || domDataSet[prop].length === 0)
+                ) {
+                    // 主动加载选项数据
+                    getDomData[label + prop]('');
+                }
             });
 
             oldData.value = { ...(detailFormModel || {}) };
@@ -144,14 +207,12 @@ const getIsDetail = (formColumnItem: any) => {
         detail = isDetail(detailFormModel);
     }
 
-    // 如果需要显示，并数据的类型是方法，先通过方法获取初始值
+    // 如果需要显示，并且数据的类型是方法，先通过方法获取初始值
     if (detail) {
-        if (getDomData[label + prop]) {
+        if (getDomData[label + prop] && domDataInit) {
             getDomData[label + prop]().then(() => {
                 domDataInit(domDataSet[prop], detailFormModel);
             });
-        } else if (domDataInit) {
-            domDataInit(domDataSet[prop], detailFormModel);
         }
     }
 
@@ -233,7 +294,11 @@ const onSubmit = async () => {
         if (valid) {
             loading.value = true;
 
-            // 只传修改过的数据
+            if (props.handleFormatData) {
+                props.handleFormatData({ saveData: detailFormModel });
+            }
+
+            // 修改过的数据
             const onlyUpdateData: any = {};
             Object.keys(detailFormModel).forEach((key) => {
                 if (
@@ -244,10 +309,15 @@ const onSubmit = async () => {
                 }
             });
 
+            // if (op === 'create') {
+            //     await props.handleCreate(onlyUpdateData);
+            // } else {
+            //     await props.handleUpdate(onlyUpdateData);
+            // }
             if (op === 'create') {
-                await props.handleCreate(onlyUpdateData);
+                await props.handleCreate(detailFormModel, onlyUpdateData);
             } else {
-                await props.handleUpdate(onlyUpdateData);
+                await props.handleUpdate(detailFormModel, onlyUpdateData);
             }
 
             loading.value = false;
@@ -277,11 +347,13 @@ const onSubmit = async () => {
     width: 100%;
     height: 100%;
 
-    background: linear-gradient(to right,
-            rgba(183, 223, 255, 0.1) 0%,
-            rgba(147, 129, 255, 0.15) 25%,
-            rgba(190, 144, 255, 0.2) 50%,
-            rgba(126, 188, 255, 0.25) 75%);
+    background: linear-gradient(
+        to right,
+        rgba(183, 223, 255, 0.1) 0%,
+        rgba(147, 129, 255, 0.15) 25%,
+        rgba(190, 144, 255, 0.2) 50%,
+        rgba(126, 188, 255, 0.25) 75%
+    );
     mask-image: linear-gradient(to top, transparent, black);
     -webkit-mask-image: linear-gradient(to top, transparent, black);
     width: 100%;
@@ -292,7 +364,7 @@ const onSubmit = async () => {
     display: flex;
 }
 
-.detail-content>div {
+.detail-content > div {
     &:first-child {
         flex: 1;
     }

@@ -6,6 +6,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pighand.aio.common.enums.AuthorizationAlgEnum;
 import com.pighand.aio.common.enums.AuthorizationTypeEnum;
@@ -26,10 +27,7 @@ import org.springframework.util.StringUtils;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
-import java.util.Calendar;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -119,27 +117,41 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
         // 根据jwtBody中的key，从userInfo和extension中获取对应的值
         Map<String, Object> jwtBody = projectAuthorization.getJwtBody();
-        if (jwtBody != null) {
+        if (jwtBody == null) {
+            jwtBody = new HashMap<>(3);
+        }
 
-            // 使用om，将userInfo和extension转换为map，方便获取值
-            Map userMap = userInfo != null ? om.convertValue(userInfo, Map.class) : null;
+        // 默认字段
+        jwtBody.put("id", "id");
+        jwtBody.put("aId", "applicationId");
+        jwtBody.put("tId", "tenantId");
+        jwtBody.put("sId", "storeId");
 
-            for (String key : jwtBody.keySet()) {
-                String value = jwtBody.get(key).toString();
-                String[] tableAndField = value.split("\\.");
+        // 使用om，将userInfo和extension转换为map，方便获取值
+        om.setAnnotationIntrospector(AnnotationIntrospector.nopInstance());
+        Map userMap = userInfo != null ? om.convertValue(userInfo, Map.class) : null;
 
-                Object tableValue = "";
-                if (tableAndField.length == 1) {
-                    tableValue = userMap.get(tableAndField[0]);
-                } else {
-                    Map subMap = userMap.get(tableAndField[0]) != null ?
-                        om.convertValue(userMap.get(tableAndField[0]), Map.class) : null;
-                    tableValue = subMap.get(tableAndField[1]);
-                }
+        Map<String, Object> claims = new HashMap<>(3);
+        for (String key : jwtBody.keySet()) {
+            String value = jwtBody.get(key).toString();
+            String[] tableAndField = value.split("\\.");
 
-                jwtBuilder.withClaim(key, tableValue.toString());
+            Object tableValue = "";
+            if (tableAndField.length == 1) {
+                tableValue = userMap.get(tableAndField[0]);
+            } else {
+                Map subMap =
+                    userMap.get(tableAndField[0]) != null ? om.convertValue(userMap.get(tableAndField[0]), Map.class) :
+                        null;
+                tableValue = subMap.get(tableAndField[1]);
+            }
+
+            if (null != tableValue && !"".equals(tableValue.toString())) {
+                claims.put(key, tableValue);
             }
         }
+
+        jwtBuilder.withPayload(claims);
 
         // 如果需要登录校验，则将登录信息存入redis
         boolean isSetToRedis = false;
@@ -161,7 +173,6 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         }
 
         // _c：是否存入redis
-        jwtBuilder.withClaim("id", userInfo.getId());
         if (isSetToRedis) {
             jwtBuilder.withClaim("_c", 1);
         }
@@ -265,7 +276,10 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         }
 
         LoginUser loginUser = new LoginUser();
-        loginUser.setId(Long.valueOf(decodedJWT.getClaim("id").toString()));
+        loginUser.setId(decodedJWT.getClaim("id").asLong());
+        loginUser.setAId(decodedJWT.getClaim("aId").asLong());
+        loginUser.setTId(decodedJWT.getClaim("tId").asLong());
+        loginUser.setSId(decodedJWT.getClaim("sId").asLong());
 
         // redis校验：登录状态、所属环境
         if (checkRedis) {

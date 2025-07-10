@@ -8,6 +8,7 @@ import com.pighand.aio.vo.CMS.ArticleVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.BeanUtil;
+import com.pighand.framework.spring.util.VerifyUtils;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
@@ -91,11 +92,11 @@ public interface ArticleMapper extends BaseMapper<ArticleDomain> {
         if (joinTables.contains(ARTICLE_CATEGORY_RELEVANCE.getTableName())) {
             mainIdGetters.add(ArticleVO::getId);
 
-            if (subTableQueriesList != null) {
+            if (VerifyUtils.isNotEmpty(subTableQueriesList)) {
                 subTableQueriesList.add(
                     ids -> new ArticleCategoryRelevanceDomain().select(ARTICLE_CATEGORY_RELEVANCE.DEFAULT_COLUMNS)
                         .where(ARTICLE_CATEGORY_RELEVANCE.ARTICLE_ID.in(ids)).listAs(ArticleCategoryRelevanceVO.class));
-            } else {
+            } else if (VerifyUtils.isNotEmpty(subTableQueriesSingle)) {
                 subTableQueriesSingle.add(
                     id -> new ArticleCategoryRelevanceDomain().select(ARTICLE_CATEGORY_RELEVANCE.DEFAULT_COLUMNS)
                         .where(ARTICLE_CATEGORY_RELEVANCE.ARTICLE_ID.eq(id)).listAs(ArticleCategoryRelevanceVO.class));

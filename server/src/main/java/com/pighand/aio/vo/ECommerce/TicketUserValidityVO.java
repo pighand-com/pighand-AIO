@@ -1,6 +1,7 @@
 package com.pighand.aio.vo.ECommerce;
 
 import com.mybatisflex.annotation.Column;
+import com.mybatisflex.annotation.TableRef;
 import com.mybatisflex.core.handler.JacksonTypeHandler;
 import com.pighand.aio.domain.ECommerce.TicketUserValidityDomain;
 import lombok.Data;
@@ -15,6 +16,7 @@ import java.util.List;
  * @createDate 2024-04-28 11:36:03
  */
 @Data
+@TableRef(TicketUserValidityDomain.class)
 @EqualsAndHashCode(callSuper = false)
 public class TicketUserValidityVO extends TicketUserValidityDomain {
 

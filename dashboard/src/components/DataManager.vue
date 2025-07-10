@@ -4,8 +4,10 @@
         v-if="isShowSearch"
         :handle-query="handleQuery"
         v-bind="searchProps">
-        <template v-for="(_, name) in $slots" #[getSearchSlotName(name)]>
-            <slot :name="name"></slot>
+        <template
+            v-for="(_, name) in $slots"
+            #[getSearchSlotName(name)]="slotProps">
+            <slot :name="name" v-bind="slotProps"></slot>
         </template>
     </PSearch>
 
@@ -15,9 +17,12 @@
         :handle-query="handleQuery"
         :handle-find="handleFind"
         :handle-delete="handleDelete"
+        :handle-format-data="handleFormatData"
         v-bind="dataTableProps">
-        <template v-for="(_, name) in $slots" #[getTableSlotName(name)]>
-            <slot :name="name"></slot>
+        <template
+            v-for="(_, name) in $slots"
+            #[getTableSlotName(name)]="slotProps">
+            <slot :name="name" v-bind="slotProps"></slot>
         </template>
     </PDataTable>
 
@@ -27,9 +32,12 @@
         :handle-create="handleCreate"
         :handle-update="handleUpdate"
         :handle-query="handleQuery"
+        :handle-format-data="handleFormatData"
         v-bind="drawerProps">
-        <template v-for="(_, name) in $slots" #[getDrawerSlotName(name)]>
-            <slot :name="name"></slot>
+        <template
+            v-for="(_, name) in $slots"
+            #[getDrawerSlotName(name)]="slotProps">
+            <slot :name="name" v-bind="slotProps"></slot>
         </template>
 
         <template #detail-float>
@@ -78,6 +86,11 @@ defineProps({
         default: undefined
     },
     handleUpdate: {
+        type: Function,
+        required: false,
+        default: undefined
+    },
+    handleFormatData: {
         type: Function,
         required: false,
         default: undefined

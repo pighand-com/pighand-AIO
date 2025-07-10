@@ -29,6 +29,8 @@ export interface FormColumnsInterface {
     label: string;
     /** 表单项属性名 */
     prop: string;
+    /** 表单项后缀 */
+    suffix?: string;
 
     /** 判断唯一键，全部是false则默认为id */
     isPrimaryKey?: boolean;
@@ -122,6 +124,8 @@ export interface FormColumnsInterface {
     isUpdate?: boolean;
     /** 校验规则 */
     rules?: Array<any>;
+    /** 详情表单变更回调 */
+    onDetailChange?: (_value: object, _formModel: any) => void;
 
     /** input组件类型 */
     inputType?: 'text' | 'password' | 'textarea';
@@ -213,11 +217,15 @@ export interface ProvideFormInterface {
     };
     /** 获取组件数据的方法集合 */
     getDomData: {
-        [key: string]: () => Promise<void>;
+        [key: string]: (key?: string) => Promise<void>;
     };
     /** 组件数据加载状态 */
     domDataSetLoading: {
         [key: string]: boolean;
+    };
+    /** 清除组件数据缓存的方法集合 */
+    clearDomDataCache: {
+        [key: string]: () => void;
     };
     /** 监听详情表单数据变化 */
     watchDetailForm: (callback: (newVal: any, oldVal: any) => void) => void;
@@ -270,6 +278,8 @@ export default function provideForm(
     const getDomData = reactive({});
     // 组件数据加载状态
     const domDataSetLoading = reactive({});
+    // 清除缓存的方法集合
+    const clearDomDataCache = reactive({});
 
     // 处理每个表单列的配置
     formColumns.forEach((item) => {
@@ -308,20 +318,45 @@ export default function provideForm(
             // 处理异步数据源
             if (typeof domData === 'function') {
                 domDataSetLoading[label + prop] = false;
+                
+                // 简化缓存逻辑：只缓存空输入的初始数据
+                let hasInitialData = false;
 
                 getDomData[label + prop] = async (key: string) => {
-                    domDataSetLoading[label + prop] = true;
-
-                    const result = await domData(
-                        key,
-                        domDataSet,
-                        detailFormModel
-                    );
-                    if (result !== undefined && result !== null) {
-                        domDataSet[prop] = result;
+                    // 如果正在加载中，直接返回
+                    if (domDataSetLoading[label + prop]) {
+                        return;
                     }
 
-                    domDataSetLoading[label + prop] = false;
+                    // 只有空输入且已有初始数据时才跳过请求
+                    if (!key && hasInitialData) {
+                        return;
+                    }
+
+                    domDataSetLoading[label + prop] = true;
+                    
+                    try {
+                        const result = await domData(
+                            key,
+                            domDataSet,
+                            detailFormModel
+                        );
+                        if (result !== undefined && result !== null) {
+                            domDataSet[prop] = result;
+                            // 只有空输入时标记为已有初始数据
+                            if (!key) {
+                                hasInitialData = true;
+                            }
+                        }
+                    } finally {
+                        domDataSetLoading[label + prop] = false;
+                    }
+                };
+
+                // 清除缓存的方法
+                clearDomDataCache[label + prop] = () => {
+                    hasInitialData = false;
+                    domDataSet[prop] = [];
                 };
             } else {
                 // 静态数据源直接赋值
@@ -467,6 +502,7 @@ export default function provideForm(
         domDataSet,
         getDomData,
         domDataSetLoading,
+        clearDomDataCache,
         watchDetailForm
     });
 
@@ -490,6 +526,7 @@ export default function provideForm(
         domDataSet,
         getDomData,
         domDataSetLoading,
+        clearDomDataCache,
         watchDetailForm
     };
 }

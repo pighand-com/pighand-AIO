@@ -3,6 +3,7 @@ package com.pighand.aio.vo.ECommerce;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.mybatisflex.annotation.TableRef;
 import com.pighand.aio.domain.ECommerce.OrderDomain;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import lombok.Data;
@@ -17,6 +18,7 @@ import java.util.List;
  * @createDate 2024-04-18 14:35:34
  */
 @Data
+@TableRef(OrderDomain.class)
 @EqualsAndHashCode(callSuper = false)
 public class OrderVO extends OrderDomain {
 
@@ -33,7 +35,7 @@ public class OrderVO extends OrderDomain {
     // relation table: end
 
     // 支付平台
-    private Integer outTradePlatform;
+    private String outTradePlatform;
 
     // 答题
     @JsonDeserialize(using = ToLongSerializer.class)
@@ -41,4 +43,9 @@ public class OrderVO extends OrderDomain {
     private Long deviceId;
 
     private String message;
+
+    // 分销ID
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long salespersonId;
 }

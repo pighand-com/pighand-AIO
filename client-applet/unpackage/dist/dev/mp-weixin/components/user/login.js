@@ -4,15 +4,30 @@ const common_login = require("../../common/login.js");
 const common_storage = require("../../common/storage.js");
 const _sfc_main = {
   __name: "login",
+  props: {
+    item: {
+      type: Array,
+      default: () => ["login"]
+    }
+  },
   setup(__props) {
-    const isLogin = common_storage.getToken() && props.item.includes("login");
+    const props = __props;
+    const token = common_vendor.ref(common_storage.getToken());
+    const handleStorageChange = () => {
+      token.value = common_storage.getToken();
+    };
+    common_vendor.index.$on("storage-changed", handleStorageChange);
+    common_vendor.onUnmounted(() => {
+      common_vendor.index.$off("storage-changed", handleStorageChange);
+    });
+    const isLogin = common_vendor.computed(() => token.value && props.item.includes("login"));
     function beginLogin() {
       common_login.login();
     }
     return (_ctx, _cache) => {
       return common_vendor.e({
-        a: !common_vendor.unref(isLogin)
-      }, !common_vendor.unref(isLogin) ? {
+        a: !isLogin.value
+      }, !isLogin.value ? {
         b: common_vendor.o(beginLogin)
       } : {});
     };

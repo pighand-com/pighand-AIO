@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "custom-navigation-bar": "../../../components/custom-navigation-bar/custom-navigation-bar",
+    "status-bar-gradient": "../../../components/status-bar-gradient/status-bar-gradient",
+    "user-check": "../../../components/user/check"
+  }
+}

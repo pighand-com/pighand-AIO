@@ -71,7 +71,7 @@ public class LotteryServiceImpl extends BaseServiceImpl<LotteryCommonConfigMappe
      */
     @Override
     public LotteryVO find(Long id) {
-        LotteryVO lotteryO = super.mapper.find(id, null);
+        LotteryVO lotteryO = super.mapper.find(id);
 
         LotteryTypeService typeService = this.getLotteryTypeService(lotteryO.getLotteryType());
 

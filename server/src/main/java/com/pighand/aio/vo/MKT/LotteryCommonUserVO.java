@@ -1,5 +1,6 @@
 package com.pighand.aio.vo.MKT;
 
+import com.mybatisflex.annotation.TableRef;
 import com.pighand.aio.domain.MKT.LotteryCommonUserDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,6 +12,7 @@ import lombok.EqualsAndHashCode;
  * @createDate 2024-11-28 17:21:35
  */
 @Data
+@TableRef(LotteryCommonUserDomain.class)
 @EqualsAndHashCode(callSuper = false)
 public class LotteryCommonUserVO extends LotteryCommonUserDomain {
 

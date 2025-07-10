@@ -1,5 +1,6 @@
 package com.pighand.aio.vo.CMS;
 
+import com.mybatisflex.annotation.TableRef;
 import com.pighand.aio.domain.CMS.QuestionAnswerDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import java.util.List;
  * @createDate 2024-04-10 23:45:23
  */
 @Data
+@TableRef(QuestionAnswerDomain.class)
 @EqualsAndHashCode(callSuper = false)
 public class QuestionAnswerVO extends QuestionAnswerDomain {
 

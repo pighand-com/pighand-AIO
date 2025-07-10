@@ -39,8 +39,13 @@ public class TicketUserDomain extends BaseDomainRecord<TicketUserDomain> impleme
     @Schema(description = "订单id")
     private Long orderId;
 
+    private Long orderSkuId;
+
     @Schema(description = "剩余核销次数")
     private Integer remainingValidationCount;
+
+    @Schema(description = "状态 10-未核销 20-已核销")
+    private Integer status;
 
     @Schema(description = "创建时间")
     private Date createdAt;

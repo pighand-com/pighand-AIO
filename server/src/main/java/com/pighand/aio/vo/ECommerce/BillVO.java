@@ -1,5 +1,6 @@
 package com.pighand.aio.vo.ECommerce;
 
+import com.mybatisflex.annotation.TableRef;
 import com.pighand.aio.domain.ECommerce.BillDomain;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,6 +12,7 @@ import lombok.EqualsAndHashCode;
  * @createDate 2024-04-18 14:35:34
  */
 @Data
+@TableRef(BillDomain.class)
 @EqualsAndHashCode(callSuper = false)
 public class BillVO extends BillDomain {
 

@@ -4,6 +4,7 @@ import com.pighand.aio.domain.ECommerce.TicketUserDomain;
 import com.pighand.aio.vo.ECommerce.TicketUserVO;
 import com.pighand.framework.spring.base.BaseService;
 import com.pighand.framework.spring.page.PageOrList;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 电商 - 已购票务
@@ -52,4 +53,7 @@ public interface TicketUserService extends BaseService<TicketUserDomain> {
     void delete(Long id);
 
     void validation(TicketUserVO ticketUserVO);
+
+    @Transactional(rollbackFor = Exception.class)
+    void cancelValidation(TicketUserVO ticketUserVO);
 }

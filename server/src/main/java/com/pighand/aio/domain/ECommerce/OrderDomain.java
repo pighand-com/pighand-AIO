@@ -38,9 +38,13 @@ public class OrderDomain extends BaseDomainRecord<OrderDomain> implements Serial
     private Long applicationId;
 
     @Schema(description = "商户id")
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long businessId;
 
     @Schema(description = "门店id")
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long storeId;
 
     @Length(max = 32)
@@ -72,6 +76,9 @@ public class OrderDomain extends BaseDomainRecord<OrderDomain> implements Serial
     @Schema(description = "实付金额（分）")
     private Long amountPaid;
 
+    @Schema(description = "退款（分）")
+    private Long refundAmount;
+
     @Length(max = 32)
     @Schema(description = "收件人姓名")
     private String userName;
@@ -83,6 +90,9 @@ public class OrderDomain extends BaseDomainRecord<OrderDomain> implements Serial
     @Length(max = 18)
     @Schema(description = "收件人手机")
     private String userPhone;
+
+    @Schema(description = "订单超时时间")
+    private Date expiredAt;
 
     @Schema(description = "创建时间")
     private Date createdAt;

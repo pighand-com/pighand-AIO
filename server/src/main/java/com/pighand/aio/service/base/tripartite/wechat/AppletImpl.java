@@ -14,6 +14,7 @@ import com.pighand.framework.spring.exception.ThrowException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -85,7 +86,12 @@ public class AppletImpl extends AbstractWechat<UserInfo> implements TripartitePl
 
         HashMap params = new HashMap<>(1);
         params.put("code", encryptedData.getCode());
-        String userInfo = WechatSDK.MINI_APPLET.getPhone(token, params);
+
+        HashMap headers = new HashMap<>(1);
+        String body = new ObjectMapper().valueToTree(params).toString();
+        headers.put("Content-Length", String.valueOf(body.getBytes(StandardCharsets.UTF_8).length));
+
+        String userInfo = WechatSDK.MINI_APPLET.getPhone(token, params, headers);
 
         patternString = "\"phoneNumber\":\"(.*?)\"";
         pattern = Pattern.compile(patternString);

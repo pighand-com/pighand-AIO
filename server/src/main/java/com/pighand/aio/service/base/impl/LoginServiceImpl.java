@@ -79,8 +79,9 @@ public class LoginServiceImpl implements LoginService {
         Long applicationId = Context.applicationId();
 
         PHQueryChain queryChain = userService.queryChain();
-        queryChain.fullSelect(USER.ID, USER.PASSWORD, USER.USERNAME, USER.STATUS, APPLICATION.ID, APPLICATION.NAME,
-            APPLICATION.UPLOAD_TYPE).from(USER).innerJoin(APPLICATION).on(APPLICATION.ID.eq(USER.APPLICATION_ID));
+        queryChain.fullSelect(USER.ID, USER.PASSWORD, USER.USERNAME, USER.STATUS, USER.APPLICATION_ID, USER.TENANT_ID,
+                USER.STORE_ID, APPLICATION.ID, APPLICATION.NAME, APPLICATION.UPLOAD_TYPE).from(USER).innerJoin(APPLICATION)
+            .on(APPLICATION.ID.eq(USER.APPLICATION_ID));
 
         if (applicationId != null) {
             queryChain.where(USER.APPLICATION_ID.eq(applicationId)).and(USER.USERNAME.eq(username))

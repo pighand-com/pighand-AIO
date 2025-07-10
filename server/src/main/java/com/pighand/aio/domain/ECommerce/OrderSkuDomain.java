@@ -37,22 +37,34 @@ public class OrderSkuDomain extends BaseDomainRecord<OrderSkuDomain> implements 
     private Long id;
 
     @Schema(description = "订单ID")
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long orderId;
 
     @Length(max = 32)
     @Schema(description = "交易单ID")
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long orderTradeId;
 
     @Schema(description = "SPU ID")
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long spuId;
 
     @Schema(description = "SKU ID")
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long skuId;
 
     @Schema(description = "票务ID")
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long ticketId;
 
     @Schema(description = "场次ID")
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long sessionId;
 
     @Column("type")

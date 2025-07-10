@@ -3,6 +3,7 @@ package com.pighand.aio.vo.base;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.mybatisflex.annotation.TableRef;
 import com.pighand.aio.domain.base.UserBindDomain;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import lombok.Data;
@@ -15,6 +16,7 @@ import lombok.EqualsAndHashCode;
  * @createDate 2023-12-04 16:37:26
  */
 @Data
+@TableRef(UserBindDomain.class)
 @EqualsAndHashCode(callSuper = false)
 public class UserBindVO extends UserBindDomain {
     private UserVO user;

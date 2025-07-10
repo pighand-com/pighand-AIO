@@ -6,15 +6,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mybatisflex.core.query.QueryChain;
 import com.mybatisflex.core.query.QueryWrapper;
-import com.pighand.aio.common.enums.RoleEnum;
 import com.pighand.aio.common.enums.UserStatusEnum;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.base.UserDomain;
+import com.pighand.aio.domain.base.UserRoleDomain;
 import com.pighand.aio.mapper.base.UserMapper;
 import com.pighand.aio.service.base.UserExtensionService;
+import com.pighand.aio.service.base.UserRoleService;
 import com.pighand.aio.service.base.UserService;
 import com.pighand.aio.service.common.UploadService;
 import com.pighand.aio.vo.base.CheckUserExist;
+import com.pighand.aio.vo.base.UserRoleVO;
 import com.pighand.aio.vo.base.UserVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.exception.ThrowPrompt;
@@ -25,8 +27,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.pighand.aio.domain.base.table.UserExtensionTableDef.USER_EXTENSION;
 import static com.pighand.aio.domain.base.table.UserTableDef.USER;
@@ -44,6 +48,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
     private final UserExtensionService userExtensionService;
 
     private final UploadService uploadService;
+
+    private final UserRoleService userRoleService;
 
     ObjectMapper om = new ObjectMapper();
 
@@ -88,14 +94,29 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
             query.and(USER.ID.ne(userId));
         }
 
-        if (hasUsername) {
-            query.or(USER.USERNAME.eq(username));
-        }
-        if (hasPhone) {
-            query.or(USER.PHONE.eq(phone));
-        }
-        if (hasEmail) {
-            query.or(USER.EMAIL.eq(email));
+        // 构建username、phone、email之间的or条件
+        if (hasUsername || hasPhone || hasEmail) {
+            boolean first = true;
+
+            if (hasUsername) {
+                query.and(USER.USERNAME.eq(username));
+                first = false;
+            }
+            if (hasPhone) {
+                if (first) {
+                    query.and(USER.PHONE.eq(phone));
+                } else {
+                    query.or(USER.PHONE.eq(phone));
+                }
+                first = false;
+            }
+            if (hasEmail) {
+                if (first) {
+                    query.and(USER.EMAIL.eq(email));
+                } else {
+                    query.or(USER.EMAIL.eq(email));
+                }
+            }
         }
         List<UserDomain> users = query.list();
 
@@ -134,7 +155,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
             return;
         }
 
-        if (VerifyUtils.isEmpty(username)) {
+        if (VerifyUtils.isNotEmpty(username)) {
             boolean isPhone = isPhone(username);
             boolean isEmail = isEmail(username);
 
@@ -173,9 +194,20 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
             userVO.setPassword(new BCryptPasswordEncoder().encode(userVO.getPassword()));
         }
 
-        userVO.setRoleId(RoleEnum.USER.value);
         userVO.setStatus(UserStatusEnum.NORMAL);
         super.mapper.insert(userVO);
+
+        if (userVO.getRoleIds() != null && !userVO.getRoleIds().isEmpty()) {
+            List<UserRoleDomain> userRoles = new ArrayList<>(userVO.getRoleIds().size());
+            userVO.getRoleIds().forEach(roleId -> {
+                UserRoleDomain userRole = new UserRoleDomain();
+                userRole.setRoleId(roleId);
+                userRole.setUserId(userVO.getId());
+                userRoles.add(userRole);
+            });
+            userRoleService.saveBatch(userRoles);
+
+        }
 
         return userVO;
     }
@@ -188,10 +220,20 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
      */
     @Override
     public UserVO find(Long id) {
-        return this.queryChain()
+        UserVO user = this.queryChain()
             .select(USER.ID, USER.ROLE_ID, USER.USERNAME, USER.PHONE, USER.EMAIL, USER.STATUS, USER_EXTENSION.PROFILE)
             .leftJoin(USER_EXTENSION).on(USER_EXTENSION.ID.eq(USER.ID))
             .where(USER.APPLICATION_ID.eq(Context.applicationId())).and(USER.ID.eq(id)).oneAs(UserVO.class);
+
+        // 关联角色
+        if (user != null && user.getId() != null) {
+            List<UserRoleVO> roles = userRoleService.findRolesByUserId(List.of(user.getId()));
+            if (VerifyUtils.isNotEmpty(roles)) {
+                user.setRoles(roles);
+            }
+        }
+
+        return user;
     }
 
     /**
@@ -208,14 +250,33 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
         QueryWrapper queryWrapper = QueryWrapper.create()
             // like
             .and(USER.ID.like(userVO.getId())).and(USER.ID.like(userVO.getId()))
-            .and(USER.USERNAME.like(userVO.getUsername())).and(USER.PHONE.like(userVO.getPhone()))
-            .and(USER.EMAIL.like(userVO.getEmail()))
+            .and(USER.USERNAME.like(userVO.getUsername()))
+            .and(USER.PHONE.like(userVO.getPhone(), VerifyUtils::isNotEmpty))
+            .and(USER.EMAIL.like(userVO.getEmail(), VerifyUtils::isNotEmpty))
 
             // equal
             .and(USER.APPLICATION_ID.eq(userVO.getApplicationId())).and(USER.STATUS.eq(userVO.getStatus()))
             .and(USER.ROLE_ID.eq(userVO.getRoleId()));
 
-        return this.mapper.query(userVO, queryWrapper);
+        PageOrList<UserVO> result = this.mapper.query(userVO, queryWrapper);
+
+        // 关联角色
+        List<Long> ids = result.getRecords().stream().map(UserVO::getId).collect(Collectors.toList());
+        if (VerifyUtils.isNotEmpty(ids)) {
+            List<UserRoleVO> roles = userRoleService.findRolesByUserId(ids);
+
+            // 按userId组装
+            Map<Long, List<UserRoleVO>> roleMap = roles.stream().collect(Collectors.groupingBy(UserRoleVO::getUserId));
+
+            result.getRecords().forEach(user -> {
+                List<UserRoleVO> userRoles = roleMap.get(user.getId());
+                if (VerifyUtils.isNotEmpty(userRoles)) {
+                    user.setRoles(userRoles);
+                }
+            });
+        }
+
+        return result;
     }
 
     /**
@@ -233,10 +294,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
 
         Map map = om.convertValue(userVO, Map.class);
         boolean isUpdateExtension = map.containsKey("extension") && ((Map)map.get("extension")).size() > 0;
+        boolean isUpdateRoles = map.containsKey("roleIds");
 
         map.remove("extension");
         map.remove("id");
         map.remove("pageType");
+        map.remove("roleIds");
         boolean isUpdateUser = map.size() > 0;
 
         if (isUpdateUser) {
@@ -253,6 +316,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
                 uploadService.updateFileOfficial(profile);
             }
         }
+
+        // 处理角色关联
+        if (isUpdateRoles) {
+            userRoleService.updateUserRoles(userVO.getId(), userVO.getRoleIds());
+        }
     }
 
     /**
@@ -263,6 +331,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
     @Override
     public void delete(Long id) {
         super.mapper.deleteById(id);
+
+        userRoleService.delUserRoles(id, null);
     }
 
 }

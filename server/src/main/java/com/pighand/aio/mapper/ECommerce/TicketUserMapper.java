@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.pighand.aio.domain.ECommerce.table.OrderTableDef.ORDER;
+import static com.pighand.aio.domain.ECommerce.table.ThemeTableDef.THEME;
 import static com.pighand.aio.domain.ECommerce.table.TicketTableDef.TICKET;
 import static com.pighand.aio.domain.ECommerce.table.TicketUserTableDef.TICKET_USER;
 import static com.pighand.aio.domain.ECommerce.table.TicketUserValidityTableDef.TICKET_USER_VALIDITY;
@@ -46,7 +47,14 @@ public interface TicketUserMapper extends BaseMapper<TicketUserDomain> {
 
         // TICKET
         if (joinTables.contains(TICKET.getTableName())) {
-            queryWrapper.leftJoin(TICKET).on(TICKET.ID.eq(TICKET_USER.TICKET_ID));
+            queryWrapper.select(TICKET.NAME).leftJoin(TICKET).on(TICKET.ID.eq(TICKET_USER.TICKET_ID));
+
+            joinTables.remove(TICKET.getTableName());
+        }
+
+        // THEME
+        if (joinTables.contains(THEME.getTableName())) {
+            queryWrapper.select(THEME.POSTER_URL).leftJoin(THEME).on(THEME.ID.eq(TICKET.THEME_ID));
 
             joinTables.remove(TICKET.getTableName());
         }

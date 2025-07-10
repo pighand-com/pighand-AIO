@@ -1,6 +1,7 @@
 {
   "usingComponents": {
-    "user-check": "../../../components/user/check",
+    "custom-button": "../../../components/custom-button/custom-button",
+    "uni-popup": "../../../uni_modules/uni-popup/components/uni-popup/uni-popup",
     "tab-bar": "../../../components/tab-bar/tab-bar"
   }
 }

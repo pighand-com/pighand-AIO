@@ -33,14 +33,17 @@ public class TicketDomain extends GoodsBaseInfo implements Serializable {
     @RequestFieldException("ticketUpdate")
     private Long id;
 
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long applicationId;
 
-    @Schema(description = "商户id")
-    private Long businessId;
-
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     @Schema(description = "门店id")
     private Long storeId;
 
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     @Schema(description = "主题id")
     private Long themeId;
 

@@ -43,7 +43,6 @@ public class DistributionSalespersonDomain extends BaseDomainRecord<Distribution
     private Long userId;
 
     @Column("status")
-    @NotNull(groups = {ValidationGroup.Create.class})
-    @Schema(description = "状态：1=启用，0=禁用")
+    @Schema(description = "状态：10=启用，0=禁用")
     private Integer status;
 }

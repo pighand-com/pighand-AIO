@@ -1,0 +1,1 @@
+{"version":3,"file":"banner.js","sources":["api/banner.ts"],"sourcesContent":["import request from '@/common/request';\n\nexport default {\n    /**\n     * 列表\n     */\n    query: async () =>\n        await request.get(`banner`),\n};\n"],"names":["request"],"mappings":";;AAEA,MAAe,YAAA;AAAA;AAAA;AAAA;AAAA,EAIX,OAAO,YACH,MAAMA,eAAAA,QAAQ,IAAI,QAAQ;AAClC;;"}

@@ -18,6 +18,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.pighand.aio.domain.ECommerce.table.ThemeTableDef.THEME;
 import static com.pighand.aio.domain.ECommerce.table.TicketTableDef.TICKET;
 import static com.pighand.aio.domain.ECommerce.table.TicketValidityTableDef.TICKET_VALIDITY;
 import static com.pighand.aio.domain.base.table.StoreTableDef.STORE;
@@ -50,6 +51,14 @@ public interface TicketMapper extends BaseMapper<TicketDomain> {
             queryWrapper.leftJoin(STORE).on(STORE.ID.eq(TICKET.STORE_ID));
 
             joinTables.remove(STORE.getTableName());
+        }
+
+        // THEME
+        if (joinTables.contains(THEME.getTableName())) {
+            queryWrapper.select(THEME.ID, THEME.THEME_NAME);
+            queryWrapper.leftJoin(THEME).on(THEME.ID.eq(TICKET.THEME_ID));
+
+            joinTables.remove(THEME.getTableName());
         }
 
         return queryWrapper;

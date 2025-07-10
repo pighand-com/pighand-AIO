@@ -10,5 +10,11 @@ export default {
     },
     update: async (param: any) =>
         await request.put(`${baseUrl}/${param.id}`, param),
-    del: async (id: any) => await request.del(`${baseUrl}/${id}`)
+    del: async (id: any) => await request.del(`${baseUrl}/${id}`),
+
+    // 退款
+    refund: async (orderTradeId: any) =>
+        await request.post(`${baseUrl}/refund`, {
+            orderTradeId
+        })
 };

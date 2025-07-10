@@ -4,6 +4,7 @@
 
 <script>
 import cos from '@/common/cos.ts';
+import { common } from '@/api';
 
 import Editor from '@tinymce/tinymce-vue';
 
@@ -23,7 +24,7 @@ import 'tinymce/plugins/code'; //编辑源码
 import 'tinymce/plugins/codesample'; //代码示例
 import 'tinymce/plugins/directionality'; //文字方向
 import 'tinymce/plugins/fullscreen'; //全屏
-// import 'tinymce/plugins/image'; //插入编辑图片
+import 'tinymce/plugins/image'; //插入编辑图片
 import 'tinymce/plugins/insertdatetime'; //插入日期时间
 import 'tinymce/plugins/link'; //超链接
 import 'tinymce/plugins/lists'; //列表插件
@@ -110,27 +111,74 @@ export default {
                         input.setAttribute('accept', '.mp4,.webm');
                     }
 
-                    input.onchange = function () {
+                    input.onchange = async function () {
                         if (this.files.length > 0) {
                             let file = this.files[0];
-                            cos.upload(file, this.uploadPath).then((result) => {
-                                callback(result);
-                            });
+
+                            const uploadUrlInfo = await common.getUploadUrls([
+                                {
+                                    extension: file.type.split('/')[1],
+                                    path: 'editor'
+                                }
+                            ]);
+
+                            for (const uploadUrl of uploadUrlInfo.urls) {
+                                switch (applicationInfo.uploadType) {
+                                    case 'tencent_cloud_cos':
+                                        await cos.upload(
+                                            file,
+                                            uploadUrl.uploadUrl,
+                                            uploadUrlInfo.headers
+                                        );
+                                        callback(uploadUrl.url);
+                                        break;
+                                    default:
+                                        ElMessage.error('暂不支持当前上传类型');
+                                        break;
+                                }
+                            }
                         }
                     };
                     //触发点击
                     input.click();
                 },
                 images_upload_handler: (blobInfo, progress) => {
-                    return new Promise((resolve, reject) => {
-                        cos.upload(blobInfo.blob(), this.uploadPath)
-                            .then((result) => {
-                                progress(100);
-                                resolve(result);
-                            })
-                            .catch((err) => {
-                                reject(err);
-                            });
+                    return new Promise(async (resolve, reject) => {
+                        try {
+                            const file = blobInfo.blob();
+                            const { getApplicationInfo } = await import(
+                                '@/common/storage'
+                            );
+                            const applicationInfo = getApplicationInfo();
+
+                            const uploadUrlInfo = await common.getUploadUrls([
+                                {
+                                    extension: file.type.split('/')[1],
+                                    path: 'editor'
+                                }
+                            ]);
+
+                            for (const uploadUrl of uploadUrlInfo.urls) {
+                                switch (applicationInfo.uploadType) {
+                                    case 'tencent_cloud_cos':
+                                        await cos.upload(
+                                            file,
+                                            uploadUrl.uploadUrl,
+                                            uploadUrlInfo.headers
+                                        );
+                                        progress(100);
+                                        resolve(uploadUrl.url);
+                                        break;
+                                    default:
+                                        reject(
+                                            new Error('暂不支持当前上传类型')
+                                        );
+                                        break;
+                                }
+                            }
+                        } catch (err) {
+                            reject(err);
+                        }
                     });
                 }
             }

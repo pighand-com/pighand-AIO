@@ -25,32 +25,33 @@ const _sfc_main = {
     const token = common_vendor.ref(common_storage.getToken());
     const userInfo = common_vendor.ref(common_storage.getUserInfo());
     const props = __props;
-    common_vendor.index.$on("storage-changed", () => {
+    const handleStorageChange = () => {
       token.value = common_storage.getToken();
       userInfo.value = common_storage.getUserInfo();
-    });
+    };
+    common_vendor.index.$on("storage-changed", handleStorageChange);
     common_vendor.onUnmounted(() => {
-      common_vendor.index.$off("storage-changed");
+      common_vendor.index.$off("storage-changed", handleStorageChange);
     });
-    const isLogin = common_vendor.computed(() => token.value && userInfo.value && props.item.includes("login"));
-    const isPhone = common_vendor.computed(() => {
+    const needLogin = common_vendor.computed(() => (!token.value || !(userInfo == null ? void 0 : userInfo.value)) && props.item.includes("login"));
+    const needPhone = common_vendor.computed(() => {
       var _a;
-      return ((_a = userInfo.value) == null ? void 0 : _a.phone) && props.item.includes("phone");
+      return !((_a = userInfo.value) == null ? void 0 : _a.phone) && props.item.includes("phone");
     });
-    const isAvatar = common_vendor.computed(() => {
+    const needAvatar = common_vendor.computed(() => {
       var _a;
-      return ((_a = userInfo.value) == null ? void 0 : _a.avatar) && props.item.includes("avatar");
+      return !((_a = userInfo.value) == null ? void 0 : _a.avatar) && props.item.includes("avatar");
     });
     return (_ctx, _cache) => {
       return common_vendor.e({
-        a: !isLogin.value
-      }, !isLogin.value ? {} : !isPhone.value ? {
+        a: needLogin.value
+      }, needLogin.value ? {} : needPhone.value ? {
         c: common_vendor.t(userInfo.value.phone)
-      } : !isAvatar.value ? {
+      } : needAvatar.value ? {
         e: common_vendor.t(userInfo.value.avatar)
       } : {}, {
-        b: !isPhone.value,
-        d: !isAvatar.value
+        b: needPhone.value,
+        d: needAvatar.value
       });
     };
   }

@@ -9,8 +9,32 @@
 <script setup>
 import login from '@/common/login'
 import { getToken } from '@/common/storage'
+import { ref, computed, onUnmounted } from 'vue'
 
-const isLogin = getToken() && props.item.includes('login')
+const props = defineProps({
+    item: {
+        type: Array,
+        default: () => ['login']
+    }
+})
+
+// 使用ref创建响应式变量
+const token = ref(getToken())
+
+// 监听storage变化
+const handleStorageChange = () => {
+    token.value = getToken()
+}
+
+uni.$on('storage-changed', handleStorageChange)
+
+// 组件卸载时移除事件监听
+onUnmounted(() => {
+    uni.$off('storage-changed', handleStorageChange)
+})
+
+// 使用计算属性计算登录状态
+const isLogin = computed(() => token.value && props.item.includes('login'))
 
 function beginLogin() {
     login()
@@ -31,4 +55,4 @@ function beginLogin() {
     opacity: 0;
     z-index: 1;
 }
-</style> 
+</style>

@@ -10,16 +10,13 @@ import com.pighand.aio.service.ECommerce.SessionUserGroupService;
 import com.pighand.aio.service.base.ApplicationPlatformKeyService;
 import com.pighand.aio.vo.ECommerce.SessionUserGroupVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
-import com.pighand.framework.spring.exception.ThrowException;
 import com.pighand.framework.spring.page.PageOrList;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * 电商 - 场次 - 用户分组
@@ -28,11 +25,11 @@ import java.util.regex.Pattern;
  * @createDate 2023-12-05 16:13:27
  */
 @Service
+@RequiredArgsConstructor
 public class SessionUserGroupServiceImpl extends BaseServiceImpl<SessionUserGroupMapper, SessionUserGroupDomain>
     implements SessionUserGroupService {
 
-    @Autowired
-    private ApplicationPlatformKeyService projectPlatformKeyService;
+    private final ApplicationPlatformKeyService projectPlatformKeyService;
 
     @Value("spring.profiles.active")
     private String env;
@@ -104,29 +101,10 @@ public class SessionUserGroupServiceImpl extends BaseServiceImpl<SessionUserGrou
 
         String accessToken = WechatSDK.MINI_APPLET.accessToken(key.getAppid(), key.getSecret(), "client_credential");
 
-        String patternString = "\"access_token\":\"(.*?)\"";
-        Pattern pattern = Pattern.compile(patternString);
-        Matcher matcher = pattern.matcher(accessToken);
+        String token = WechatSDK.utils.extractAccessToken(accessToken);
 
-        String token = "";
-        if (matcher.find()) {
-            token = matcher.group(1);
-        } else {
-            throw new ThrowException("解析微信返回的accessToken失败");
-        }
+        String qrcodeEnv = WechatSDK.utils.getAppletEnv();
 
-        String qrcodeEnv = "release";
-        switch (env) {
-            case "dev":
-                qrcodeEnv = "develop";
-                break;
-            case "test":
-                qrcodeEnv = "trial";
-                break;
-            default:
-                qrcodeEnv = "release";
-                break;
-        }
         long currentTimeMillis = System.currentTimeMillis() + 1000 * 60 * 3;
         long roundedSeconds = currentTimeMillis / 1000;
 
@@ -134,7 +112,7 @@ public class SessionUserGroupServiceImpl extends BaseServiceImpl<SessionUserGrou
         params.put("page", "pages/my-order/my-order");
         params.put("scene", Context.loginUser().getId().toString() + "_" + roundedSeconds + "_" + money);
         params.put("env_version", qrcodeEnv);
-        byte[] images = WechatSDK.MINI_APPLET.getAppletQrcode(token, params);
+        byte[] images = WechatSDK.MINI_APPLET.getAppletQRCode(token, params, null);
 
         return Base64.getEncoder().encodeToString(images);
     }

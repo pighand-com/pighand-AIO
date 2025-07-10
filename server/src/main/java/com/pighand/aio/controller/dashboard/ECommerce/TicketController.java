@@ -6,6 +6,7 @@ import com.pighand.aio.service.ECommerce.TicketService;
 import com.pighand.aio.service.ECommerce.TicketUserService;
 import com.pighand.aio.vo.ECommerce.TicketUserVO;
 import com.pighand.aio.vo.ECommerce.TicketVO;
+import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.framework.spring.api.annotation.*;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.base.BaseController;
@@ -35,6 +36,10 @@ public class TicketController extends BaseController<TicketService> {
      */
     @Post(docSummary = "创建", fieldGroup = "ticketCreate")
     public Result<TicketVO> create(@Validated({ValidationGroup.Create.class}) @RequestBody TicketVO ticketVO) {
+        LoginUser loginUser = Context.loginUser();
+        ticketVO.setApplicationId(loginUser.getAId());
+        ticketVO.setStoreId(loginUser.getSId());
+
         ticketVO = super.service.create(ticketVO);
 
         return new Result(ticketVO);
@@ -67,9 +72,6 @@ public class TicketController extends BaseController<TicketService> {
     @Put(path = "{id}", docSummary = "修改", fieldGroup = "ticketUpdate")
     public Result update(@PathVariable(name = "id") Long id, @RequestBody TicketVO ticketVO) {
         ticketVO.setId(id);
-
-        // Prohibit modifying fields
-        ticketVO.setId(null);
         ticketVO.setDeleted(null);
 
         super.service.update(ticketVO);
@@ -89,20 +91,25 @@ public class TicketController extends BaseController<TicketService> {
     /**
      * @param ticketUserVO
      */
-    @Get(path = "user", docSummary = "我的票务")
+    @Get(path = "user", docSummary = "用户的票务")
     public Result<PageOrList<TicketUserVO>> query(TicketUserVO ticketUserVO) {
-        ticketUserVO.setCreatorId(Context.loginUser().getId());
         PageOrList<TicketUserVO> result = ticketUserService.query(ticketUserVO);
 
         return new Result(result);
     }
 
-    /**
-     * @param ticketUserVO
-     */
-    @Post(path = "validation", docSummary = "票务核销")
-    public Result validation(@RequestBody TicketUserVO ticketUserVO) {
+    @Post(path = "user/{id}/validation", docSummary = "票务核销")
+    public Result validation(@PathVariable(name = "id") Long id, @RequestBody TicketUserVO ticketUserVO) {
+        ticketUserVO.setId(id);
         ticketUserService.validation(ticketUserVO);
+
+        return new Result();
+    }
+
+    @Put(path = "user/{id}/validation", docSummary = "取消票务核销")
+    public Result unValidation(@PathVariable(name = "id") Long id, @RequestBody TicketUserVO ticketUserVO) {
+        ticketUserVO.setId(id);
+        ticketUserService.cancelValidation(ticketUserVO);
 
         return new Result();
     }

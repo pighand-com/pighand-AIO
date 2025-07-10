@@ -51,7 +51,7 @@ public class TenantServiceImpl extends BaseServiceImpl<TenantMapper, TenantDomai
      */
     @Override
     public TenantDomain find(Long id) {
-        return super.mapper.find(id, null);
+        return super.mapper.find(id);
     }
 
     /**

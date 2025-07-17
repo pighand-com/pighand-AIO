@@ -46,6 +46,9 @@ public class BannerDomain extends BaseDomainRecord<BannerDomain> implements Seri
     @Schema(description = "跳转地址")
     private String redirectionPath;
 
+    @Schema(description = "分组")
+    private String group;
+
     @Schema(description = "状态：0下架，10上架")
     private Integer status;
 }

@@ -42,4 +42,6 @@ public class StoreDomain extends BaseDomainRecordTs<StoreDomain> implements Seri
     @Column("name")
     @Length(max = 32)
     private String name;
+
+    private String introduce;
 }

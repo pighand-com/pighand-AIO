@@ -37,7 +37,7 @@ const _sfc_main = {
     };
     return (_ctx, _cache) => {
       return {
-        a: common_assets._imports_0$2,
+        a: common_assets._imports_0$4,
         b: __props.height ? "aspectFill" : "widthFix",
         c: common_vendor.t(__props.text),
         d: __props.fontSize,

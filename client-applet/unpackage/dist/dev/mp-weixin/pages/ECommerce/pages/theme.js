@@ -249,7 +249,7 @@ const _sfc_main = {
       } : {}, {
         h: themeDetail.value.serviceQrUrl
       }, themeDetail.value.serviceQrUrl ? {
-        i: common_assets._imports_0$1,
+        i: common_assets._imports_0$2,
         j: common_vendor.o(contactService)
       } : {}, {
         k: common_vendor.o(showTicketModal),

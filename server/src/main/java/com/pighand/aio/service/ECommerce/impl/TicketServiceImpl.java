@@ -82,8 +82,8 @@ public class TicketServiceImpl extends BaseServiceImpl<TicketMapper, TicketDomai
         ticketVO.setJoinTables(THEME.getName());
 
         QueryWrapper queryWrapper = QueryWrapper.create()
-            .select(TICKET.ID, TICKET.NAME, TICKET.DETAILS, TICKET.ORIGINAL_PRICE, TICKET.CURRENT_PRICE,
-                TICKET.VALIDATION_COUNT)
+            .select(TICKET.ID, TICKET.NAME, TICKET.DETAILS, TICKET.POSTER_URL, TICKET.ORIGINAL_PRICE,
+                TICKET.CURRENT_PRICE, TICKET.VALIDATION_COUNT)
 
             // like
             .and(TICKET.NAME.like(ticketVO.getName())).and(TICKET.DETAILS.like(ticketVO.getDetails()))

@@ -31,6 +31,8 @@ export interface FormColumnsInterface {
     prop: string;
     /** 表单项后缀 */
     suffix?: string;
+    /** 帮助信息，可以是文字或DOM对象 */
+    help?: string | any;
 
     /** 判断唯一键，全部是false则默认为id */
     isPrimaryKey?: boolean;

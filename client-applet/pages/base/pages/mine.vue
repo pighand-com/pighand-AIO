@@ -1,6 +1,6 @@
 <template>
 	<view class="page">
-		<custom-navigation-bar :back="true" position="flex" />
+		<custom-navigation-bar :back="false" position="flex" />
 
 		<!-- 背景图片 -->
 		<view class="bg-container">
@@ -87,6 +87,12 @@
 		
 		<tab-bar />
 		
+		<!-- 联系我们悬浮按钮 -->
+		<view class="contact-float-btn" @click="showContactModal">
+			<image src="../static/phone-icon.svg" class="contact-phone-icon" mode="aspectFit"></image>
+			<text class="contact-float-text">联系我们</text>
+		</view>
+		
 		<!-- 分销二维码弹窗 -->
 		<view class="qr-modal" v-if="isQrModalVisible" @click="hideQrModal">
 			<view class="qr-modal-content" @click.stop>
@@ -110,6 +116,25 @@
 				</view>
 			</view>
 		</view>
+		
+		<!-- 联系我们弹窗 -->
+		<view class="contact-modal" v-if="isContactModalVisible" @click="hideContactModal">
+			<view class="contact-modal-content" @click.stop>
+				<view class="contact-header">
+					<text class="contact-title">联系我们</text>
+				</view>
+				<view class="contact-body">
+					<view class="contact-item" @click="makePhoneCall('投诉反馈')">
+						<image src="../static/phone-icon.svg" class="contact-item-icon" mode="aspectFit"></image>
+						<text class="contact-item-text">投诉反馈</text>
+					</view>
+					<view class="contact-item" @click="makePhoneCall('品牌合作')">
+						<image src="../static/phone-icon.svg" class="contact-item-icon" mode="aspectFit"></image>
+						<text class="contact-item-text">品牌合作</text>
+					</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -127,6 +152,7 @@ const salespersonId = ref(getSalespersonId())
 const isQrModalVisible = ref(false)
 const distributionQrCode = ref('')
 const isSettingsModalVisible = ref(false)
+const isContactModalVisible = ref(false)
 const isStaff = ref(false)
 
 // 检查用户是否为工作人员（roleId=9000）
@@ -264,6 +290,34 @@ const logout = () => {
                     icon: 'success'
                 })
             }
+        }
+    })
+}
+
+// 显示联系我们弹窗
+const showContactModal = () => {
+    isContactModalVisible.value = true
+}
+
+// 隐藏联系我们弹窗
+const hideContactModal = () => {
+    isContactModalVisible.value = false
+}
+
+// 拨打电话
+const makePhoneCall = (type) => {
+    hideContactModal()
+    uni.makePhoneCall({
+        phoneNumber: '18182400663',
+        success: () => {
+            console.log(`${type}电话拨打成功`)
+        },
+        fail: (err) => {
+            console.log(`${type}电话拨打失败:`, err)
+            uni.showToast({
+                title: '拨打失败',
+                icon: 'none'
+            })
         }
     })
 }
@@ -548,6 +602,43 @@ const logout = () => {
 	box-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.3);
 }
 
+/* 联系我们悬浮按钮 */
+.contact-float-btn {
+	position: fixed;
+	bottom: 200rpx;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 200rpx;
+	height: 80rpx;
+	background: linear-gradient(135deg, #F5F5F5, #E8E8E8);
+	border-radius: 40rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12rpx;
+	box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.15);
+	z-index: 1000;
+	transition: all 0.3s ease;
+	border: 2rpx solid rgba(0, 0, 0, 0.1);
+}
+
+.contact-float-btn:active {
+	transform: translateX(-50%) scale(0.95);
+	box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.25);
+}
+
+.contact-phone-icon {
+	width: 32rpx;
+	height: 32rpx;
+	filter: brightness(0);
+}
+
+.contact-float-text {
+	font-size: 28rpx;
+	color: #333333;
+	font-weight: 600;
+}
+
 /* 二维码图标样式 */
 .icon-group {
 	display: flex;
@@ -725,5 +816,76 @@ const logout = () => {
 	font-weight: bold;
 	text-align: center;
 	display: block;
+}
+
+/* 联系我们弹窗样式 */
+.contact-modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 2000;
+}
+
+.contact-modal-content {
+	width: 600rpx;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+	border-radius: 32rpx;
+	box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.3);
+	backdrop-filter: blur(20rpx);
+	border: 2rpx solid rgba(255, 255, 255, 0.3);
+	overflow: hidden;
+}
+
+.contact-header {
+	padding: 48rpx 48rpx 32rpx;
+	border-bottom: 2rpx solid rgba(0, 0, 0, 0.1);
+	text-align: center;
+}
+
+.contact-title {
+	font-size: 40rpx;
+	font-weight: 600;
+	color: #333;
+}
+
+.contact-body {
+	padding: 32rpx 48rpx 48rpx;
+}
+
+.contact-item {
+	padding: 32rpx 0;
+	border-bottom: 2rpx solid rgba(0, 0, 0, 0.05);
+	transition: all 0.3s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 16rpx;
+}
+
+.contact-item:last-child {
+	border-bottom: none;
+}
+
+.contact-item:active {
+	background-color: rgba(0, 0, 0, 0.05);
+	transform: scale(0.98);
+}
+
+.contact-item-icon {
+	width: 32rpx;
+	height: 32rpx;
+	filter: brightness(0);
+}
+
+.contact-item-text {
+	font-size: 36rpx;
+	color: #333;
+	font-weight: 500;
 }
 </style>

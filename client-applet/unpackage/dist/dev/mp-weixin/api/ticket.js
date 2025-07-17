@@ -8,7 +8,11 @@ const ticketAPI = {
   /**
    * 我的列表
    */
-  queryMine: async (params) => await common_request.request.get(`ticket/mine`, params)
+  queryMine: async (params) => await common_request.request.get(`ticket/mine`, params),
+  /**
+   * 获取详情
+   */
+  find: async (id) => await common_request.request.get(`ticket/${id}`)
 };
 exports.ticketAPI = ticketAPI;
 //# sourceMappingURL=../../.sourcemap/mp-weixin/api/ticket.js.map

@@ -49,6 +49,10 @@ public class TicketDomain extends GoodsBaseInfo implements Serializable {
 
     private String name;
 
+    @Length(max = 255)
+    @Schema(description = "封面")
+    private String posterUrl;
+
     @Length(max = 65535)
     @Schema(description = "描述")
     private String details;

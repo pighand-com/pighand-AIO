@@ -5,8 +5,22 @@
     <el-form-item
         :style="{ width: '100%' }"
         v-show="!formColumnItem.hidden"
-        :label="formColumnItem.label"
         :prop="formColumnItem.prop">
+        <template #label>
+            <span class="flex items-center">
+                <el-tooltip
+                    v-if="formColumnItem.help"
+                    raw-content
+                    :content="formColumnItem.help"
+                    placement="top"
+                    class="mr-1">
+                    <el-icon class="cursor-pointer text-gray-500 mr-1">
+                        <Help />
+                    </el-icon>
+                </el-tooltip>
+                {{ formColumnItem.label }}
+            </span>
+        </template>
         <el-input
             v-if="!formColumnItem.domType || formColumnItem.domType === 'input'"
             v-bind="formColumnItem.componentProps || {}"
@@ -365,7 +379,8 @@ import {
     Delete,
     ZoomIn,
     UploadOne,
-    DeleteThree
+    DeleteThree,
+    Help
 } from '@icon-park/vue-next';
 
 import cos from '@/common/cos.ts';

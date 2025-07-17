@@ -42,6 +42,23 @@ const { getDetailOperation, queryTableData } = provideForm([
         hidden: true
     },
     {
+        label: '分组',
+        prop: 'group',
+        isTable: true,
+        isDetail: true,
+        domType: 'select',
+        domData: [
+            {
+                label: 'Banner',
+                value: 'banner'
+            },
+            {
+                label: '活动',
+                value: 'activity'
+            }
+        ]
+    },
+    {
         label: '描述',
         prop: 'description',
         isTable: true,
@@ -67,7 +84,16 @@ const { getDetailOperation, queryTableData } = provideForm([
         label: '跳转地址',
         prop: 'redirectionPath',
         isTable: true,
-        isDetail: true
+        isDetail: true,
+        help: `
+            <strong>网页(包含公众号等):</strong>
+            </br>
+            http开头的网址
+            </br></br>
+            <strong>小程序路径(id的值xxx，替换为对应页面的ID): </strong>
+            </br>
+            票务详情 - /pages/ECommerce/pages/ticket-detail?id=xxx
+        `
     },
     {
         label: '状态',

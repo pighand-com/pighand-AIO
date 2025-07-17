@@ -8,6 +8,15 @@ const pages = [
     path: "pages/base/pages/mine"
   },
   {
+    path: "pages/base/pages/store"
+  },
+  {
+    path: "pages/base/pages/webview"
+  },
+  {
+    path: "pages/base/pages/customer-service"
+  },
+  {
     path: "pages/ECommerce/pages/theme"
   },
   {
@@ -24,11 +33,17 @@ const pages = [
   },
   {
     path: "pages/ECommerce/pages/queue-setting"
+  },
+  {
+    path: "pages/ECommerce/pages/ticket-list"
+  },
+  {
+    path: "pages/ECommerce/pages/ticket-detail"
   }
 ];
 const globalStyle = {
   navigationBarTextStyle: "black",
-  navigationBarTitleText: "uni-app",
+  navigationBarTitleText: "",
   navigationStyle: "custom",
   navigationBarBackgroundColor: "#F8F8F8",
   backgroundColor: "#F8F8F8"
@@ -43,6 +58,18 @@ const tabBar = {
       text: "首页",
       iconPath: "static/tab-bar-index-inactive.png",
       selectedIconPath: "static/tab-bar-index-activity.png"
+    },
+    {
+      pagePath: "pages/ECommerce/pages/ticket-list",
+      text: "票务",
+      iconPath: "static/tab-bar-ticket-inactive.png",
+      selectedIconPath: "static/tab-bar-ticket-activity.png"
+    },
+    {
+      pagePath: "pages/base/pages/customer-service",
+      text: "客服",
+      iconPath: "static/tab-bar-service-inactive.png",
+      selectedIconPath: "static/tab-bar-service-activity.png"
     },
     {
       pagePath: "pages/base/pages/mine",

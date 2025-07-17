@@ -24,6 +24,7 @@ const _sfc_main = {
     const isQrModalVisible = common_vendor.ref(false);
     const distributionQrCode = common_vendor.ref("");
     const isSettingsModalVisible = common_vendor.ref(false);
+    const isContactModalVisible = common_vendor.ref(false);
     const isStaff = common_vendor.ref(false);
     const checkIsStaff = async () => {
       const user = userInfo.value;
@@ -47,7 +48,7 @@ const _sfc_main = {
           salespersonId.value = response;
         }
       } catch (error) {
-        common_vendor.index.__f__("log", "at pages/base/pages/mine.vue:162", "获取销售员ID失败:", error);
+        common_vendor.index.__f__("log", "at pages/base/pages/mine.vue:188", "获取销售员ID失败:", error);
       }
     };
     const handleStorageChange = () => {
@@ -96,7 +97,7 @@ const _sfc_main = {
           });
         }
       } catch (error) {
-        common_vendor.index.__f__("log", "at pages/base/pages/mine.vue:230", "获取分销二维码失败:", error);
+        common_vendor.index.__f__("log", "at pages/base/pages/mine.vue:256", "获取分销二维码失败:", error);
         common_vendor.index.showToast({
           title: "获取二维码失败",
           icon: "none"
@@ -128,11 +129,33 @@ const _sfc_main = {
         }
       });
     };
+    const showContactModal = () => {
+      isContactModalVisible.value = true;
+    };
+    const hideContactModal = () => {
+      isContactModalVisible.value = false;
+    };
+    const makePhoneCall = (type) => {
+      hideContactModal();
+      common_vendor.index.makePhoneCall({
+        phoneNumber: "18182400663",
+        success: () => {
+          common_vendor.index.__f__("log", "at pages/base/pages/mine.vue:313", `${type}电话拨打成功`);
+        },
+        fail: (err) => {
+          common_vendor.index.__f__("log", "at pages/base/pages/mine.vue:316", `${type}电话拨打失败:`, err);
+          common_vendor.index.showToast({
+            title: "拨打失败",
+            icon: "none"
+          });
+        }
+      });
+    };
     return (_ctx, _cache) => {
       var _a, _b;
       return common_vendor.e({
         a: common_vendor.p({
-          back: true,
+          back: false,
           position: "flex"
         }),
         b: ((_a = userInfo.value) == null ? void 0 : _a.avatar) || common_vendor.unref(common_assets.defaultAvatar),
@@ -145,12 +168,12 @@ const _sfc_main = {
         }),
         f: salespersonId.value
       }, salespersonId.value ? {
-        g: common_assets._imports_0,
+        g: common_assets._imports_0$1,
         h: common_vendor.o(showDistributionQR)
       } : {}, {
         i: isLogin.value
       }, isLogin.value ? {
-        j: common_assets._imports_1,
+        j: common_assets._imports_1$1,
         k: common_vendor.o(showSettings)
       } : {}, {
         l: common_vendor.o(goToOrder),
@@ -175,19 +198,31 @@ const _sfc_main = {
           item: ["login"]
         })
       } : {}, {
-        w: isQrModalVisible.value
+        w: common_assets._imports_2$1,
+        x: common_vendor.o(showContactModal),
+        y: isQrModalVisible.value
       }, isQrModalVisible.value ? {
-        x: distributionQrCode.value,
-        y: common_vendor.o(() => {
+        z: distributionQrCode.value,
+        A: common_vendor.o(() => {
         }),
-        z: common_vendor.o(hideQrModal)
+        B: common_vendor.o(hideQrModal)
       } : {}, {
-        A: isSettingsModalVisible.value
+        C: isSettingsModalVisible.value
       }, isSettingsModalVisible.value ? {
-        B: common_vendor.o(logout),
-        C: common_vendor.o(() => {
+        D: common_vendor.o(logout),
+        E: common_vendor.o(() => {
         }),
-        D: common_vendor.o(hideSettings)
+        F: common_vendor.o(hideSettings)
+      } : {}, {
+        G: isContactModalVisible.value
+      }, isContactModalVisible.value ? {
+        H: common_assets._imports_2$1,
+        I: common_vendor.o(($event) => makePhoneCall("投诉反馈")),
+        J: common_assets._imports_2$1,
+        K: common_vendor.o(($event) => makePhoneCall("品牌合作")),
+        L: common_vendor.o(() => {
+        }),
+        M: common_vendor.o(hideContactModal)
       } : {});
     };
   }

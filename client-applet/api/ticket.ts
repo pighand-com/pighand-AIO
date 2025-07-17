@@ -10,4 +10,9 @@ export default {
      * 我的列表
      */
     queryMine: async (params: any) => await request.get(`ticket/mine`, params),
+
+    /**
+     * 获取详情
+     */
+    find: async (id: string) => await request.get(`ticket/${id}`),
 };

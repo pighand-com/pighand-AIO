@@ -42,6 +42,13 @@ provideForm([
         ]
     },
     {
+        label: '简介',
+        prop: 'introduce',
+        isTable: false,
+        isDetail: true,
+        domType: 'editor'
+    },
+    {
         label: '商户',
         prop: 'tenantId',
         isTable: true,

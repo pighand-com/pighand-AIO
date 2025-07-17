@@ -2,16 +2,21 @@
   "pages": [
     "pages/base/pages/index",
     "pages/base/pages/mine",
+    "pages/base/pages/store",
+    "pages/base/pages/webview",
+    "pages/base/pages/customer-service",
     "pages/ECommerce/pages/theme",
     "pages/ECommerce/pages/order-list",
     "pages/ECommerce/pages/order-detail",
     "pages/ECommerce/pages/mine-ticket",
     "pages/ECommerce/pages/distribution-list",
-    "pages/ECommerce/pages/queue-setting"
+    "pages/ECommerce/pages/queue-setting",
+    "pages/ECommerce/pages/ticket-list",
+    "pages/ECommerce/pages/ticket-detail"
   ],
   "window": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "uni-app",
+    "navigationBarTitleText": "",
     "navigationStyle": "custom",
     "navigationBarBackgroundColor": "#F8F8F8",
     "backgroundColor": "#F8F8F8"
@@ -26,6 +31,18 @@
         "text": "首页",
         "iconPath": "static/tab-bar-index-inactive.png",
         "selectedIconPath": "static/tab-bar-index-activity.png"
+      },
+      {
+        "pagePath": "pages/ECommerce/pages/ticket-list",
+        "text": "票务",
+        "iconPath": "static/tab-bar-ticket-inactive.png",
+        "selectedIconPath": "static/tab-bar-ticket-activity.png"
+      },
+      {
+        "pagePath": "pages/base/pages/customer-service",
+        "text": "客服",
+        "iconPath": "static/tab-bar-service-inactive.png",
+        "selectedIconPath": "static/tab-bar-service-activity.png"
       },
       {
         "pagePath": "pages/base/pages/mine",

@@ -249,6 +249,40 @@
 	box-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.3);
 }
 
+/* 联系我们悬浮按钮 */
+.contact-float-btn.data-v-0a65c2d0 {
+	position: fixed;
+	bottom: 200rpx;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 200rpx;
+	height: 80rpx;
+	background: linear-gradient(135deg, #F5F5F5, #E8E8E8);
+	border-radius: 40rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12rpx;
+	box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.15);
+	z-index: 1000;
+	transition: all 0.3s ease;
+	border: 2rpx solid rgba(0, 0, 0, 0.1);
+}
+.contact-float-btn.data-v-0a65c2d0:active {
+	transform: translateX(-50%) scale(0.95);
+	box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.25);
+}
+.contact-phone-icon.data-v-0a65c2d0 {
+	width: 32rpx;
+	height: 32rpx;
+	filter: brightness(0);
+}
+.contact-float-text.data-v-0a65c2d0 {
+	font-size: 28rpx;
+	color: #333333;
+	font-weight: 600;
+}
+
 /* 二维码图标样式 */
 .icon-group.data-v-0a65c2d0 {
 	display: flex;
@@ -410,4 +444,67 @@
 	font-weight: bold;
 	text-align: center;
 	display: block;
+}
+
+/* 联系我们弹窗样式 */
+.contact-modal.data-v-0a65c2d0 {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 2000;
+}
+.contact-modal-content.data-v-0a65c2d0 {
+	width: 600rpx;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+	border-radius: 32rpx;
+	box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.3);
+	-webkit-backdrop-filter: blur(20rpx);
+	        backdrop-filter: blur(20rpx);
+	border: 2rpx solid rgba(255, 255, 255, 0.3);
+	overflow: hidden;
+}
+.contact-header.data-v-0a65c2d0 {
+	padding: 48rpx 48rpx 32rpx;
+	border-bottom: 2rpx solid rgba(0, 0, 0, 0.1);
+	text-align: center;
+}
+.contact-title.data-v-0a65c2d0 {
+	font-size: 40rpx;
+	font-weight: 600;
+	color: #333;
+}
+.contact-body.data-v-0a65c2d0 {
+	padding: 32rpx 48rpx 48rpx;
+}
+.contact-item.data-v-0a65c2d0 {
+	padding: 32rpx 0;
+	border-bottom: 2rpx solid rgba(0, 0, 0, 0.05);
+	transition: all 0.3s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 16rpx;
+}
+.contact-item.data-v-0a65c2d0:last-child {
+	border-bottom: none;
+}
+.contact-item.data-v-0a65c2d0:active {
+	background-color: rgba(0, 0, 0, 0.05);
+	transform: scale(0.98);
+}
+.contact-item-icon.data-v-0a65c2d0 {
+	width: 32rpx;
+	height: 32rpx;
+	filter: brightness(0);
+}
+.contact-item-text.data-v-0a65c2d0 {
+	font-size: 36rpx;
+	color: #333;
+	font-weight: 500;
 }

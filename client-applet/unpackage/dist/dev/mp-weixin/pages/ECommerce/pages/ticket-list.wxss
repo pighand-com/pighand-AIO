@@ -1,0 +1,110 @@
+
+.content.data-v-db976eb8 {
+	background-color: #f5f5f5;
+	position: relative;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+.ticket-list.data-v-db976eb8 {
+	padding: 20rpx;
+	flex: 1;
+	overflow-y: auto;
+	padding-bottom: calc(100rpx + env(safe-area-inset-bottom) + 20rpx);
+}
+.ticket-item.data-v-db976eb8 {
+	display: flex;
+	align-items: center;
+	background-color: #fff;
+	border-radius: 20rpx;
+	padding: 30rpx;
+	margin-bottom: 20rpx;
+	box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+	transition: all 0.3s ease;
+}
+.ticket-item.data-v-db976eb8:active {
+	transform: scale(0.98);
+	background-color: #f8f8f8;
+}
+.ticket-cover.data-v-db976eb8 {
+	width: 240rpx;
+	height: 140rpx;
+	border-radius: 12rpx;
+	overflow: hidden;
+	margin-right: 40rpx;
+	flex-shrink: 0;
+}
+.ticket-item:not(:has(.ticket-cover)) .ticket-info.data-v-db976eb8 {
+	margin-left: 0;
+}
+.cover-image.data-v-db976eb8 {
+	width: 100%;
+	height: 100%;
+}
+.ticket-info.data-v-db976eb8 {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.ticket-name.data-v-db976eb8 {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 15rpx;
+	line-height: 1.4;
+}
+.price-info.data-v-db976eb8 {
+	display: flex;
+	align-items: center;
+	gap: 15rpx;
+}
+.original-price.data-v-db976eb8 {
+	font-size: 24rpx;
+	color: #999;
+	text-decoration: line-through;
+}
+.current-price.data-v-db976eb8 {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #ff4444;
+}
+.buy-button.data-v-db976eb8 {
+	padding: 15rpx 25rpx;
+	background: linear-gradient(135deg, #ff8c00 0%, #ff6b00 100%);
+	border-radius: 25rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	box-shadow: 0 4rpx 15rpx rgba(255, 140, 0, 0.3);
+	transition: all 0.3s ease;
+}
+.buy-button.data-v-db976eb8:active {
+	transform: scale(0.95);
+}
+.buy-text.data-v-db976eb8 {
+	font-size: 24rpx;
+	color: #ffffff;
+	font-weight: bold;
+}
+.empty-state.data-v-db976eb8 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 400rpx;
+}
+.empty-text.data-v-db976eb8 {
+	font-size: 28rpx;
+	color: #999;
+}
+.loading-state.data-v-db976eb8 {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 400rpx;
+}
+.loading-text.data-v-db976eb8 {
+	font-size: 28rpx;
+	color: #999;
+}

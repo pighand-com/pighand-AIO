@@ -1,65 +1,269 @@
 
-.content {
-	padding: 0;
+.content.data-v-946b03a8 {
+	background-color: white;
 	position: relative;
-	height: calc(100vh - 100rpx);
+	min-height: 100vh;
+	padding-bottom: calc(100rpx + env(safe-area-inset-bottom));
+	overflow-x: hidden;
 }
-.banner-container {
-	width: 100%;
-	height: calc(100vh - 100rpx);
+
+/* 橙色渐变背景 */
+.gradient-bg.data-v-946b03a8 {
 	position: absolute;
 	top: 0;
 	left: 0;
+	width: 100%;
+	height: 640rpx;
+	background: linear-gradient(180deg, #ff8c00 0%, rgba(255, 140, 0, 0) 100%);
 	z-index: 1;
 }
-.banner-swiper {
+
+/* Banner区域 */
+.banner-container.data-v-946b03a8 {
 	width: 100%;
-	height: 100%;
+	height: 400rpx;
+	position: relative;
+	z-index: 2;
+	padding: 20rpx 30rpx;
+	box-sizing: border-box;
 }
-.banner-image {
+.banner-swiper.data-v-946b03a8 {
 	width: 100%;
 	height: 100%;
-	border-radius: 0;
+	border-radius: 20rpx;
+	overflow: hidden;
+}
+.banner-image.data-v-946b03a8 {
+	width: 100%;
+	height: 100%;
+	border-radius: 20rpx;
 }
 
-/* 轮播指示点样式 */
-.banner-swiper .uni-swiper-dot {
-	background-color: rgba(255, 255, 255, 0.5);
+/* 轮播指示点样式 - 通过swiper属性设置 */
+
+/* 功能图标区域 */
+.function-icons.data-v-946b03a8 {
+	display: flex;
+	justify-content: space-around;
+	position: relative;
+	z-index: 3;
 }
-.banner-swiper .uni-swiper-dot-active {
+.icon-item.data-v-946b03a8 {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 15rpx;
+}
+.icon-wrapper.data-v-946b03a8 {
+	width: 100rpx;
+	height: 100rpx;
 	background-color: #ffffff;
+	border-radius: 60rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.1);
+	transition: all 0.3s ease;
+}
+.icon-wrapper.data-v-946b03a8:active {
+	transform: scale(0.95);
+}
+.icon.data-v-946b03a8 {
+	font-size: 60rpx;
+}
+.icon-text.data-v-946b03a8 {
+	font-size: 28rpx;
+	color: #333;
+	font-weight: 500;
 }
 
-/* 主题购买按钮样式 */
-.theme-container {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	z-index: 10;
-	text-align: center;
+/* 通用区域标题 */
+.section-title.data-v-946b03a8 {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #333;
+	padding: 30rpx 30rpx 20rpx;
 }
 
-/* 按钮样式已移至组件内部 */
-
-/* 查看排队时间按钮样式 */
-.queue-button-container {
-	position: fixed;
-	top: calc(50% + 120rpx);
-	left: 50%;
-	transform: translateX(-50%);
-	z-index: 10;
+/* 门票展示区域 */
+.ticket-section.data-v-946b03a8 {
+	margin-top: 20rpx;
+	background-color: #ffffff;
+	border-radius: 20rpx 20rpx 0 0;
+	position: relative;
+	z-index: 3;
+}
+.ticket-list.data-v-946b03a8 {
+	padding: 0 20rpx;
+}
+.ticket-item.data-v-946b03a8 {
+	display: flex;
+	align-items: center;
+	background-color: #fff;
+	border-radius: 20rpx;
+	padding: 30rpx;
+	margin-bottom: 20rpx;
+	box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+	transition: all 0.3s ease;
+	border: 1rpx solid #f0f0f0;
+}
+.ticket-item.data-v-946b03a8:active {
+	transform: scale(0.98);
+	background-color: #f8f8f8;
+}
+.ticket-cover.data-v-946b03a8 {
+	width: 240rpx;
+	height: 140rpx;
+	border-radius: 12rpx;
+	overflow: hidden;
+	margin-right: 40rpx;
+	flex-shrink: 0;
+}
+.cover-image.data-v-946b03a8 {
+	width: 100%;
+	height: 100%;
+}
+.ticket-info.data-v-946b03a8 {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+.ticket-name.data-v-946b03a8 {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	margin-bottom: 15rpx;
+	line-height: 1.4;
+}
+.price-info.data-v-946b03a8 {
+	display: flex;
+	align-items: center;
+	gap: 15rpx;
+}
+.original-price.data-v-946b03a8 {
+	font-size: 24rpx;
+	color: #999;
+	text-decoration: line-through;
+}
+.current-price.data-v-946b03a8 {
+	font-size: 28rpx;
+	font-weight: bold;
+	color: #ff4444;
+}
+.buy-button.data-v-946b03a8 {
+	padding: 15rpx 25rpx;
+	background: linear-gradient(135deg, #ff8c00 0%, #ff6b00 100%);
+	border-radius: 25rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	box-shadow: 0 4rpx 15rpx rgba(255, 140, 0, 0.3);
+	transition: all 0.3s ease;
+}
+.buy-button.data-v-946b03a8:active {
+	transform: scale(0.95);
+}
+.buy-text.data-v-946b03a8 {
+	font-size: 24rpx;
+	color: #ffffff;
+	font-weight: bold;
+}
+.show-all.data-v-946b03a8 {
 	text-align: center;
+}
+.show-all-text.data-v-946b03a8 {
+	font-size: 28rpx;
+	color: #999999;
+	font-weight: 500;
+}
+
+/* 游戏项目区域 */
+.game-section.data-v-946b03a8 {
+	margin-top: 20rpx;
+	background-color: #ffffff;
+	border-radius: 20rpx;
+	position: relative;
+	z-index: 3;
+}
+.game-scroll.data-v-946b03a8 {
+	padding: 0 20rpx 30rpx;
+}
+
+/* 隐藏横向滚动条 */
+.game-scroll.data-v-946b03a8 ::-webkit-scrollbar {
+	display: none;
+}
+.game-scroll.data-v-946b03a8 {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+.game-list.data-v-946b03a8 {
+	display: flex;
+	gap: 20rpx;
+	padding-right: 20rpx;
+}
+.game-item.data-v-946b03a8 {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 15rpx;
+	flex-shrink: 0;
+}
+.game-cover.data-v-946b03a8 {
+	width: 200rpx;
+	height: 120rpx;
+	border-radius: 12rpx;
+	overflow: hidden;
+}
+.game-image.data-v-946b03a8 {
+	width: 100%;
+	height: 100%;
+}
+.game-name.data-v-946b03a8 {
+	font-size: 26rpx;
+	color: #333;
+	font-weight: 500;
+	text-align: center;
+	width: 200rpx;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* 活动区域 */
+.activity-section.data-v-946b03a8 {
+	margin-top: 20rpx;
+	background-color: #ffffff;
+	border-radius: 20rpx;
+	position: relative;
+	z-index: 3;
+	margin-bottom: 20rpx;
+}
+.activity-container.data-v-946b03a8 {
+	padding: 0 20rpx 30rpx;
+}
+.activity-swiper.data-v-946b03a8 {
+	width: 100%;
+	height: 300rpx;
+	border-radius: 20rpx;
+	overflow: hidden;
+}
+.activity-image.data-v-946b03a8 {
+	width: 100%;
+	height: 100%;
+	border-radius: 80rpx;
 }
 
 /* 排队时间弹出层样式 */
-.queue-popup {
+.queue-popup.data-v-946b03a8 {
 	width: 600rpx;
 	background-color: #ffffff;
 	border-radius: 20rpx;
 	overflow: hidden;
 }
-.queue-popup-header {
+.queue-popup-header.data-v-946b03a8 {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -67,50 +271,50 @@
 	background-color: #f8f9fa;
 	border-bottom: 1rpx solid #e9ecef;
 }
-.queue-popup-title {
+.queue-popup-title.data-v-946b03a8 {
 	font-size: 36rpx;
 	font-weight: bold;
 	color: #333333;
 }
-.close-icon {
+.close-icon.data-v-946b03a8 {
 	font-size: 40rpx;
 	color: #666666;
 	line-height: 1;
 }
-.queue-popup-content {
+.queue-popup-content.data-v-946b03a8 {
 	padding: 40rpx;
 	max-height: 800rpx;
 	overflow-y: auto;
 }
-.no-data {
+.no-data.data-v-946b03a8 {
 	text-align: center;
 	padding: 80rpx 0;
 	color: #999999;
 	font-size: 28rpx;
 }
-.queue-list {
+.queue-list.data-v-946b03a8 {
 	display: flex;
 	flex-direction: column;
 	gap: 20rpx;
 }
-.queue-item {
+.queue-item.data-v-946b03a8 {
 	padding: 30rpx;
 	background-color: #f8f9fa;
 	border-radius: 12rpx;
 	border: 1rpx solid #e9ecef;
 }
-.theme-info {
+.theme-info.data-v-946b03a8 {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 }
-.theme-name {
+.theme-name.data-v-946b03a8 {
 	font-size: 32rpx;
 	color: #333333;
 	font-weight: 500;
 	flex: 1;
 }
-.queue-duration {
+.queue-duration.data-v-946b03a8 {
 	font-size: 28rpx;
 	color: #007aff;
 	font-weight: bold;

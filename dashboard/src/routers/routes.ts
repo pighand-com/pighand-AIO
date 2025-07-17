@@ -63,6 +63,15 @@ const routes = [
                     icon: shallowRef(MultiPictureCarousel)
                 },
                 component: () => import('@/pages/CMS/Banner.vue')
+            },
+            {
+                path: 'assets',
+                name: 'assets',
+                title: '素材管理',
+                meta: {
+                    icon: shallowRef(Material)
+                },
+                component: () => import('@/pages/common/Assets.vue')
             }
         ]
     },
@@ -216,17 +225,7 @@ const routes = [
             icon: shallowRef(Components),
             pageType: constant.page_type_single
         },
-        children: [
-            {
-                path: 'assets',
-                name: 'assets',
-                title: '素材管理',
-                meta: {
-                    icon: shallowRef(Material)
-                },
-                component: () => import('@/pages/common/Assets.vue')
-            }
-        ]
+        children: []
     }
 ];
 

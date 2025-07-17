@@ -18,36 +18,13 @@ import { CrossRingTwo } from '@icon-park/vue-next';
 
 provideForm([
     {
-        label: 'id',
+        label: 'ID',
         prop: 'id',
         isDetail: true,
         isPrimaryKey: true,
-        hidden: true
-    },
-    {
-        label: '主题',
-        prop: 'themeId',
+        hidden: true,
         isTable: true,
-        isDetail: true,
-        isSearch: true,
-        domType: 'select',
-        domData: async (key) => {
-            const result = await theme.query({ name: key });
-            return result.records.map((item) => ({
-                label: item.themeName,
-                value: item.id
-            }));
-        },
-        tableFormat: (_value, _row, _item) => {
-            return _row.theme?.themeName || '';
-        },
-        rules: [
-            {
-                required: true,
-                message: '主题必填',
-                trigger: 'blur'
-            }
-        ]
+        tableWidth: 168
     },
     {
         label: '名称',
@@ -69,6 +46,33 @@ provideForm([
                 trigger: 'blur'
             }
         ]
+    },
+    {
+        label: '主题',
+        prop: 'themeId',
+        isTable: true,
+        isDetail: true,
+        isSearch: true,
+        domType: 'select',
+        domData: async (key) => {
+            const result = await theme.query({ name: key });
+            return result.records.map((item) => ({
+                label: item.themeName,
+                value: item.id
+            }));
+        },
+        tableFormat: (_value, _row, _item) => {
+            return _row.theme?.themeName || '';
+        }
+    },
+    {
+        label: '封面',
+        prop: 'posterUrl',
+        isTable: false,
+        isDetail: true,
+        domType: 'uploadImage',
+        tableType: 'image',
+        uploadPath: 'ticket'
     },
     {
         label: '描述',
@@ -161,25 +165,6 @@ provideForm([
                       title: '无限'
                   });
         }
-    },
-    {
-        label: '创建人',
-        prop: 'creator.name',
-        isTable: true,
-        isDetail: false
-    },
-    {
-        label: '创建时间',
-        prop: 'createdAt',
-        isTable: true,
-        isSearch: true,
-        domType: 'dateTimePickerRange'
-    },
-    {
-        label: '更新时间',
-        prop: 'updatedAt',
-        isTable: true,
-        domType: 'dateTimePickerRange'
     }
 ]);
 

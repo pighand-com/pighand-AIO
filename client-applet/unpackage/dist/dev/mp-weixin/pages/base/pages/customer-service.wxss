@@ -1,0 +1,56 @@
+
+.customer-service-page.data-v-05bf6414 {
+	min-height: 100vh;
+	background-color: #f8f8f8;
+}
+.content.data-v-05bf6414 {
+	padding: 40rpx;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: calc(100vh - 200rpx);
+}
+.service-info.data-v-05bf6414 {
+	text-align: center;
+	margin-bottom: 80rpx;
+}
+.title.data-v-05bf6414 {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #333;
+	display: block;
+	margin-bottom: 20rpx;
+}
+.desc.data-v-05bf6414 {
+	font-size: 28rpx;
+	color: #666;
+	display: block;
+}
+.service-btn.data-v-05bf6414 {
+	width: 300rpx;
+	background-color: #AC9157;
+	border-radius: 60rpx;
+	border: none;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4rpx 12rpx rgba(172, 145, 87, 0.3);
+    padding: 24rpx 0;
+}
+.service-btn.data-v-05bf6414::after {
+	border: none;
+}
+.service-icon.data-v-05bf6414 {
+	width: 40rpx;
+	height: 40rpx;
+	margin-bottom: 8rpx;
+}
+.service-text.data-v-05bf6414 {
+    padding-top: 8rpx;
+	font-size: 28rpx;
+    line-height: 28rpx;
+	color: #fff;
+	font-weight: 500;
+}

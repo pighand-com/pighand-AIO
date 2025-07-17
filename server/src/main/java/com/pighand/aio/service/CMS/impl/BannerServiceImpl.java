@@ -97,6 +97,7 @@ public class BannerServiceImpl extends BaseServiceImpl<BannerMapper, BannerDomai
 
         updateChain.set(BANNER.IMAGE_URL, cmsBannerVO.getImageUrl());
         updateChain.set(BANNER.REDIRECTION_PATH, cmsBannerVO.getRedirectionPath());
+        updateChain.set(BANNER.GROUP, cmsBannerVO.getGroup());
 
         updateChain.update();
     }

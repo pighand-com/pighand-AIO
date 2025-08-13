@@ -54,10 +54,11 @@
 </template>
 
 <script setup>
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import Decimal from 'decimal.js'
 import { ticket as ticketAPI } from '@/api'
+import { createShareInfo } from '@/common/share'
 
 // 票务列表数据
 const ticketList = ref([])
@@ -96,6 +97,16 @@ const goToDetail = (ticketId) => {
 		url: `/pages/ECommerce/pages/ticket-detail?id=${ticketId}`
 	})
 }
+
+// 分享给朋友
+onShareAppMessage(() => {
+	return createShareInfo()
+})
+
+// 分享到朋友圈
+onShareTimeline(() => {
+	return createShareInfo()
+})
 </script>
 
 <style scoped>

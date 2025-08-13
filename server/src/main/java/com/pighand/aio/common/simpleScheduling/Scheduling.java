@@ -3,6 +3,7 @@ package com.pighand.aio.common.simpleScheduling;
 import com.pighand.aio.domain.system.SimpleSchedulingDomain;
 import com.pighand.aio.service.ECommerce.SessionService;
 import com.pighand.aio.service.IoT.DeviceTaskService;
+import com.pighand.aio.service.MKT.LotteryService;
 import com.pighand.aio.service.system.SimpleSchedulingService;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -28,6 +29,8 @@ public class Scheduling implements SchedulingConfigurer {
 
     private final DeviceTaskService deviceTaskService;
 
+    private final LotteryService lotteryService;
+
     @Override
     public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
         List<SimpleSchedulingDomain> scheduling =
@@ -51,6 +54,10 @@ public class Scheduling implements SchedulingConfigurer {
             // 执行IoT设备任务
             case "runDeviceTask":
                 deviceTaskService.runDeviceTask();
+                break;
+            // 开奖
+            case "draw":
+                lotteryService.drawAll();
                 break;
             default:
                 break;

@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -231,81 +233,93 @@ public class DistributionSalesServiceImpl extends BaseServiceImpl<DistributionSa
      * @return Map<String, Object> 状态统计结果
      */
     @Override
-    public Map<String, Object> statistics(DistributionSalesVO distDistributionSalesVO) {
-        Long salespersonId = distDistributionSalesVO.getSalespersonId();
+    public Map<String, Object> statistics(DistributionSalesVO vo) {
+        Long salespersonId = vo.getSalespersonId();
 
-        if (salespersonId == null && distDistributionSalesVO.getUserId() != null) {
-            DistributionSalespersonDomain distributionSalespersonDomain =
-                distributionSalespersonService.findByUserId(distDistributionSalesVO.getUserId());
-
-            salespersonId = distributionSalespersonDomain.getId();
+        if (salespersonId == null && vo.getUserId() != null) {
+            DistributionSalespersonDomain person = distributionSalespersonService.findByUserId(vo.getUserId());
+            salespersonId = person != null ? person.getId() : null;
         }
 
         if (salespersonId == null) {
             throw new ThrowPrompt("用户没有分销资格");
         }
 
-        Map<String, Object> statusCountMap = new HashMap(5);
-        statusCountMap.put("frozenAmount", 0L);     // 冻结
-        statusCountMap.put("incomingAmount", 0L);   // 入账中
-        statusCountMap.put("settledAmount", 0L);    // 待提现
-        statusCountMap.put("refundAmount", 0L);    // 退款
-        statusCountMap.put("withdrawAmount", 0L);   // 已提现
+        final Long finalSalespersonId = salespersonId;
 
-        // 查询冻结、退款统计
-        QueryWrapper queryWrapper = QueryWrapper.create()
-            .select(QueryMethods.sum(DISTRIBUTION_SALES.FROZEN_AMOUNT).as("frozenAmount"),
-                QueryMethods.sum(DISTRIBUTION_SALES.REFUND_AMOUNT).as("refundAmount")).from(DISTRIBUTION_SALES)
-            .where(DISTRIBUTION_SALES.SALESPERSON_ID.eq(salespersonId)).and(DISTRIBUTION_SALES.TYPE.eq(10));
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("frozenAmount", 0L);
+        resultMap.put("incomingAmount", 0L);
+        resultMap.put("settledAmount", 0L);
+        resultMap.put("refundAmount", 0L);
+        resultMap.put("withdrawAmount", 0L);
 
-        DistributionSalesVO result = super.mapper.selectOneByQueryAs(queryWrapper, DistributionSalesVO.class);
+        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            Future<DistributionSalesVO> frozenFuture = executor.submit(() -> {
+                QueryWrapper queryWrapper = QueryWrapper.create()
+                    .select(QueryMethods.sum(DISTRIBUTION_SALES.FROZEN_AMOUNT).as("frozenAmount"),
+                        QueryMethods.sum(DISTRIBUTION_SALES.REFUND_AMOUNT).as("refundAmount")).from(DISTRIBUTION_SALES)
+                    .where(DISTRIBUTION_SALES.SALESPERSON_ID.eq(finalSalespersonId))
+                    .and(DISTRIBUTION_SALES.TYPE.eq(10));
+                return super.mapper.selectOneByQueryAs(queryWrapper, DistributionSalesVO.class);
+            });
 
-        statusCountMap.put("frozenAmount",
-            Optional.ofNullable(result).map(DistributionSalesVO::getFrozenAmount).orElse(BigDecimal.ZERO).longValue());
-        statusCountMap.put("refundAmount",
-            Optional.ofNullable(result).map(DistributionSalesVO::getRefundAmount).orElse(BigDecimal.ZERO).longValue());
+            Future<DistributionSalesVO> withdrawFuture = executor.submit(() -> {
+                QueryWrapper queryWithdrawWrapper = QueryWrapper.create()
+                    .select(QueryMethods.sum(DISTRIBUTION_SALES.SETTLED_AMOUNT).as("settledAmount"))
+                    .from(DISTRIBUTION_SALES).where(DISTRIBUTION_SALES.SALESPERSON_ID.eq(finalSalespersonId))
+                    .and(DISTRIBUTION_SALES.TYPE.eq(20));
+                return super.mapper.selectOneByQueryAs(queryWithdrawWrapper, DistributionSalesVO.class);
+            });
 
-        // 查询已提现
-        QueryWrapper queryWithdrawWrapper =
-            QueryWrapper.create().select(QueryMethods.sum(DISTRIBUTION_SALES.SETTLED_AMOUNT).as("settledAmount"))
-                .from(DISTRIBUTION_SALES).where(DISTRIBUTION_SALES.SALESPERSON_ID.eq(salespersonId))
-                .and(DISTRIBUTION_SALES.TYPE.eq(20));
+            Future<List<DistributionSalesDetailDomain>> detailFuture = executor.submit(() -> {
+                QueryWrapper queryDetailWrapper = QueryWrapper.create()
+                    .select(DISTRIBUTION_SALES_DETAIL.ID, DISTRIBUTION_SALES_DETAIL.AMOUNT,
+                        DISTRIBUTION_SALES_DETAIL.SETTLEMENT_TIME).from(DISTRIBUTION_SALES_DETAIL)
+                    .where(DISTRIBUTION_SALES_DETAIL.SALESPERSON_ID.eq(finalSalespersonId))
+                    .and(DISTRIBUTION_SALES_DETAIL.STATUS.eq(10));
+                return distributionSalesDetailMapper.selectListByQuery(queryDetailWrapper);
+            });
 
-        DistributionSalesVO withdrawResult =
-            super.mapper.selectOneByQueryAs(queryWithdrawWrapper, DistributionSalesVO.class);
-        statusCountMap.put("withdrawAmount",
-            Optional.ofNullable(withdrawResult).map(DistributionSalesVO::getSettledAmount).orElse(BigDecimal.ZERO)
-                .longValue());
+            // 等待结果
+            DistributionSalesVO frozen = frozenFuture.get();
+            DistributionSalesVO withdraw = withdrawFuture.get();
+            List<DistributionSalesDetailDomain> details = detailFuture.get();
 
-        // 待提现记录
-        QueryWrapper queryDetailWrapper = QueryWrapper.create()
-            .select(DISTRIBUTION_SALES_DETAIL.ID, DISTRIBUTION_SALES_DETAIL.AMOUNT,
-                DISTRIBUTION_SALES_DETAIL.SETTLEMENT_TIME)
-            .where(DISTRIBUTION_SALES_DETAIL.SALESPERSON_ID.eq(salespersonId))
-            .and(DISTRIBUTION_SALES_DETAIL.STATUS.eq(10));
-        List<DistributionSalesDetailDomain> settledList =
-            distributionSalesDetailMapper.selectListByQuery(queryDetailWrapper);
+            // 处理统计逻辑
+            resultMap.put("frozenAmount",
+                Optional.ofNullable(frozen).map(DistributionSalesVO::getFrozenAmount).orElse(BigDecimal.ZERO)
+                    .longValue());
+            resultMap.put("refundAmount",
+                Optional.ofNullable(frozen).map(DistributionSalesVO::getRefundAmount).orElse(BigDecimal.ZERO)
+                    .longValue());
+            resultMap.put("withdrawAmount",
+                Optional.ofNullable(withdraw).map(DistributionSalesVO::getSettledAmount).orElse(BigDecimal.ZERO)
+                    .longValue());
 
-        // 统计待提现金额，入账中金额
-        BigDecimal incomingAmount = BigDecimal.ZERO;
-        BigDecimal settledAmount = BigDecimal.ZERO;
-        List<String> settledDetailIds = new ArrayList<>();
-        Date now = new Date();
-        for (DistributionSalesDetailDomain detailDomain : settledList) {
-            boolean isIncoming =
-                detailDomain.getSettlementTime() != null && detailDomain.getSettlementTime().after(now);
-            if (isIncoming) {
-                incomingAmount = incomingAmount.add(detailDomain.getAmount());
-            } else {
-                settledAmount = settledAmount.add(detailDomain.getAmount());
-                settledDetailIds.add(detailDomain.getId().toString());
+            BigDecimal incomingAmount = BigDecimal.ZERO;
+            BigDecimal settledAmount = BigDecimal.ZERO;
+            List<String> settledDetailIds = new ArrayList<>();
+            Date now = new Date();
+
+            for (DistributionSalesDetailDomain detail : details) {
+                if (detail.getSettlementTime() != null && detail.getSettlementTime().after(now)) {
+                    incomingAmount = incomingAmount.add(detail.getAmount());
+                } else {
+                    settledAmount = settledAmount.add(detail.getAmount());
+                    settledDetailIds.add(String.valueOf(detail.getId()));
+                }
             }
-        }
-        statusCountMap.put("incomingAmount", incomingAmount.longValue());   // 入账中
-        statusCountMap.put("settledAmount", settledAmount.longValue());    // 待提现
-        statusCountMap.put("settledDetailIds", settledDetailIds);
 
-        return statusCountMap;
+            resultMap.put("incomingAmount", incomingAmount.longValue());
+            resultMap.put("settledAmount", settledAmount.longValue());
+            resultMap.put("settledDetailIds", settledDetailIds);
+
+        } catch (Exception e) {
+            throw new RuntimeException("统计失败", e);
+        }
+
+        return resultMap;
     }
 
     /**

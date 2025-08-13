@@ -1,6 +1,9 @@
 spring:
   profiles:
     active: dev
+  threads:
+    virtual:
+      enabled: true
 
 logging:
   config: classpath:config/log4j2.xml

@@ -15,6 +15,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 营销 - 抽奖参与用户
@@ -46,4 +47,6 @@ public class LotteryCommonUserDomain extends BaseDomainRecord<LotteryCommonUserD
 
     @Schema(description = "剩余参与次数")
     private Integer remainingParticipations;
+
+    private Date createdAt;
 }

@@ -153,15 +153,18 @@ watch(
                 });
             }
 
-            Object.keys(detailDefaultValue).forEach((key) => {
-                detailFormModel[key] = detailDefaultValue[key];
-            });
+            const { op } = getDetailOperation(detailFormModel);
+            if (op === 'create') {
+                Object.keys(detailDefaultValue).forEach((key) => {
+                    detailFormModel[key] = detailDefaultValue[key];
+                });
+            }
 
             // 为有远程数据源且已有值的字段加载初始数据
             formColumns.forEach((column) => {
                 const { label, prop, domData, domType } = column;
                 const fieldValue = detailFormModel[prop];
-                
+
                 // 如果是select类型，有远程数据源，且字段有值，但选项数据还未加载
                 if (
                     domType === 'select' &&

@@ -8,9 +8,16 @@ dependencies:
   decimal.js:
     specifier: ^10.5.0
     version: 10.5.0
+  uqrcodejs:
+    specifier: ^4.0.7
+    version: 4.0.7
 
 packages:
 
   /decimal.js@10.5.0:
     resolution: {integrity: sha512-8vDa8Qxvr/+d94hSh5P3IJwI5t8/c0KsMp+g8bNw9cY2icONa5aPfvKeieW1WlG0WQYwwhJ7mjui2xtiePQSXw==}
+    dev: false
+
+  /uqrcodejs@4.0.7:
+    resolution: {integrity: sha512-84+aZmD2godCVI+93lxE3YUAPNY8zAJvNA7xRS7R7U+q57KzMDepBSfNCwoRUhWOfR6eHFoAOcHRPwsP6ka1cA==}
     dev: false

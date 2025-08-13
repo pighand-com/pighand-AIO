@@ -3,11 +3,10 @@
 		<custom-navigation-bar :back="true" />
 		
 		<!-- 主题海报 -->
-		<view class="theme-poster" v-if="themeDetail.posterUrl">
+		<!-- <view class="theme-poster" v-if="themeDetail.posterUrl">
 			<image :src="themeDetail.posterUrl" class="poster-image" mode="widthFix"></image>
-			<!-- 状态栏渐变遮罩 -->
 			<status-bar-gradient />
-		</view>
+		</view> -->
 		
 		<!-- 主题内容 -->
 		<view class="theme-content">
@@ -15,16 +14,16 @@
 			<rich-text class="theme-description" v-if="themeDetail.pictureDescription" :nodes="themeDetail.pictureDescription"></rich-text>
 		</view>
 		
-		<!-- 底部操作栏 -->
-		<view class="bottom-action-bar">
+		<!-- 底部操作栏 - 只有当有票或有客服时才显示 -->
+		<view class="bottom-action-bar" v-if="(ticketList && ticketList.length > 0) || themeDetail.serviceQrUrl">
 			<!-- 咨询客服 - 只有当serviceQrUrl有值时才显示 -->
 			<view class="customer-service" @click="contactService" v-if="themeDetail.serviceQrUrl">
 				<image src="/static/icon-customer-service.png" class="service-icon"></image>
 				<text class="service-text">咨询客服</text>
 			</view>
 			
-			<!-- 购买按钮 -->
-			<user-check :item="['login', 'phone']">
+			<!-- 购买按钮 - 只有当有票时才显示 -->
+			<user-check :item="['login', 'phone']" v-if="ticketList && ticketList.length > 0">
 				<view class="buy-button" @click="showTicketModal">
 					<text class="buy-text">即刻购票</text>
 				</view>
@@ -116,11 +115,12 @@
 </template>
 
 <script setup>
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 import { ref, computed, watch } from 'vue'
 import Decimal from 'decimal.js';
 import { theme as themeAPI, ticket as ticketAPI, order as orderAPI } from '@/api'
 import { getFromSalesId } from '@/common/storage'
+import { createShareInfo } from '@/common/share'
 
 // 主题详情数据
 const themeDetail = ref({})
@@ -157,6 +157,8 @@ const getThemeDetail = async (id) => {
 	try {
 		const res = await themeAPI.find(id)
 		themeDetail.value = res
+		// 获取主题详情后立即获取票务列表
+		await getTicketList()
 	} catch (error) {
 		console.error('获取主题详情失败:', error)
 	}
@@ -164,15 +166,15 @@ const getThemeDetail = async (id) => {
 
 // 获取票务列表
 const getTicketList = async () => {
-	const res = await ticketAPI.query({ themeId: themeDetail.value.id })
-	ticketList.value = res.records || []
-	selectedTicketIndex.value = 0
-	// 获取票务列表后立即计算价格
-	if (ticketList.value.length > 0) {
-		calculatePrice()
-		// 检查是否需要显示滚动提示
-		checkScrollIndicator()
-	}
+	// const res = await ticketAPI.query({ themeId: themeDetail.value.id })
+	// ticketList.value = res.records || []
+	// selectedTicketIndex.value = 0
+	// // 获取票务列表后立即计算价格
+	// if (ticketList.value.length > 0) {
+	// 	calculatePrice()
+	// 	// 检查是否需要显示滚动提示
+	// 	checkScrollIndicator()
+	// }
 }
 
 // 检查是否需要显示滚动提示
@@ -237,7 +239,7 @@ const hideQrModal = () => {
 // 显示购票弹窗
 const showTicketModal = () => {
 	isModalVisible.value = true
-	getTicketList()
+	// 票务列表已在页面加载时获取，无需重复获取
 }
 
 // 隐藏弹窗
@@ -409,12 +411,32 @@ const purchaseTicket = async () => {
 	}
 }
 
+// 分享给朋友
+onShareAppMessage(() => {
+	return createShareInfo({
+		subtitle: themeDetail.value.themeName,
+		imageUrl: themeDetail.value.posterUrl,
+		params: { id: themeDetail.value.id }
+	})
+})
+
+// 分享到朋友圈
+onShareTimeline(() => {
+	return createShareInfo({
+		subtitle: themeDetail.value.themeName,
+		imageUrl: themeDetail.value.posterUrl,
+		params: { id: themeDetail.value.id }
+	})
+})
+
 </script>
 
 <style scoped>
 .content {
-	background-color: #f5f5f5;
-	padding-bottom: 160rpx; /* 为底部操作栏留出空间 */
+	height: 100vh;
+	padding-top: 180rpx;
+	background: linear-gradient(180deg, #eab88a 0%, #fff9db 100%);
+	/* padding-bottom: 160rpx; */
 }
 
 .theme-poster {
@@ -431,10 +453,6 @@ const purchaseTicket = async () => {
 
 
 .theme-content {
-	padding: 30rpx 0;
-	background-color: #fff;
-	margin-top: 20rpx;
-	margin-bottom: 20rpx; /* 增加底部间距 */
 }
 
 .theme-title {

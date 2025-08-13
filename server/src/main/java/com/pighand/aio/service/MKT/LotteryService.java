@@ -50,4 +50,8 @@ public interface LotteryService extends BaseService<LotteryCommonConfigDomain> {
      * @param id
      */
     void delete(Long id);
+
+    void drawAll();
+
+    void drawById(Long id);
 }

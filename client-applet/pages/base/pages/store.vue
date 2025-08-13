@@ -9,9 +9,10 @@
 </template>
 
 <script setup>
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 import { ref } from 'vue'
 import { store as storeAPI } from '@/api'
+import { createShareInfo } from '@/common/share'
 
 // 主题详情数据
 const storeDetail = ref({})
@@ -33,11 +34,25 @@ const getStoreDetail = async (id) => {
 	}
 }
 
+// 分享给朋友
+onShareAppMessage(() => {
+	return createShareInfo({
+		params: { id: storeDetail.value.id }
+	})
+})
+
+// 分享到朋友圈
+onShareTimeline(() => {
+	return createShareInfo({
+		params: { id: storeDetail.value.id }
+	})
+})
+
 </script>
 
 <style scoped>
 .content {
-	background-color: #f5f5f5;
+	background-color: #f9f4c9;
 	padding-bottom: 160rpx; /* 为底部操作栏留出空间 */
 }
 
@@ -55,10 +70,6 @@ const getStoreDetail = async (id) => {
 
 
 .store-content {
-	padding: 30rpx 0;
-	background-color: #fff;
-	margin-top: 20rpx;
-	margin-bottom: 20rpx; /* 增加底部间距 */
 }
 
 .store-title {

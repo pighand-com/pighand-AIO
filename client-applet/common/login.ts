@@ -1,4 +1,4 @@
-import { getToken, setToken, setUserInfo, setApplicationInfo } from '@/common/storage';
+import { getToken, setBatchStorage } from '@/common/storage';
 import api from '@/api/login';
 
 /**
@@ -33,9 +33,12 @@ export default async (options: { silent?: false } = {}) => {
         }
         
         const { token, application, ...userInfo } = res;
-        setToken(token);
-        setUserInfo(userInfo);
-		setApplicationInfo(application)
+        // 使用批量设置方法，只触发一次storage-changed事件
+        setBatchStorage({
+            token,
+            userInfo,
+            applicationInfo: application
+        });
 
         if (!options.silent) {
             uni.showToast({

@@ -73,11 +73,12 @@
 </template>
 
 <script setup>
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 import { ref, computed, watch } from 'vue'
 import Decimal from 'decimal.js'
 import { ticket as ticketAPI, order as orderAPI } from '@/api'
 import { getFromSalesId } from '@/common/storage'
+import { createShareInfo } from '@/common/share'
 
 // 票务详情数据
 const ticketDetail = ref({})
@@ -231,13 +232,31 @@ const purchaseTicket = async () => {
 		isLoading.value = false
 		
 		console.error('购票失败:', error)
-		uni.showToast({
-			title: '购票失败，请重试',
-			icon: 'error',
-			duration: 2000
-		})
+			uni.showToast({
+				title: '购票失败，请重试',
+				icon: 'error',
+				duration: 2000
+			})
+		}
 	}
-}
+
+// 分享给朋友
+onShareAppMessage(() => {
+	return createShareInfo({
+		subtitle: ticketDetail.value.name,
+		imageUrl: ticketDetail.value.posterUrl,
+		params: { id: ticketDetail.value.id }
+	})
+})
+
+// 分享到朋友圈
+onShareTimeline(() => {
+	return createShareInfo({
+		subtitle: ticketDetail.value.name,
+		imageUrl: ticketDetail.value.posterUrl,
+		params: { id: ticketDetail.value.id }
+	})
+})
 </script>
 
 <style scoped>

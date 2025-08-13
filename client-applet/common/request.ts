@@ -75,7 +75,8 @@ const request = async (method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: string, d
         return disposeResponse(response, config?.isDialog, config?.responseType === 'blob');
     } catch (error) {
         uni.showToast({
-            title: '网络请求失败：' + error,
+            title: error || '网络请求失败',
+            duration: 3000,
             icon: 'none'
         });
         throw error;

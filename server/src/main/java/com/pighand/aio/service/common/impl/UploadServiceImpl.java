@@ -81,7 +81,11 @@ public class UploadServiceImpl implements UploadService {
         }
 
         if (VerifyUtils.isNotEmpty(path)) {
-            key = path + "/" + key;
+            if (path.endsWith("-") || path.endsWith("_") || path.endsWith(".")) {
+                key = path + key;
+            } else {
+                key = path + "/" + key;
+            }
         }
 
         return key;
@@ -155,8 +159,16 @@ public class UploadServiceImpl implements UploadService {
     public void updateFileOfficial(String... fileUrls) {
         ApplicationPlatformKeyDomain projectPlatformKey = projectPlatformKeyService.uploadKey();
 
+        if (fileUrls == null || fileUrls.length == 0) {
+            return;
+        }
+
         List<String> keys = Arrays.stream(fileUrls).filter(fileUrl -> VerifyUtils.isNotEmpty(fileUrl))
             .map(fileUrl -> fileKeyByUrl(fileUrl)).toList();
+
+        if (keys.isEmpty()) {
+            return;
+        }
 
         COSClient cosClient = tencentCloudSDK.cosClient(projectPlatformKey.getAppid(), projectPlatformKey.getSecret(),
             projectPlatformKey.getRegion());

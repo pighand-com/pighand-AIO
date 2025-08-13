@@ -45,11 +45,25 @@ const updateTabBarCurrent = () => {
 }
 
 /**
+ * 隐藏系统TabBar
+ * 只有在TabBar页面才需要隐藏系统TabBar
+ */
+const hideSystemTabBar = () => {
+    try {
+        uni.hideTabBar()
+    } catch (error) {
+        console.warn('隐藏TabBar失败:', error)
+    }
+}
+
+/**
  * 组件挂载时的初始化逻辑
  */
 onMounted(() => {
     // 初始化时更新一次当前选中状态
     updateTabBarCurrent()
+    
+    hideSystemTabBar()
     
     // 监听路由变化 - 使用before拦截器提前更新
     uni.addInterceptor('switchTab', {
@@ -60,7 +74,13 @@ onMounted(() => {
                 tabBarCurrent.value = targetIndex
             }
         },
-        success: () => updateTabBarCurrent()
+        success: () => {
+            updateTabBarCurrent()
+            // 切换到TabBar页面后延迟隐藏系统TabBar
+            setTimeout(() => {
+                hideSystemTabBar()
+            }, 100)
+        }
     })
 })
 

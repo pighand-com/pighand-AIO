@@ -97,6 +97,37 @@ const setApplicationInfo = (applicationInfo: {
     uni.$emit('storage-changed');
 };
 
+// 批量设置storage，只触发一次storage-changed事件
+const setBatchStorage = (data: {
+    token?: string;
+    userInfo?: Object;
+    applicationInfo?: {
+        id: string;
+        name: string;
+        uploadType: string;
+    };
+    salespersonId?: string;
+    fromSalesId?: string;
+}) => {
+    if (data.token !== undefined) {
+        uni.setStorageSync(constant.local_storage_token, data.token);
+    }
+    if (data.userInfo !== undefined) {
+        uni.setStorageSync(constant.local_storage_user_info, JSON.stringify(data.userInfo));
+    }
+    if (data.applicationInfo !== undefined) {
+        uni.setStorageSync(constant.local_storage_application_info, JSON.stringify(data.applicationInfo));
+    }
+    if (data.salespersonId !== undefined) {
+        uni.setStorageSync(constant.local_storage_salesperson_id, data.salespersonId);
+    }
+    if (data.fromSalesId !== undefined) {
+        uni.setStorageSync(constant.local_storage_from_sales_id, data.fromSalesId);
+    }
+    // 统一触发一次storage-changed事件
+    uni.$emit('storage-changed');
+};
+
 export {
     getToken,
     setToken,
@@ -111,5 +142,6 @@ export {
     getFromSalesId,
     setFromSalesId,
     clearFromSalesId,
-    clearAll
+    clearAll,
+    setBatchStorage
 };

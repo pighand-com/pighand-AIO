@@ -22,11 +22,15 @@ public interface LotteryTypeService<D, T> {
 
     void update(D lotteryObject);
 
-    void createPrizes(List<T> prizes);
+    void createPrizes(Long lotteryId, List<T> prizes);
 
     List<T> queryPrizes(Long lotteryId);
+
+    List<T> queryPrizes(List<Long> ids);
 
     void createOrUpdatePrize(D lotteryObject, T prize);
 
     void deletePrize(Long prizeId);
+
+    void draw(Long lotteryId, List<Long> allUserIds);
 }

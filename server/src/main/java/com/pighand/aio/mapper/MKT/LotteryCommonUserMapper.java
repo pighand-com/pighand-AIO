@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.pighand.aio.domain.MKT.table.LotteryCommonUserTableDef.LOTTERY_COMMON_USER;
+import static com.pighand.aio.domain.base.table.UserExtensionTableDef.USER_EXTENSION;
+import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 
 /**
  * 营销 - 抽奖参与用户
@@ -39,6 +41,15 @@ public interface LotteryCommonUserMapper extends BaseMapper<LotteryCommonUserDom
 
         if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
+        }
+
+        if (joinTables.contains(USER_EXTENSION.getTableName())) {
+            queryWrapper.select(USER_EXTENSION.PROFILE).leftJoin(USER_EXTENSION.getTableName())
+                .on(LOTTERY_COMMON_USER.USER_ID.eq(USER_EXTENSION.ID));
+        }
+
+        if (joinTables.contains(USER.getTableName())) {
+            queryWrapper.select(USER.PHONE).leftJoin(USER.getTableName()).on(LOTTERY_COMMON_USER.USER_ID.eq(USER.ID));
         }
 
         return queryWrapper;

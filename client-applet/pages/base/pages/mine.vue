@@ -83,6 +83,16 @@
 					</view>
 				</user-check>
 			</view>
+			
+			<!-- 核销区域 -->
+			<view class="verification-section" v-if="isStaff">
+				<user-check :item="['login']">
+					<view class="verification-box" @click="goToVerification">
+						<text class="verification-text">核销</text>
+						<text class="verification-arrow">></text>
+					</view>
+				</user-check>
+			</view>
 		</view>
 		
 		<tab-bar />
@@ -142,9 +152,9 @@
 import { onShow, onLoad } from '@dcloudio/uni-app'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { getUserInfo, getToken, getSalespersonId, setSalespersonId, clearAll } from '@/common/storage'
-import { distribution as distributionAPI } from '@/api'
+import { distribution as distributionAPI, ticket as ticketAPI } from '@/api'
 
-import defaultAvatar from '../static/default-avatar.jpg'
+import defaultAvatar from '../../../static/default-avatar.jpg'
 
 const isLogin = ref(!!getToken())
 const userInfo = ref(getUserInfo())
@@ -239,6 +249,31 @@ function goToQueueSettings() {
         url: '/pages/ECommerce/pages/queue-setting'
     })
 }
+
+// 核销功能 - 打开扫码
+function goToVerification() {
+    uni.scanCode({
+        success: async function (res) {
+			uni.showLoading({
+				title: '核销中...'
+			})
+			
+			await ticketAPI.validation(res.result)
+			uni.hideLoading()
+			uni.showToast({
+				title: '核销成功',
+				icon: 'success'
+			})
+        },
+        fail: function (err) {
+            uni.showToast({
+                title: '扫码失败',
+                icon: 'none'
+            })
+        }
+    })
+}
+
 // 显示分销二维码
 const showDistributionQR = async () => {
     try {
@@ -415,6 +450,10 @@ const makePhoneCall = (type) => {
 }
 
 .queue-section {
+	margin-top: 32rpx;
+}
+
+.verification-section {
 	margin-top: 32rpx;
 }
 
@@ -598,6 +637,52 @@ const makePhoneCall = (type) => {
 }
 
 .queue-box:active {
+	transform: scale(0.98);
+	box-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.3);
+}
+
+.verification-box {
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.25));
+	border-radius: 24rpx;
+	padding: 48rpx 36rpx;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.25), 0 0 0 2rpx rgba(255, 255, 255, 0.4);
+	border: 3rpx solid rgba(255, 255, 255, 0.4);
+	backdrop-filter: blur(15rpx);
+	transition: all 0.3s ease;
+	position: relative;
+}
+
+.verification-text {
+	font-size: 36rpx;
+	color: #333;
+	font-weight: 600;
+	text-shadow: 0 1rpx 2rpx rgba(255, 255, 255, 0.8);
+}
+
+.verification-arrow {
+	font-size: 36rpx;
+	color: #666;
+	font-weight: bold;
+	text-shadow: 0 1rpx 2rpx rgba(255, 255, 255, 0.8);
+}
+
+.verification-box::before {
+	content: '';
+	position: absolute;
+	top: -2rpx;
+	left: -2rpx;
+	right: -2rpx;
+	bottom: -2rpx;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.3));
+	border-radius: 26rpx;
+	z-index: -1;
+	opacity: 0.8;
+}
+
+.verification-box:active {
 	transform: scale(0.98);
 	box-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.3);
 }

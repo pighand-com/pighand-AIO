@@ -29,23 +29,23 @@
 		
 		<!-- 功能图标区域 -->
 		<view class="function-icons">
-			<view class="icon-item" @click="showQueuePopup">
-				<view class="icon-wrapper">
-					<image class="icon" src="../static/icon-queue.png" mode="aspectFit"></image>
-				</view>
-				<text class="icon-text">排队</text>
-			</view>
 			<view class="icon-item" @click="goToStore">
 				<view class="icon-wrapper">
 					<image class="icon" src="../static/icon-theme.png" mode="aspectFit"></image>
 				</view>
 				<text class="icon-text">主题介绍</text>
 			</view>
-			<view class="icon-item" @click="showGameTip">
+			<view class="icon-item" @click="showQueuePopup">
+				<view class="icon-wrapper">
+					<image class="icon" src="../static/icon-queue.png" mode="aspectFit"></image>
+				</view>
+				<text class="icon-text">预计等待时间</text>
+			</view>
+			<view class="icon-item" @click="goToStore">
 				<view class="icon-wrapper">
 					<image class="icon" src="../static/icon-game.png" mode="aspectFit"></image>
 				</view>
-				<text class="icon-text">游戏</text>
+				<text class="icon-text">抽奖</text>
 			</view>
 		</view>
 		
@@ -100,7 +100,8 @@
 				<view class="game-list">
 					<view class="game-item" 
 						  v-for="theme in themeList" 
-						  :key="theme.id">
+						  :key="theme.id"
+						  @click="goToTheme(theme.id)">
 						<view class="game-cover">
 							<image :src="theme.posterUrl" 
 								   class="game-image" 
@@ -157,9 +158,10 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 import { banner as bannerAPI, theme as themeAPI, ticket as ticketAPI } from '@/api'
 import { setFromSalesId } from '@/common/storage'
+import { createShareInfo } from '@/common/share'
 import Decimal from 'decimal.js'
 
 const bannerList = ref([])
@@ -245,7 +247,8 @@ const getThemeList = async () => {
 // 跳转到商店页面
 const goToStore = () => {
 	uni.navigateTo({
-		url: '/pages/base/pages/store?id=1'
+		// url: '/pages/base/pages/store?id=1'
+		url: '/pages/MKT/pages/lottery-list'
 	})
 }
 
@@ -268,6 +271,13 @@ const goToTicketDetail = (ticketId) => {
 const goToTicketList = () => {
 	uni.switchTab({
 		url: '/pages/ECommerce/pages/ticket-list'
+	})
+}
+
+// 跳转到主题页面
+const goToTheme = (themeId) => {
+	uni.navigateTo({
+		url: `/pages/ECommerce/pages/theme?id=${themeId}`
 	})
 }
 
@@ -332,6 +342,16 @@ onLoad((options) => {
 	getTicketList()
 })
 
+// 分享给朋友
+onShareAppMessage(() => {
+	return createShareInfo()
+})
+
+// 分享到朋友圈
+onShareTimeline(() => {
+	return createShareInfo()
+})
+
 </script>
 
 <style scoped>
@@ -349,8 +369,8 @@ onLoad((options) => {
 	top: 0;
 	left: 0;
 	width: 100%;
-	height: 640rpx;
-	background: linear-gradient(180deg, #ff8c00 0%, rgba(255, 140, 0, 0) 100%);
+	height: 100%;
+	background: linear-gradient(180deg, #ff8c00 0%, rgba(255, 140, 0, 0.6) 30%, rgba(255, 140, 0, 0.3) 60%, rgba(255, 140, 0, 0) 100%);
 	z-index: 1;
 }
 
@@ -431,7 +451,7 @@ onLoad((options) => {
 /* 门票展示区域 */
 .ticket-section {
 	margin-top: 20rpx;
-	background-color: #ffffff;
+	/* background-color: #ffffff; */
 	border-radius: 20rpx 20rpx 0 0;
 	position: relative;
 	z-index: 3;
@@ -540,7 +560,7 @@ onLoad((options) => {
 /* 游戏项目区域 */
 .game-section {
 	margin-top: 20rpx;
-	background-color: #ffffff;
+	/* background-color: #ffffff; */
 	border-radius: 20rpx;
 	position: relative;
 	z-index: 3;
@@ -572,6 +592,12 @@ onLoad((options) => {
 	align-items: center;
 	gap: 15rpx;
 	flex-shrink: 0;
+	transition: all 0.3s ease;
+}
+
+.game-item:active {
+	transform: scale(0.95);
+	opacity: 0.8;
 }
 
 .game-cover {
@@ -600,7 +626,7 @@ onLoad((options) => {
 /* 活动区域 */
 .activity-section {
 	margin-top: 20rpx;
-	background-color: #ffffff;
+	/* background-color: #ffffff; */
 	border-radius: 20rpx;
 	position: relative;
 	z-index: 3;

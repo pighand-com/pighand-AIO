@@ -19,6 +19,10 @@ const props = defineProps({
     item: {
         type: Array,
         default: () => ['login', 'phone', 'avatar']
+    },
+    disabled: {
+        type: Boolean,
+        default: false
     }
 })
 
@@ -36,7 +40,7 @@ onUnmounted(() => {
 })
 
 // 使用计算属性来依赖响应式数据
-const needLogin = computed(() => (!token.value || !userInfo?.value) && props.item.includes('login'))
-const needPhone = computed(() => !userInfo.value?.phone && props.item.includes('phone'))
-const needAvatar = computed(() => !userInfo.value?.avatar && props.item.includes('avatar'))
+const needLogin = computed(() => !props.disabled && (!token.value || !userInfo?.value) && props.item.includes('login'))
+const needPhone = computed(() => !props.disabled && !userInfo.value?.phone && props.item.includes('phone'))
+const needAvatar = computed(() => !props.disabled && !userInfo.value?.avatar && props.item.includes('avatar'))
 </script>

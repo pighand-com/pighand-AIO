@@ -1,5 +1,6 @@
 package com.pighand.aio.domain.MKT;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -9,11 +10,9 @@ import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.handler.JacksonTypeHandler;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.api.springdoc.dataType.EmptyObject;
 import com.pighand.framework.spring.base.BaseDomainRecord;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
@@ -41,28 +40,42 @@ public class LotteryCommonConfigDomain extends BaseDomainRecord<LotteryCommonCon
     @RequestFieldException("mktLotteryCommonConfigUpdate")
     private Long id;
 
-    @NotNull(groups = {ValidationGroup.Create.class})
-    @Length(max = 8)
-    @Schema(description = "抽奖类型")
-    private String lotteryType;
+    @Schema(description = "抽奖类型 10参与型抽奖")
+    private Integer lotteryType;
 
+    @Length(max = 32)
+    @Schema(description = "标题")
+    private String title;
+
+    @Schema(description = "描述")
+    private String description;
+
+    @Length(max = 255)
+    @Schema(description = "封面图")
+    private String coverUrl;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Schema(description = "开始时间")
     private Date beginTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Schema(description = "结束时间")
     private Date endTime;
 
-    @Schema(description = "背景图片", implementation = EmptyObject.class)
-    @Column(typeHandler = JacksonTypeHandler.class)
-    private List<String> backgroundUrls;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Schema(description = "开奖时间")
+    private Date drawTime;
 
-    @Length(max = 32)
-    @Schema(description = "分享标题")
-    private String shareTitle;
+    @Schema(description = "开奖状态 10未开奖 20开奖中 30开奖完成")
+    private Integer drawStatus;
 
     @Length(max = 255)
     @Schema(description = "分享图片url")
     private String shareImageUrl;
+
+    @Schema(description = "背景图片", implementation = EmptyObject.class)
+    @Column(typeHandler = JacksonTypeHandler.class)
+    private List<String> backgroundUrls;
 
     @Length(max = 255)
     @Schema(description = "助力海报图url")

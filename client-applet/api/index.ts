@@ -7,6 +7,7 @@ import ticket from './ticket';
 import order from './order';
 import distribution from './distribution';
 import store from './store';
+import lottery from './lottery';
 
 export {
     login,
@@ -17,5 +18,6 @@ export {
     ticket,
     order,
     distribution,
-    store
+    store,
+    lottery
 };

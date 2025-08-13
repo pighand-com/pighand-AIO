@@ -99,24 +99,26 @@
 
         <plugins>
             <!-- 暂时无效，log4j暂不支持，等2.24发布后再试 -->
-            <plugin>
-                <groupId>org.graalvm.buildtools</groupId>
-                <artifactId>native-maven-plugin</artifactId>
-                <version>${native-maven-plugin}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>
-                    <mainClass>com.pighand.aio.Application</mainClass>
-                    <metadataRepository>
-                        <enabled>true</enabled>
-                        <localPath>${project.basedir}/src/reachability-metadata</localPath>
-                    </metadataRepository>
-                    <imageName>${project.artifactId}</imageName>
-                    <buildArgs>
-                        <buildArg>--verbose</buildArg>
-                    </buildArgs>
-                </configuration>
-            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>org.graalvm.buildtools</groupId>-->
+            <!--                <artifactId>native-maven-plugin</artifactId>-->
+            <!--                <version>${native-maven-plugin}</version>-->
+            <!--                <extensions>true</extensions>-->
+            <!--                <configuration>-->
+            <!--                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>-->
+            <!--                    <mainClass>com.pighand.aio.Application</mainClass>-->
+            <!--                    <metadataRepository>-->
+            <!--                        <enabled>true</enabled>-->
+            <!--                        <localPath>${project.basedir}/src/reachability-metadata</localPath>-->
+            <!--                    </metadataRepository>-->
+            <!--                    <imageName>${project.artifactId}</imageName>-->
+            <!--                    <buildArgs>-->
+            <!--                        <buildArg>&#45;&#45;verbose</buildArg>-->
+            <!--                    </buildArgs>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
+
+
         </plugins>
 
     </build>

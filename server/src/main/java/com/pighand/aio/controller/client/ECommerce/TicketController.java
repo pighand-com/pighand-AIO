@@ -8,12 +8,14 @@ import com.pighand.aio.service.ECommerce.TicketUserService;
 import com.pighand.aio.vo.ECommerce.TicketUserVO;
 import com.pighand.aio.vo.ECommerce.TicketVO;
 import com.pighand.framework.spring.api.annotation.Get;
+import com.pighand.framework.spring.api.annotation.Post;
 import com.pighand.framework.spring.api.annotation.RestController;
 import com.pighand.framework.spring.base.BaseController;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.response.Result;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 电商 - 票务
@@ -45,12 +47,22 @@ public class TicketController extends BaseController<TicketService> {
         return new Result(result);
     }
 
-    @Authorization(true)
+    @Authorization()
     @Get(docSummary = "我的列表", value = "mine")
     public Result<PageOrList<TicketUserVO>> queryMine(TicketUserVO ticketUserVO) {
         ticketUserVO.setCreatorId(Context.loginUser().getId());
         PageOrList<TicketUserVO> result = ticketUserService.query(ticketUserVO);
 
         return new Result(result);
+    }
+
+    // TODO 移动端使用id核销不安全，改为生成加密token（包含id和有效时间）
+    @Authorization()
+    @Post(path = "user/{id}/validation", docSummary = "票务核销")
+    public Result validation(@PathVariable(name = "id") Long id, @RequestBody TicketUserVO ticketUserVO) {
+        ticketUserVO.setId(id);
+        ticketUserService.validation(ticketUserVO);
+
+        return new Result();
     }
 }

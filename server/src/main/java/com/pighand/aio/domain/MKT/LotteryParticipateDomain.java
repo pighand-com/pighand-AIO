@@ -16,7 +16,7 @@ import org.hibernate.validator.constraints.Length;
 import java.io.Serializable;
 
 /**
- * 营销 - 抽奖 - 参与类型
+ * 营销 - 抽奖 - 参与型抽奖
  *
  * @author wangshuli
  * @createDate 2024-11-28 17:21:35
@@ -33,8 +33,6 @@ public class LotteryParticipateDomain extends BaseDomainRecord<LotteryParticipat
     @RequestFieldException("mktLotteryParticipateCreate")
     @RequestFieldException("mktLotteryParticipateUpdate")
     private Long id;
-
-    private Long lotteryCommonConfigId;
 
     @Length(max = 255)
     @Schema(description = "参与抽奖url")

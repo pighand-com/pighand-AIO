@@ -38,6 +38,15 @@
 		},
 		{
 			"path": "pages/ECommerce/pages/ticket-detail"
+		},
+		{
+			"path": "pages/MKT/pages/lottery"
+		},
+		{
+			"path": "pages/MKT/pages/lottery-list"
+		},
+		{
+			"path": "pages/MKT/pages/lottery-participants"
 		}
 	],
 	"globalStyle": {

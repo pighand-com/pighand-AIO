@@ -1,1 +1,0 @@
-<view class="content data-v-30addfe8"><custom-navigation-bar wx:if="{{a}}" class="data-v-30addfe8" u-i="30addfe8-0" bind:__l="__l" u-p="{{a}}"/><view class="store-content data-v-30addfe8"><rich-text class="store-description data-v-30addfe8" nodes="{{b}}"></rich-text></view></view>

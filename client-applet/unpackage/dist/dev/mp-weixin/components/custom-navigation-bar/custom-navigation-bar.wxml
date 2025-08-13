@@ -1,1 +1,0 @@
-<view class="navigation-bar data-v-78fe8cb5" style="{{h}}"><view class="status-bar data-v-78fe8cb5" style="{{a}}"></view><view wx:if="{{b}}" class="title data-v-78fe8cb5" style="{{d}}">{{c}}</view><view wx:if="{{e}}" class="back data-v-78fe8cb5" bindtap="{{g}}"><image class="data-v-78fe8cb5" src="{{f}}" mode="widthFix"></image></view></view>

@@ -1,7 +1,0 @@
-{
-  "usingComponents": {
-    "custom-navigation-bar": "../../../components/custom-navigation-bar/custom-navigation-bar",
-    "uni-popup": "../../../uni_modules/uni-popup/components/uni-popup/uni-popup",
-    "tab-bar": "../../../components/tab-bar/tab-bar"
-  }
-}

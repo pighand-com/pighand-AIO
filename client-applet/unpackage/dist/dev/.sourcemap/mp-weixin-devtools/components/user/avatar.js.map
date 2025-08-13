@@ -1,1 +1,0 @@
-{"version":3,"names":["wx","createComponent","Component"],"sources":["avatar.vue?type=component"],"sourcesContent":["import Component from '/Users/wangshuli/workspace/mine/pighand/pighand-AIO/uni-app/components/user/avatar.vue'\nwx.createComponent(Component)"],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AACAA,EAAA,CAAGC,eAAA,CAAgBC,SAAS","ignoreList":[]}

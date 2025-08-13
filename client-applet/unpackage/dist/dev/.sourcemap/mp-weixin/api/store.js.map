@@ -1,1 +1,0 @@
-{"version":3,"file":"store.js","sources":["api/store.ts"],"sourcesContent":["import request from '@/common/request';\n\nexport default {\n    /**\n     * 获取详情\n     */\n    find: async (id: string) => await request.get(`store/${id}`),\n};\n"],"names":["request"],"mappings":";;AAEA,MAAe,WAAA;AAAA;AAAA;AAAA;AAAA,EAIX,MAAM,OAAO,OAAe,MAAMA,uBAAQ,IAAI,SAAS,EAAE,EAAE;AAC/D;;"}

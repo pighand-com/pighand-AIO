@@ -1,1 +1,0 @@
-<view class="avatar-wrapper data-v-f245d64b"><slot></slot><button wx:if="{{a}}" class="overlay-button data-v-f245d64b" open-type="chooseAvatar" bindchooseavatar="{{b}}"></button></view>

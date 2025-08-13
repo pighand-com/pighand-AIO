@@ -1,9 +1,0 @@
-
-.status-bar-gradient.data-v-06701e00 {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	pointer-events: none;
-	z-index: 2;
-}

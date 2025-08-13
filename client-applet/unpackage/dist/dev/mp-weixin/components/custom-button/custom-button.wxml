@@ -1,1 +1,0 @@
-<view class="{{['data-v-34596d2b', 'custom-btn', g]}}" bindtap="{{h}}" style="{{'width:' + i + ';' + ('height:' + j) + ';' + ('border-radius:' + k)}}"><image src="{{a}}" class="btn-bg-image data-v-34596d2b" mode="{{b}}"></image><text class="btn-text data-v-34596d2b" style="{{'font-size:' + d + ';' + ('line-height:' + e) + ';' + ('color:' + f)}}">{{c}}</text></view>

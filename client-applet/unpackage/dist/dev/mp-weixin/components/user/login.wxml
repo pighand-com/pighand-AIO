@@ -1,1 +1,0 @@
-<view class="login-wrapper data-v-ac254fa3"><slot></slot><button wx:if="{{a}}" class="overlay-button data-v-ac254fa3" bindtap="{{b}}"></button></view>

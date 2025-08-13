@@ -1,1 +1,0 @@
-<view class="login-wrapper"><user-login wx:if="{{a}}" u-s="{{['d']}}" u-i="5feaaa0b-0" bind:__l="__l"><slot/></user-login><user-phone wx:elif="{{b}}" u-s="{{['d']}}" u-i="5feaaa0b-1" bind:__l="__l">{{c}}<slot/></user-phone><user-avatar wx:elif="{{d}}" u-s="{{['d']}}" u-i="5feaaa0b-2" bind:__l="__l">{{e}}<slot/></user-avatar><view wx:else><slot/></view></view>

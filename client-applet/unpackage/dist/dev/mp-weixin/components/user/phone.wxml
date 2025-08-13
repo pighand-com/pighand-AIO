@@ -1,1 +1,0 @@
-<view class="phone-wrapper data-v-9e489cb3"><slot></slot><button wx:if="{{a}}" class="overlay-button data-v-9e489cb3" open-type="getPhoneNumber" bindgetphonenumber="{{b}}"></button></view>

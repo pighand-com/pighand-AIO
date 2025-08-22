@@ -3,7 +3,26 @@
 		<!-- 橙色渐变背景 -->
 		<view class="gradient-bg"></view>
 
-		<custom-navigation-bar position="flex" />
+		<custom-navigation-bar position="flex">
+			<!-- 门店选择器 -->
+			<view class="store-selector" v-if="currentStore">
+				<view class="store-current" @click="toggleStoreSelector">
+					<text class="store-name">{{ currentStore.name }}</text>
+					<text class="store-arrow">{{ showStoreSelector ? '▲' : '▼' }}</text>
+				</view>
+				<view class="store-dropdown" v-if="showStoreSelector">
+					<view 
+						v-for="store in storeList" 
+						:key="store.id" 
+						class="store-item"
+						:class="{ active: store.id === currentStore.id }"
+						@click="selectStore(store)"
+					>
+						<text class="store-item-name">{{ store.name }}</text>
+					</view>
+				</view>
+			</view>
+		</custom-navigation-bar>
 		
 		<!-- Banner轮播图 -->
 		<view class="banner-container" v-if="bannerList.length > 0">
@@ -41,7 +60,7 @@
 				</view>
 				<text class="icon-text">预计等待时间</text>
 			</view>
-			<view class="icon-item" @click="goToStore">
+			<view class="icon-item" @click="gotoLottery">
 				<view class="icon-wrapper">
 					<image class="icon" src="../static/icon-game.png" mode="aspectFit"></image>
 				</view>
@@ -159,8 +178,8 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { onLoad, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
-import { banner as bannerAPI, theme as themeAPI, ticket as ticketAPI } from '@/api'
-import { setFromSalesId } from '@/common/storage'
+import { banner as bannerAPI, theme as themeAPI, ticket as ticketAPI, store as storeAPI } from '@/api'
+import { setFromSalesId, getStoreId, setStoreId } from '@/common/storage'
 import { createShareInfo } from '@/common/share'
 import Decimal from 'decimal.js'
 
@@ -169,6 +188,9 @@ const themeList = ref([])
 const ticketList = ref([])
 const activityList = ref([])
 const queuePopup = ref(null)
+const storeList = ref([])
+const currentStore = ref(getStoreId())
+const showStoreSelector = ref(false)
 
 // 显示的门票列表（从第3个开始显示2条）
 const displayTickets = computed(() => {
@@ -244,19 +266,58 @@ const getThemeList = async () => {
 	}
 }
 
+// 获取门店列表
+const getStoreList = async () => {
+	try {
+		const res = await storeAPI.query()
+		if (res && res.records) {
+			storeList.value = res.records
+			// 如果没有选中的门店，默认选择第一个
+			if (!currentStore.value && storeList.value.length > 0) {
+				currentStore.value = storeList.value[0]
+				setStoreId(currentStore.value.id)
+			}
+		}
+	} catch (error) {
+		console.error('获取门店列表失败:', error)
+	}
+}
+
+// 选择门店
+const selectStore = (store) => {
+	currentStore.value = store
+	setStoreId(store.id)
+	showStoreSelector.value = false
+	// 重新加载其他数据
+	loadPageData()
+}
+
+// 显示门店选择器
+const toggleStoreSelector = () => {
+	showStoreSelector.value = !showStoreSelector.value
+}
+
+// 加载页面数据
+const loadPageData = async () => {
+	await Promise.all([
+		getBannerList(),
+		getActivityList(),
+		getThemeList(),
+		getTicketList()
+	])
+}
+
 // 跳转到商店页面
 const goToStore = () => {
 	uni.navigateTo({
-		// url: '/pages/base/pages/store?id=1'
-		url: '/pages/MKT/pages/lottery-list'
+		url: '/pages/base/pages/store?id=' + currentStore.value.id
 	})
 }
 
 // 显示游戏提示
-const showGameTip = () => {
-	uni.showToast({
-		title: '即将开放，敬请期待',
-		icon: 'none'
+const gotoLottery = () => {
+	uni.navigateTo({
+		url: '/pages/MKT/pages/lottery-list'
 	})
 }
 
@@ -327,7 +388,7 @@ const handleBannerClick = (banner) => {
 }
 
 // 页面加载时获取参数
-onLoad((options) => {
+onLoad(async (options) => {
 	const { scene = ''} = options;
 	// 检查是否有sales参数
 	const sales = scene && decodeURIComponent(scene).split('=')[1]
@@ -335,11 +396,22 @@ onLoad((options) => {
 		setFromSalesId(sales)
 	}
 	
-	// 获取数据
-	getBannerList()
-	getActivityList()
-	getThemeList()
-	getTicketList()
+	// 检查是否已有存储的门店ID
+	const storedStoreId = getStoreId()
+	
+	// 首先获取门店列表
+	await getStoreList()
+	
+	// 如果有存储的门店ID，尝试设置为当前门店
+	if (storedStoreId && storeList.value.length > 0) {
+		const storedStore = storeList.value.find(store => store.id === storedStoreId)
+		if (storedStore) {
+			currentStore.value = storedStore
+		}
+	}
+	
+	// 加载其他数据
+	loadPageData()
 })
 
 // 分享给朋友
@@ -372,6 +444,86 @@ onShareTimeline(() => {
 	height: 100%;
 	background: linear-gradient(180deg, #ff8c00 0%, rgba(255, 140, 0, 0.6) 30%, rgba(255, 140, 0, 0.3) 60%, rgba(255, 140, 0, 0) 100%);
 	z-index: 1;
+}
+
+/* 门店选择器 */
+.store-selector {
+	position: relative;
+	z-index: 3;
+	padding-left: 30rpx;
+}
+
+.store-current {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	transition: all 0.3s ease;
+}
+
+.store-current:active {
+	transform: scale(0.98);
+}
+
+.store-name {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333;
+	flex: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.store-arrow {
+	font-size: 24rpx;
+	color: #666;
+	transition: transform 0.3s ease;
+	padding-left: 8rpx;
+}
+
+.store-dropdown {
+	position: absolute;
+	top: 100%;
+	left: 30rpx;
+	width: max-content;
+	max-width: calc(100vw - 60rpx);
+	background-color: #ffffff;
+	border-radius: 20rpx;
+	box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.15);
+	max-height: 400rpx;
+	overflow-y: auto;
+	z-index: 10;
+}
+
+.store-item {
+	padding: 25rpx 30rpx;
+	border-bottom: 1rpx solid #f0f0f0;
+	transition: all 0.3s ease;
+	text-align: left;
+}
+
+.store-item:last-child {
+	border-bottom: none;
+}
+
+.store-item:active {
+	background-color: #f8f8f8;
+}
+
+.store-item.active {
+	background-color: #fff2e6;
+}
+
+.store-item.active .store-item-name {
+	color: #ff8c00;
+	font-weight: bold;
+}
+
+.store-item-name {
+	font-size: 30rpx;
+	color: #333;
+	transition: color 0.3s ease;
+	white-space: nowrap;
 }
 
 /* Banner区域 */

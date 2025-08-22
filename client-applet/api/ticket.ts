@@ -19,5 +19,5 @@ export default {
     /**
      * 核销票务
      */
-    validation: async (id: string) => await request.post(`ticket/user/${id}/validation`, {}),
+    validation: async (tickets: {id: string, validationCount: number}[]) => await request.post(`ticket/user/validation`, tickets),
 };

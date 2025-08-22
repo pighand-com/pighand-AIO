@@ -175,7 +175,7 @@ const purchaseTicket = async () => {
 		
 		const result = await orderAPI.create(orderData)
 
-		const { nonceStr, prepayId, signType, paySign, timeStamp } = result
+		const { nonceStr, prepayId, signType, paySign, timeStamp, orderIds } = result
 		uni.requestPayment({
 			provider:'wxpay',
 			timeStamp,
@@ -194,9 +194,18 @@ const purchaseTicket = async () => {
 						duration: 2000
 					})
 					setTimeout(() => {
-						uni.navigateTo({
-							url:`/pages/ECommerce/pages/order-list?tradeStatus=40`
-						})
+						// 根据orderIds数量决定跳转页面
+						if (orderIds && orderIds.length === 1) {
+							// 只有一个订单，跳转到订单详情页
+							uni.navigateTo({
+								url:`/pages/ECommerce/pages/order-detail?id=${orderIds[0]}`
+							})
+						} else {
+							// 多个订单或无orderIds，跳转到订单列表页
+							uni.navigateTo({
+								url:`/pages/ECommerce/pages/order-list?tradeStatus=40`
+							})
+						}
 					}, 2000)
 				}else{
 					uni.showToast({
@@ -205,9 +214,18 @@ const purchaseTicket = async () => {
 						duration: 2000
 					})
 					setTimeout(() => {
-						uni.navigateTo({
-							url:`/pages/ECommerce/pages/order-list?tradeStatus=10`
-						})
+						// 根据orderIds数量决定跳转页面
+						if (orderIds && orderIds.length === 1) {
+							// 只有一个订单，跳转到订单详情页
+							uni.navigateTo({
+								url:`/pages/ECommerce/pages/order-detail?id=${orderIds[0]}`
+							})
+						} else {
+							// 多个订单或无orderIds，跳转到订单列表页
+							uni.navigateTo({
+								url:`/pages/ECommerce/pages/order-list?tradeStatus=10`
+							})
+						}
 					}, 2000)
 				}
 			},
@@ -221,9 +239,18 @@ const purchaseTicket = async () => {
 					duration: 2000
 				})
 				setTimeout(() => {
-					uni.navigateTo({
-						url:`/pages/ECommerce/pages/order-list?tradeStatus=10`
-					})
+					// 根据orderIds数量决定跳转页面
+					if (orderIds && orderIds.length === 1) {
+						// 只有一个订单，跳转到订单详情页
+						uni.navigateTo({
+							url:`/pages/ECommerce/pages/order-detail?id=${orderIds[0]}`
+						})
+					} else {
+						// 多个订单或无orderIds，跳转到订单列表页
+						uni.navigateTo({
+							url:`/pages/ECommerce/pages/order-list?tradeStatus=10`
+						})
+					}
 				}, 2000)
 			}
 		})

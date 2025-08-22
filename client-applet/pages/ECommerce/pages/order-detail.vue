@@ -31,6 +31,24 @@
         <text class="info-label">支付时间</text>
         <text class="info-value">{{ formatDate(orderDetail.paymentTime) }}</text>
       </view>
+      <!-- 退款/售后状态下显示退款金额和实付金额 -->
+      <template v-if="orderDetail.tradeStatus === 51">
+        <view class="info-item">
+          <text class="info-label">实付金额</text>
+          <text class="info-value paid-amount">￥{{ formatAmount(orderDetail.amountPaid) }}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">退款金额</text>
+          <text class="info-value refund-amount">￥{{ formatAmount(orderDetail.refundAmount) }}</text>
+        </view>
+      </template>
+      <!-- 其他状态只显示对应金额 -->
+      <template v-else>
+        <view class="info-item">
+          <text class="info-label">{{ orderDetail.tradeStatus === 10 ? '应付金额' : '实付金额' }}</text>
+          <text class="info-value paid-amount">￥{{ formatAmount(orderDetail.amountPaid) }}</text>
+        </view>
+      </template>
     </view>
     
     <!-- 商品信息 -->
@@ -42,8 +60,8 @@
         <view v-for="(ticket, index) in orderDetail.ticket" :key="ticket.id + '_' + index" class="goods-item">
           <view class="goods-img-container">
             <image 
-              v-if="ticket?.theme?.posterUrl" 
-              :src="ticket?.theme?.posterUrl" 
+              v-if="ticket?.posterUrl || ticket?.theme?.posterUrl" 
+              :src="ticket?.posterUrl || ticket?.theme?.posterUrl" 
               class="goods-img" 
               mode="aspectFill" 
             />
@@ -57,29 +75,78 @@
           </view>
         </view>
       </view>
+      
+      <!-- 已付款状态显示二维码列表 -->
+      <template v-if="orderDetail.tradeStatus === 40 && expandedTicketList && expandedTicketList.length > 0">
+        <view class="qr-section">
+          <swiper 
+            class="qr-swiper" 
+            :current="currentTicketIndex" 
+            @change="onSwiperChange"
+            :indicator-dots="false"
+            :autoplay="false"
+            :circular="false"
+            :previous-margin="expandedTicketList.length > 1 ? '72rpx' : '0'"
+            :next-margin="expandedTicketList.length > 1 ? '72rpx' : '0'"
+          >
+            <swiper-item 
+              v-for="(ticketInstance, index) in expandedTicketList" 
+              :key="ticketInstance.instanceId + '_qr_' + index"
+              class="qr-swiper-item"
+            >
+              <view class="qr-card">
+                <view class="qr-tip-container">
+                  <text class="qr-tip-title">{{ ticketInstance?.name || '未知商品' }} ({{ ticketInstance.instanceIndex }}/{{ ticketInstance.totalQuantity }})</text>
+                </view>
+                <view class="qr-image-container">
+                  <!-- 状态为10时显示二维码 -->
+                  <template v-if="!ticketInstance.ticketUserStatus || ticketInstance.ticketUserStatus === 10">
+                    <canvas 
+                      :canvas-id="`qrcode-${index}`" 
+                      class="qr-canvas" 
+                      :style="{width: qrSize + 'px', height: qrSize + 'px'}"
+                      v-show="!ticketInstance.isLoading"
+                    ></canvas>
+                    <view v-if="ticketInstance.isLoading" class="qr-loading" :style="{width: qrSize + 'px', height: qrSize + 'px'}">
+                      <uni-load-more status="loading" :content-text="{contentdown: '生成中...', contentrefresh: '生成中...', contentnomore: '生成中...'}"></uni-load-more>
+                    </view>
+                  </template>
+                  
+                  <!-- 状态为20时显示已核销文案 -->
+                  <view v-else-if="ticketInstance.ticketUserStatus === 20" class="qr-status-container verified" :style="{width: qrSize + 'px', height: qrSize + 'px'}">
+                    <image class="qr-background-icon" src="../../base/static/qr-code.svg" mode="aspectFit"></image>
+                    <view class="qr-blur-overlay"></view>
+                    <text class="status-text">已核销</text>
+                  </view>
+                  
+                  <!-- 状态为99时显示已退款文案 -->
+                  <view v-else-if="ticketInstance.ticketUserStatus === 99" class="qr-status-container refunded" :style="{width: qrSize + 'px', height: qrSize + 'px'}">
+                    <image class="qr-background-icon" src="../../base/static/qr-code.svg" mode="aspectFit"></image>
+                    <view class="qr-blur-overlay"></view>
+                    <text class="status-text">已退款</text>
+                  </view>
+                </view>
+                <view class="qr-ticket-info">
+                  <text class="qr-ticket-code">票号：{{ ticketInstance.ticketUserId || ticketInstance.id }}</text>
+                </view>
+              </view>
+            </swiper-item>
+          </swiper>
+          
+          <!-- 指示器 -->
+          <view v-if="expandedTicketList.length > 1" class="qr-indicator">
+            <view 
+              v-for="(ticketInstance, index) in expandedTicketList" 
+              :key="index"
+              class="indicator-dot"
+              :class="{ active: index === currentTicketIndex }"
+            ></view>
+          </view>
+        </view>
+      </template>
     </view>
     
-    <!-- 实付金额 -->
-    <view class="amount-card">
-      <!-- 退款/售后状态下显示退款金额和实付金额 -->
-      <template v-if="orderDetail.tradeStatus === 51">
-        <view class="amount-item">
-          <text class="amount-label">实付金额</text>
-          <text class="amount-value paid-amount">￥{{ formatAmount(orderDetail.amountPaid) }}</text>
-        </view>
-        <view class="amount-item total">
-          <text class="amount-label">退款金额</text>
-          <text class="amount-value final refund-amount">￥{{ formatAmount(orderDetail.refundAmount) }}</text>
-        </view>
-      </template>
-      <!-- 其他状态只显示对应金额 -->
-      <template v-else>
-        <view class="amount-item total">
-          <text class="amount-label">{{ orderDetail.tradeStatus === 10 ? '应付金额' : '实付金额' }}</text>
-          <text class="amount-value final paid-amount">￥{{ formatAmount(orderDetail.amountPaid) }}</text>
-        </view>
-      </template>
-    </view>
+
     
     <!-- 操作按钮 -->
     <view class="action-buttons" v-if="showActionButtons">
@@ -108,6 +175,7 @@ import { onLoad } from '@dcloudio/uni-app'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { order as orderAPI } from '@/api'
 import Decimal from 'decimal.js'
+import UQRCode from 'uqrcodejs'
 
 // 订单详情数据
 const orderDetail = ref({})
@@ -117,6 +185,11 @@ const isPaying = ref(false)
 // 倒计时相关
 const countdownText = ref('')
 let countdownTimer = null
+
+// 二维码相关
+const currentTicketIndex = ref(0)
+const qrSize = ref(200)
+const expandedTicketList = ref([]) // 展开后的票据列表，每个票据实例一个
 
 // 计算属性：是否显示操作按钮
 const showActionButtons = computed(() => {
@@ -156,6 +229,136 @@ function getTicketQuantityFromMap(order, ticketId) {
     })
   }
   return order._ticketQuantityMap.get(ticketId) || 0
+}
+
+// 展开票据列表，为每个票据实例创建独立项
+function expandTicketList() {
+  const tickets = orderDetail.value.ticket || []
+  const expanded = []
+  
+  tickets.forEach(ticket => {
+    // 先根据status排序，status=10的在最前面，其他状态的顺序不变
+    const sortedTicketUsers = (ticket?.ticketUsers || []).sort((a, b) => {
+      if (a.status === 10 && b.status !== 10) return -1
+      if (a.status !== 10 && b.status === 10) return 1
+      return 0
+    })
+    
+    sortedTicketUsers.forEach((ticketUser, index) => {
+      expanded.push({
+        ...ticket,
+        instanceId: `${ticket.id}_${ticketUser.id}`,
+        instanceIndex: index + 1,
+        totalQuantity: ticket.ticketUsers.length,
+        ticketUserId: ticketUser.id,
+        ticketUserStatus: ticketUser.status,
+        isLoading: ticketUser.status === 10 // 只有状态为10的才需要加载二维码
+      })
+    })
+  })
+  
+  expandedTicketList.value = expanded
+}
+
+// 生成某张票的二维码（根据索引）
+function generateQrCodeByIndex(index) {
+  const tickets = expandedTicketList.value
+  if (!tickets || !tickets[index]) return
+  
+  const ticketInstance = tickets[index]
+  
+  // 只有状态为10或没有状态的票据才生成二维码
+  if (ticketInstance.ticketUserStatus && ticketInstance.ticketUserStatus !== 10) {
+    ticketInstance.isLoading = false
+    return
+  }
+  
+  try {
+    const qr = new UQRCode()
+    
+    // 为单个票据实例生成二维码
+    // 使用ticketUserId作为票号，如果没有则使用ticket.id
+    const ticketId = ticketInstance.ticketUserId || ticketInstance.id
+    const allTicketIds = tickets
+      .filter(ticket => ticket.ticketUserStatus === 10 || !ticket.ticketUserStatus)
+      .map(ticket => ticket.ticketUserId || ticket.id)
+      .filter(item => item !== ticketId)
+    
+    // 将当前选中的票id放在第一位
+    const sortedIds = [ticketId, ...allTicketIds]
+    
+    const qrData = [{
+      name: ticketInstance.name,
+      ids: sortedIds
+    }]
+    
+    qr.data = JSON.stringify(qrData)
+    qr.size = qrSize.value
+    
+    qr.make()
+    const ctx = uni.createCanvasContext(`qrcode-${index}`)
+    qr.canvasContext = ctx
+    qr.drawCanvas()
+    
+    // 标记当前票已完成加载
+    ticketInstance.isLoading = false
+  } catch (error) {
+    console.error('二维码生成失败', error)
+    if (ticketInstance) ticketInstance.isLoading = false
+  }
+}
+
+// swiper 切换事件
+function onSwiperChange(e) {
+  const newIndex = e?.detail?.current || 0
+  currentTicketIndex.value = newIndex
+  // 惰性生成当前页二维码
+  const tickets = expandedTicketList.value
+  if (tickets && tickets[newIndex] && tickets[newIndex].isLoading) {
+    // 只有状态为10或没有状态的票据才生成二维码
+    const ticket = tickets[newIndex]
+    if (!ticket.ticketUserStatus || ticket.ticketUserStatus === 10) {
+      setTimeout(() => generateQrCodeByIndex(newIndex), 100)
+    }
+  }
+}
+
+// 显示二维码（点击二维码图标时）
+function showQrModal(ticket) {
+  const tickets = expandedTicketList.value || []
+  // 设置默认索引为当前点击的票的第一个实例
+  const idx = Math.max(0, tickets.findIndex((t) => t.id === ticket.id))
+  currentTicketIndex.value = idx
+  
+  // 滚动到对应的二维码
+  setTimeout(() => {
+    // 这里可以添加滚动到二维码区域的逻辑
+    uni.pageScrollTo({
+      selector: '.qr-section',
+      duration: 300
+    })
+  }, 100)
+}
+
+// 初始化二维码
+function initQrCodes() {
+  if (orderDetail.value.tradeStatus === 40 && orderDetail.value.ticket) {
+    // 展开票据列表
+    expandTicketList()
+    
+    // 找到第一个状态为10的票据生成二维码
+    setTimeout(() => {
+      const tickets = expandedTicketList.value
+      if (tickets && tickets.length > 0) {
+        const firstValidIndex = tickets.findIndex(ticket => 
+          !ticket.ticketUserStatus || ticket.ticketUserStatus === 10
+        )
+        if (firstValidIndex >= 0) {
+          generateQrCodeByIndex(firstValidIndex)
+        }
+      }
+    }, 200)
+  }
 }
 
 
@@ -202,15 +405,19 @@ function copyOrderSn(orderSn) {
 }
 
 // 获取订单详情
-function fetchOrderDetail(id) {
+function fetchOrderDetail(id, shouldStartCountdown = false) {
   if (!id) return
   
   loading.value = true
   return orderAPI.find(id).then(res => {
     orderDetail.value = res || {}
-    // 如果是待支付状态，启动倒计时
-    if (orderDetail.value.tradeStatus === 10) {
+    // 只有在明确指定时才启动倒计时，避免重复调用
+    if (shouldStartCountdown && orderDetail.value.tradeStatus === 10) {
       startCountdown()
+    }
+    // 如果是已付款状态，初始化二维码
+    if (orderDetail.value.tradeStatus === 40) {
+      initQrCodes()
     }
     return res
   }).catch(err => {
@@ -253,9 +460,9 @@ const payOrder = async () => {
             icon: 'success',
             duration: 2000
           })
-          // 支付成功后重新查询订单详情
+          // 支付成功后重新查询订单详情，不需要重新启动倒计时
           setTimeout(() => {
-            fetchOrderDetail(orderDetail.value.id)
+            fetchOrderDetail(orderDetail.value.id, false)
           }, 2000)
         }else{
           uni.showToast({
@@ -350,8 +557,8 @@ function startCountdown() {
       countdownText.value = '已过期'
       clearInterval(countdownTimer)
       countdownTimer = null
-      // 刷新订单状态
-      fetchOrderDetail(orderDetail.value.id)
+      // 不再自动刷新订单状态，避免循环调用
+      // fetchOrderDetail(orderDetail.value.id)
       return
     }
     
@@ -374,10 +581,8 @@ function startCountdown() {
 // 页面加载时获取订单详情
 onLoad((options) => {
   if (options && options.id) {
-    fetchOrderDetail(options.id).then(() => {
-      // 获取订单详情后启动倒计时
-      startCountdown()
-    })
+    // 页面初始化时获取订单详情并启动倒计时
+    fetchOrderDetail(options.id, true)
   } else {
     uni.showToast({
       title: '订单编号不能为空',
@@ -424,14 +629,6 @@ onUnmounted(() => {
   box-shadow: 0 8rpx 32rpx rgba(0, 122, 255, 0.3);
 }
 
-.status-icon {
-  margin-right: 24rpx;
-}
-
-.status-emoji {
-  font-size: 48rpx;
-}
-
 .status-info {
   flex: 1;
 }
@@ -452,7 +649,6 @@ onUnmounted(() => {
 .countdown-container {
   margin-top: 16rpx;
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 12rpx;
   padding: 8rpx 16rpx;
   display: flex;
   align-items: center;
@@ -471,8 +667,7 @@ onUnmounted(() => {
 
 /* 卡片通用样式 */
 .order-info-card,
-.goods-card,
-.amount-card {
+.goods-card {
   margin: 32rpx 24rpx;
   background: #ffffff;
   border-radius: 24rpx;
@@ -521,7 +716,7 @@ onUnmounted(() => {
 
 /* 商品信息 */
 .goods-list {
-  padding: 0 32rpx 32rpx;
+  padding: 0 32rpx 0;
 }
 
 .goods-item {
@@ -549,8 +744,8 @@ onUnmounted(() => {
 }
 
 .goods-img-placeholder {
-  width: 100%;
-  height: 100%;
+  width: 160rpx;
+  height: 160rpx;
   border-radius: 16rpx;
   background: linear-gradient(135deg, #f5f5f7 0%, #e5e5ea 100%);
   display: flex;
@@ -588,58 +783,152 @@ onUnmounted(() => {
   align-self: flex-start;
 }
 
-/* 费用明细 */
-.amount-item {
+/* 金额颜色统一规范 */
+.refund-amount {
+  color: #34c759 !important;
+}
+
+.paid-amount {
+  color: #ff3b30 !important;
+}
+
+/* 二维码区域 */
+.qr-section {
+  padding-bottom: 32rpx;
+  background-color: #f5f5f5;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.qr-swiper {
+  width: 100%;
+  height: 560rpx;
+}
+
+.qr-swiper-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 24rpx 32rpx;
-  border-bottom: 1rpx solid #f5f5f7;
+  justify-content: center;
+  padding: 0 8rpx;
 }
 
-.amount-item:last-child {
-  border-bottom: none;
+.qr-card {
+  background: #ffffff;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  border: 1rpx solid #f5f5f7;
+  width: 100%;
+  max-width: 500rpx;
 }
 
-.amount-item.total {
-  background: #f8f9fa;
-  border-top: 2rpx solid #e5e5ea;
+.qr-tip-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20rpx;
 }
 
-.amount-label {
-  font-size: 30rpx;
-  color: #8a8a8a;
-  font-weight: 400;
-}
-
-.amount-item.total .amount-label {
+.qr-tip-title {
+  font-size: 28rpx;
   color: #1d1d1f;
   font-weight: 600;
+  text-align: center;
+  line-height: 1.4;
 }
 
-.amount-value {
-  font-size: 30rpx;
+.qr-image-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20rpx;
+}
+
+.qr-canvas {
+  border-radius: 12rpx;
+  border: 1rpx solid #e5e5ea;
+}
+
+.qr-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12rpx;
+  border: 1rpx solid #e5e5ea;
+  background: #f8f9fa;
+}
+
+.qr-status-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.qr-background-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.qr-blur-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.qr-status-container .status-text {
+  font-size: 40rpx;
+  font-weight: 600;
+  position: relative;
+  z-index: 3;
+  color: rgba(42, 40, 40, 0.9);
+  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+}
+
+.qr-status-container.verified .qr-blur-overlay {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20rpx);
+  border-radius: 40rpx;
+}
+
+.qr-ticket-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.qr-ticket-code {
+  font-size: 24rpx;
   color: #1d1d1f;
   font-weight: 500;
 }
 
-.amount-value.discount {
-  color: #34c759;
+.qr-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 16rpx;
+  margin-top: 20rpx;
 }
 
-.amount-value.final {
-  font-size: 36rpx;
-  color: #ff3b30;
-  font-weight: 600;
+.indicator-dot {
+  width: 12rpx;
+  height: 12rpx;
+  background: #d1d5db;
+  border-radius: 50%;
+  transition: all 0.3s ease;
 }
 
-/* 金额颜色统一规范 */
-.refund-amount {
-  color: #34c759 !important; /* 退款金额：绿色 */
-}
-
-.paid-amount {
-  color: #ff3b30 !important; /* 实付金额：红色 */
+.indicator-dot.active {
+  background: #007aff;
+  transform: scale(1.2);
 }
 
 /* 操作按钮 */

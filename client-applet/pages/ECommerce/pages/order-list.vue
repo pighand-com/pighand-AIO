@@ -35,8 +35,8 @@
 		<view v-for="(ticket, index) in order.ticket" :key="ticket.id + '_' + index" class="goods-item">
             <view class="goods-img-container">
               <image 
-                v-if="ticket?.theme?.posterUrl" 
-                :src="ticket?.theme?.posterUrl" 
+                v-if="ticket?.posterUrl || ticket?.theme?.posterUrl" 
+                :src="ticket?.posterUrl || ticket?.theme?.posterUrl" 
                 class="goods-img" 
                 mode="aspectFill" 
               />

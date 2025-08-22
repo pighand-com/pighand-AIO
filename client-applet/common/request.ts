@@ -1,5 +1,5 @@
 import constant from './constant';
-import { getToken, clearAll } from './storage';
+import { getToken, getStoreId, clearAll } from './storage';
 
 interface RequestConfig {
     isDialog?: boolean;
@@ -57,6 +57,7 @@ const disposeResponse = (response: any, isDialog = true, blob = false) => {
 const request = async (method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: string, data?: any, config?: RequestConfig) => {
     url = getUrl(url);
     
+    const storeId = getStoreId();
     const requestConfig: any = {
         url,
         method,
@@ -64,7 +65,8 @@ const request = async (method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: string, d
         header: {
             'X-Application-Id': constant.APPLICATION_ID,
             ...(config?.headers || {}),
-            'Authorization': getToken()
+            'Authorization': getToken(),
+            ...(storeId ? { 'X-Store-Id': storeId } : {})
         },
         timeout: 60000
     };

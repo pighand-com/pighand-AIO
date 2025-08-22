@@ -40,6 +40,9 @@
 			"path": "pages/ECommerce/pages/ticket-detail"
 		},
 		{
+			"path": "pages/ECommerce/pages/ticket-verification"
+		},
+		{
 			"path": "pages/MKT/pages/lottery"
 		},
 		{

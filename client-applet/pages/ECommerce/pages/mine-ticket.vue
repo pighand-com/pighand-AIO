@@ -122,7 +122,40 @@ const generateQrCodeByIndex = (index) => {
   try {
     const qr = new UQRCode()
 
-    qr.data = String(t.id)
+    // 构建JSON数组格式的二维码内容
+    // 按ticket.id对所有票据进行分组
+    const groupedTickets = new Map()
+    ticketList.value.forEach(item => {
+      const ticketId = item.ticket?.id
+      if (!groupedTickets.has(ticketId)) {
+        groupedTickets.set(ticketId, [])
+      }
+      groupedTickets.get(ticketId).push(item)
+    })
+    
+    // 构建二维码数据数组，当前票的组放在第一位
+    const qrDataArray = []
+    const currentTicketId = t.ticket?.id
+    
+    // 先添加当前票的组
+    if (groupedTickets.has(currentTicketId)) {
+      const currentGroup = groupedTickets.get(currentTicketId)
+      qrDataArray.push({
+        name: currentGroup[0].ticket?.name || '',
+        ids: currentGroup.map(item => item.id)
+      })
+      groupedTickets.delete(currentTicketId) // 从map中移除已处理的组
+    }
+    
+    // 添加其他组
+    groupedTickets.forEach((items, ticketId) => {
+      qrDataArray.push({
+        name: items[0].ticket?.name || '',
+        ids: items.map(item => item.id)
+      })
+    })
+    
+    qr.data = JSON.stringify(qrDataArray)
     // 设置二维码大小，必须与canvas设置的宽高一致
     qr.size = qrSize.value
     

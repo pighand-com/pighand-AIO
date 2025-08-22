@@ -254,16 +254,30 @@ function goToQueueSettings() {
 function goToVerification() {
     uni.scanCode({
         success: async function (res) {
-			uni.showLoading({
-				title: '核销中...'
-			})
-			
-			await ticketAPI.validation(res.result)
-			uni.hideLoading()
-			uni.showToast({
-				title: '核销成功',
-				icon: 'success'
-			})
+            try {
+                // 解析扫码结果
+                const scanResult = JSON.parse(res.result)
+                
+                // 检查结果格式是否正确
+                if (!Array.isArray(scanResult) || scanResult.length === 0) {
+                    uni.showToast({
+                        title: '查询失败',
+                        icon: 'none'
+                    })
+                    return
+                }
+                
+                // 跳转到核销页面，传递扫码结果
+                uni.navigateTo({
+                    url: `/pages/ECommerce/pages/ticket-verification?data=${encodeURIComponent(res.result)}`
+                })
+            } catch (error) {
+                console.error('解析扫码结果失败:', error)
+                uni.showToast({
+                    title: '查询失败',
+                    icon: 'none'
+                })
+            }
         },
         fail: function (err) {
             uni.showToast({

@@ -52,12 +52,27 @@ const clearFromSalesId = () => {
     uni.$emit('storage-changed');
 };
 
+const getStoreId = () => {
+    return uni.getStorageSync(constant.local_storage_store_id);
+};
+
+const setStoreId = (storeId: string) => {
+    uni.setStorageSync(constant.local_storage_store_id, storeId);
+    uni.$emit('storage-changed');
+};
+
+const clearStoreId = () => {
+    uni.removeStorageSync(constant.local_storage_store_id);
+    uni.$emit('storage-changed');
+};
+
 const clearAll = () => {
     clearToken();
     clearUserInfo();
     clearApplicationInfo();
     clearSalespersonId();
     clearFromSalesId();
+    clearStoreId();
     uni.$emit('storage-changed');
 };
 
@@ -108,6 +123,7 @@ const setBatchStorage = (data: {
     };
     salespersonId?: string;
     fromSalesId?: string;
+    storeId?: string;
 }) => {
     if (data.token !== undefined) {
         uni.setStorageSync(constant.local_storage_token, data.token);
@@ -123,6 +139,9 @@ const setBatchStorage = (data: {
     }
     if (data.fromSalesId !== undefined) {
         uni.setStorageSync(constant.local_storage_from_sales_id, data.fromSalesId);
+    }
+    if (data.storeId !== undefined) {
+        uni.setStorageSync(constant.local_storage_store_id, data.storeId);
     }
     // 统一触发一次storage-changed事件
     uni.$emit('storage-changed');
@@ -142,6 +161,9 @@ export {
     getFromSalesId,
     setFromSalesId,
     clearFromSalesId,
+    getStoreId,
+    setStoreId,
+    clearStoreId,
     clearAll,
     setBatchStorage
 };

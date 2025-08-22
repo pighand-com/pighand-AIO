@@ -13,6 +13,10 @@
 		<view class="back" @click="onBack" v-if="back">
 			<image src="./static/back.png" mode="widthFix"></image>
 		</view>
+		
+		<view class="slot-container" :class="{ 'no-back': !back }">
+			<slot></slot>
+		</view>
 	</view>
 </template>
 
@@ -114,6 +118,20 @@ const onBack = () => {
 			image {
 				width: 40rpx;
 				height: 40rpx;
+			}
+		}
+		
+		.slot-container {
+			height: var(--navigation-bar-height, 44px);
+			display: flex;
+			align-items: center;
+			position: absolute;
+			top: var(--status-bar-height, 0px);
+			left: 80rpx;
+			z-index: 1001;
+			
+			&.no-back {
+				left: 0;
 			}
 		}
 	}

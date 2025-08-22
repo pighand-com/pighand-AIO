@@ -4,13 +4,24 @@
         :handle-find="store.find"
         :handle-delete="store.del"
         :handle-create="store.create"
-        :handle-update="store.update">
+        :handle-update="store.update"
+        :dataTableProps="dataTableProps">
     </PDataManager>
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue';
 import { store, tenant } from '@/api';
 import provideForm from '@/common/provideForm';
+import { getUserInfo } from '@/common/storage';
+
+const dataTableProps = computed(() => {
+    const userInfo = getUserInfo();
+    if (userInfo?.username === 'admin') {
+        return {};
+    }
+    return { add: false };
+});
 
 provideForm([
     {
@@ -48,31 +59,31 @@ provideForm([
         isDetail: true,
         domType: 'editor'
     },
-    {
-        label: '商户',
-        prop: 'tenantId',
-        isTable: true,
-        isDetail: true,
-        isSearch: true,
-        domType: 'select',
-        domData: async (key) => {
-            const result = await tenant.query({ name: key });
-            return result.records.map((item) => ({
-                label: item.name,
-                value: item.id
-            }));
-        },
-        tableFormat: (_value, _row, _item) => {
-            return _row.tenant?.name || '';
-        },
-        rules: [
-            {
-                required: true,
-                message: '商户必填',
-                trigger: 'blur'
-            }
-        ]
-    },
+    // {
+    //     label: '商户',
+    //     prop: 'tenantId',
+    //     isTable: true,
+    //     isDetail: true,
+    //     isSearch: true,
+    //     domType: 'select',
+    //     domData: async (key) => {
+    //         const result = await tenant.query({ name: key });
+    //         return result.records.map((item) => ({
+    //             label: item.name,
+    //             value: item.id
+    //         }));
+    //     },
+    //     tableFormat: (_value, _row, _item) => {
+    //         return _row.tenant?.name || '';
+    //     },
+    //     rules: [
+    //         {
+    //             required: true,
+    //             message: '商户必填',
+    //             trigger: 'blur'
+    //         }
+    //     ]
+    // },
     {
         label: '创建人',
         prop: 'creator.name',

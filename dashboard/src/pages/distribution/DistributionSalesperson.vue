@@ -262,7 +262,7 @@ const { getDetailOperation, queryTableData } = provideForm([
             }));
         },
         tableFormat: (_value, _row, _item) => {
-            return _row.user.phone || '';
+            return _row.user?.phone || '';
         },
         rules: [
             {

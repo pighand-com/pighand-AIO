@@ -22,8 +22,12 @@ export default {
 
     // 核销
     validation: async (id?: any, validationCount?: number) => {
-        const params = validationCount ? { validationCount } : {};
-        return await request.post(`${baseUrl}/user/${id}/validation`, params);
+        return await request.post(`${baseUrl}/user/validation`, [
+            {
+                id,
+                validationCount
+            }
+        ]);
     },
 
     // 取消核销

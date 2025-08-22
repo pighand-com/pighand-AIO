@@ -46,15 +46,15 @@ const routes = [
             pageType: constant.page_type_single
         },
         children: [
-            {
-                path: 'article',
-                name: 'article',
-                title: '文章',
-                meta: {
-                    icon: shallowRef(Movie)
-                },
-                component: () => import('@/pages/CMS/Article.vue')
-            },
+            // {
+            //     path: 'article',
+            //     name: 'article',
+            //     title: '文章',
+            //     meta: {
+            //         icon: shallowRef(Movie)
+            //     },
+            //     component: () => import('@/pages/CMS/Article.vue')
+            // },
             {
                 path: 'banner',
                 name: 'banner',
@@ -187,15 +187,15 @@ const routes = [
             pageType: constant.page_type_single
         },
         children: [
-            {
-                path: 'tenant',
-                name: 'tenant',
-                title: '商户管理',
-                meta: {
-                    icon: shallowRef(UserBusiness)
-                },
-                component: () => import('@/pages/base/Tenant.vue')
-            },
+            // {
+            //     path: 'tenant',
+            //     name: 'tenant',
+            //     title: '商户管理',
+            //     meta: {
+            //         icon: shallowRef(UserBusiness)
+            //     },
+            //     component: () => import('@/pages/base/Tenant.vue')
+            // },
             {
                 path: 'store',
                 name: 'store',
@@ -215,18 +215,18 @@ const routes = [
                 component: () => import('@/pages/base/User.vue')
             }
         ]
-    },
-    {
-        path: '/common',
-        name: 'common',
-        title: '其他',
-        meta: {
-            requiresAuth: true,
-            icon: shallowRef(Components),
-            pageType: constant.page_type_single
-        },
-        children: []
     }
+    // {
+    //     path: '/common',
+    //     name: 'common',
+    //     title: '其他',
+    //     meta: {
+    //         requiresAuth: true,
+    //         icon: shallowRef(Components),
+    //         pageType: constant.page_type_single
+    //     },
+    //     children: []
+    // }
 ];
 
 /**

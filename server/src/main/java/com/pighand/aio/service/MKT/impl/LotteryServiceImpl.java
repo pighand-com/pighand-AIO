@@ -53,26 +53,26 @@ public class LotteryServiceImpl extends BaseServiceImpl<LotteryCommonConfigMappe
     /**
      * 创建
      *
-     * @param lotteryO
+     * @param lotteryVO
      * @return
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public LotteryVO create(LotteryVO lotteryO) {
-        lotteryO.setDrawStatus(10);
-        super.mapper.insert(lotteryO);
+    public LotteryVO create(LotteryVO lotteryVO) {
+        lotteryVO.setDrawStatus(10);
+        super.mapper.insert(lotteryVO);
 
-        LotteryTypeService typeService = this.getLotteryTypeService(lotteryO.getLotteryType());
+        LotteryTypeService typeService = this.getLotteryTypeService(lotteryVO.getLotteryType());
 
-        Object lotteryObject = typeService.getLotteryObject(lotteryO);
-        List<Object> prizes = typeService.getLotteryPrizes(lotteryObject);
+        Object lotteryVObject = typeService.getLotteryObject(lotteryVO);
+        List<Object> prizes = typeService.getLotteryPrizes(lotteryVObject);
 
-        typeService.create(lotteryO.getId(), lotteryObject);
-        typeService.createPrizes(lotteryO.getId(), prizes);
+        typeService.create(lotteryVO.getId(), lotteryVObject);
+        typeService.createPrizes(lotteryVO.getId(), prizes);
 
-        uploadService.updateFileOfficial(lotteryO.getCoverUrl());
+        uploadService.updateFileOfficial(lotteryVO.getCoverUrl());
 
-        return lotteryO;
+        return lotteryVO;
     }
 
     /**
@@ -87,11 +87,11 @@ public class LotteryServiceImpl extends BaseServiceImpl<LotteryCommonConfigMappe
 
         LotteryTypeService typeService = this.getLotteryTypeService(lotteryVO.getLotteryType());
 
-        Object lotteryObject = typeService.find(id);
+        Object lotteryVObject = typeService.find(id);
         List<Object> prizes = typeService.queryPrizes(id);
 
-        typeService.setLotteryPrizes(lotteryObject, prizes);
-        typeService.setLotteryObject(lotteryVO, lotteryObject);
+        typeService.setLotteryPrizes(lotteryVObject, prizes);
+        typeService.setLotteryObject(lotteryVO, lotteryVObject);
 
         // 查询是否参加
         LotteryCommonUserDomain lotteryCommonUser = lotteryCommonUserService.isParticipate(id);
@@ -106,8 +106,11 @@ public class LotteryServiceImpl extends BaseServiceImpl<LotteryCommonConfigMappe
         lotteryVO.setParticipateCount(lotteryCommonUserService.count(id));
 
         Date now = new Date();
-        lotteryVO.setIsBegin(lotteryVO.getBeginTime().before(now));
-        lotteryVO.setIsEnd(lotteryVO.getEndTime().before(now));
+        // TODO: 解决时间问题，库和代码必须时区相同，要不有问题
+        Date localBegin = new Date(lotteryVO.getBeginTime().getTime() - 8 * 60 * 60 * 1000);
+        Date localEnd = new Date(lotteryVO.getEndTime().getTime() - 8 * 60 * 60 * 1000);
+        lotteryVO.setIsBegin(localBegin.before(now));
+        lotteryVO.setIsEnd(localEnd.before(now));
 
         return lotteryVO;
     }
@@ -115,33 +118,33 @@ public class LotteryServiceImpl extends BaseServiceImpl<LotteryCommonConfigMappe
     /**
      * 分页或列表
      *
-     * @param lotteryO
-     * @return PageOrList<lotteryO>
+     * @param lotteryVO
+     * @return PageOrList<lotteryVO>
      */
     @Override
-    public PageOrList<LotteryVO> query(LotteryVO lotteryO) {
+    public PageOrList<LotteryVO> query(LotteryVO lotteryVO) {
 
         QueryWrapper queryWrapper = QueryWrapper.create()
 
             // like
-            .and(LOTTERY_COMMON_CONFIG.LOTTERY_TYPE.like(lotteryO.getLotteryType()))
-            .and(LOTTERY_COMMON_CONFIG.TITLE.like(lotteryO.getTitle()))
-            .and(LOTTERY_COMMON_CONFIG.SHARE_IMAGE_URL.like(lotteryO.getShareImageUrl()))
-            .and(LOTTERY_COMMON_CONFIG.HELP_POSTER_URL.like(lotteryO.getHelpPosterUrl()))
-            .and(LOTTERY_COMMON_CONFIG.MORE_BUTTON_URL.like(lotteryO.getMoreButtonUrl()))
-            .and(LOTTERY_COMMON_CONFIG.MORE_EXTERNAL_URL.like(lotteryO.getMoreExternalUrl()))
-            .and(LOTTERY_COMMON_CONFIG.RESULT_NOTIFY_URL.like(lotteryO.getResultNotifyUrl()))
+            .and(LOTTERY_COMMON_CONFIG.LOTTERY_TYPE.like(lotteryVO.getLotteryType()))
+            .and(LOTTERY_COMMON_CONFIG.TITLE.like(lotteryVO.getTitle()))
+            .and(LOTTERY_COMMON_CONFIG.SHARE_IMAGE_URL.like(lotteryVO.getShareImageUrl()))
+            .and(LOTTERY_COMMON_CONFIG.HELP_POSTER_URL.like(lotteryVO.getHelpPosterUrl()))
+            .and(LOTTERY_COMMON_CONFIG.MORE_BUTTON_URL.like(lotteryVO.getMoreButtonUrl()))
+            .and(LOTTERY_COMMON_CONFIG.MORE_EXTERNAL_URL.like(lotteryVO.getMoreExternalUrl()))
+            .and(LOTTERY_COMMON_CONFIG.RESULT_NOTIFY_URL.like(lotteryVO.getResultNotifyUrl()))
 
             // equal
-            .and(LOTTERY_COMMON_CONFIG.HELP_ADD_BY_TIMES.eq(lotteryO.getHelpAddByTimes()))
-            .and(LOTTERY_COMMON_CONFIG.MAX_HELP_ME.eq(lotteryO.getMaxHelpMe()))
-            .and(LOTTERY_COMMON_CONFIG.MAX_HELP_OTHER.eq(lotteryO.getMaxHelpOther()))
-            .and(LOTTERY_COMMON_CONFIG.SHOW_RESULT.eq(lotteryO.getShowResult()))
+            .and(LOTTERY_COMMON_CONFIG.HELP_ADD_BY_TIMES.eq(lotteryVO.getHelpAddByTimes()))
+            .and(LOTTERY_COMMON_CONFIG.MAX_HELP_ME.eq(lotteryVO.getMaxHelpMe()))
+            .and(LOTTERY_COMMON_CONFIG.MAX_HELP_OTHER.eq(lotteryVO.getMaxHelpOther()))
+            .and(LOTTERY_COMMON_CONFIG.SHOW_RESULT.eq(lotteryVO.getShowResult()))
 
             .orderBy(LOTTERY_COMMON_CONFIG.ID.desc());
 
         // 查询开奖时间是当天之后的
-        if (true == lotteryO.getIsQueryFinish()) {
+        if (lotteryVO.getIsQueryFinish() != null && lotteryVO.getIsQueryFinish()) {
             Date nowBegin = new Date();
             nowBegin.setHours(0);
             nowBegin.setMinutes(0);
@@ -149,38 +152,38 @@ public class LotteryServiceImpl extends BaseServiceImpl<LotteryCommonConfigMappe
             queryWrapper.and(LOTTERY_COMMON_CONFIG.DRAW_TIME.gt(nowBegin));
         }
 
-        return super.mapper.query(lotteryO, queryWrapper);
+        return super.mapper.query(lotteryVO, queryWrapper);
     }
 
     /**
      * 修改
      *
-     * @param lotteryO
+     * @param lotteryVO
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void update(LotteryVO lotteryO) {
-        LotteryCommonConfigDomain config = super.mapper.find(lotteryO.getId());
+    public void update(LotteryVO lotteryVO) {
+        LotteryCommonConfigDomain config = super.mapper.find(lotteryVO.getId());
 
-        if (VerifyUtils.isNotEmpty(lotteryO.getCoverUrl()) && VerifyUtils.isNotEmpty(config.getCoverUrl())
-            && !lotteryO.getCoverUrl().equals(config.getCoverUrl())) {
-            uploadService.updateFileOfficial(lotteryO.getCoverUrl());
+        if (VerifyUtils.isNotEmpty(lotteryVO.getCoverUrl()) && VerifyUtils.isNotEmpty(config.getCoverUrl())
+            && !lotteryVO.getCoverUrl().equals(config.getCoverUrl())) {
+            uploadService.updateFileOfficial(lotteryVO.getCoverUrl());
         }
 
-        super.updateById(lotteryO);
+        super.updateById(lotteryVO);
 
-        LotteryTypeService typeService = this.getLotteryTypeService(lotteryO.getLotteryType());
+        LotteryTypeService typeService = this.getLotteryTypeService(lotteryVO.getLotteryType());
 
-        Object lotteryObject = typeService.getLotteryObject(lotteryO);
-        if (lotteryObject != null) {
-            typeService.update(lotteryObject);
+        Object lotteryVObject = typeService.getLotteryObject(lotteryVO);
+        if (lotteryVObject != null) {
+            typeService.update(lotteryVObject);
         }
 
-        List<Object> prizes = typeService.getLotteryPrizes(lotteryObject);
+        List<Object> prizes = typeService.getLotteryPrizes(lotteryVObject);
         // 更新和新增奖品，同时收集新奖品ID
         List<Long> newPrizeIds = new ArrayList<>(prizes.size());
         for (Object prize : prizes) {
-            typeService.createOrUpdatePrize(lotteryObject, prize);
+            typeService.createOrUpdatePrize(lotteryVObject, prize);
 
             Long prizeId = typeService.getPrizeId(prize);
             if (prizeId != null) {
@@ -189,7 +192,7 @@ public class LotteryServiceImpl extends BaseServiceImpl<LotteryCommonConfigMappe
         }
 
         // 只遍历一次数据库奖品，检查不存在于新奖品中的ID并删除
-        List dbPrizes = typeService.queryPrizes(lotteryO.getId());
+        List dbPrizes = typeService.queryPrizes(lotteryVO.getId());
         for (Object dbPrize : dbPrizes) {
             Long prizeId = typeService.getPrizeId(dbPrize);
             if (!newPrizeIds.contains(prizeId)) {
@@ -233,10 +236,11 @@ public class LotteryServiceImpl extends BaseServiceImpl<LotteryCommonConfigMappe
 
     @Override
     public void drawAll() {
+        // TODO: 解决时间问题，库和代码必须时区相同，要不有问题
         List<LotteryCommonConfigDomain> configs =
             this.queryChain().select(LOTTERY_COMMON_CONFIG.ID, LOTTERY_COMMON_CONFIG.LOTTERY_TYPE)
-                .where(LOTTERY_COMMON_CONFIG.DRAW_STATUS.eq(10)).and(LOTTERY_COMMON_CONFIG.DRAW_TIME.le(new Date()))
-                .list();
+                .where(LOTTERY_COMMON_CONFIG.DRAW_STATUS.eq(10))
+                .and(LOTTERY_COMMON_CONFIG.DRAW_TIME.le(new Date(new Date().getTime() + 8 * 60 * 60 * 1000))).list();
 
         configs.forEach(config -> draw(config.getId(), config.getLotteryType()));
     }

@@ -1,12 +1,10 @@
 package com.pighand.aio.controller.dashboard.ECommerce;
 
-import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.ECommerce.TicketDomain;
 import com.pighand.aio.service.ECommerce.TicketService;
 import com.pighand.aio.service.ECommerce.TicketUserService;
 import com.pighand.aio.vo.ECommerce.TicketUserVO;
 import com.pighand.aio.vo.ECommerce.TicketVO;
-import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.framework.spring.api.annotation.*;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.base.BaseController;
@@ -16,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 /**
  * 电商 - 票务
@@ -36,10 +36,6 @@ public class TicketController extends BaseController<TicketService> {
      */
     @Post(docSummary = "创建", fieldGroup = "ticketCreate")
     public Result<TicketVO> create(@Validated({ValidationGroup.Create.class}) @RequestBody TicketVO ticketVO) {
-        LoginUser loginUser = Context.loginUser();
-        ticketVO.setApplicationId(loginUser.getAId());
-        ticketVO.setStoreId(loginUser.getSId());
-
         ticketVO = super.service.create(ticketVO);
 
         return new Result(ticketVO);
@@ -98,10 +94,9 @@ public class TicketController extends BaseController<TicketService> {
         return new Result(result);
     }
 
-    @Post(path = "user/{id}/validation", docSummary = "票务核销")
-    public Result validation(@PathVariable(name = "id") Long id, @RequestBody TicketUserVO ticketUserVO) {
-        ticketUserVO.setId(id);
-        ticketUserService.validation(ticketUserVO);
+    @Post(path = "user/validation", docSummary = "票务核销")
+    public Result validation(@RequestBody List<TicketUserVO> tickets) {
+        ticketUserService.validation(tickets);
 
         return new Result();
     }

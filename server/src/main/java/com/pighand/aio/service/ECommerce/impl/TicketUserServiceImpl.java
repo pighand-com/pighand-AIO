@@ -1,9 +1,7 @@
 package com.pighand.aio.service.ECommerce.impl;
 
-import com.github.houbb.sensitive.word.core.SensitiveWordHelper;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.update.UpdateChain;
-import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.ECommerce.OrderDomain;
 import com.pighand.aio.domain.ECommerce.TicketUserDomain;
 import com.pighand.aio.domain.IoT.DeviceDomain;
@@ -17,11 +15,9 @@ import com.pighand.aio.service.distribution.DistributionSalesService;
 import com.pighand.aio.vo.ECommerce.TicketUserVO;
 import com.pighand.aio.vo.ECommerce.TicketUserValidityVO;
 import com.pighand.aio.vo.ECommerce.TicketValidityDetailEntity;
-import com.pighand.aio.vo.IoT.DeviceTaskVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.exception.ThrowPrompt;
 import com.pighand.framework.spring.page.PageOrList;
-import com.pighand.framework.spring.util.VerifyUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -217,129 +213,148 @@ public class TicketUserServiceImpl extends BaseServiceImpl<TicketUserMapper, Tic
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void validation(TicketUserVO ticketUserVO) {
-        TicketUserDomain ticketUserDomain = this.getById(ticketUserVO.getId());
-        if (ticketUserDomain == null) {
+    public void validation(List<TicketUserVO> tickets) {
+        // key-id，value-核销数量
+        Map<Long, Integer> ticketMap =
+            tickets.stream().collect(Collectors.toMap(TicketUserVO::getId, TicketUserVO::getValidationCount));
+
+        List<TicketUserDomain> ticketUsers =
+            this.queryChain().where(TICKET_USER.ID.in(ticketMap.keySet())).and(TICKET_USER.STATUS.eq(10))
+                .and(TICKET_USER.REMAINING_VALIDATION_COUNT.gt(0)).list();
+
+        if (ticketUsers.size() == 0) {
             throw new ThrowPrompt("票务不存在");
         }
 
-        if (ticketUserDomain.getRemainingValidationCount() <= 0) {
-            throw new ThrowPrompt("票务已核销");
+        if (ticketUsers.size() != ticketMap.size()) {
+            throw new ThrowPrompt("票务已核销，请重新选择");
         }
+
+        // 校验核销数量
+        ticketUsers.forEach(ticketUser -> {
+            if (ticketMap.get(ticketUser.getId()) > ticketUser.getRemainingValidationCount()) {
+                throw new ThrowPrompt("票务已核销，请重新选择");
+            }
+        });
 
         // 校验适配信息
-        List<TicketUserValidityVO> validity = ticketUserValidityService.queryChain()
-            .select(TICKET_USER_VALIDITY.ID, TICKET_USER_VALIDITY.VALIDATION_COUNT, TICKET_VALIDITY.VALIDITY_IDS,
-                TICKET_VALIDITY.VALIDITY_CONFIG).innerJoin(TICKET_VALIDITY)
-            .on(TICKET_VALIDITY.ID.eq(TICKET_USER_VALIDITY.TICKET_VALIDITY_ID))
-            .where(TICKET_USER_VALIDITY.TICKET_USER_ID.eq(ticketUserDomain.getId()))
-            .and(TICKET_USER_VALIDITY.VALIDATION_COUNT.gt(0)).listAs(TicketUserValidityVO.class);
-        if (validity.size() > 0) {
-            TicketUserValidityVO ticketUserValidityVO = validity.stream().filter(item -> {
-                if (item.getValidityIds() == null) {
-                    return true;
-                }
+        //        List<TicketUserValidityVO> validity = ticketUserValidityService.queryChain()
+        //            .select(TICKET_USER_VALIDITY.ID, TICKET_USER_VALIDITY.VALIDATION_COUNT, TICKET_VALIDITY.VALIDITY_IDS,
+        //                TICKET_VALIDITY.VALIDITY_CONFIG).innerJoin(TICKET_VALIDITY)
+        //            .on(TICKET_VALIDITY.ID.eq(TICKET_USER_VALIDITY.TICKET_VALIDITY_ID))
+        //            .where(TICKET_USER_VALIDITY.TICKET_USER_ID.in(ids)).and(TICKET_USER_VALIDITY.VALIDATION_COUNT.gt(0))
+        //            .listAs(TicketUserValidityVO.class);
+        //        if (validity.size() > 0) {
+        //            TicketUserValidityVO ticketUserValidityVO = validity.stream().filter(item -> {
+        //                if (item.getValidityIds() == null) {
+        //                    return true;
+        //                }
+        //
+        //                boolean isContains = item.getValidityIds().contains(ticketUserVO.getDeviceId());
+        //
+        //                if (!isContains) {
+        //                    return false;
+        //                }
+        //
+        //                if (item.getValidityConfig() == null) {
+        //                    return true;
+        //                } else if (VerifyUtils.isNotEmpty(ticketUserVO.getMessage())) {
+        //                    return
+        //                        item.getValidityConfig().stream().filter(config -> ticketUserVO.getMessage().startsWith(config))
+        //                            .count() > 0;
+        //                }
+        //
+        //                return false;
+        //            }).findFirst().orElse(null);
+        //
+        //            if (ticketUserValidityVO != null) {
+        //                // TODO: 高并发，或开多端，需要加锁
+        //                boolean isUpdate = ticketUserValidityService.updateChain()
+        //                    .set(TICKET_USER_VALIDITY.VALIDATION_COUNT, TICKET_USER_VALIDITY.VALIDATION_COUNT.subtract(1))
+        //                    .where(TICKET_USER_VALIDITY.ID.eq(ticketUserValidityVO.getId()))
+        //                    .and(TICKET_USER_VALIDITY.VALIDATION_COUNT.gt(0)).update();
+        //
+        //                if (!isUpdate) {
+        //                    throw new ThrowPrompt("核销失败");
+        //                }
+        //            }
+        //        }
 
-                boolean isContains = item.getValidityIds().contains(ticketUserVO.getDeviceId());
+        // 扣减核销次数
+        ticketUsers.forEach(ticketUserDomain -> {
+            Integer validationCount = Optional.ofNullable(ticketMap.get(ticketUserDomain.getId())).orElse(1);
 
-                if (!isContains) {
-                    return false;
-                }
+            UpdateChain updateChain = this.updateChain().set(TICKET_USER.REMAINING_VALIDATION_COUNT,
+                    TICKET_USER.REMAINING_VALIDATION_COUNT.subtract(validationCount))
+                .set(TICKET_USER.VALIDATION_AT, new Date()).where(TICKET_USER.ID.eq(ticketUserDomain.getId()))
+                .and(TICKET_USER.REMAINING_VALIDATION_COUNT.gt(0));
 
-                if (item.getValidityConfig() == null) {
-                    return true;
-                } else if (VerifyUtils.isNotEmpty(ticketUserVO.getMessage())) {
-                    return
-                        item.getValidityConfig().stream().filter(config -> ticketUserVO.getMessage().startsWith(config))
-                            .count() > 0;
-                }
-
-                return false;
-            }).findFirst().orElse(null);
-
-            if (ticketUserValidityVO != null) {
-                // TODO: 高并发，或开多端，需要加锁
-                boolean isUpdate = ticketUserValidityService.updateChain()
-                    .set(TICKET_USER_VALIDITY.VALIDATION_COUNT, TICKET_USER_VALIDITY.VALIDATION_COUNT.subtract(1))
-                    .where(TICKET_USER_VALIDITY.ID.eq(ticketUserValidityVO.getId()))
-                    .and(TICKET_USER_VALIDITY.VALIDATION_COUNT.gt(0)).update();
-
-                if (!isUpdate) {
-                    throw new ThrowPrompt("核销失败");
-                }
-            }
-        }
-
-        Integer validationCount = Optional.ofNullable(ticketUserVO.getValidationCount()).orElse(1);
-        // 数量减一
-        UpdateChain updateChain = this.updateChain().set(TICKET_USER.REMAINING_VALIDATION_COUNT,
-                TICKET_USER.REMAINING_VALIDATION_COUNT.subtract(validationCount)).set(TICKET_USER.VALIDATION_AT, new Date())
-            .where(TICKET_USER.ID.eq(ticketUserVO.getId())).and(TICKET_USER.REMAINING_VALIDATION_COUNT.gt(0));
-
-        if (ticketUserDomain.getRemainingValidationCount().equals(1)) {
-            updateChain.set(TICKET_USER.STATUS, 20);
-        }
-
-        boolean isUpdate = updateChain.update();
-        if (!isUpdate) {
-            throw new ThrowPrompt("核销失败");
-        }
-
-        // 处理分销
-        distributionSalesService.thawTicket(ticketUserDomain.getId());
-
-        // 创建任务
-        if (ticketUserVO.getDeviceId() != null) {
-            DeviceDomain deviceDomain = deviceService.getById(ticketUserVO.getDeviceId());
-
-            String finalMessage = "";
-            if (deviceDomain.getConfig() == null) {
-                // 无配置，不传编号
-                finalMessage = "AABBCC" + deviceDomain.getSn() + "030200FF";
-            } else if (deviceDomain.getConfig().toString().indexOf("input") != -1) {
-                // 输入文字
-
-                // 违禁词过滤
-                finalMessage = SensitiveWordHelper.replace(ticketUserVO.getMessage());
-
-                //                // 转为16进制
-                //                try {
-                //                    byte[] bytes = finalMessage.getBytes(StandardCharsets.UTF_8);
-                //                    StringBuilder hexStringBuilder = new StringBuilder();
-                //                    for (byte b : bytes) {
-                //                        hexStringBuilder.append(String.format("%02X", b));
-                //                    }
-                //                    finalMessage = hexStringBuilder.toString();
-                //                } catch (Exception e) {
-                //                    throw new ThrowException("文字转换失败");
-                //                }
-            } else {
-                // 传编号
-                finalMessage = "AABBCC" + deviceDomain.getSn() + "0302" + ticketUserVO.getMessage() + "FF";
+            // 全部核销，设置核销状态
+            if (ticketUserDomain.getRemainingValidationCount().equals(validationCount)) {
+                updateChain.set(TICKET_USER.STATUS, 20);
             }
 
-            DeviceTaskVO deviceTaskVO = new DeviceTaskVO();
-            deviceTaskVO.setDeviceId(ticketUserVO.getDeviceId());
-            deviceTaskVO.setCreatedAt(new Date());
-            deviceTaskVO.setCreatorId(Context.loginUser().getId());
-            deviceTaskVO.setMessage(finalMessage);
-            deviceTaskVO.setRunningStatus(10);
-            deviceTaskVO.setRunningStatus(10);
+            boolean isUpdate = updateChain.update();
+            if (!isUpdate) {
+                throw new ThrowPrompt("核销失败");
+            }
 
-            deviceTaskService.create(deviceTaskVO);
-        }
+            // 处理分销
+            distributionSalesService.thawTicket(ticketUserDomain.getId());
 
-        // 全部核销，更新订单退款状态
-        long notValidationCount =
-            this.queryChain().select(TICKET_USER.ID).where(TICKET_USER.ORDER_ID.eq(ticketUserDomain.getOrderId()))
-                .and(TICKET_USER.STATUS.eq(10)).count();
+            // 创建任务
+            //            if (ticketUserDomain.getDeviceId() != null) {
+            //                DeviceDomain deviceDomain = deviceService.getById(ticketUserVO.getDeviceId());
+            //
+            //                String finalMessage = "";
+            //                if (deviceDomain.getConfig() == null) {
+            //                    // 无配置，不传编号
+            //                    finalMessage = "AABBCC" + deviceDomain.getSn() + "030200FF";
+            //                } else if (deviceDomain.getConfig().toString().indexOf("input") != -1) {
+            //                    // 输入文字
+            //
+            //                    // 违禁词过滤
+            //                    finalMessage = SensitiveWordHelper.replace(ticketUserVO.getMessage());
+            //
+            //                    //                // 转为16进制
+            //                    //                try {
+            //                    //                    byte[] bytes = finalMessage.getBytes(StandardCharsets.UTF_8);
+            //                    //                    StringBuilder hexStringBuilder = new StringBuilder();
+            //                    //                    for (byte b : bytes) {
+            //                    //                        hexStringBuilder.append(String.format("%02X", b));
+            //                    //                    }
+            //                    //                    finalMessage = hexStringBuilder.toString();
+            //                    //                } catch (Exception e) {
+            //                    //                    throw new ThrowException("文字转换失败");
+            //                    //                }
+            //                } else {
+            //                    // 传编号
+            //                    finalMessage = "AABBCC" + deviceDomain.getSn() + "0302" + ticketUserVO.getMessage() + "FF";
+            //                }
+            //
+            //                DeviceTaskVO deviceTaskVO = new DeviceTaskVO();
+            //                deviceTaskVO.setDeviceId(ticketUserVO.getDeviceId());
+            //                deviceTaskVO.setCreatedAt(new Date());
+            //                deviceTaskVO.setCreatorId(Context.loginUser().getId());
+            //                deviceTaskVO.setMessage(finalMessage);
+            //                deviceTaskVO.setRunningStatus(10);
+            //                deviceTaskVO.setRunningStatus(10);
+            //
+            //                deviceTaskService.create(deviceTaskVO);
+            //            }
 
-        if (notValidationCount <= 0) {
-            OrderDomain orderDomain = new OrderDomain();
-            orderDomain.setId(ticketUserDomain.getOrderId());
-            orderDomain.setRefundStatus(10);
-            orderMapper.update(orderDomain);
-        }
+            // 全部核销，更新订单退款状态
+            long notValidationCount =
+                this.queryChain().select(TICKET_USER.ID).where(TICKET_USER.ORDER_ID.eq(ticketUserDomain.getOrderId()))
+                    .and(TICKET_USER.STATUS.eq(10)).count();
+
+            if (notValidationCount <= 0) {
+                OrderDomain orderDomain = new OrderDomain();
+                orderDomain.setId(ticketUserDomain.getOrderId());
+                orderDomain.setRefundStatus(10);
+                orderMapper.update(orderDomain);
+            }
+        });
     }
 
     /**

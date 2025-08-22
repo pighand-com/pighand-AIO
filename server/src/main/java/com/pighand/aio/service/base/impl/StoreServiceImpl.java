@@ -65,7 +65,7 @@ public class StoreServiceImpl extends BaseServiceImpl<StoreMapper, StoreDomain> 
             .and(STORE.NAME.like(baseStoreVO.getName()))
 
             // equal
-            .and(STORE.APPLICATION_ID.eq(baseStoreVO.getApplicationId()))
+            .and(STORE.ID.eq(baseStoreVO.getId())).and(STORE.APPLICATION_ID.eq(baseStoreVO.getApplicationId()))
             .and(STORE.TENANT_ID.eq(baseStoreVO.getTenantId()))
 
             // between

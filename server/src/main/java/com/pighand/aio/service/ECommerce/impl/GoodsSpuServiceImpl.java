@@ -52,14 +52,12 @@ public class GoodsSpuServiceImpl extends BaseServiceImpl<GoodsSpuMapper, GoodsSp
     @Transactional(rollbackFor = Exception.class)
     @Override
     public GoodsSpuVO create(GoodsSpuVO goodsSpuVO) {
-        goodsSpuVO.setApplicationId(Context.applicationId());
         goodsSpuVO.setStatus(GoodsSpuStatusEnum.UNLISTED);
         goodsSpuVO.setDeleted(false);
         super.mapper.insert(goodsSpuVO);
 
         List<GoodsSkuVO> goodsSku = goodsSpuVO.getGoodsSku();
         goodsSku.forEach(goodsSkuVO -> {
-            goodsSkuVO.setApplicationId(Context.applicationId());
             goodsSkuVO.setSpuId(goodsSpuVO.getId());
             goodsSkuVO.setDeleted(false);
         });

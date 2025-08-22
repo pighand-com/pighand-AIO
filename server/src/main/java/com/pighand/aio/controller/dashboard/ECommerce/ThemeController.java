@@ -1,11 +1,9 @@
 package com.pighand.aio.controller.dashboard.ECommerce;
 
-import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.common.interfaces.Authorization;
 import com.pighand.aio.domain.ECommerce.ThemeDomain;
 import com.pighand.aio.service.ECommerce.ThemeService;
 import com.pighand.aio.vo.ECommerce.ThemeVO;
-import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.framework.spring.api.annotation.*;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.base.BaseController;
@@ -31,10 +29,6 @@ public class ThemeController extends BaseController<ThemeService> {
      */
     @Post(docSummary = "创建", fieldGroup = "themeCreate")
     public Result<ThemeVO> create(@Validated({ValidationGroup.Create.class}) @RequestBody ThemeVO themeVO) {
-        LoginUser loginUser = Context.loginUser();
-        themeVO.setApplicationId(loginUser.getAId());
-        themeVO.setStoreId(loginUser.getSId());
-
         themeVO = super.service.create(themeVO);
 
         return new Result(themeVO);

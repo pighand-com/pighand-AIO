@@ -40,6 +40,10 @@ public class LotteryCommonConfigDomain extends BaseDomainRecord<LotteryCommonCon
     @RequestFieldException("mktLotteryCommonConfigUpdate")
     private Long id;
 
+    @RequestFieldException("mktLotteryCommonConfigCreate")
+    @RequestFieldException("mktLotteryCommonConfigUpdate")
+    private Long storeId;
+
     @Schema(description = "抽奖类型 10参与型抽奖")
     private Integer lotteryType;
 

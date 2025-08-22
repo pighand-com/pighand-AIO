@@ -38,6 +38,10 @@ public class DistributionSalespersonDomain extends BaseDomainRecord<Distribution
     @Schema(description = "主键ID")
     private Long id;
 
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long storeId;
+
     @NotNull(groups = {ValidationGroup.Create.class})
     @Schema(description = "用户ID，具备销售资格的用户")
     private Long userId;

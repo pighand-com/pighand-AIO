@@ -32,7 +32,13 @@ public class BannerDomain extends BaseDomainRecord<BannerDomain> implements Seri
     @RequestFieldException("cmsBannerUpdate")
     private Long id;
 
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long applicationId;
+
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long storeId;
 
     @Length(max = 500)
     @Schema(description = "描述")

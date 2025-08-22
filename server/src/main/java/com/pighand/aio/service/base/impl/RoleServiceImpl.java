@@ -11,6 +11,7 @@ import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
+import static com.pighand.aio.common.dataPermission.ignore.RunWithIgnore.IgnoreDataPermission;
 import static com.pighand.aio.domain.base.table.RoleTableDef.ROLE;
 
 /**
@@ -63,7 +64,8 @@ public class RoleServiceImpl extends BaseServiceImpl<RoleMapper, RoleDomain> imp
             // equal
             .and(ROLE.APPLICATION_ID.eq(baseRoleVO.getApplicationId()));
 
-        return super.mapper.query(baseRoleVO, queryWrapper);
+        // TODO 数据权限
+        return IgnoreDataPermission(() -> mapper.query(baseRoleVO, queryWrapper));
     }
 
     /**

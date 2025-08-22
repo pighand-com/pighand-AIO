@@ -3,9 +3,11 @@ package com.pighand.aio.controller.client.base;
 import com.pighand.aio.common.interfaces.ApplicationId;
 import com.pighand.aio.domain.base.StoreDomain;
 import com.pighand.aio.service.base.StoreService;
+import com.pighand.aio.vo.base.StoreVO;
 import com.pighand.framework.spring.api.annotation.Get;
 import com.pighand.framework.spring.api.annotation.RestController;
 import com.pighand.framework.spring.base.BaseController;
+import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.response.Result;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -28,5 +30,12 @@ public class StoreController extends BaseController<StoreService> {
         StoreDomain baseStoreDomain = super.service.find(id);
 
         return new Result(baseStoreDomain);
+    }
+
+    @Get(docSummary = "列表")
+    public Result<PageOrList<StoreVO>> query(StoreVO storeVO) {
+        PageOrList<StoreVO> result = super.service.query(storeVO);
+
+        return new Result(result);
     }
 }

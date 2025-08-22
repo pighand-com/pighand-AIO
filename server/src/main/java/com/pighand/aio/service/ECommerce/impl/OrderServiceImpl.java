@@ -33,7 +33,6 @@ import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
@@ -44,6 +43,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.pighand.aio.domain.ECommerce.table.BillTableDef.BILL;
 import static com.pighand.aio.domain.ECommerce.table.GoodsSkuTableDef.GOODS_SKU;
@@ -51,7 +51,6 @@ import static com.pighand.aio.domain.ECommerce.table.GoodsSpuTableDef.GOODS_SPU;
 import static com.pighand.aio.domain.ECommerce.table.OrderSkuTableDef.ORDER_SKU;
 import static com.pighand.aio.domain.ECommerce.table.OrderTableDef.ORDER;
 import static com.pighand.aio.domain.ECommerce.table.OrderTradeTableDef.ORDER_TRADE;
-import static com.pighand.aio.domain.ECommerce.table.ThemeTableDef.THEME;
 import static com.pighand.aio.domain.ECommerce.table.TicketTableDef.TICKET;
 import static com.pighand.aio.domain.ECommerce.table.TicketUserTableDef.TICKET_USER;
 import static com.pighand.aio.domain.ECommerce.table.TicketValidityTableDef.TICKET_VALIDITY;
@@ -97,9 +96,6 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
 
     private final UserService userService;
 
-    @Value("${upload.path}")
-    private String uploadPath;
-
     /**
      * 价格计算
      *
@@ -144,7 +140,6 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
 
             if (orderVO == null) {
                 orderVO = new OrderVO();
-                orderVO.setStoreId(goodsBaseInfo.getStoreId());
                 orderVO.setSn(IDGenerator.generate(TableIdEnum.ORDER, BillTypeEnum.PAYMENT));
                 orderVO.setTradeStatus(10);
                 orderVO.setRefundStatus(10);
@@ -205,7 +200,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
      * @param orderSku
      * @return
      */
-    private OrderTradeDomain getPlaceGoods(List<OrderSkuVO> orderSku, Long salespersonId) {
+    private OrderTradeVO getPlaceGoods(List<OrderSkuVO> orderSku, Long salespersonId) {
         Date now = new Date();
         LoginUser loginUser = Context.loginUser();
 
@@ -242,22 +237,23 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
         CalculatePriceEstimateVO sessionOrder = this.calculatePriceEstimate(sessionInfo, sessionQuantities);
 
         // 保存交易单
-        OrderTradeDomain orderTradeDomain = new OrderTradeDomain();
-        orderTradeDomain.setSn(IDGenerator.generate(TableIdEnum.ORDER_TRADE, BillTypeEnum.PAYMENT));
-        orderTradeDomain.setAmountPaid(
+        OrderTradeVO orderTrade = new OrderTradeVO();
+        orderTrade.setSn(IDGenerator.generate(TableIdEnum.ORDER_TRADE, BillTypeEnum.PAYMENT));
+        orderTrade.setAmountPaid(
             skuOrder.getAmountPaid().add(ticketOrder.getAmountPaid()).add(sessionOrder.getAmountPaid()).longValue());
-        orderTradeDomain.setAmountPayable(
+        orderTrade.setAmountPayable(
             skuOrder.getAmountPayable().add(ticketOrder.getAmountPayable()).add(sessionOrder.getAmountPayable())
                 .longValue());
-        orderTradeDomain.setCreatorId(loginUser.getId());
-        orderTradeDomain.setCreatedAt(now);
-        orderTradeDomain.setSalespersonId(salespersonId);
-        orderTradeService.save(orderTradeDomain);
+        orderTrade.setCreatorId(loginUser.getId());
+        orderTrade.setCreatedAt(now);
+        orderTrade.setSalespersonId(salespersonId);
+        orderTradeService.save(orderTrade);
 
         // 保存订单
+        List<Long> orderIds = new ArrayList<>(orderSku.size());
         List<OrderSkuDomain> saveOrderSku = new ArrayList<>(orderSku.size());
         for (OrderVO orderVO : skuOrder.getOrder()) {
-            orderVO.setOrderTradeId(orderTradeDomain.getId());
+            orderVO.setOrderTradeId(orderTrade.getId());
             orderVO.setCreatedAt(now);
             orderVO.setCreatorId(loginUser.getId());
             orderVO.setUserPhone(userDomain.getPhone());
@@ -265,15 +261,17 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
             orderVO.setExpiredAt(new Date(now.getTime() + 10 * 60 * 1000));
             this.save(orderVO);
 
+            orderIds.add(orderVO.getId());
+
             for (OrderSkuVO orderSkuVO : orderVO.getOrderSku()) {
                 orderSkuVO.setOrderId(orderVO.getId());
-                orderSkuVO.setOrderTradeId(orderTradeDomain.getId());
+                orderSkuVO.setOrderTradeId(orderTrade.getId());
                 saveOrderSku.add(orderSkuVO);
             }
         }
 
         for (OrderVO orderVO : ticketOrder.getOrder()) {
-            orderVO.setOrderTradeId(orderTradeDomain.getId());
+            orderVO.setOrderTradeId(orderTrade.getId());
             orderVO.setCreatedAt(now);
             orderVO.setCreatorId(loginUser.getId());
             orderVO.setUserPhone(userDomain.getPhone());
@@ -281,15 +279,17 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
             orderVO.setExpiredAt(new Date(now.getTime() + 10 * 60 * 1000));
             this.save(orderVO);
 
+            orderIds.add(orderVO.getId());
+
             for (OrderSkuVO orderSkuVO : orderVO.getOrderSku()) {
                 orderSkuVO.setOrderId(orderVO.getId());
-                orderSkuVO.setOrderTradeId(orderTradeDomain.getId());
+                orderSkuVO.setOrderTradeId(orderTrade.getId());
                 saveOrderSku.add(orderSkuVO);
             }
         }
 
         for (OrderVO orderVO : sessionOrder.getOrder()) {
-            orderVO.setOrderTradeId(orderTradeDomain.getId());
+            orderVO.setOrderTradeId(orderTrade.getId());
             orderVO.setCreatedAt(now);
             orderVO.setCreatorId(loginUser.getId());
             orderVO.setUserPhone(userDomain.getPhone());
@@ -297,16 +297,19 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
             orderVO.setExpiredAt(new Date(now.getTime() + 10 * 60 * 1000));
             this.save(orderVO);
 
+            orderIds.add(orderVO.getId());
+
             for (OrderSkuVO orderSkuVO : orderVO.getOrderSku()) {
                 orderSkuVO.setOrderId(orderVO.getId());
-                orderSkuVO.setOrderTradeId(orderTradeDomain.getId());
+                orderSkuVO.setOrderTradeId(orderTrade.getId());
                 saveOrderSku.add(orderSkuVO);
             }
         }
 
         orderSkuService.saveBatch(saveOrderSku);
 
-        return orderTradeDomain;
+        orderTrade.setOrderIds(orderIds);
+        return orderTrade;
     }
 
     /**
@@ -320,9 +323,9 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public PayVO placeOrderAndPay(OrderVO orderVO) {
-        OrderTradeDomain order = this.getPlaceGoods(orderVO.getOrderSku(), orderVO.getSalespersonId());
+        OrderTradeVO orderTrade = this.getPlaceGoods(orderVO.getOrderSku(), orderVO.getSalespersonId());
 
-        if (!orderVO.getAmountPaid().equals(order.getAmountPaid())) {
+        if (!orderVO.getAmountPaid().equals(orderTrade.getAmountPaid())) {
             throw new ThrowPrompt("价格发生改变，请重新下单");
         }
 
@@ -341,11 +344,16 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
                 .and(USER_WECHAT.APPLICATION_ID.eq(applicationId)).one();
 
             PayVO payVO = new PayVO();
+            payVO.setOrderIds(orderTrade.getOrderIds().stream().map(String::valueOf).collect(Collectors.toList()));
+
             String prepay_id =
                 wechat.pay(projectPlatformKeyDomain.getAppid(), projectPlatformPayDomain.getWechatMerchantId(),
-                    uploadPath + "/apiclient_key.pem", projectPlatformPayDomain.getWechatMerchantCertificateSerial(),
-                    projectPlatformPayDomain.getWechatMerchantV3(), userWechatDomain.getOpenid(), "商品", order.getSn(),
-                    Integer.valueOf(order.getAmountPaid().toString()));
+                    projectPlatformPayDomain.getWechatMerchantCertificate(),
+                    projectPlatformPayDomain.getWechatMerchantCertificateSerial(),
+                    projectPlatformPayDomain.getWechatMerchantPublicKey(),
+                    projectPlatformPayDomain.getWechatMerchantPublicKeyId(),
+                    projectPlatformPayDomain.getWechatMerchantV3(), userWechatDomain.getOpenid(), "商品",
+                    orderTrade.getSn(), Integer.valueOf(orderTrade.getAmountPaid().toString()));
             payVO.setPrepayId(prepay_id);
 
             Long nonceStr = System.currentTimeMillis();
@@ -354,7 +362,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
             try {
                 Signature sign = Signature.getInstance("SHA256withRSA");
 
-                File file = ResourceUtils.getFile(uploadPath + "/apiclient_key.pem");
+                File file = ResourceUtils.getFile(projectPlatformPayDomain.getWechatMerchantCertificate());
                 PrivateKey privateKey = PemUtil.loadPrivateKey(new FileInputStream(file));
                 sign.initSign(privateKey);
 
@@ -415,10 +423,12 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
 
             ApplicationPlatformPayDomain projectPlatformPayDomain =
                 projectPlatformPayService.find(Context.applicationId());
-            Config config =
-                wechat.getConfig(projectPlatformPayDomain.getWechatMerchantId(), uploadPath + "/apiclient_key.pem",
-                    projectPlatformPayDomain.getWechatMerchantCertificateSerial(),
-                    projectPlatformPayDomain.getWechatMerchantV3());
+            Config config = wechat.getConfig(projectPlatformPayDomain.getWechatMerchantId(),
+                projectPlatformPayDomain.getWechatMerchantCertificate(),
+                projectPlatformPayDomain.getWechatMerchantCertificateSerial(),
+                projectPlatformPayDomain.getWechatMerchantPublicKey(),
+                projectPlatformPayDomain.getWechatMerchantPublicKeyId(),
+                projectPlatformPayDomain.getWechatMerchantV3());
 
             // 从请求头中获取信息
             // 这是微信回调固定在请求头里的参数，验签要用
@@ -537,6 +547,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
 
         // like
         queryWrapper.and(ORDER.SN.like(orderVO.getSn(), VerifyUtils::isNotEmpty));
+        queryWrapper.and(ORDER.USER_PHONE.eq(orderVO.getUserPhone(), VerifyUtils::isNotEmpty));
 
         // equal
         queryWrapper.and(ORDER.CREATOR_ID.eq(orderVO.getCreatorId(), VerifyUtils::isNotEmpty));
@@ -575,9 +586,8 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
 
         Map<Long, TicketVO> ticketMap = new HashMap<>();
         if (ticketIds.size() > 0) {
-            List<TicketVO> tickets =
-                ticketService.queryChain().select(TICKET.ID, TICKET.NAME, THEME.POSTER_URL).leftJoin(THEME)
-                    .on(TICKET.THEME_ID.eq(THEME.ID)).where(TICKET.ID.in(ticketIds)).listAs(TicketVO.class);
+            List<TicketVO> tickets = ticketService.queryChain().select(TICKET.ID, TICKET.NAME, TICKET.POSTER_URL)
+                .where(TICKET.ID.in(ticketIds)).listAs(TicketVO.class);
 
             tickets.forEach(ticketDomain -> {
                 ticketMap.put(ticketDomain.getId(), ticketDomain);
@@ -678,12 +688,27 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
         // 查询票务信息
         Map<Long, TicketVO> ticketMap = new HashMap<>();
         if (ticketIds.size() > 0) {
-            List<TicketVO> tickets =
-                ticketService.queryChain().select(TICKET.ID, TICKET.NAME, THEME.POSTER_URL).leftJoin(THEME)
-                    .on(TICKET.THEME_ID.eq(THEME.ID)).where(TICKET.ID.in(ticketIds)).listAs(TicketVO.class);
+            List<TicketVO> tickets = ticketService.queryChain().select(TICKET.ID, TICKET.NAME, TICKET.POSTER_URL)
+                .where(TICKET.ID.in(ticketIds)).listAs(TicketVO.class);
 
             tickets.forEach(ticketDomain -> {
                 ticketMap.put(ticketDomain.getId(), ticketDomain);
+            });
+
+            // 查询用户票务
+            List<TicketUserVO> ticketUsers =
+                ticketUserService.queryChain().select(TICKET_USER.ID, TICKET_USER.STATUS, TICKET_USER.TICKET_ID)
+                    .where(TICKET_USER.ORDER_ID.eq(order.getId())).listAs(TicketUserVO.class);
+
+            Map<Long, TicketUserVO> ticketUserMap = new HashMap<>();
+            ticketUsers.forEach(ticketUserDomain -> {
+                ticketUserMap.put(ticketUserDomain.getId(), ticketUserDomain);
+            });
+
+            tickets.forEach(ticket -> {
+                ticket.setTicketUsers(ticketUserMap.values().stream()
+                    .filter(ticketUser -> ticketUser.getTicketId().equals(ticket.getId()))
+                    .collect(Collectors.toList()));
             });
         }
 
@@ -810,9 +835,12 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
         // 微信退款
         Long applicationId = Context.applicationId();
         ApplicationPlatformPayDomain projectPlatformPayDomain = projectPlatformPayService.find(applicationId);
-        wechat.refund(projectPlatformPayDomain.getWechatMerchantId(), uploadPath + "/apiclient_key.pem",
+        wechat.refund(projectPlatformPayDomain.getWechatMerchantId(),
+            projectPlatformPayDomain.getWechatMerchantCertificate(),
             projectPlatformPayDomain.getWechatMerchantCertificateSerial(),
-            projectPlatformPayDomain.getWechatMerchantV3(), refundTotal, refundAmount, order.getSn(), order.getSn());
+            projectPlatformPayDomain.getWechatMerchantPublicKey(),
+            projectPlatformPayDomain.getWechatMerchantPublicKeyId(), projectPlatformPayDomain.getWechatMerchantV3(),
+            refundTotal, refundAmount, order.getSn(), order.getSn());
 
         // TODO: 支持一个交易单，多个订单情况
         super.updateChain().set(ORDER.TRADE_STATUS, 51).set(ORDER.REFUND_STATUS, 10)
@@ -912,7 +940,10 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
             PayVO payVO = new PayVO();
             String prepay_id =
                 wechat.pay(projectPlatformKeyDomain.getAppid(), projectPlatformPayDomain.getWechatMerchantId(),
-                    uploadPath + "/apiclient_key.pem", projectPlatformPayDomain.getWechatMerchantCertificateSerial(),
+                    projectPlatformPayDomain.getWechatMerchantCertificate(),
+                    projectPlatformPayDomain.getWechatMerchantCertificateSerial(),
+                    projectPlatformPayDomain.getWechatMerchantPublicKey(),
+                    projectPlatformPayDomain.getWechatMerchantPublicKeyId(),
                     projectPlatformPayDomain.getWechatMerchantV3(), userWechatDomain.getOpenid(), "商品",
                     orderTrade.getSn(), Integer.valueOf(orderTrade.getAmountPaid().toString()));
             payVO.setPrepayId(prepay_id);
@@ -923,7 +954,7 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
             try {
                 Signature sign = Signature.getInstance("SHA256withRSA");
 
-                File file = ResourceUtils.getFile(uploadPath + "/apiclient_key.pem");
+                File file = ResourceUtils.getFile(projectPlatformPayDomain.getWechatMerchantCertificate());
                 PrivateKey privateKey = PemUtil.loadPrivateKey(new FileInputStream(file));
                 sign.initSign(privateKey);
 

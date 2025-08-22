@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 /**
  * 电商 - 票务
  *
@@ -58,10 +60,9 @@ public class TicketController extends BaseController<TicketService> {
 
     // TODO 移动端使用id核销不安全，改为生成加密token（包含id和有效时间）
     @Authorization()
-    @Post(path = "user/{id}/validation", docSummary = "票务核销")
-    public Result validation(@PathVariable(name = "id") Long id, @RequestBody TicketUserVO ticketUserVO) {
-        ticketUserVO.setId(id);
-        ticketUserService.validation(ticketUserVO);
+    @Post(path = "user/validation", docSummary = "票务核销")
+    public Result validation(@RequestBody List<TicketUserVO> tickets) {
+        ticketUserService.validation(tickets);
 
         return new Result();
     }

@@ -7,9 +7,11 @@ import com.pighand.aio.service.base.ApplicationPlatformPayService;
 import com.pighand.aio.vo.base.ApplicationPlatformPayVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import static com.pighand.aio.domain.base.table.ApplicationPlatformPayTableDef.APPLICATION_PLATFORM_PAY;
+import java.nio.file.Paths;
+import java.util.Optional;
 
 /**
  * 项目 - 支付信息
@@ -21,6 +23,9 @@ import static com.pighand.aio.domain.base.table.ApplicationPlatformPayTableDef.A
 public class ApplicationPlatformPayServiceImpl
     extends BaseServiceImpl<ApplicationPlatformPayMapper, ApplicationPlatformPayDomain>
     implements ApplicationPlatformPayService {
+
+    @Value("${upload.path}")
+    private String uploadPath;
 
     /**
      * 创建
@@ -43,7 +48,16 @@ public class ApplicationPlatformPayServiceImpl
      */
     @Override
     public ApplicationPlatformPayDomain find(Long id) {
-        return super.mapper.find(id);
+        ApplicationPlatformPayDomain domain = super.mapper.find(id);
+
+        String wechatMerchantCertificate =
+            Optional.ofNullable(domain.getWechatMerchantCertificate()).orElse("apiclient_key.pem");
+        String wechatMerchantPublicKey = Optional.ofNullable(domain.getWechatMerchantPublicKey()).orElse("pub_key.pem");
+
+        domain.setWechatMerchantCertificate(Paths.get(uploadPath).resolve(wechatMerchantCertificate).toString());
+        domain.setWechatMerchantPublicKey(Paths.get(uploadPath).resolve(wechatMerchantPublicKey).toString());
+
+        return domain;
     }
 
     /**
@@ -55,16 +69,7 @@ public class ApplicationPlatformPayServiceImpl
     @Override
     public PageOrList<ApplicationPlatformPayVO> query(ApplicationPlatformPayVO projectPlatformPayVO) {
 
-        QueryWrapper queryWrapper = QueryWrapper.create()
-            // like
-            .and(APPLICATION_PLATFORM_PAY.WECHAT_MERCHANT_ID.like(projectPlatformPayVO.getWechatMerchantId())).and(
-                APPLICATION_PLATFORM_PAY.WECHAT_MERCHANT_PRIVATE_KEY.like(
-                    projectPlatformPayVO.getWechatMerchantPrivateKey())).and(
-                APPLICATION_PLATFORM_PAY.WECHAT_MERCHANT_CERTIFICATE.like(
-                    projectPlatformPayVO.getWechatMerchantCertificate())).and(
-                APPLICATION_PLATFORM_PAY.WECHAT_MERCHANT_CERTIFICATE_SERIAL.like(
-                    projectPlatformPayVO.getWechatMerchantCertificateSerial()))
-            .and(APPLICATION_PLATFORM_PAY.WECHAT_MERCHANT_V3.like(projectPlatformPayVO.getWechatMerchantV3()));
+        QueryWrapper queryWrapper = QueryWrapper.create();
 
         return super.mapper.query(projectPlatformPayVO, queryWrapper);
     }

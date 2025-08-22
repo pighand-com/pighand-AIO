@@ -47,7 +47,7 @@ public interface TicketUserMapper extends BaseMapper<TicketUserDomain> {
 
         // TICKET
         if (joinTables.contains(TICKET.getTableName())) {
-            queryWrapper.select(TICKET.NAME, TICKET.POSTER_URL).leftJoin(TICKET)
+            queryWrapper.select(TICKET.ID, TICKET.NAME, TICKET.POSTER_URL).leftJoin(TICKET)
                 .on(TICKET.ID.eq(TICKET_USER.TICKET_ID));
 
             joinTables.remove(TICKET.getTableName());

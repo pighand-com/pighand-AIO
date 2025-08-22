@@ -41,16 +41,18 @@ public class ApplicationPlatformPayDomain extends BaseDomainRecord<ApplicationPl
     private String wechatMerchantId;
 
     @Length(max = 16)
-    @Schema(description = "微信支付 - 私钥文件名(apiclient_key.pem)，默认商户id_key.pem")
-    private String wechatMerchantPrivateKey;
-
-    @Length(max = 16)
-    @Schema(description = "微信支付 - 证书名(apiclient_cert.pem)，默认商户id_cert.pem")
+    @Schema(description = "微信支付 - 商户API证书名(apiclient_key.pem)")
     private String wechatMerchantCertificate;
 
     @Length(max = 41)
-    @Schema(description = "微信支付 - 证书(apiclient_cert.pem)序列号。查看方式：openssl x509 -in apiclient_cert.pem -noout -serial")
+    @Schema(description = "微信支付 - 商户API证书(apiclient_cert.pem)序列号。查看方式：openssl x509 -in apiclient_cert.pem -noout -serial")
     private String wechatMerchantCertificateSerial;
+
+    @Schema(description = "微信支付 - 公钥文件名（pub_key.pem）")
+    private String wechatMerchantPublicKey;
+
+    @Schema(description = "微信支付 - 公钥ID（PUB_KEY_ID_xxxx）")
+    private String wechatMerchantPublicKeyId;
 
     @Length(max = 40)
     @Schema(description = "微信支付 - APIV3密钥")

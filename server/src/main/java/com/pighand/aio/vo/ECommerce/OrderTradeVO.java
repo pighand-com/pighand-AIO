@@ -25,4 +25,7 @@ public class OrderTradeVO extends OrderTradeDomain {
 
     private List<BillVO> bill;
     // relation table: end
+
+    // TODO 支持List<String>转List<Long>
+    private List<Long> orderIds;
 }

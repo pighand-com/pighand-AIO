@@ -85,7 +85,7 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletMapper, WalletDomai
         if (!isFromSystem) {
             boolean isUpdate =
                 this.updateChain().setRaw(WALLET.TOKENS, WALLET.TOKENS.subtract(walletTransferVO.getAccount()))
-                    .where(WALLET.APPLICATION_ID.eq(applicationId)).and(WALLET.USER_ID.eq(fromUserId))
+                    .where(WALLET.USER_ID.eq(fromUserId))
                     .and(WALLET.TOKENS.subtract(walletTransferVO.getAccount()).ge(0)).update();
 
             if (!isUpdate) {
@@ -93,12 +93,9 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletMapper, WalletDomai
             }
         }
 
-        WalletDomain toUserWallet =
-            this.queryChain().where(WALLET.APPLICATION_ID.eq(applicationId)).and(WALLET.USER_ID.eq(toUser.getId()))
-                .one();
+        WalletDomain toUserWallet = this.queryChain().where(WALLET.USER_ID.eq(toUser.getId())).one();
         if (toUserWallet == null) {
             toUserWallet = new WalletDomain();
-            toUserWallet.setApplicationId(applicationId);
             toUserWallet.setUserId(toUser.getId());
             toUserWallet.setTokens(walletTransferVO.getAccount());
             toUserWallet.setFreezeTokens(BigDecimal.ZERO);
@@ -113,7 +110,6 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletMapper, WalletDomai
             }
         }
 
-        walletTransferVO.setApplicationId(applicationId);
         if (loginUser != null) {
             walletTransferVO.setFromUserId(loginUser.getId());
         }
@@ -126,7 +122,6 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletMapper, WalletDomai
         Date now = new Date();
 
         WalletBillVO fromBill = new WalletBillVO();
-        fromBill.setApplicationId(applicationId);
         fromBill.setUserId(fromUserId);
         fromBill.setType(isFromSystem ? 20 : 32);
         fromBill.setWalletType(20);
@@ -136,7 +131,6 @@ public class WalletServiceImpl extends BaseServiceImpl<WalletMapper, WalletDomai
         fromBill.setCreatedAt(now);
 
         WalletBillVO toBill = new WalletBillVO();
-        toBill.setApplicationId(applicationId);
         toBill.setUserId(toUser.getId());
         toBill.setType(isFromSystem ? 10 : 31);
         toBill.setWalletType(20);

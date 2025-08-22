@@ -26,4 +26,6 @@ public class TicketVO extends TicketDomain {
     private List<TicketValidityVO> ticketValidity;
 
     private String system;
+
+    private List<TicketUserVO> ticketUsers;
 }

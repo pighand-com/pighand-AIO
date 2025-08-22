@@ -5,10 +5,9 @@ import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.core.FlexGlobalConfig;
 import com.mybatisflex.core.audit.AuditManager;
 import com.mybatisflex.core.keygen.KeyGenerators;
-import com.pighand.aio.common.base.ApplicationIdAware;
+import com.pighand.aio.common.dataPermission.DialectRegister;
 import com.pighand.aio.common.enums.CacheConfigEnum;
 import com.pighand.aio.common.interceptor.AuthorizationInterceptor;
-import com.pighand.aio.common.listener.InsertListener;
 import com.pighand.framework.spring.PighandFrameworkConfig;
 import com.pighand.framework.spring.api.jacksonSerializer.JacksonSerializer;
 import com.pighand.framework.spring.api.springdoc.analysis.SpringDocParameter;
@@ -204,17 +203,18 @@ public class Application {
     @Configuration
     public class MyBatisFlexConfiguration {
 
-        public MyBatisFlexConfiguration() {
+        public MyBatisFlexConfiguration() throws Exception {
 
-            InsertListener AIOInsertListener = new InsertListener();
             DBInsertListener PHInsertListener = new DBInsertListener();
             DBUpdateListener PHUpdateListener = new DBUpdateListener();
 
             FlexGlobalConfig config = FlexGlobalConfig.getDefaultConfig();
 
-            config.registerInsertListener(AIOInsertListener, ApplicationIdAware.class);
             config.registerInsertListener(PHInsertListener, DomainTimeStampAware.class);
             config.registerUpdateListener(PHUpdateListener, DomainTimeStampAware.class);
+
+            // 注册查询权限监听方言
+            new DialectRegister();
         }
     }
 }

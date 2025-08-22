@@ -1,7 +1,7 @@
 package com.pighand.aio.service.ECommerce.payments;
 
 import com.wechat.pay.java.core.Config;
-import com.wechat.pay.java.core.RSAAutoCertificateConfig;
+import com.wechat.pay.java.core.RSAPublicKeyConfig;
 import com.wechat.pay.java.service.payments.jsapi.JsapiService;
 import com.wechat.pay.java.service.payments.jsapi.model.Amount;
 import com.wechat.pay.java.service.payments.jsapi.model.Payer;
@@ -25,9 +25,9 @@ public class Wechat {
     @Value("${pay.notify-url}")
     private String notifyUrl;
 
-    public void refund(String merchantId, String privateKeyPath, String merchantSerialNumber, String apiV3Key,
-        Long total, Long refund, String orderTradeSn, String refundSn) {
-        Config config = getConfig(merchantId, privateKeyPath, merchantSerialNumber, apiV3Key);
+    public void refund(String merchantId, String certificatePath, String certificateSerial, String publicKeyPath,
+        String publicKeyId, String apiV3Key, Long total, Long refund, String orderTradeSn, String refundSn) {
+        Config config = getConfig(merchantId, certificatePath, certificateSerial, publicKeyPath, publicKeyId, apiV3Key);
 
         //构造申请退款对象
         RefundService service = new RefundService.Builder().config(config).build();
@@ -49,17 +49,20 @@ public class Wechat {
         service.create(request);
     }
 
-    public Config getConfig(String merchantId, String privateKeyPath, String merchantSerialNumber, String apiV3Key) {
-        return new RSAAutoCertificateConfig.Builder().merchantId(merchantId).privateKeyFromPath(privateKeyPath)
-            .merchantSerialNumber(merchantSerialNumber).apiV3Key(apiV3Key).build();
+    public Config getConfig(String merchantId, String certificatePath, String certificateSerial, String publicKeyPath,
+        String publicKeyId, String apiV3Key) {
+        return new RSAPublicKeyConfig.Builder().merchantId(merchantId).privateKeyFromPath(certificatePath)
+            .merchantSerialNumber(certificateSerial).publicKeyFromPath(publicKeyPath).publicKeyId(publicKeyId)
+            .apiV3Key(apiV3Key).build();
     }
 
     /**
      * 支付
      */
-    public String pay(String appid, String merchantId, String privateKeyPath, String merchantSerialNumber,
-        String apiV3Key, String openid, String goodsName, String orderSn, Integer total) {
-        Config config = getConfig(merchantId, privateKeyPath, merchantSerialNumber, apiV3Key);
+    public String pay(String appid, String merchantId, String certificatePath, String certificateSerial,
+        String publicKeyPath, String publicKeyId, String apiV3Key, String openid, String goodsName, String orderSn,
+        Integer total) {
+        Config config = getConfig(merchantId, certificatePath, certificateSerial, publicKeyPath, publicKeyId, apiV3Key);
 
         JsapiService service = new JsapiService.Builder().config(config).build();
 

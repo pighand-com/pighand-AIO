@@ -1,6 +1,5 @@
 package com.pighand.aio.controller.dashboard.CMS;
 
-import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.domain.CMS.BannerDomain;
 import com.pighand.aio.service.CMS.BannerService;
 import com.pighand.aio.vo.CMS.BannerVO;
@@ -28,10 +27,6 @@ public class BannerController extends BaseController<BannerService> {
      */
     @Post(docSummary = "创建", fieldGroup = "cmsBannerCreate")
     public Result<BannerVO> create(@Validated({ValidationGroup.Create.class}) @RequestBody BannerVO cmsBannerVO) {
-        Long applicationId = Context.applicationId();
-
-        cmsBannerVO.setApplicationId(applicationId);
-
         cmsBannerVO = super.service.create(cmsBannerVO);
 
         return new Result(cmsBannerVO);

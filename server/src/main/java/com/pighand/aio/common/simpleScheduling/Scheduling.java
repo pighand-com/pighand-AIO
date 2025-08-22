@@ -49,7 +49,7 @@ public class Scheduling implements SchedulingConfigurer {
         switch (functionName) {
             // 创建新的场次
             case "newSession":
-                sessionService.create(1L);
+                sessionService.create();
                 break;
             // 执行IoT设备任务
             case "runDeviceTask":

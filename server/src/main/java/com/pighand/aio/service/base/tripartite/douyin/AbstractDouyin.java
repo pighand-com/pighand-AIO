@@ -80,7 +80,6 @@ public abstract class AbstractDouyin<T extends DouyinResponse> extends AbstractT
         UserStatusEnum newUserStatus) {
         UserWechatVO userWechatVO = new UserWechatVO();
         if (userPlatformInfo.getDbId() == null) {
-            userWechatVO.setApplicationId(applicationId);
             userWechatVO.setUserId(userPlatformInfo.getUserId());
             userWechatVO.setOpenid(analysisInfo.getOpenid());
             userWechatVO.setUnionid(analysisInfo.getUnionid());

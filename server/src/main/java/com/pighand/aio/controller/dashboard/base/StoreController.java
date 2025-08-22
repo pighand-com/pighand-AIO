@@ -1,5 +1,6 @@
 package com.pighand.aio.controller.dashboard.base;
 
+import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.common.interfaces.ApplicationId;
 import com.pighand.aio.common.interfaces.Authorization;
 import com.pighand.aio.domain.base.StoreDomain;
@@ -10,6 +11,7 @@ import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.base.BaseController;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.response.Result;
+import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,6 +54,11 @@ public class StoreController extends BaseController<StoreService> {
      */
     @Get(docSummary = "分页或列表", fieldGroup = "baseStoreQuery")
     public Result<PageOrList<StoreVO>> query(StoreVO baseStoreVO) {
+        Long storeId = Context.storeId();
+        if (VerifyUtils.isNotEmpty(storeId)) {
+            baseStoreVO.setId(storeId);
+        }
+
         PageOrList<StoreVO> result = super.service.query(baseStoreVO);
 
         return new Result(result);

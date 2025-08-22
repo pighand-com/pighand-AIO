@@ -26,9 +26,13 @@ public class AuthorizationInterceptor extends RequestInterceptor {
 
     public static final String HEADER_APPLICATION_ID = "X-Application-Id";
 
+    public static final String HEADER_STORE_ID = "X-Store-Id";
+
     private static final FastThreadLocal<LoginUser> authorizationInfoLocal = new FastThreadLocal<>();
 
     private static final FastThreadLocal<Long> applicationIdLocal = new FastThreadLocal<>();
+
+    private static final FastThreadLocal<Long> storeIdLocal = new FastThreadLocal<>();
 
     @Resource
     private AuthorizationService authorizationService;
@@ -39,6 +43,10 @@ public class AuthorizationInterceptor extends RequestInterceptor {
 
     public static Long applicationIdLocal() {
         return applicationIdLocal.get();
+    }
+
+    public static Long storeIdLocal() {
+        return storeIdLocal.get();
     }
 
     @Override
@@ -66,6 +74,7 @@ public class AuthorizationInterceptor extends RequestInterceptor {
         // 先清空，防止线程池复用，导致使用上一个线程的登录信息
         authorizationInfoLocal.remove();
         applicationIdLocal.remove();
+        storeIdLocal.remove();
 
         // 判断ApplicationId是否必须
         boolean isApplicationRequired = false;
@@ -98,16 +107,35 @@ public class AuthorizationInterceptor extends RequestInterceptor {
             return false;
         }
 
+        // 解析StoreId
+        String storeId = request.getHeader(HEADER_STORE_ID);
+        if (VerifyUtils.isNotEmpty(storeId)) {
+            storeIdLocal.set(Long.parseLong(storeId));
+        }
+
         // 解析token
         if (VerifyUtils.isNotEmpty(authorization)) {
             try {
                 LoginUser loginUser = authorizationService.checkToken(authorization);
 
+                Long userApplicationId = loginUser.getAId();
+                Long userStoreId = loginUser.getSId();
+
                 // token所属应用id与请求头不一致，判断为无效token
-                if (isLoginRequired && VerifyUtils.isNotEmpty(applicationId) && VerifyUtils.isNotEmpty(
-                    loginUser.getAId()) && !loginUser.getAId().toString().equals(applicationId)) {
+                if (isLoginRequired && (
+                    (VerifyUtils.isNotEmpty(applicationId) && VerifyUtils.isNotEmpty(userApplicationId)
+                        && !userApplicationId.toString().equals(applicationId)) || (VerifyUtils.isNotEmpty(storeId)
+                        && VerifyUtils.isNotEmpty(userStoreId) && !userStoreId.toString().equals(storeId)))) {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     return false;
+                }
+
+                if (VerifyUtils.isNotEmpty(userApplicationId) && VerifyUtils.isEmpty(applicationId)) {
+                    applicationIdLocal.set(userApplicationId);
+                }
+
+                if (VerifyUtils.isNotEmpty(userStoreId) && VerifyUtils.isEmpty(storeId)) {
+                    storeIdLocal.set(userStoreId);
                 }
 
                 authorizationInfoLocal.set(loginUser);

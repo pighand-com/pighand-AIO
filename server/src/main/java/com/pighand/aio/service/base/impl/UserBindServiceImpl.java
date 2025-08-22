@@ -48,7 +48,6 @@ public class UserBindServiceImpl extends BaseServiceImpl<UserBindMapper, UserBin
      */
     @Override
     public void bind(Long bindUserId) {
-        Long applicationId = Context.applicationId();
         LoginUser loginUser = Context.loginUser();
 
         if (loginUser.getId().equals(bindUserId)) {
@@ -61,7 +60,6 @@ public class UserBindServiceImpl extends BaseServiceImpl<UserBindMapper, UserBin
         }
 
         UserBindDomain userBindDomain = new UserBindDomain();
-        userBindDomain.setApplicationId(applicationId);
         userBindDomain.setUserId(loginUser.getId());
         userBindDomain.setUpperId(bindUserId);
         userBindDomain.setCreatedAt(new Date());

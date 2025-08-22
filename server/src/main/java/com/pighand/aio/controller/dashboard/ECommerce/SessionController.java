@@ -34,7 +34,7 @@ public class SessionController extends BaseController<SessionService> {
      */
     @Post(docSummary = "创建", fieldGroup = "sessionCreate")
     public Result<SessionVO> create() {
-        SessionVO sessionVO = super.service.create(null);
+        SessionVO sessionVO = super.service.create();
 
         return new Result(sessionVO);
     }

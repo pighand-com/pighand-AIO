@@ -18,6 +18,15 @@ public class Context {
     }
 
     /**
+     * 获取店铺id
+     *
+     * @return
+     */
+    public static Long storeId() {
+        return AuthorizationInterceptor.storeIdLocal();
+    }
+
+    /**
      * 获取登录用户
      *
      * @return null 未登录

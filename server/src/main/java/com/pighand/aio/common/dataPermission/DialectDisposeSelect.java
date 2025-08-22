@@ -11,9 +11,9 @@ import com.pighand.aio.common.dataPermission.ignore.RunWithIgnore;
 import java.util.List;
 
 /**
- * 查询数据权限处理
+ * select 数据权限处理
  */
-public class DialectDisposeQuery extends CommonsDialectImpl {
+public class DialectDisposeSelect extends CommonsDialectImpl {
     /**
      * 准备权限验证
      * <p>
@@ -43,7 +43,7 @@ public class DialectDisposeQuery extends CommonsDialectImpl {
 
                 // 为每个数据权限字段添加过滤条件
                 for (String permissionField : permissionFields) {
-                    Object fieldValue = DataPermissionFields.getFiledValue(permissionField);
+                    Object fieldValue = DataPermissionFields.getFiledDefaultValue(permissionField);
 
                     if (fieldValue == null) {
                         continue;

@@ -245,7 +245,6 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
     public PageOrList<UserVO> query(UserVO userVO) {
         userVO.setPageType(PageType.PAGE);
         userVO.setJoinTables(USER_EXTENSION.getTableName(), "bind_count");
-        userVO.setApplicationId(Context.applicationId());
 
         QueryWrapper queryWrapper = QueryWrapper.create()
             // like

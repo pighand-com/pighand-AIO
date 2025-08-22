@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
-import com.pighand.aio.common.base.ApplicationIdAware;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecordTs;
@@ -25,7 +24,7 @@ import java.io.Serializable;
 @Table(value = "base_tenant")
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class TenantDomain extends BaseDomainRecordTs<TenantDomain> implements Serializable, ApplicationIdAware {
+public class TenantDomain extends BaseDomainRecordTs<TenantDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id

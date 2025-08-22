@@ -35,6 +35,8 @@ public class OrderDomain extends BaseDomainRecord<OrderDomain> implements Serial
     @RequestFieldException("orderUpdate")
     private Long id;
 
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long applicationId;
 
     @Schema(description = "商户id")

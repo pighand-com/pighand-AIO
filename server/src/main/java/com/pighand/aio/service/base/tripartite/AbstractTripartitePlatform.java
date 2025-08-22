@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+import static com.pighand.aio.common.dataPermission.ignore.RunWithIgnore.IgnoreDataPermission;
+
 /**
  * 三方平台抽象类
  *
@@ -164,7 +166,6 @@ public abstract class AbstractTripartitePlatform<T> {
         UserStatusEnum newUserStatus = null;
         if (!isUserExist) {
             UserVO userVO = new UserVO();
-            userVO.setApplicationId(applicationId);
             userVO.setInitialSourcePlatform(this.userSourcePlatform);
 
             if (roleId == null) {
@@ -217,8 +218,7 @@ public abstract class AbstractTripartitePlatform<T> {
 
             userPlatformInfo.setUserId(userInfo.getId());
         } else {
-            userInfo = userService.find(userPlatformInfo.getUserId());
-
+            userInfo = IgnoreDataPermission(() -> userService.find(userPlatformInfo.getUserId()));
         }
 
         // 3. 同步用户平台数据
@@ -232,7 +232,6 @@ public abstract class AbstractTripartitePlatform<T> {
         if (userExtensionDomain == null) {
             userExtensionDomain = new UserExtensionDomain();
             userExtensionDomain.setId(userInfo.getId());
-            userExtensionDomain.setApplicationId(applicationId);
             userExtensionDomain.setNickname(platFormUserInfo.getNickname());
             userExtensionDomain.setProfile(platFormUserInfo.getProfile());
             userExtensionDomain.setGender(platFormUserInfo.getGender());

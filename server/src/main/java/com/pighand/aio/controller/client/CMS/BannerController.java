@@ -1,6 +1,5 @@
 package com.pighand.aio.controller.client.CMS;
 
-import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.service.CMS.BannerService;
 import com.pighand.aio.vo.CMS.BannerVO;
 import com.pighand.framework.spring.api.annotation.Get;
@@ -20,10 +19,7 @@ public class BannerController extends BaseController<BannerService> {
 
     @Get(docSummary = "列表", fieldGroup = "cmsBannerQuery")
     public Result<PageOrList<BannerVO>> query() {
-        Long applicationId = Context.applicationId();
-
         BannerVO cmsBannerVO = new BannerVO();
-        cmsBannerVO.setApplicationId(applicationId);
         cmsBannerVO.setStatus(10);
 
         PageOrList<BannerVO> result = super.service.query(cmsBannerVO);

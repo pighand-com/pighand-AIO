@@ -55,12 +55,11 @@ public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, SessionDo
     /**
      * 创建
      *
-     * @param ApplicationId 项目id，如果为null，则使用登录用户项目id
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public SessionVO create(Long ApplicationId) {
+    public SessionVO create() {
         Date now = new Date();
 
         // 最后有效场次
@@ -86,8 +85,6 @@ public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, SessionDo
         Date endTime = calendar.getTime();
 
         SessionVO sessionVO = new SessionVO();
-        sessionVO.setApplicationId(ApplicationId == null ? Context.applicationId() : ApplicationId);
-        sessionVO.setStoreId(1L);
         sessionVO.setSessionTemplateId(1L);
         sessionVO.setBeginTime(beginTime);
         sessionVO.setEndTime(endTime);

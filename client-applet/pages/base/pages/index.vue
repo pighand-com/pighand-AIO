@@ -179,7 +179,7 @@
 import { ref, computed } from 'vue'
 import { onLoad, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 import { banner as bannerAPI, theme as themeAPI, ticket as ticketAPI, store as storeAPI } from '@/api'
-import { setFromSalesId, getStoreId, setStoreId } from '@/common/storage'
+import { setFromSalesId, getStore, setStore } from '@/common/storage'
 import { createShareInfo } from '@/common/share'
 import Decimal from 'decimal.js'
 
@@ -189,7 +189,7 @@ const ticketList = ref([])
 const activityList = ref([])
 const queuePopup = ref(null)
 const storeList = ref([])
-const currentStore = ref(getStoreId())
+const currentStore = ref(getStore())
 const showStoreSelector = ref(false)
 
 // 显示的门票列表（从第3个开始显示2条）
@@ -275,7 +275,7 @@ const getStoreList = async () => {
 			// 如果没有选中的门店，默认选择第一个
 			if (!currentStore.value && storeList.value.length > 0) {
 				currentStore.value = storeList.value[0]
-				setStoreId(currentStore.value.id)
+				setStore(currentStore.value)
 			}
 		}
 	} catch (error) {
@@ -286,7 +286,7 @@ const getStoreList = async () => {
 // 选择门店
 const selectStore = (store) => {
 	currentStore.value = store
-	setStoreId(store.id)
+	setStore(store)
 	showStoreSelector.value = false
 	// 重新加载其他数据
 	loadPageData()
@@ -396,17 +396,17 @@ onLoad(async (options) => {
 		setFromSalesId(sales)
 	}
 	
-	// 检查是否已有存储的门店ID
-	const storedStoreId = getStoreId()
+	// 检查是否已有存储的门店对象
+	const storedStore = getStore()
 	
 	// 首先获取门店列表
 	await getStoreList()
 	
-	// 如果有存储的门店ID，尝试设置为当前门店
-	if (storedStoreId && storeList.value.length > 0) {
-		const storedStore = storeList.value.find(store => store.id === storedStoreId)
-		if (storedStore) {
-			currentStore.value = storedStore
+	// 如果有存储的门店对象，尝试设置为当前门店
+	if (storedStore && storeList.value.length > 0) {
+		const matchedStore = storeList.value.find(store => store.id === storedStore.id)
+		if (matchedStore) {
+			currentStore.value = matchedStore
 		}
 	}
 	

@@ -1,16 +1,26 @@
 package com.pighand.aio.service.MKT.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mybatisflex.core.query.QueryWrapper;
+import com.pighand.aio.common.enums.PlatformEnum;
+import com.pighand.aio.common.sdk.wechat.WechatSDK;
 import com.pighand.aio.domain.MKT.LotteryCommonConfigDomain;
 import com.pighand.aio.domain.MKT.LotteryCommonUserDomain;
 import com.pighand.aio.domain.MKT.LotteryParticipatePrizeDomain;
+import com.pighand.aio.domain.base.ApplicationPlatformKeyDomain;
+import com.pighand.aio.domain.base.UserWechatDomain;
 import com.pighand.aio.mapper.MKT.LotteryCommonConfigMapper;
 import com.pighand.aio.service.MKT.LotteryCommonUserService;
 import com.pighand.aio.service.MKT.LotteryService;
 import com.pighand.aio.service.MKT.lotteryType.LotteryTypeService;
+import com.pighand.aio.service.base.ApplicationPlatformKeyService;
+import com.pighand.aio.service.base.UserWechatService;
 import com.pighand.aio.service.common.UploadService;
+import com.pighand.aio.service.msg.NotifyConfigWechatAppletService;
+import com.pighand.aio.vo.MKT.LotteryCommonUserVO;
 import com.pighand.aio.vo.MKT.LotteryParticipateVO;
 import com.pighand.aio.vo.MKT.LotteryVO;
+import com.pighand.aio.vo.msg.NotifyConfigWechatAppletVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;
@@ -18,13 +28,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.pighand.aio.domain.MKT.table.LotteryCommonConfigTableDef.LOTTERY_COMMON_CONFIG;
 import static com.pighand.aio.domain.MKT.table.LotteryCommonUserTableDef.LOTTERY_COMMON_USER;
+import static com.pighand.aio.domain.base.table.UserWechatTableDef.USER_WECHAT;
+import static com.pighand.aio.domain.msg.table.NotifyConfigWechatAppletTableDef.NOTIFY_CONFIG_WECHAT_APPLET;
 
 /**
  * 营销 - 抽奖配置
@@ -36,6 +47,12 @@ import static com.pighand.aio.domain.MKT.table.LotteryCommonUserTableDef.LOTTERY
 @RequiredArgsConstructor
 public class LotteryServiceImpl extends BaseServiceImpl<LotteryCommonConfigMapper, LotteryCommonConfigDomain>
     implements LotteryService {
+
+    private final UserWechatService userWechatService;
+
+    private final ApplicationPlatformKeyService projectPlatformKeyService;
+
+    private final NotifyConfigWechatAppletService notifyConfigWechatAppletService;
 
     private final UploadService uploadService;
 
@@ -71,6 +88,9 @@ public class LotteryServiceImpl extends BaseServiceImpl<LotteryCommonConfigMappe
         typeService.createPrizes(lotteryVO.getId(), prizes);
 
         uploadService.updateFileOfficial(lotteryVO.getCoverUrl());
+
+        // 设置同步信息
+        notifyConfigWechatAppletService.syncByTemplate(100, lotteryVO.getId());
 
         return lotteryVO;
     }
@@ -213,6 +233,39 @@ public class LotteryServiceImpl extends BaseServiceImpl<LotteryCommonConfigMappe
     }
 
     /**
+     * 抽奖所有活动
+     */
+    @Override
+    public void drawAll() {
+        // TODO: 解决时间问题，库和代码必须时区相同，要不有问题
+        List<LotteryCommonConfigDomain> configs =
+            this.queryChain().select(LOTTERY_COMMON_CONFIG.ID, LOTTERY_COMMON_CONFIG.LOTTERY_TYPE)
+                .where(LOTTERY_COMMON_CONFIG.DRAW_STATUS.eq(10))
+                .and(LOTTERY_COMMON_CONFIG.DRAW_TIME.le(new Date(new Date().getTime() + 8 * 60 * 60 * 1000))).list();
+
+        configs.forEach(config -> draw(config.getId(), config.getLotteryType()));
+    }
+
+    /**
+     * 抽奖单个活动
+     *
+     * @param id
+     */
+    @Override
+    public void drawById(Long id) {
+        LotteryCommonConfigDomain config = this.queryChain()
+            .select(LOTTERY_COMMON_CONFIG.ID, LOTTERY_COMMON_CONFIG.LOTTERY_TYPE, LOTTERY_COMMON_CONFIG.DRAW_TIME)
+            .where(LOTTERY_COMMON_CONFIG.ID.eq(id)).one();
+
+        if (config == null || config.getDrawStatus() != 10 || (config.getDrawTime() != null && config.getDrawTime()
+            .before(new Date()))) {
+            return;
+        }
+
+        draw(config.getId(), config.getLotteryType());
+    }
+
+    /**
      * TODO: 事物有问题，字方法报错没回滚
      *
      * @param id
@@ -235,32 +288,104 @@ public class LotteryServiceImpl extends BaseServiceImpl<LotteryCommonConfigMappe
     }
 
     @Override
-    public void drawAll() {
+    public void drawNotifyAll() {
         // TODO: 解决时间问题，库和代码必须时区相同，要不有问题
         List<LotteryCommonConfigDomain> configs =
             this.queryChain().select(LOTTERY_COMMON_CONFIG.ID, LOTTERY_COMMON_CONFIG.LOTTERY_TYPE)
-                .where(LOTTERY_COMMON_CONFIG.DRAW_STATUS.eq(10))
-                .and(LOTTERY_COMMON_CONFIG.DRAW_TIME.le(new Date(new Date().getTime() + 8 * 60 * 60 * 1000))).list();
+                .innerJoin(NOTIFY_CONFIG_WECHAT_APPLET)
+                .on(NOTIFY_CONFIG_WECHAT_APPLET.DATA_ID.eq(LOTTERY_COMMON_CONFIG.ID)
+                    .and(NOTIFY_CONFIG_WECHAT_APPLET.DATA_TYPE.eq(100))
+                    .and(NOTIFY_CONFIG_WECHAT_APPLET.NOTIFIED.eq(false)))
+                .where(LOTTERY_COMMON_CONFIG.DRAW_STATUS.eq(30))
+                .and(LOTTERY_COMMON_CONFIG.DRAW_TIME.le(new Date(new Date().getTime() + 8 * 60 * 60 * 1000)))
+                .and(LOTTERY_COMMON_CONFIG.END_TIME.le(new Date(new Date().getTime() + 8 * 60 * 60 * 1000))).list();
 
-        configs.forEach(config -> draw(config.getId(), config.getLotteryType()));
+        configs.forEach(config -> drawNotify(config.getId()));
     }
 
     /**
-     * 抽奖
+     * 开奖通知
+     * TODO: 优化逻辑，字段改为替换方式，不是写死
      *
-     * @param id
+     * @param lotteryId
      */
-    @Override
-    public void drawById(Long id) {
-        LotteryCommonConfigDomain config = this.queryChain()
-            .select(LOTTERY_COMMON_CONFIG.ID, LOTTERY_COMMON_CONFIG.LOTTERY_TYPE, LOTTERY_COMMON_CONFIG.DRAW_TIME)
-            .where(LOTTERY_COMMON_CONFIG.ID.eq(id)).one();
+    protected void drawNotify(Long lotteryId) {
+        NotifyConfigWechatAppletVO notifyConfigWechatApplet =
+            notifyConfigWechatAppletService.findByDataId(lotteryId, 100);
 
-        if (config == null || config.getDrawStatus() != 10 || (config.getDrawTime() != null && config.getDrawTime()
-            .before(new Date()))) {
+        if (notifyConfigWechatApplet == null || notifyConfigWechatApplet.getNotified()) {
             return;
         }
 
-        draw(config.getId(), config.getLotteryType());
+        // TODO: notified 传 true无效，只能是1
+        notifyConfigWechatAppletService.updateChain().set(NOTIFY_CONFIG_WECHAT_APPLET.NOTIFIED, 1)
+            .where(NOTIFY_CONFIG_WECHAT_APPLET.ID.eq(notifyConfigWechatApplet.getId())).update();
+
+        ApplicationPlatformKeyDomain key = projectPlatformKeyService.findByPlatform(PlatformEnum.WECHAT_APPLET);
+        String accessToken = WechatSDK.MINI_APPLET.accessToken(key.getAppid(), key.getSecret(), "client_credential");
+
+        String token = WechatSDK.utils.extractAccessToken(accessToken);
+
+        HashMap params = new HashMap<>(5);
+        params.put("template_id", notifyConfigWechatApplet.getTemplateId());
+        params.put("miniprogram_state", WechatSDK.utils.getAppletEnv());
+
+        String url = notifyConfigWechatApplet.getUrl();
+        if (url != null) {
+            url = url.replace("{{id}}", lotteryId.toString());
+            params.put("page", url);
+        }
+
+        // 查询抽奖详情
+        LotteryCommonConfigDomain lottery = super.mapper.find(lotteryId);
+
+        // 查询用户中奖信息
+        LotteryCommonUserVO lotteryCommonUserVO = new LotteryCommonUserVO();
+        lotteryCommonUserVO.setLotteryId(lotteryId);
+        PageOrList<LotteryCommonUserVO> lotteryUsers = lotteryCommonUserService.query(lotteryCommonUserVO);
+        String prizeName = "很遗憾您本次未中奖";
+
+        // 查询奖品信息
+        LotteryTypeService typeService = this.getLotteryTypeService(lottery.getLotteryType());
+        List<Object> prizes = typeService.queryPrizes(lotteryId);
+        Map<Long, Object> prizesMap = new HashMap<>();
+        for (Object prize : prizes) {
+            prizesMap.put(typeService.getPrizeId(prize), prize);
+        }
+
+        for (LotteryCommonUserVO record : lotteryUsers.getRecords()) {
+            if (record.getPrizeId() == null) {
+                continue;
+            }
+
+            Object prize = prizesMap.get(record.getPrizeId());
+            if (prize == null) {
+                continue;
+            }
+
+            if (prize instanceof LotteryParticipatePrizeDomain) {
+                prizeName = "恭喜您获得" + ((LotteryParticipatePrizeDomain)prize).getName();
+            }
+
+            // 组装data格式
+            HashMap<String, Object> data = new HashMap<>();
+            data.put("thing10", Map.of("value", lottery.getTitle()));
+            data.put("thing4", Map.of("value", prizeName));
+            data.put("thing1", Map.of("value", "鲁小班提示您奖品即将过期请尽快兑换"));
+
+            params.put("data", data);
+
+            UserWechatDomain user =
+                userWechatService.queryChain().where(USER_WECHAT.USER_ID.eq(record.getUserId())).one();
+            params.put("touser", user.getOpenid());
+
+            // TODO: 不计算body服务器上报412
+            HashMap headers = new HashMap<>(1);
+            String body = new ObjectMapper().valueToTree(params).toString();
+            headers.put("Content-Length", String.valueOf(body.getBytes(StandardCharsets.UTF_8).length));
+
+            WechatSDK.MINI_APPLET.sendTemplateMessage(token, params, headers);
+        }
+
     }
 }

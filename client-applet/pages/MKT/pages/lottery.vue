@@ -88,6 +88,14 @@
 			</view>
 		</view>
 
+		<!-- 微信客服 -->
+		<view class="wechat-service-section" v-if="serviceHotline">
+			<view class="wechat-service-content" @click="copyServiceHotline">
+				<text class="wechat-service-title">微信客服</text>
+				<text class="wechat-service-value">{{ serviceHotline }}</text>
+			</view>
+		</view>
+
 		<!-- 参与按钮 -->
 		<view class="participate-section">
 			<!-- 根据活动状态和登录状态设置用户检查 -->
@@ -135,7 +143,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { onLoad, onHide, onShow, onShareAppMessage, onShareTimeline } from '@dcloudio/uni-app'
 import { lottery as lotteryAPI } from '@/api'
-import { getToken } from '@/common/storage'
+import { getToken, getStore } from '@/common/storage'
 import { createShareInfo } from '@/common/share'
 
 const lotteryId = ref('')
@@ -150,6 +158,12 @@ const countdown = ref({
 	minutes: 0,
 	seconds: 0,
 	status: ''
+})
+
+// 获取微信客服号码
+const serviceHotline = computed(() => {
+	const store = getStore()
+	return store?.serviceHotline || ''
 })
 
 // 显示的参与者列表（最多6个）
@@ -348,7 +362,7 @@ const getDrawTimeStatusText = () => {
 		const matchedPrize = prizes.find(prize => prize.id === userPrizeId)
 		
 		// 如果找到匹配的奖品，返回奖品名称，否则返回未中奖
-		return matchedPrize ? matchedPrize.name : '未中奖'
+		return matchedPrize ? '恭喜中奖：' + matchedPrize.name : '未中奖'
 	}
 
 	return '已开奖'
@@ -420,6 +434,18 @@ const handleParticipate = async () => {
 			title: '参与成功',
 			icon: 'success'
 		})
+		
+		// 提示订阅授权
+		uni.requestSubscribeMessage({
+			tmplIds: ['3hHWhoh6tdQEHFF5QLTrGcyZZum5818Ji9rB31eXH-w'],
+			success: (res) => {
+				console.log('订阅授权成功:', res)
+			},
+			fail: (err) => {
+				console.log('订阅授权失败:', err)
+			}
+		})
+		
 		// 重新获取详情和参与人员列表
 		await getLotteryDetail()
 		await getParticipantsList()
@@ -438,6 +464,29 @@ const handleParticipate = async () => {
 const goToParticipantsList = () => {
 	uni.navigateTo({
 		url: `/pages/MKT/pages/lottery-participants?id=${lotteryId.value}`
+	})
+}
+
+// 复制微信客服号码
+const copyServiceHotline = () => {
+	if (!serviceHotline.value) {
+		return
+	}
+	
+	uni.setClipboardData({
+		data: serviceHotline.value,
+		success: () => {
+			uni.showToast({
+				title: '已复制到剪贴板',
+				icon: 'success'
+			})
+		},
+		fail: () => {
+			uni.showToast({
+				title: '复制失败',
+				icon: 'none'
+			})
+		}
 	})
 }
 
@@ -675,6 +724,37 @@ onShareTimeline(() => {
 	margin: 0 10rpx;
 }
 
+/* 微信客服区域 */
+.wechat-service-section {
+	position: relative;
+	z-index: 3;
+}
+
+.wechat-service-content {
+	display: flex;
+	align-items: center;
+	justify-content: start;
+	padding: 0 30rpx 30rpx;
+	cursor: pointer;
+	transition: opacity 0.3s ease;
+}
+
+.wechat-service-content:active {
+	opacity: 0.7;
+}
+
+.wechat-service-title {
+	font-size: 28rpx;
+	color: #666;
+	padding-right: 16rpx;
+}
+
+.wechat-service-value {
+	font-size: 28rpx;
+	color: #ff6b00;
+	font-weight: 500;
+}
+
 /* 开奖时间区域 */
 .draw-time-section {
 	margin-top: 32rpx;
@@ -748,7 +828,7 @@ onShareTimeline(() => {
 
 /* 参与按钮区域 */
 .participate-section {
-	padding: 40rpx 30rpx;
+	padding: 0 30rpx 40rpx;
 	position: relative;
 	z-index: 3;
 }

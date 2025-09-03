@@ -1,5 +1,7 @@
+declare const uni: any;
+declare const __wxConfig: any;
 import constant from './constant';
-import { getToken, getStoreId, clearAll } from './storage';
+import { getToken, getStore, clearAll } from './storage';
 
 interface RequestConfig {
     isDialog?: boolean;
@@ -57,7 +59,8 @@ const disposeResponse = (response: any, isDialog = true, blob = false) => {
 const request = async (method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: string, data?: any, config?: RequestConfig) => {
     url = getUrl(url);
     
-    const storeId = getStoreId();
+    const store = getStore();
+    const storeId = store ? store.id : null;
     const requestConfig: any = {
         url,
         method,

@@ -58,6 +58,7 @@ public class Scheduling implements SchedulingConfigurer {
             // 开奖
             case "draw":
                 lotteryService.drawAll();
+                lotteryService.drawNotifyAll();
                 break;
             default:
                 break;

@@ -63,4 +63,23 @@ public interface MiniApplet {
     byte[] getAppletQRCode(@RequestParam String access_token, @RequestBody Map<String, String> params,
         @RequestHeader Map<String, String> headers);
 
+    /**
+     * 发送模板消息
+     * 本接口用于向用户发送模板消息
+     *
+     * @param access_token 接口调用凭证
+     * @param params       请求参数，包含以下字段：
+     *                     - touser: 接收者（用户）的 openid
+     *                     - template_id: 所需下发的订阅模板id
+     *                     - url: 模板跳转链接（可选）
+     *                     - miniprogram: 跳转小程序时填写（可选）
+     *                     - data: 模板内容，需根据模板给定的格式给出
+     *                     - client_msg_id: 防重入id（可选）
+     * @return 发送结果，包含msgid、errcode、errmsg
+     * @see <a href="https://developers.weixin.qq.com/doc/service/api/notify/notify/api_sendnewsubscribemsg.html">发送模板消息</a>
+     */
+    @PostExchange("cgi-bin/message/subscribe/send")
+    String sendTemplateMessage(@RequestParam String access_token, @RequestBody Map<String, Object> params,
+        @RequestHeader Map<String, String> headers);
+
 }

@@ -43,4 +43,6 @@ public class StoreDomain extends BaseDomainRecordTs<StoreDomain> implements Seri
     private String name;
 
     private String introduce;
+
+    private String serviceHotline;
 }

@@ -54,4 +54,6 @@ public interface LotteryService extends BaseService<LotteryCommonConfigDomain> {
     void drawAll();
 
     void drawById(Long id);
+
+    void drawNotifyAll();
 }

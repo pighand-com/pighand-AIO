@@ -52,17 +52,18 @@ const clearFromSalesId = () => {
     uni.$emit('storage-changed');
 };
 
-const getStoreId = () => {
-    return uni.getStorageSync(constant.local_storage_store_id);
+const getStore = () => {
+    const storeData = uni.getStorageSync(constant.local_storage_store_info);
+    return storeData ? JSON.parse(storeData) : null;
 };
 
-const setStoreId = (storeId: string) => {
-    uni.setStorageSync(constant.local_storage_store_id, storeId);
+const setStore = (store: any) => {
+    uni.setStorageSync(constant.local_storage_store_info, JSON.stringify(store));
     uni.$emit('storage-changed');
 };
 
-const clearStoreId = () => {
-    uni.removeStorageSync(constant.local_storage_store_id);
+const clearStore = () => {
+    uni.removeStorageSync(constant.local_storage_store_info);
     uni.$emit('storage-changed');
 };
 
@@ -72,7 +73,7 @@ const clearAll = () => {
     clearApplicationInfo();
     clearSalespersonId();
     clearFromSalesId();
-    clearStoreId();
+    clearStore();
     uni.$emit('storage-changed');
 };
 
@@ -123,7 +124,7 @@ const setBatchStorage = (data: {
     };
     salespersonId?: string;
     fromSalesId?: string;
-    storeId?: string;
+    store?: any;
 }) => {
     if (data.token !== undefined) {
         uni.setStorageSync(constant.local_storage_token, data.token);
@@ -140,8 +141,8 @@ const setBatchStorage = (data: {
     if (data.fromSalesId !== undefined) {
         uni.setStorageSync(constant.local_storage_from_sales_id, data.fromSalesId);
     }
-    if (data.storeId !== undefined) {
-        uni.setStorageSync(constant.local_storage_store_id, data.storeId);
+    if (data.store !== undefined) {
+        uni.setStorageSync(constant.local_storage_store_info, JSON.stringify(data.store));
     }
     // 统一触发一次storage-changed事件
     uni.$emit('storage-changed');
@@ -161,9 +162,9 @@ export {
     getFromSalesId,
     setFromSalesId,
     clearFromSalesId,
-    getStoreId,
-    setStoreId,
-    clearStoreId,
+    getStore,
+    setStore,
+    clearStore,
     clearAll,
     setBatchStorage
 };

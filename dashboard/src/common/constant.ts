@@ -1,7 +1,7 @@
 export default {
     api: {
         development: 'http://127.0.0.1:3091/dashboard/',
-        production: 'http://127.0.0.1:3091/dashboard/'
+        production: 'https://lubanqihuanleyuan.com/api/dashboard/'
     },
     local_storage_token: 'token',
     local_storage_user_info: 'user_info',

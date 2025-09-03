@@ -1,8 +1,8 @@
 export default {
     api: {
-        release: 'http://127.0.0.1:3091/',
-        trial: 'http://127.0.0.1:3091/',
-        develop: 'http://127.0.0.1:3091/'
+        release: 'https://lubanqihuanleyuan.com/api/client/',
+        trial: 'https://lubanqihuanleyuan.com/api/client/',
+        develop: 'http://127.0.0.1:3091/client/',
     },
 	
 	APPLICATION_ID: '1',
@@ -13,4 +13,10 @@ export default {
     local_storage_store_info: 'store_info',
     local_storage_salesperson_id: 'salesperson_id',
     local_storage_from_sales_id: 'from_sales_id',
+    
+    // 分享配置
+    share: {
+        title: '游亿娱乐',
+        imageUrl: 'https://pro-1361694157.cos.ap-chengdu.myqcloud.com/assets/4_1755855010832_0_671.jpeg'
+    },
 };

@@ -1,4 +1,4 @@
-# PigHand-AIO 项目架构
+# PigHand-AIO 项目架构与开发规范
 
 ## 技术栈
 
@@ -7,6 +7,8 @@
 - **API 文档**：SpringDoc (OpenAPI 3)
 - **数据校验**：Hibernate Validator
 - **工具库**：Lombok, Jackson
+- **日志框架**：SLF4J + Logback
+- **测试框架**：JUnit 5 + Mockito
 
 ## 系统架构
 
@@ -37,7 +39,7 @@
 系统提供了一系列基类，用于简化开发：
 
 - **BaseController**：控制器基类，提供通用的请求处理方法
-- **BaseService/BaseServiceImpl**：服务层基类，提供通用的业务逻辑处理方法
+- **BaseServiceImpl**：服务层基类，提供通用的业务逻辑处理方法和数据库操作能力
 - **BaseMapper**：数据访问层基类，提供通用的数据库操作方法
 - **BaseDomain**：领域模型基类，提供通用的实体属性和方法
 
@@ -57,15 +59,42 @@
 
 系统使用 `Context` 类管理请求上下文，提供了获取当前登录用户、应用 ID 等方法。
 
-## 数据模型设计
+## 开发规范
 
-### 领域模型 (Domain)
+### 功能开发文件清单
 
-领域模型对应数据库表结构，使用 MyBatis-Flex 的注解进行映射。
+创建一个完整功能模块时，通常需要创建以下文件：
 
-### 视图对象 (VO)
+| 文件类型 | 必需性 | 命名规范 | 说明文档 |
+|---------|--------|----------|----------|
+| **Controller** | 必需 | `XxxController` | `.llm_develop/coding/controller.md` |
+| **Service** | 可选* | `XxxService` | `.llm_develop/coding/serviceImpl.md` |
+| **Domain** | 必需 | `XxxDomain` | `.llm_develop/coding/domain.md` |
+| **VO** | 必需 | `XxxVO` | `.llm_develop/coding/vo.md` |
+| **Mapper** | 必需 | `XxxMapper` | `.llm_develop/coding/mapper.md` |
+| **Mapper XML** | 可选 | `XxxMapper.xml` | `.llm_develop/coding/resources-mapper.md` |
 
-视图对象用于接收请求参数和返回响应结果，通常继承自对应的领域模型，并添加额外的属性和校验注解。
+> **注意**：Service 层非必须，如果业务逻辑简单，可以直接在 Controller 中调用 Mapper。但如果需要 Service 层，建议直接创建实现类并命名为 `XxxService`，无需创建接口。
+
+### 开发流程
+
+1. **创建数据库表**
+2. **创建 Domain 实体类** - 对应数据库表结构
+3. **创建 Mapper 接口** - 数据访问层
+4. **创建 VO 类** - 用于接收请求参数和返回结果
+5. **创建 Service 类**（可选）- 业务逻辑处理
+6. **创建 Controller 类** - API 接口层
+7. **编写单元测试**
+
+### 核心规范要点
+
+- **分层职责**：Controller 负责参数校验和结果返回，Service 负责业务逻辑，Mapper 负责数据访问
+- **命名统一**：使用统一的后缀命名（Controller、Service、Domain、VO、Mapper）
+- **继承基类**：Service 继承 `BaseServiceImpl`，Mapper 继承 `BaseMapper`
+- **注解使用**：合理使用 `@Validated`、`@Transactional`、`@Service` 等注解
+- **异常处理**：使用 `ThrowPrompt` 抛出业务异常，全局异常处理器统一处理
+
+详细的编码规范和示例请参考 `.llm_develop/coding/` 目录下的对应文档。
 
 ## 安全设计
 

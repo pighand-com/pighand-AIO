@@ -68,7 +68,7 @@ public class UserController extends BaseController<UserService> {
 
 ## 注意事项
 
-- 控制层继承 `BaseController<T>` 类，泛型参数为对应的 Service 接口
+- 控制层继承 `BaseController<T>` 类，泛型参数为对应的 Service 实现类
 - 使用自定义注解 `@RestController` 替代 Spring 的注解，增加了文档相关属性
 - 使用自定义注解 `@Post`、`@Get`、`@Put`、`@Delete` 替代 Spring 的注解，简化 RESTful API 开发
 - 使用 `@Validated` 注解进行参数校验，配合验证分组使用

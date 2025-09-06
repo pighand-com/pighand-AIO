@@ -49,7 +49,7 @@
 				<user-check :item="['login']">
 					<view class="order-box" @click="goToOrder">
 						<text class="order-text">我的订单</text>
-						<text class="order-arrow">></text>
+						<text class="order-arrow">{{">"}}</text>
 					</view>
 				</user-check>
 			</view>
@@ -59,7 +59,7 @@
 				<user-check :item="['login']">
 					<view class="ticket-box" @click="goToTicket">
 						<text class="ticket-text">我的票务</text>
-						<text class="ticket-arrow">></text>
+						<text class="ticket-arrow">{{">"}}</text>
 					</view>
 				</user-check>
 			</view>
@@ -69,7 +69,7 @@
 				<user-check :item="['login']">
 					<view class="distribution-box" @click="goToDistribution">
 						<text class="distribution-text">我的分销</text>
-						<text class="distribution-arrow">></text>
+						<text class="distribution-arrow">{{">"}}</text>
 					</view>
 				</user-check>
 			</view>
@@ -79,7 +79,7 @@
 				<user-check :item="['login']">
 					<view class="queue-box" @click="goToQueueSettings">
 						<text class="queue-text">排队设置</text>
-						<text class="queue-arrow">></text>
+						<text class="queue-arrow">{{">"}}</text>
 					</view>
 				</user-check>
 			</view>
@@ -89,7 +89,7 @@
 				<user-check :item="['login']">
 					<view class="verification-box" @click="goToVerification">
 						<text class="verification-text">核销</text>
-						<text class="verification-arrow">></text>
+						<text class="verification-arrow">{{">"}}</text>
 					</view>
 				</user-check>
 			</view>

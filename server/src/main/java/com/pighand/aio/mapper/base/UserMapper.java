@@ -46,8 +46,11 @@ public interface UserMapper extends BaseMapper<UserDomain> {
         }
 
         // USER_EXTENSION
+        // TODO: name 无法自动映射，必须重命名
         if (joinTables.contains(USER_EXTENSION.getTableName())) {
-            queryWrapper.leftJoin(USER_EXTENSION).on(USER_EXTENSION.ID.eq(USER.ID));
+            queryWrapper.select(USER.DEFAULT_COLUMNS).select(USER_EXTENSION.DEFAULT_COLUMNS)
+                .select(USER_EXTENSION.NAME.as("base_user_extension$name")).leftJoin(USER_EXTENSION)
+                .on(USER_EXTENSION.ID.eq(USER.ID));
 
             joinTables.remove(USER_EXTENSION.getTableName());
         }

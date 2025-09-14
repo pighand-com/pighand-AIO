@@ -37,7 +37,7 @@ const constant: EnvironmentConfig = {
   // API地址配置
   api: {
     release: 'https://api.production.com/',
-    develop: 'http://127.0.0.1:3091/'
+    develop: 'http://127.0.0.1:9080/'
   },
   
   APPLICATION_ID: '1',

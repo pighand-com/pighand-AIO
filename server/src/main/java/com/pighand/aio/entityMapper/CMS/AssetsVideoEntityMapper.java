@@ -1,7 +1,7 @@
 package com.pighand.aio.entityMapper.CMS;
 
-import com.pighand.user.domain.CmsAssetsVideoDomain;
-import com.pighand.user.domain.CmsAssetsVideoVO;
+import com.pighand.aio.domain.CMS.AssetsVideoDomain;
+import com.pighand.aio.vo.CMS.AssetsVideoVO;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -15,11 +15,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AssetsVideoEntityMapper {
 
-    CmsAssetsVideoVO toVo(CmsAssetsVideoDomain entity);
+    AssetsVideoVO toVo(AssetsVideoDomain entity);
 
-    CmsAssetsVideoDomain toDomain(CmsAssetsVideoVO vo);
+    AssetsVideoDomain toDomain(AssetsVideoVO vo);
 
-    List<CmsAssetsVideoVO> toVoList(List<CmsAssetsVideoDomain> entity);
+    List<AssetsVideoVO> toVoList(List<AssetsVideoDomain> entity);
 
-    List<CmsAssetsVideoDomain> toDomainList(List<CmsAssetsVideoVO> vo);
+    List<AssetsVideoDomain> toDomainList(List<AssetsVideoVO> vo);
 }

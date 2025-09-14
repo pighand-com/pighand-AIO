@@ -1,7 +1,7 @@
 package com.pighand.aio.controller.client.CMS;
 
 import com.pighand.aio.domain.CMS.AssetsFavouriteDomain;
-import com.pighand.aio.service.CmsAssetsFavouriteService;
+import com.pighand.aio.service.CMS.AssetsFavouriteService;
 import com.pighand.aio.vo.CMS.AssetsFavouriteVO;
 import com.pighand.framework.spring.api.annotation.*;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @createDate 2025-09-03 17:16:47
  */
 @RestController(path = "cms/assets/favourite", docName = "CMS - 素材 - 收藏")
-public class AssetsFavouriteController extends BaseController<CmsAssetsFavouriteService> {
+public class AssetsFavouriteController extends BaseController<AssetsFavouriteService> {
 
     /**
      * @param cmsAssetsFavouriteVO

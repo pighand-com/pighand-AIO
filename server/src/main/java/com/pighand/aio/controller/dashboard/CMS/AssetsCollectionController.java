@@ -1,7 +1,7 @@
 package com.pighand.aio.controller.dashboard.CMS;
 
 import com.pighand.aio.domain.CMS.AssetsCollectionDomain;
-import com.pighand.aio.service.CmsAssetsCollectionService;
+import com.pighand.aio.service.CMS.AssetsCollectionService;
 import com.pighand.aio.vo.CMS.AssetsCollectionVO;
 import com.pighand.framework.spring.api.annotation.*;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
@@ -12,14 +12,16 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import static com.pighand.aio.domain.base.table.UserExtensionTableDef.USER_EXTENSION;
+
 /**
  * CMS - 素材 - 专辑
  *
  * @author wangshuli
  * @createDate 2025-09-03 17:16:47
  */
-@RestController(path = "cms/assets/collection", docName = "CMS - 素材 - 专辑")
-public class AssetsCollectionController extends BaseController<CmsAssetsCollectionService> {
+@RestController(path = "dashboard/assets/collection", docName = "CMS - 素材 - 专辑")
+public class AssetsCollectionController extends BaseController<AssetsCollectionService> {
 
     /**
      * @param cmsAssetsCollectionVO
@@ -49,6 +51,8 @@ public class AssetsCollectionController extends BaseController<CmsAssetsCollecti
      */
     @Get(docSummary = "分页或列表", fieldGroup = "cmsAssetsCollectionQuery")
     public Result<PageOrList<AssetsCollectionVO>> query(AssetsCollectionVO cmsAssetsCollectionVO) {
+        cmsAssetsCollectionVO.setJoinTables(USER_EXTENSION.getName());
+
         PageOrList<AssetsCollectionVO> result = super.service.query(cmsAssetsCollectionVO);
 
         return new Result(result);

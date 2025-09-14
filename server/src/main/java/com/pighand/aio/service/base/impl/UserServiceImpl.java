@@ -88,36 +88,16 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
         boolean hasEmail = VerifyUtils.isNotEmpty(email);
 
         QueryChain query = this.queryChain().select(USER.USERNAME, USER.PHONE, USER.EMAIL)
-            .where(USER.APPLICATION_ID.eq(Context.applicationId()));
+            .where(USER.APPLICATION_ID.eq(Context.applicationId()))
+
+            // 构建username、phone、email之间的or条件
+            .and(USER.USERNAME.eq(username, hasUsername).or(USER.PHONE.eq(phone, hasPhone))
+                .or(USER.EMAIL.eq(email, hasEmail)));
 
         if (userId != null) {
             query.and(USER.ID.ne(userId));
         }
 
-        // 构建username、phone、email之间的or条件
-        if (hasUsername || hasPhone || hasEmail) {
-            boolean first = true;
-
-            if (hasUsername) {
-                query.and(USER.USERNAME.eq(username));
-                first = false;
-            }
-            if (hasPhone) {
-                if (first) {
-                    query.and(USER.PHONE.eq(phone));
-                } else {
-                    query.or(USER.PHONE.eq(phone));
-                }
-                first = false;
-            }
-            if (hasEmail) {
-                if (first) {
-                    query.and(USER.EMAIL.eq(email));
-                } else {
-                    query.or(USER.EMAIL.eq(email));
-                }
-            }
-        }
         List<UserDomain> users = query.list();
 
         boolean isUsernameExist = false;
@@ -125,11 +105,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
         boolean isEmailExist = false;
 
         for (UserDomain user : users) {
-            if (hasUsername && user.getUsername().equals(username)) {
+            if (hasUsername && username.equals(user.getUsername())) {
                 isUsernameExist = true;
-            } else if (hasPhone && user.getPhone().equals(phone)) {
+            } else if (hasPhone && phone.equals(user.getPhone())) {
                 isPhoneExist = true;
-            } else if (hasEmail && user.getEmail().equals(email)) {
+            } else if (hasEmail && email.equals(user.getEmail())) {
                 isEmailExist = true;
             }
         }
@@ -206,7 +186,11 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
                 userRoles.add(userRole);
             });
             userRoleService.saveBatch(userRoles);
+        }
 
+        if (userVO.getExtension() != null) {
+            userVO.getExtension().setId(userVO.getId());
+            userExtensionService.create(userVO.getExtension());
         }
 
         return userVO;
@@ -247,6 +231,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
         userVO.setJoinTables(USER_EXTENSION.getTableName(), "bind_count");
 
         QueryWrapper queryWrapper = QueryWrapper.create()
+
             // like
             .and(USER.ID.like(userVO.getId())).and(USER.ID.like(userVO.getId()))
             .and(USER.USERNAME.like(userVO.getUsername()))

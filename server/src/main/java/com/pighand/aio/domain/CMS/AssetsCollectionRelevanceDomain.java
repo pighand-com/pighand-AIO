@@ -35,7 +35,8 @@ public class AssetsCollectionRelevanceDomain extends BaseDomainRecord<AssetsColl
     @RequestFieldException("cmsAssetsCollectionRelevanceUpdate")
     private Long id;
 
-    @NotNull(groups = {ValidationGroup.Create.class})
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     @Schema(description = "专辑(cms_assets_collection)id")
     private Long collectionId;
 
@@ -43,7 +44,8 @@ public class AssetsCollectionRelevanceDomain extends BaseDomainRecord<AssetsColl
     @Schema(description = "素材类型 10图片 20视频 30文档")
     private Integer assetsType;
 
-    @NotNull(groups = {ValidationGroup.Create.class})
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     @Schema(description = "素材id")
     private Long assetsId;
 

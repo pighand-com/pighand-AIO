@@ -2,7 +2,6 @@ package com.pighand.aio.mapper.CMS;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.CMS.AssetsFavouriteDomain;
-import com.pighand.aio.table.CmsAssetsFavouriteTableDef.CMS_ASSETS_FAVOURITE;
 import com.pighand.aio.vo.CMS.AssetsFavouriteVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
@@ -16,6 +15,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.pighand.aio.domain.CMS.table.AssetsFavouriteTableDef.ASSETS_FAVOURITE;
 
 /**
  * CMS - 素材 - 收藏
@@ -86,7 +87,7 @@ public interface AssetsFavouriteMapper extends BaseMapper<AssetsFavouriteDomain>
     default AssetsFavouriteVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(CMS_ASSETS_FAVOURITE.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(ASSETS_FAVOURITE.ID.eq(id));
 
         AssetsFavouriteVO result = this.selectOneByQueryAs(queryWrapper, AssetsFavouriteVO.class);
         this.relationMany(joinTableSet, result);

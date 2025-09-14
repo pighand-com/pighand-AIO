@@ -2,7 +2,6 @@ package com.pighand.aio.mapper.CMS;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.CMS.AssetsCollectionDomain;
-import com.pighand.aio.table.CmsAssetsCollectionTableDef.CMS_ASSETS_COLLECTION;
 import com.pighand.aio.vo.CMS.AssetsCollectionVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
@@ -16,6 +15,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.pighand.aio.domain.CMS.table.AssetsCollectionTableDef.ASSETS_COLLECTION;
+import static com.pighand.aio.domain.base.table.UserExtensionTableDef.USER_EXTENSION;
 
 /**
  * CMS - 素材 - 专辑
@@ -38,6 +40,11 @@ public interface AssetsCollectionMapper extends BaseMapper<AssetsCollectionDomai
 
         if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
+        }
+
+        if (joinTables.contains(USER_EXTENSION.getName())) {
+            queryWrapper.select(USER_EXTENSION.NAME).leftJoin(USER_EXTENSION)
+                .on(ASSETS_COLLECTION.CREATED_BY.eq(USER_EXTENSION.ID));
         }
 
         return queryWrapper;
@@ -86,7 +93,7 @@ public interface AssetsCollectionMapper extends BaseMapper<AssetsCollectionDomai
     default AssetsCollectionVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(CMS_ASSETS_COLLECTION.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(ASSETS_COLLECTION.ID.eq(id));
 
         AssetsCollectionVO result = this.selectOneByQueryAs(queryWrapper, AssetsCollectionVO.class);
         this.relationMany(joinTableSet, result);

@@ -13,5 +13,9 @@ import lombok.Data;
 public class AssetsCollectionRelevanceVO extends AssetsCollectionRelevanceDomain {
 
     // relation table: begin
+    /**
+     * 专辑名称
+     */
+    private String collectionName;
     // relation table: end
 }

@@ -14,4 +14,9 @@ public class OrgDepartmentVO extends OrgDepartmentDomain {
 
     // relation table: begin
     // relation table: end
+    
+    /**
+     * 子部门列表
+     */
+    private java.util.List<OrgDepartmentVO> children;
 }

@@ -1,7 +1,7 @@
 package com.pighand.aio.entityMapper.base;
 
-import com.pighand.user.domain.BaseOrgDepartmentDomain;
-import com.pighand.user.domain.BaseOrgDepartmentVO;
+import com.pighand.aio.domain.base.OrgDepartmentDomain;
+import com.pighand.aio.vo.base.OrgDepartmentVO;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -15,11 +15,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface OrgDepartmentEntityMapper {
 
-    BaseOrgDepartmentVO toVo(BaseOrgDepartmentDomain entity);
+    OrgDepartmentVO toVo(OrgDepartmentDomain entity);
 
-    BaseOrgDepartmentDomain toDomain(BaseOrgDepartmentVO vo);
+    OrgDepartmentDomain toDomain(OrgDepartmentVO vo);
 
-    List<BaseOrgDepartmentVO> toVoList(List<BaseOrgDepartmentDomain> entity);
+    List<OrgDepartmentVO> toVoList(List<OrgDepartmentDomain> entity);
 
-    List<BaseOrgDepartmentDomain> toDomainList(List<BaseOrgDepartmentVO> vo);
+    List<OrgDepartmentDomain> toDomainList(List<OrgDepartmentVO> vo);
 }

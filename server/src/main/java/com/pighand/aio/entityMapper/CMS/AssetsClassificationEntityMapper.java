@@ -1,7 +1,7 @@
 package com.pighand.aio.entityMapper.CMS;
 
-import com.pighand.user.domain.CmsAssetsClassificationDomain;
-import com.pighand.user.domain.CmsAssetsClassificationVO;
+import com.pighand.aio.domain.CMS.AssetsClassificationDomain;
+import com.pighand.aio.vo.CMS.AssetsClassificationVO;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -15,11 +15,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AssetsClassificationEntityMapper {
 
-    CmsAssetsClassificationVO toVo(CmsAssetsClassificationDomain entity);
+    AssetsClassificationVO toVo(AssetsClassificationDomain entity);
 
-    CmsAssetsClassificationDomain toDomain(CmsAssetsClassificationVO vo);
+    AssetsClassificationDomain toDomain(AssetsClassificationVO vo);
 
-    List<CmsAssetsClassificationVO> toVoList(List<CmsAssetsClassificationDomain> entity);
+    List<AssetsClassificationVO> toVoList(List<AssetsClassificationDomain> entity);
 
-    List<CmsAssetsClassificationDomain> toDomainList(List<CmsAssetsClassificationVO> vo);
+    List<AssetsClassificationDomain> toDomainList(List<AssetsClassificationVO> vo);
 }

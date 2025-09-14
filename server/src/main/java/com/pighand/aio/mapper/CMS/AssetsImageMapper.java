@@ -2,7 +2,6 @@ package com.pighand.aio.mapper.CMS;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.CMS.AssetsImageDomain;
-import com.pighand.aio.table.CmsAssetsImageTableDef.CMS_ASSETS_IMAGE;
 import com.pighand.aio.vo.CMS.AssetsImageVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
@@ -16,6 +15,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.pighand.aio.domain.CMS.table.AssetsImageTableDef.ASSETS_IMAGE;
+import static com.pighand.aio.domain.CMS.table.AssetsClassificationTableDef.ASSETS_CLASSIFICATION;
 
 /**
  * CMS - 素材 - 图片
@@ -38,6 +40,10 @@ public interface AssetsImageMapper extends BaseMapper<AssetsImageDomain> {
 
         if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
+        }
+
+        if(joinTables.contains(ASSETS_CLASSIFICATION.getTableName())) {
+            queryWrapper.select(ASSETS_CLASSIFICATION.ID, ASSETS_CLASSIFICATION.NAME).join(ASSETS_CLASSIFICATION).on(ASSETS_CLASSIFICATION.ID.eq(ASSETS_IMAGE.CLASSIFICATION_ID));
         }
 
         return queryWrapper;
@@ -85,7 +91,7 @@ public interface AssetsImageMapper extends BaseMapper<AssetsImageDomain> {
     default AssetsImageVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(CMS_ASSETS_IMAGE.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(ASSETS_IMAGE.ID.eq(id));
 
         AssetsImageVO result = this.selectOneByQueryAs(queryWrapper, AssetsImageVO.class);
         this.relationMany(joinTableSet, result);

@@ -1,8 +1,8 @@
 export default {
     api: {
-        release: 'http://127.0.0.1:3091/',
-        trial: 'http://127.0.0.1:3091/',
-        develop: 'http://127.0.0.1:3091/'
+        release: 'http://127.0.0.1:9080/',
+        trial: 'http://127.0.0.1:9080/',
+        develop: 'http://127.0.0.1:9080/'
     },
 	
 	APPLICATION_ID: '1',

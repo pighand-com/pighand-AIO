@@ -1,7 +1,7 @@
 package com.pighand.aio.controller.dashboard.CMS;
 
 import com.pighand.aio.domain.CMS.AssetsClassificationDomain;
-import com.pighand.aio.service.CmsAssetsClassificationService;
+import com.pighand.aio.service.CMS.AssetsClassificationService;
 import com.pighand.aio.vo.CMS.AssetsClassificationVO;
 import com.pighand.framework.spring.api.annotation.*;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author wangshuli
  * @createDate 2025-09-03 17:16:47
  */
-@RestController(path = "cms/assets/classification", docName = "CMS - 素材 - 分类")
-public class AssetsClassificationController extends BaseController<CmsAssetsClassificationService> {
+@RestController(path = "dashboard/assets/classification", docName = "CMS - 素材 - 分类")
+public class AssetsClassificationController extends BaseController<AssetsClassificationService> {
 
     /**
      * @param cmsAssetsClassificationVO

@@ -2,7 +2,6 @@ package com.pighand.aio.mapper.CMS;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.CMS.AssetsClassificationDomain;
-import com.pighand.aio.table.CmsAssetsClassificationTableDef.CMS_ASSETS_CLASSIFICATION;
 import com.pighand.aio.vo.CMS.AssetsClassificationVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
@@ -16,6 +15,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.pighand.aio.domain.CMS.table.AssetsClassificationTableDef.ASSETS_CLASSIFICATION;
 
 /**
  * CMS - 素材 - 分类
@@ -86,7 +87,7 @@ public interface AssetsClassificationMapper extends BaseMapper<AssetsClassificat
     default AssetsClassificationVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(CMS_ASSETS_CLASSIFICATION.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(ASSETS_CLASSIFICATION.ID.eq(id));
 
         AssetsClassificationVO result = this.selectOneByQueryAs(queryWrapper, AssetsClassificationVO.class);
         this.relationMany(joinTableSet, result);

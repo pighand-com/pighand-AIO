@@ -2,7 +2,6 @@ package com.pighand.aio.mapper.base;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.base.OrgDepartmentDomain;
-import com.pighand.aio.table.BaseOrgDepartmentTableDef.BASE_ORG_DEPARTMENT;
 import com.pighand.aio.vo.base.OrgDepartmentVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
@@ -16,6 +15,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.pighand.aio.domain.base.table.OrgDepartmentTableDef.ORG_DEPARTMENT;
 
 /**
  * 组织 - 部门
@@ -86,7 +87,7 @@ public interface OrgDepartmentMapper extends BaseMapper<OrgDepartmentDomain> {
     default OrgDepartmentVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(BASE_ORG_DEPARTMENT.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(ORG_DEPARTMENT.ID.eq(id));
 
         OrgDepartmentVO result = this.selectOneByQueryAs(queryWrapper, OrgDepartmentVO.class);
         this.relationMany(joinTableSet, result);

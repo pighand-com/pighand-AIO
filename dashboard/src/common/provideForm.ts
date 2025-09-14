@@ -50,6 +50,7 @@ export interface FormColumnsInterface {
         | 'input'
         | 'number'
         | 'select'
+        | 'treeSelect'
         | 'checkbox'
         | 'datePicker'
         | 'dateTimePicker'
@@ -134,15 +135,6 @@ export interface FormColumnsInterface {
 
     /** 上传路径 */
     uploadPath?: string;
-    /** 上传文件类型映射 */
-    uploadAcceptMap?: {
-        /** 映射键名 */
-        key: string;
-        /** 映射关系 */
-        map: {
-            [key: string | number]: string;
-        };
-    };
 
     /** 组件扩展属性 */
     componentProps?: {

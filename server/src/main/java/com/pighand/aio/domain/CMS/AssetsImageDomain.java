@@ -8,7 +8,7 @@ import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.base.BaseDomainRecord;
+import com.pighand.framework.spring.base.BaseDomainRecordTs;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -24,7 +24,7 @@ import java.util.Date;
  */
 @Table(value = "cms_assets_image")
 @Data
-public class AssetsImageDomain extends BaseDomainRecord<AssetsImageDomain> implements Serializable {
+public class AssetsImageDomain extends BaseDomainRecordTs<AssetsImageDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,8 +34,12 @@ public class AssetsImageDomain extends BaseDomainRecord<AssetsImageDomain> imple
     @RequestFieldException("cmsAssetsImageUpdate")
     private Long id;
 
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long applicationId;
 
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     @Schema(description = "分类id")
     private Long classificationId;
 
@@ -56,8 +60,11 @@ public class AssetsImageDomain extends BaseDomainRecord<AssetsImageDomain> imple
     @Schema(description = "文件格式")
     private String fileFormat;
 
-    @Schema(description = "文件大小（KB）")
+    @Schema(description = "文件大小（B）")
     private Long fileSize;
+
+    @Schema(description = "分辨率，格式 Height x Width")
+    private String resolutionRatio;
 
     @Schema(description = "浏览量")
     private Integer viewCount;
@@ -66,7 +73,10 @@ public class AssetsImageDomain extends BaseDomainRecord<AssetsImageDomain> imple
     private Integer downloadCount;
 
     @Schema(description = "是否精选")
-    private Integer handpick;
+    private Boolean handpick;
+
+    @Schema(description = "状态：10-上架，20-下架")
+    private Integer status;
 
     @Schema(description = "创建人")
     private Long createdBy;
@@ -78,5 +88,5 @@ public class AssetsImageDomain extends BaseDomainRecord<AssetsImageDomain> imple
     private Date updatedAt;
 
     @Schema(description = "是否删除")
-    private Integer deleted;
+    private Boolean deleted;
 }

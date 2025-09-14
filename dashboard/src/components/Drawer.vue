@@ -301,6 +301,41 @@ const onSubmit = async () => {
                 props.handleFormatData({ saveData: detailFormModel });
             }
 
+            /**
+             * 将包含'.'的key转换为嵌套对象结构
+             * 例如: {'user.name': 'John', 'user.age': 25} => {user: {name: 'John', age: 25}}
+             */
+            const convertDotNotationToNested = (flatObj: any): any => {
+                const result: any = {};
+                
+                Object.keys(flatObj).forEach(key => {
+                    const value = flatObj[key];
+                    
+                    if (key.includes('.')) {
+                        // 按'.'分割key
+                        const keys = key.split('.');
+                        let current = result;
+                        
+                        // 遍历所有层级，创建嵌套结构
+                        for (let i = 0; i < keys.length - 1; i++) {
+                            const currentKey = keys[i];
+                            if (!current[currentKey]) {
+                                current[currentKey] = {};
+                            }
+                            current = current[currentKey];
+                        }
+                        
+                        // 设置最终值
+                        current[keys[keys.length - 1]] = value;
+                    } else {
+                        // 没有'.'的key直接设置
+                        result[key] = value;
+                    }
+                });
+                
+                return result;
+            };
+
             // 修改过的数据
             const onlyUpdateData: any = {};
             Object.keys(detailFormModel).forEach((key) => {
@@ -311,6 +346,10 @@ const onSubmit = async () => {
                     onlyUpdateData[key] = detailFormModel[key];
                 }
             });
+            
+            // 将平铺的数据转换为嵌套结构
+            const nestedOnlyUpdateData = convertDotNotationToNested(onlyUpdateData);
+            const nestedDetailFormModel = convertDotNotationToNested(detailFormModel);
 
             // if (op === 'create') {
             //     await props.handleCreate(onlyUpdateData);
@@ -318,9 +357,9 @@ const onSubmit = async () => {
             //     await props.handleUpdate(onlyUpdateData);
             // }
             if (op === 'create') {
-                await props.handleCreate(detailFormModel, onlyUpdateData);
+                await props.handleCreate(nestedDetailFormModel, nestedOnlyUpdateData);
             } else {
-                await props.handleUpdate(detailFormModel, onlyUpdateData);
+                await props.handleUpdate(nestedDetailFormModel, nestedOnlyUpdateData);
             }
 
             loading.value = false;

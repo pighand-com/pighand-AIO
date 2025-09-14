@@ -122,6 +122,59 @@
                 :value="domDataItem.value" />
         </el-select>
 
+        <el-tree-select
+            v-if="formColumnItem.domType === 'treeSelect'"
+            v-bind="formColumnItem.componentProps || {}"
+            v-model="formModel[formColumnItem.prop]"
+            :data="domDataSet[formColumnItem.prop] || []"
+            :placeholder="formColumnItem.placeholder"
+            :loading="
+                domDataSetLoading[formColumnItem.label + formColumnItem.prop]
+            "
+            @focus="
+                () => {
+                    // 获得焦点时加载初始数据
+                    if (
+                        getDomData[
+                            formColumnItem.label + formColumnItem.prop
+                        ] &&
+                        (!domDataSet[formColumnItem.prop] ||
+                            domDataSet[formColumnItem.prop].length === 0)
+                    ) {
+                        getDomData[formColumnItem.label + formColumnItem.prop](
+                            ''
+                        );
+                    }
+                }
+            "
+            @change="
+                (value) => {
+                    // 执行用户自定义的change回调
+                    if (formColumnItem.onDetailChange) {
+                        formColumnItem.onDetailChange(value, formModel);
+                    }
+                }
+            "
+            @clear="
+                () => {
+                    if (
+                        clearDomDataCache[
+                            formColumnItem.label + formColumnItem.prop
+                        ]
+                    ) {
+                        clearDomDataCache[
+                            formColumnItem.label + formColumnItem.prop
+                        ]();
+                        // 清除后重新加载初始数据
+                        getDomData[formColumnItem.label + formColumnItem.prop](
+                            ''
+                        );
+                    }
+                }
+            "
+            filterable
+            clearable />
+
         <el-radio-group
             v-if="formColumnItem.domType === 'radio'"
             v-bind="formColumnItem.componentProps || {}"
@@ -230,6 +283,7 @@
             </span>
         </div>
 
+        <!-- 自定义图片上传 -->
         <el-upload
             v-if="
                 (formColumnItem.domType === 'uploadImage' &&
@@ -249,12 +303,13 @@
                         formColumnItem.uploadPath
                     )
             "
-            accept="image/png,image/jpeg,image/jpg">
+            accept="image/*">
             <el-icon class="image-uploader-icon">
                 <Plus />
             </el-icon>
         </el-upload>
 
+        <!-- 其他上传 -->
         <el-upload
             v-if="
                 ['uploadFile', 'uploadFileList'].includes(
@@ -268,13 +323,6 @@
             :limit="formColumnItem.domType === 'uploadFileList' ? 0 : 1"
             :drag="formColumnItem.domType === 'uploadFileList'"
             :multiple="formColumnItem.domType === 'uploadFileList'"
-            :accept="
-                formColumnItem.uploadAcceptMap
-                    ? formColumnItem.uploadAcceptMap.map[
-                          formModel[formColumnItem.uploadAcceptMap.key]
-                      ]
-                    : '*'
-            "
             :http-request="
                 (options) =>
                     upload(
@@ -386,6 +434,7 @@ import {
 import cos from '@/common/cos.ts';
 import { common } from '@/api';
 import { getApplicationInfo } from '@/common/storage';
+import { getFileExtension } from '@/common/fileUtils';
 
 /**
  * 组件属性定义
@@ -478,7 +527,7 @@ const upload = async (options, prop, domType, path) => {
         // 获取上传url
         const uploadUrlInfo = await common.getUploadUrls([
             {
-                extension: options.file.type.split('/')[1],
+                extension: getFileExtension(options.file),
                 path: path
             }
         ]);
@@ -524,6 +573,40 @@ const upload = async (options, prop, domType, path) => {
     } else {
         // eslint-disable-next-line vue/no-mutating-props
         props.formModel[prop] = fileUrls[0];
+    }
+
+    // 自动设置文件格式和文件大小
+    if (options.file) {
+        // 设置文件格式
+        // eslint-disable-next-line vue/no-mutating-props
+        props.formModel[prop + '_fileFormat'] = getFileExtension(options.file);
+        
+        // 设置文件大小
+            // eslint-disable-next-line vue/no-mutating-props
+            const fileSizeKB = options.file.size;
+            props.formModel[prop + '_fileSize'] = Math.round(fileSizeKB);
+        
+        // 如果是图片，自动获取图片尺寸
+        if (options.file.type.startsWith('image/')) {
+            const img = new Image();
+            img.onload = function() {
+                // eslint-disable-next-line vue/no-mutating-props
+                props.formModel[prop + '_resolutionRatio'] = `${img.height} x ${img.width}`;
+            };
+            img.src = URL.createObjectURL(options.file);
+        }
+        
+        // 如果是视频，自动获取视频分辨率
+        if (options.file.type.startsWith('video/')) {
+            const video = document.createElement('video');
+            video.onloadedmetadata = function() {
+                // eslint-disable-next-line vue/no-mutating-props
+                props.formModel[prop + '_resolutionRatio'] = `${video.videoHeight} x ${video.videoWidth}`;
+                // 释放对象URL以避免内存泄漏
+                URL.revokeObjectURL(video.src);
+            };
+            video.src = URL.createObjectURL(options.file);
+        }
     }
 
     uploadImageLoading.value[prop] = false;

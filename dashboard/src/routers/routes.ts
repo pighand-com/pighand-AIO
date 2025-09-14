@@ -17,7 +17,13 @@ import {
     HeavyMetal,
     FinancingTwo,
     IdCardV,
-    Order
+    Order,
+    TreeList,
+    Picture,
+    Video,
+    FileDoc,
+    Folder,
+    FileCollection
 } from '@icon-park/vue-next';
 
 const routes = [
@@ -72,6 +78,51 @@ const routes = [
                     icon: shallowRef(Material)
                 },
                 component: () => import('@/pages/common/Assets.vue')
+            },
+            {
+                path: 'assets_image',
+                name: 'assets_image',
+                title: '图片素材',
+                meta: {
+                    icon: shallowRef(Picture)
+                },
+                component: () => import('@/pages/CMS/AssetsImage.vue')
+            },
+            {
+                path: 'assets_video',
+                name: 'assets_video',
+                title: '视频素材',
+                meta: {
+                    icon: shallowRef(Video)
+                },
+                component: () => import('@/pages/CMS/AssetsVideo.vue')
+            },
+            {
+                path: 'assets_doc',
+                name: 'assets_doc',
+                title: '文档素材',
+                meta: {
+                    icon: shallowRef(FileDoc)
+                },
+                component: () => import('@/pages/CMS/AssetsDoc.vue')
+            },
+            {
+                path: 'assets_classification',
+                name: 'assets_classification',
+                title: '素材分类',
+                meta: {
+                    icon: shallowRef(Folder)
+                },
+                component: () => import('@/pages/CMS/AssetsClassification.vue')
+            },
+            {
+                path: 'assets_collection',
+                name: 'assets_collection',
+                title: '素材专辑',
+                meta: {
+                    icon: shallowRef(FileCollection)
+                },
+                component: () => import('@/pages/CMS/AssetsCollection.vue')
             }
         ]
     },
@@ -213,6 +264,15 @@ const routes = [
                     icon: shallowRef(EveryUser)
                 },
                 component: () => import('@/pages/base/User.vue')
+            },
+            {
+                path: 'department',
+                name: 'department',
+                title: '部门管理',
+                meta: {
+                    icon: shallowRef(TreeList)
+                },
+                component: () => import('@/pages/base/Department.vue')
             }
         ]
     }

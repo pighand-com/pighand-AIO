@@ -1,7 +1,7 @@
 package com.pighand.aio.entityMapper.CMS;
 
-import com.pighand.user.domain.CmsAssetsDocDomain;
-import com.pighand.user.domain.CmsAssetsDocVO;
+import com.pighand.aio.domain.CMS.AssetsDocDomain;
+import com.pighand.aio.vo.CMS.AssetsDocVO;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -15,11 +15,11 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AssetsDocEntityMapper {
 
-    CmsAssetsDocVO toVo(CmsAssetsDocDomain entity);
+    AssetsDocVO toVo(AssetsDocDomain entity);
 
-    CmsAssetsDocDomain toDomain(CmsAssetsDocVO vo);
+    AssetsDocDomain toDomain(AssetsDocVO vo);
 
-    List<CmsAssetsDocVO> toVoList(List<CmsAssetsDocDomain> entity);
+    List<AssetsDocVO> toVoList(List<AssetsDocDomain> entity);
 
-    List<CmsAssetsDocDomain> toDomainList(List<CmsAssetsDocVO> vo);
+    List<AssetsDocDomain> toDomainList(List<AssetsDocVO> vo);
 }

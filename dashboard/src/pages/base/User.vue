@@ -24,11 +24,45 @@ provideForm([
         isTable: true
     },
     {
+        label: '姓名',
+        prop: 'extension.name',
+        isSearch: true,
+        isSearchMore: false,
+        isTable: true,
+        isDetail: true,
+        domType: 'input'
+    },
+    {
         label: '电话',
         prop: 'phone',
         isSearch: true,
         isSearchMore: false,
-        isTable: true
+        isTable: true,
+        isDetail: true,
+        domType: 'input',
+        rules: [
+            {
+                pattern: /^1[3-9]\d{9}$/,
+                message: '请输入正确的手机号码',
+                trigger: 'blur'
+            }
+        ]
+    },
+    {
+        label: '邮箱',
+        prop: 'email',
+        isSearch: true,
+        isSearchMore: false,
+        isTable: true,
+        isDetail: true,
+        domType: 'input',
+        rules: [
+            {
+                type: 'email',
+                message: '请输入正确的邮箱地址',
+                trigger: 'blur'
+            }
+        ]
     },
     {
         label: '账号',

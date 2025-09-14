@@ -2,7 +2,6 @@ package com.pighand.aio.mapper.CMS;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.CMS.AssetsDocDomain;
-import com.pighand.aio.table.CmsAssetsDocTableDef.CMS_ASSETS_DOC;
 import com.pighand.aio.vo.CMS.AssetsDocVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
@@ -16,6 +15,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.pighand.aio.domain.CMS.table.AssetsClassificationTableDef.ASSETS_CLASSIFICATION;
+import static com.pighand.aio.domain.CMS.table.AssetsDocTableDef.ASSETS_DOC;
 
 /**
  * CMS - 素材 - 文档
@@ -38,6 +40,11 @@ public interface AssetsDocMapper extends BaseMapper<AssetsDocDomain> {
 
         if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
+        }
+
+        if (joinTables.contains(ASSETS_CLASSIFICATION.getTableName())) {
+            queryWrapper.select(ASSETS_CLASSIFICATION.ID, ASSETS_CLASSIFICATION.NAME).join(ASSETS_CLASSIFICATION)
+                .on(ASSETS_CLASSIFICATION.ID.eq(ASSETS_DOC.CLASSIFICATION_ID));
         }
 
         return queryWrapper;
@@ -85,7 +92,7 @@ public interface AssetsDocMapper extends BaseMapper<AssetsDocDomain> {
     default AssetsDocVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(CMS_ASSETS_DOC.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(ASSETS_DOC.ID.eq(id));
 
         AssetsDocVO result = this.selectOneByQueryAs(queryWrapper, AssetsDocVO.class);
         this.relationMany(joinTableSet, result);

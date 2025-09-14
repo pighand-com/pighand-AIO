@@ -8,13 +8,12 @@ import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
-import com.pighand.framework.spring.base.BaseDomainRecord;
+import com.pighand.framework.spring.base.BaseDomainRecordTs;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * CMS - 素材 - 分类
@@ -24,7 +23,7 @@ import java.util.Date;
  */
 @Table(value = "cms_assets_classification")
 @Data
-public class AssetsClassificationDomain extends BaseDomainRecord<AssetsClassificationDomain> implements Serializable {
+public class AssetsClassificationDomain extends BaseDomainRecordTs<AssetsClassificationDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -34,6 +33,8 @@ public class AssetsClassificationDomain extends BaseDomainRecord<AssetsClassific
     @RequestFieldException("cmsAssetsClassificationUpdate")
     private Long id;
 
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long parentId;
 
     @Column("name")
@@ -41,17 +42,6 @@ public class AssetsClassificationDomain extends BaseDomainRecord<AssetsClassific
     private String name;
 
     @Schema(description = "是否系统内置")
-    private Integer inlay;
+    private Boolean inlay;
 
-    @Schema(description = "创建人")
-    private Long createdBy;
-
-    @Schema(description = "创建时间")
-    private Date createdAt;
-
-    @Schema(description = "更新时间")
-    private Date updatedAt;
-
-    @Schema(description = "是否删除")
-    private Integer deleted;
 }

@@ -2,7 +2,6 @@ package com.pighand.aio.mapper.CMS;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.CMS.AssetsVideoDomain;
-import com.pighand.aio.table.CmsAssetsVideoTableDef.CMS_ASSETS_VIDEO;
 import com.pighand.aio.vo.CMS.AssetsVideoVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
@@ -16,6 +15,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.pighand.aio.domain.CMS.table.AssetsClassificationTableDef.ASSETS_CLASSIFICATION;
+import static com.pighand.aio.domain.CMS.table.AssetsVideoTableDef.ASSETS_VIDEO;
 
 /**
  * CMS - 素材 - 视频
@@ -38,6 +40,11 @@ public interface AssetsVideoMapper extends BaseMapper<AssetsVideoDomain> {
 
         if (joinTables == null || joinTables.isEmpty()) {
             return queryWrapper;
+        }
+
+        if (joinTables.contains(ASSETS_CLASSIFICATION.getTableName())) {
+            queryWrapper.select(ASSETS_CLASSIFICATION.ID, ASSETS_CLASSIFICATION.NAME).join(ASSETS_CLASSIFICATION)
+                .on(ASSETS_CLASSIFICATION.ID.eq(ASSETS_VIDEO.CLASSIFICATION_ID));
         }
 
         return queryWrapper;
@@ -85,7 +92,7 @@ public interface AssetsVideoMapper extends BaseMapper<AssetsVideoDomain> {
     default AssetsVideoVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(CMS_ASSETS_VIDEO.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(ASSETS_VIDEO.ID.eq(id));
 
         AssetsVideoVO result = this.selectOneByQueryAs(queryWrapper, AssetsVideoVO.class);
         this.relationMany(joinTableSet, result);

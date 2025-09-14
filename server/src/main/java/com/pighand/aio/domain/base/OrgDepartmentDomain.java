@@ -35,4 +35,9 @@ public class OrgDepartmentDomain extends BaseDomainRecord<OrgDepartmentDomain> i
     @Column("name")
     @Length(max = 255)
     private String name;
+
+    @Column("parent_id")
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long parentId;
 }

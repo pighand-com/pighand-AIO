@@ -2,7 +2,6 @@ package com.pighand.aio.mapper.CMS;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.CMS.AssetsCollectionRelevanceDomain;
-import com.pighand.aio.table.CmsAssetsCollectionRelevanceTableDef.CMS_ASSETS_COLLECTION_RELEVANCE;
 import com.pighand.aio.vo.CMS.AssetsCollectionRelevanceVO;
 import com.pighand.framework.spring.base.BaseMapper;
 import com.pighand.framework.spring.page.PageOrList;
@@ -16,6 +15,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.pighand.aio.domain.CMS.table.AssetsCollectionRelevanceTableDef.ASSETS_COLLECTION_RELEVANCE;
 
 /**
  * CMS - 素材 - 专辑关系表
@@ -86,8 +87,7 @@ public interface AssetsCollectionRelevanceMapper extends BaseMapper<AssetsCollec
     default AssetsCollectionRelevanceVO find(Long id, String... joinTables) {
         Set<String> joinTableSet = Stream.of(joinTables).collect(Collectors.toSet());
 
-        QueryWrapper queryWrapper =
-            this.relationOne(joinTableSet, null).where(CMS_ASSETS_COLLECTION_RELEVANCE.ID.eq(id));
+        QueryWrapper queryWrapper = this.relationOne(joinTableSet, null).where(ASSETS_COLLECTION_RELEVANCE.ID.eq(id));
 
         AssetsCollectionRelevanceVO result = this.selectOneByQueryAs(queryWrapper, AssetsCollectionRelevanceVO.class);
         this.relationMany(joinTableSet, result);

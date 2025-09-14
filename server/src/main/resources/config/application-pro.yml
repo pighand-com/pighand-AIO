@@ -1,6 +1,6 @@
 server:
-  port: ${PORT:9081}
-  domain: http://127.0.0.1:9081
+  port: ${PORT:9080}
+  domain: http://127.0.0.1:9080
 
 #logging:
 #  level:

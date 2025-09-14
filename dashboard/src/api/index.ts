@@ -15,6 +15,12 @@ import distributionGoodsRule from './distributionGoodsRule';
 import distributionSalesperson from './distributionSalesperson';
 import distributionSales from './distributionSales';
 import role from './role';
+import department from './department';
+import assetsImage from './assetsImage';
+import assetsVideo from './assetsVideo';
+import assetsDoc from './assetsDoc';
+import assetsClassification from './assetsClassification';
+import assetsCollection from './assetsCollection';
 
 export {
     common,
@@ -33,5 +39,11 @@ export {
     distributionGoodsRule,
     distributionSalesperson,
     distributionSales,
-    role
+    role,
+    department,
+    assetsImage,
+    assetsVideo,
+    assetsDoc,
+    assetsClassification,
+    assetsCollection
 };

@@ -17,7 +17,8 @@ import {
     HeavyMetal,
     FinancingTwo,
     IdCardV,
-    Order
+    Order,
+    Local
 } from '@icon-park/vue-next';
 
 const routes = [
@@ -174,6 +175,15 @@ const routes = [
                     icon: shallowRef(GoldMedal)
                 },
                 component: () => import('@/pages/MKT/Lottery.vue')
+            },
+            {
+                path: 'checkInLocation',
+                name: 'checkInLocation',
+                title: '打卡点管理',
+                meta: {
+                    icon: shallowRef(Local)
+                },
+                component: () => import('@/pages/MKT/CheckInLocation.vue')
             }
         ]
     },

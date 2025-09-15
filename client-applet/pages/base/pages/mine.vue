@@ -44,26 +44,6 @@
 				</view>
 			</view>
 			
-			<!-- 订单区域 -->
-			<view class="order-section">
-				<user-check :item="['login']">
-					<view class="order-box" @click="goToOrder">
-						<text class="order-text">我的订单</text>
-						<text class="order-arrow">{{">"}}</text>
-					</view>
-				</user-check>
-			</view>
-			
-			<!-- 票务区域 -->
-			<view class="ticket-section">
-				<user-check :item="['login']">
-					<view class="ticket-box" @click="goToTicket">
-						<text class="ticket-text">我的票务</text>
-						<text class="ticket-arrow">{{">"}}</text>
-					</view>
-				</user-check>
-			</view>
-			
 			<!-- 分销区域 -->
 			<view class="distribution-section" v-if="salespersonId">
 				<user-check :item="['login']">
@@ -90,6 +70,36 @@
 					<view class="verification-box" @click="goToVerification">
 						<text class="verification-text">核销</text>
 						<text class="verification-arrow">{{">"}}</text>
+					</view>
+				</user-check>
+			</view>
+			
+			<!-- 打卡确认区域 -->
+			<view class="checkin-section" v-if="isStaff">
+				<user-check :item="['login']">
+					<view class="checkin-box" @click="goToCheckIn">
+						<text class="checkin-text">打卡确认</text>
+						<text class="checkin-arrow">{{">"}}</text>
+					</view>
+				</user-check>
+			</view>
+			
+			<!-- 订单区域 -->
+			<view class="order-section">
+				<user-check :item="['login']">
+					<view class="order-box" @click="goToOrder">
+						<text class="order-text">我的订单</text>
+						<text class="order-arrow">{{">"}}</text>
+					</view>
+				</user-check>
+			</view>
+			
+			<!-- 票务区域 -->
+			<view class="ticket-section">
+				<user-check :item="['login']">
+					<view class="ticket-box" @click="goToTicket">
+						<text class="ticket-text">我的票务</text>
+						<text class="ticket-arrow">{{">"}}</text>
 					</view>
 				</user-check>
 			</view>
@@ -145,6 +155,39 @@
 				</view>
 			</view>
 		</view>
+		
+		<!-- 打卡地点选择弹窗 -->
+		<view class="checkin-modal" v-if="isCheckInModalVisible" @click="hideCheckInModal">
+			<view class="checkin-modal-content" @click.stop>
+				<view class="checkin-header">
+					<text class="checkin-title">选择打卡地点</text>
+				</view>
+				<view class="checkin-body">
+					<view class="checkin-location-list">
+						<view 
+							v-for="location in checkInLocations" 
+							:key="location.id" 
+							class="checkin-location-item"
+							:class="{ 'selected': selectedLocationId === location.id }"
+							@click="selectCheckInLocation(location.id)"
+						>
+							<text class="checkin-location-name">{{ location.name }}</text>
+							<view class="checkin-location-check" v-if="selectedLocationId === location.id">
+								<text class="checkin-check-icon">✓</text>
+							</view>
+						</view>
+					</view>
+					<view class="checkin-actions">
+						<view class="checkin-cancel-btn" @click="hideCheckInModal">
+							<text class="checkin-cancel-text">取消</text>
+						</view>
+						<view class="checkin-confirm-btn" @click="confirmCheckIn">
+							<text class="checkin-confirm-text">确认打卡</text>
+						</view>
+					</view>
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -152,7 +195,7 @@
 import { onShow, onLoad } from '@dcloudio/uni-app'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { getUserInfo, getToken, getSalespersonId, setSalespersonId, clearAll } from '@/common/storage'
-import { distribution as distributionAPI, ticket as ticketAPI } from '@/api'
+import { distribution as distributionAPI, ticket as ticketAPI, checkInLocation as checkInLocationAPI } from '@/api'
 
 import defaultAvatar from '../../../static/default-avatar.jpg'
 
@@ -164,6 +207,11 @@ const distributionQrCode = ref('')
 const isSettingsModalVisible = ref(false)
 const isContactModalVisible = ref(false)
 const isStaff = ref(false)
+
+// 打卡相关变量
+const isCheckInModalVisible = ref(false)
+const checkInLocations = ref([])
+const selectedLocationId = ref('')
 
 // 检查用户是否为工作人员（roleId=9000）
 const checkIsStaff = async () => {
@@ -286,6 +334,112 @@ function goToVerification() {
             })
         }
     })
+}
+
+// 打卡确认功能 - 打开扫码
+function goToCheckIn() {
+    uni.scanCode({
+        success: async function (res) {
+            try {
+                // 解析扫码结果
+                const scanResult = JSON.parse(res.result)
+                
+                // 检查结果格式是否正确
+                if (!scanResult.userId || scanResult.type !== 'checkIn') {
+                    uni.showToast({
+                        title: '二维码错误',
+                        icon: 'none'
+                    })
+                    return
+                }
+                
+                // 获取打卡地点列表并显示选择弹窗
+                await loadCheckInLocations()
+                showCheckInModal()
+                
+            } catch (error) {
+                console.error('解析扫码结果失败:', error)
+                uni.showToast({
+                    title: '二维码错误',
+                    icon: 'none'
+                })
+            }
+        },
+        fail: function (err) {
+            uni.showToast({
+                title: '扫码失败',
+                icon: 'none'
+            })
+        }
+    })
+}
+
+// 加载打卡地点列表
+const loadCheckInLocations = async () => {
+    try {
+        const response = await checkInLocationAPI.getLocations()
+		checkInLocations.value = response.records
+		
+		// 从localStorage获取上次选择的地点
+		const savedLocationId = uni.getStorageSync('selectedCheckInLocationId')
+		if (savedLocationId && response.records.find(loc => loc.id === savedLocationId)) {
+			selectedLocationId.value = savedLocationId
+		} else if (response.length > 0) {
+			selectedLocationId.value = response[0].id
+		}
+    } catch (error) {
+        console.error('获取打卡地点失败:', error)
+        uni.showToast({
+            title: '获取打卡地点失败',
+            icon: 'none'
+        })
+    }
+}
+
+// 显示打卡地点选择弹窗
+const showCheckInModal = () => {
+    isCheckInModalVisible.value = true
+}
+
+// 隐藏打卡地点选择弹窗
+const hideCheckInModal = () => {
+    isCheckInModalVisible.value = false
+}
+
+// 选择打卡地点
+const selectCheckInLocation = (locationId) => {
+    selectedLocationId.value = locationId
+}
+
+// 确认打卡
+const confirmCheckIn = async () => {
+    if (!selectedLocationId.value) {
+        uni.showToast({
+            title: '请选择打卡地点',
+            icon: 'none'
+        })
+        return
+    }
+    
+    try {
+        const response = await checkInLocationAPI.checkIn(selectedLocationId.value)
+        
+        // 保存选择的地点到localStorage
+        uni.setStorageSync('selectedCheckInLocationId', selectedLocationId.value)
+        
+        hideCheckInModal()
+        
+        uni.showToast({
+            title: '打卡成功',
+            icon: 'success'
+        })
+    } catch (error) {
+        console.error('打卡失败:', error)
+        uni.showToast({
+            title: '打卡失败',
+            icon: 'none'
+        })
+    }
 }
 
 // 显示分销二维码
@@ -452,7 +606,7 @@ const makePhoneCall = (type) => {
 }
 
 .order-section {
-	/* 移除padding，因为已经在content-container中设置 */
+	margin-top: 32rpx;
 }
 
 .ticket-section {
@@ -699,6 +853,56 @@ const makePhoneCall = (type) => {
 .verification-box:active {
 	transform: scale(0.98);
 	box-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.3);
+}
+
+.checkin-box {
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.25));
+	border-radius: 24rpx;
+	padding: 48rpx 36rpx;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.25), 0 0 0 2rpx rgba(255, 255, 255, 0.4);
+	border: 3rpx solid rgba(255, 255, 255, 0.4);
+	backdrop-filter: blur(15rpx);
+	transition: all 0.3s ease;
+	position: relative;
+}
+
+.checkin-text {
+	font-size: 36rpx;
+	color: #333;
+	font-weight: 600;
+	text-shadow: 0 1rpx 2rpx rgba(255, 255, 255, 0.8);
+}
+
+.checkin-arrow {
+	font-size: 36rpx;
+	color: #666;
+	font-weight: bold;
+	text-shadow: 0 1rpx 2rpx rgba(255, 255, 255, 0.8);
+}
+
+.checkin-box::before {
+	content: '';
+	position: absolute;
+	top: -2rpx;
+	left: -2rpx;
+	right: -2rpx;
+	bottom: -2rpx;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.3));
+	border-radius: 26rpx;
+	z-index: -1;
+	opacity: 0.8;
+}
+
+.checkin-box:active {
+	transform: scale(0.98);
+	box-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.3);
+}
+
+.checkin-section {
+	margin-top: 32rpx;
 }
 
 /* 联系我们悬浮按钮 */
@@ -986,5 +1190,162 @@ const makePhoneCall = (type) => {
 	font-size: 36rpx;
 	color: #333;
 	font-weight: 500;
+}
+
+/* 打卡地点选择弹窗样式 */
+.checkin-modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 2000;
+}
+
+.checkin-modal-content {
+	width: 600rpx;
+	max-height: 80vh;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+	border-radius: 32rpx;
+	box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.3);
+	backdrop-filter: blur(20rpx);
+	border: 2rpx solid rgba(255, 255, 255, 0.3);
+	overflow: hidden;
+}
+
+.checkin-header {
+	padding: 48rpx 48rpx 32rpx;
+	border-bottom: 2rpx solid rgba(0, 0, 0, 0.1);
+	text-align: center;
+}
+
+.checkin-title {
+	font-size: 40rpx;
+	font-weight: 600;
+	color: #333;
+}
+
+.checkin-body {
+	padding: 32rpx 48rpx 48rpx;
+}
+
+.checkin-location-list {
+	max-height: 400rpx;
+	overflow-y: auto;
+	margin-bottom: 32rpx;
+}
+
+/* 隐藏打卡地点列表滚动条 */
+.checkin-location-list::-webkit-scrollbar {
+	display: none;
+}
+
+.checkin-location-list {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+.checkin-location-item {
+	padding: 32rpx 24rpx;
+	border-radius: 16rpx;
+	margin-bottom: 16rpx;
+	background: rgba(255, 255, 255, 0.6);
+	border: 2rpx solid rgba(0, 0, 0, 0.1);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	transition: all 0.3s ease;
+}
+
+.checkin-location-item.selected {
+	background: linear-gradient(135deg, #ff8c00, #ff6b00);
+	border-color: #ff8c00;
+	box-shadow: 0 4rpx 12rpx rgba(255, 140, 0, 0.3);
+}
+
+.checkin-location-item:active {
+	transform: scale(0.98);
+}
+
+.checkin-location-name {
+	font-size: 32rpx;
+	color: #333;
+	font-weight: 500;
+}
+
+.checkin-location-item.selected .checkin-location-name {
+	color: #fff;
+}
+
+.checkin-location-check {
+	width: 48rpx;
+	height: 48rpx;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.9);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.checkin-check-icon {
+	font-size: 28rpx;
+	color: #ff8c00;
+	font-weight: bold;
+}
+
+.checkin-actions {
+	display: flex;
+	gap: 24rpx;
+}
+
+.checkin-cancel-btn {
+	flex: 1;
+	padding: 32rpx 0;
+	border-radius: 16rpx;
+	background: rgba(0, 0, 0, 0.1);
+	border: 2rpx solid rgba(0, 0, 0, 0.2);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.3s ease;
+}
+
+.checkin-cancel-btn:active {
+	transform: scale(0.98);
+	background: rgba(0, 0, 0, 0.15);
+}
+
+.checkin-cancel-text {
+	font-size: 32rpx;
+	color: #666;
+	font-weight: 500;
+}
+
+.checkin-confirm-btn {
+	flex: 1;
+	padding: 32rpx 0;
+	border-radius: 16rpx;
+	background: linear-gradient(135deg, #ff8c00, #ff6b00);
+	border: 2rpx solid #ff8c00;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.3s ease;
+	box-shadow: 0 4rpx 12rpx rgba(255, 140, 0, 0.3);
+}
+
+.checkin-confirm-btn:active {
+	transform: scale(0.98);
+	box-shadow: 0 2rpx 6rpx rgba(255, 140, 0, 0.4);
+}
+
+.checkin-confirm-text {
+	font-size: 32rpx;
+	color: #fff;
+	font-weight: 600;
 }
 </style>

@@ -66,6 +66,12 @@
 				</view>
 				<text class="icon-text">抽奖</text>
 			</view>
+			<view class="icon-item" @click="gotoCheckIn">
+				<view class="icon-wrapper">
+					<image class="icon" src="../static/icon-checkin.svg" mode="aspectFit"></image>
+				</view>
+				<text class="icon-text">打卡</text>
+			</view>
 		</view>
 		
 		<!-- 门票展示区域 -->
@@ -318,6 +324,13 @@ const goToStore = () => {
 const gotoLottery = () => {
 	uni.navigateTo({
 		url: '/pages/MKT/pages/lottery-list'
+	})
+}
+
+// 跳转到打卡页面
+const gotoCheckIn = () => {
+	uni.navigateTo({
+		url: '/pages/MKT/pages/check-in'
 	})
 }
 

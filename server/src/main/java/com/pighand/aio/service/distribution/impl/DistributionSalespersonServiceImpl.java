@@ -161,9 +161,12 @@ public class DistributionSalespersonServiceImpl
         String qrcodeEnv = WechatSDK.utils.getAppletEnv();
 
         HashMap params = new HashMap<>(5);
-        params.put("page", "pages/base/pages/index");
-        params.put("scene", "sales=" + salespersonId);
-        params.put("env_version", qrcodeEnv);
+        //        params.put("page", "pages/base/pages/index");
+        //        params.put("scene", "sales=" + salespersonId);
+        //        params.put("env_version", qrcodeEnv);
+        params.put("page", "pages/MKT/pages/check-in");
+        params.put("scene", "fromQrCode=true");
+        params.put("env_version", "trial");
         params.put("is_hyaline", true);
         params.put("check_path", false);
 

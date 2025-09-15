@@ -49,8 +49,9 @@
 			"path": "pages/MKT/pages/lottery-list"
 		},
 		{
-			"path": "pages/MKT/pages/lottery-participants"
+			"path": "pages/MKT/pages/check-in"
 		}
+		
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

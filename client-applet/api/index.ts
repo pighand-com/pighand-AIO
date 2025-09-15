@@ -8,6 +8,7 @@ import order from './order';
 import distribution from './distribution';
 import store from './store';
 import lottery from './lottery';
+import checkInLocation from './checkInLocation';
 
 export {
     login,
@@ -19,5 +20,6 @@ export {
     order,
     distribution,
     store,
-    lottery
+    lottery,
+    checkInLocation
 };

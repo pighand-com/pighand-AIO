@@ -1,5 +1,6 @@
 package com.pighand.aio.controller.client.base;
 
+import com.pighand.aio.common.CAPTCHA.CAPTCHA;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.common.interfaces.ApplicationId;
 import com.pighand.aio.service.base.UserService;
@@ -12,6 +13,7 @@ import com.pighand.framework.spring.base.BaseController;
 import com.pighand.framework.spring.response.Result;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestBody;
+import com.pighand.aio.service.base.LoginService;
 
 /**
  * 授权相关
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class LoginController extends BaseController<UserService> {
 
     private final AppletImpl wechatAppletService;
+    private final LoginService loginService;
 
     @ApplicationId
     @Post(value = "wechat/applet", docDescription = "微信小程序登录")
@@ -32,5 +35,12 @@ public class LoginController extends BaseController<UserService> {
         Long applicationId = Context.applicationId();
         UserVO userVO = wechatAppletService.loginInByCode(applicationId, login.getCode());
         return new Result(userVO);
+    }
+
+    @Post(docDescription = "密码登录")
+    @CAPTCHA(key = "username")
+    public Result<UserVO> passwordLogin(@RequestBody Login login) {
+        UserVO user = loginService.loginByPassword(login.getUsername(), login.getPassword());
+        return new Result(user);
     }
 }

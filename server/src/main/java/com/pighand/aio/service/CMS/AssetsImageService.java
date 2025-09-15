@@ -25,12 +25,13 @@ import static com.pighand.aio.domain.CMS.table.AssetsImageTableDef.ASSETS_IMAGE;
  *
  * @author wangshuli
  * @createDate 2025-09-03 17:16:47
- */
+ */@Service
 @RequiredArgsConstructor
-@Service
 public class AssetsImageService extends BaseServiceImpl<AssetsImageMapper, AssetsImageDomain> {
 
     private final AssetsCollectionRelevanceService assetsCollectionRelevanceService;
+
+
 
     /**
      * 创建

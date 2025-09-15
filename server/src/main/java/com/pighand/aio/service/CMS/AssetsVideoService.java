@@ -25,12 +25,13 @@ import static com.pighand.aio.domain.CMS.table.AssetsVideoTableDef.ASSETS_VIDEO;
  *
  * @author wangshuli
  * @createDate 2025-09-03 17:16:47
- */
+ */@Service
 @RequiredArgsConstructor
-@Service
 public class AssetsVideoService extends BaseServiceImpl<AssetsVideoMapper, AssetsVideoDomain> {
 
     private final AssetsCollectionRelevanceService assetsCollectionRelevanceService;
+
+
 
     /**
      * 创建

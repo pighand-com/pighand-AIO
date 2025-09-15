@@ -32,6 +32,10 @@ public class AssetsDocService extends BaseServiceImpl<AssetsDocMapper, AssetsDoc
 
     private final AssetsCollectionRelevanceService assetsCollectionRelevanceService;
 
+
+
+
+
     /**
      * 创建
      *
@@ -39,17 +43,17 @@ public class AssetsDocService extends BaseServiceImpl<AssetsDocMapper, AssetsDoc
      * @return
      */
     public AssetsDocVO create(AssetsDocVO cmsAssetsDocVO) {
+        // 设置默认值
         if (cmsAssetsDocVO.getHandpick() == null) {
             cmsAssetsDocVO.setHandpick(false);
         }
-
         if (cmsAssetsDocVO.getStatus() == null) {
             cmsAssetsDocVO.setStatus(20);
         }
 
         super.mapper.insert(cmsAssetsDocVO);
 
-        // 如果传了collectionIds，创建专辑关联信息
+        // 处理专辑关联
         if (!CollectionUtils.isEmpty(cmsAssetsDocVO.getCollectionIds())) {
             assetsCollectionRelevanceService.createCollectionRelevances(cmsAssetsDocVO.getId(),
                 cmsAssetsDocVO.getCollectionIds(), 30);

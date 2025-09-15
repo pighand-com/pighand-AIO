@@ -78,10 +78,10 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
                 Date newEndTime = new Date(existingUser.getEndTime().getTime() + extendTime);
                 checkInUserService.extendEndTime(loginUser.getId(),
                     LocalDateTime.ofInstant(newEndTime.toInstant(), ZoneId.systemDefault()));
-                
+
                 // 更新existingUser的结束时间
                 existingUser.setEndTime(newEndTime);
-                
+
                 return new Result<>(existingUser);
             } else {
                 // 大于半小时的，时间不变，直接返回成功
@@ -123,12 +123,10 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
      * @return
      */
     @Authorization
-    @Post(path = "checkIn/{locationId}", docSummary = "执行打卡")
-    public Result checkIn(@PathVariable Long locationId) {
-        LoginUser loginUser = Context.loginUser();
-
+    @Post(path = "checkIn/{locationId}/{userId}", docSummary = "执行打卡")
+    public Result checkIn(@PathVariable Long locationId, @PathVariable Long userId) {
         // 检查是否已参加活动
-        CheckInUserDomain checkInUser = checkInUserService.findByUser(loginUser.getId());
+        CheckInUserDomain checkInUser = checkInUserService.findByUser(userId);
         if (checkInUser == null) {
             return new Result().success();
         }
@@ -140,13 +138,13 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
 
         // 检查今日是否已打卡
         LocalDate today = LocalDate.now();
-        CheckInRecordDomain todayRecord = checkInRecordService.findTodayRecord(loginUser.getId(), locationId, today);
+        CheckInRecordDomain todayRecord = checkInRecordService.findTodayRecord(userId, locationId, today);
         if (todayRecord != null) {
             return new Result().success();
         }
 
         // 创建打卡记录
-        checkInRecordService.createCheckInRecord(loginUser.getId(), locationId, today);
+        checkInRecordService.createCheckInRecord(userId, locationId, today);
 
         return new Result().success();
     }

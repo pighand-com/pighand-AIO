@@ -34,8 +34,8 @@ export default {
      * 执行打卡
      * @param locationId 打卡地点ID
      */
-    checkIn: async (locationId: string) =>
-        await request.post(`check-in/checkIn/${locationId}`),
+    checkIn: async (locationId: string, userId: string) =>
+        await request.post(`check-in/checkIn/${locationId}/${userId}`),
 
     /**
      * 获取用户活动状态

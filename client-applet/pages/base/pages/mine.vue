@@ -212,6 +212,7 @@ const isStaff = ref(false)
 const isCheckInModalVisible = ref(false)
 const checkInLocations = ref([])
 const selectedLocationId = ref('')
+const scanUserId = ref('') // 保存扫码得到的userId
 
 // 检查用户是否为工作人员（roleId=9000）
 const checkIsStaff = async () => {
@@ -353,6 +354,9 @@ function goToCheckIn() {
                     return
                 }
                 
+                // 保存扫码得到的userId
+                scanUserId.value = scanResult.userId
+                
                 // 获取打卡地点列表并显示选择弹窗
                 await loadCheckInLocations()
                 showCheckInModal()
@@ -422,7 +426,7 @@ const confirmCheckIn = async () => {
     }
     
     try {
-        const response = await checkInLocationAPI.checkIn(selectedLocationId.value)
+        const response = await checkInLocationAPI.checkIn(selectedLocationId.value, scanUserId.value)
         
         // 保存选择的地点到localStorage
         uni.setStorageSync('selectedCheckInLocationId', selectedLocationId.value)

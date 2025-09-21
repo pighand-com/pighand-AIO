@@ -1,0 +1,8 @@
+@font-face {
+    font-family: AlibabaPuHuiTi-3-55-Regular;
+    src: url(../font/AlibabaPuHuiTi-3-55-Regular.woff2) format('woff2');
+}
+
+body {
+    font-family: AlibabaPuHuiTi-3-55-Regular, sans-serif;
+}

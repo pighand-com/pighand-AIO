@@ -35,8 +35,8 @@
                 <div class="card-content">
                     <!-- 标题和操作按钮 -->
                     <div class="title-actions">
-                        <h3 class="card-title" :class="{ 'disabled-title': item.status === 20 || item.status === null, 'featured-title': item.handpick === 1 }">
-                            <Star v-if="(item.status === 10) && item.handpick === 1" theme="filled" size="12" fill="#f7ba2a" class="featured-icon" />
+                        <h3 class="card-title" :class="{ 'disabled-title': item.status === 20 || item.status === null, 'featured-title': item.handpick === true }">
+                            <Star v-if="(item.status === 10) && item.handpick === true" theme="filled" size="12" fill="#f7ba2a" class="featured-icon" />
                             <Forbid v-if="item.status === 20 || item.status === null" theme="outline" size="12" fill="#909399" class="disabled-icon" />
                             <el-tooltip :content="item.title" placement="top" effect="light" :disabled="!isTitleOverflow(item.title)">
                                 <span class="title-text">{{ item.title }}</span>
@@ -55,20 +55,20 @@
                             </el-tooltip>
                             
                             <!-- 精选按钮 -->
-                            <el-tooltip v-if="item.status === 10 && (item.handpick === 0 || item.handpick === null)" content="精选" placement="top" effect="light">
+                            <el-tooltip v-if="item.status === 10 && !item.handpick" content="精选" placement="top" effect="light">
                                 <el-button 
                                     type="text" 
                                     size="small" 
-                                    @click="handleSetHandpick(item, 1)"
+                                    @click="handleSetHandpick(item, true)"
                                     class="action-btn handpick-btn">
                                     <Star theme="outline" size="16" fill="#f7ba2a" strokeLinejoin="bevel" />
                                 </el-button>
                             </el-tooltip>
-                            <el-tooltip v-if="item.status === 10 && item.handpick === 1" content="取消精选" placement="top" effect="light">
+                            <el-tooltip v-if="item.status === 10 && item.handpick" content="取消精选" placement="top" effect="light">
                                 <el-button 
                                     type="text" 
                                     size="small" 
-                                    @click="handleSetHandpick(item, 0)"
+                                    @click="handleSetHandpick(item, false)"
                                     class="action-btn cancel-handpick-btn">
                                     <Star theme="filled" size="16" fill="#f7ba2a" strokeLinejoin="bevel" />
                                 </el-button>
@@ -381,8 +381,8 @@ const { searchFormModel, isOpenDetail, detailFormModel, getDetailOperation, watc
         domType: 'select',
         domData: [
             { label: '全部', value: '' },
-            { label: '否', value: 0 },
-            { label: '是', value: 1 }
+            { label: '否', value: false },
+            { label: '是', value: true }
         ]
     },
     {
@@ -741,7 +741,7 @@ const handleOnShelf = async (item) => {
 // 设置精选状态
 const handleSetHandpick = async (item, handpick) => {
     try {
-        const action = handpick === 1 ? '精选' : '取消精选';
+        const action = handpick ? '精选' : '取消精选';
         await ElMessageBox.confirm(
             `确定要${action}图片"${item.title}"吗？`,
             '提示',
@@ -752,7 +752,7 @@ const handleSetHandpick = async (item, handpick) => {
             }
         );
         
-        if (handpick === 1) {
+        if (handpick) {
             await assetsImage.setHandpick(item.id);
         } else {
             await assetsImage.cancelHandpick(item.id);
@@ -761,7 +761,7 @@ const handleSetHandpick = async (item, handpick) => {
         queryData();
     } catch (error) {
         if (error !== 'cancel') {
-            const action = handpick === 1 ? '精选' : '取消精选';
+            const action = handpick ? '精选' : '取消精选';
             ElMessage.error(`${action}失败`);
         }
     }

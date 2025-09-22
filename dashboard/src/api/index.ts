@@ -15,6 +15,7 @@ import distributionGoodsRule from './distributionGoodsRule';
 import distributionSalesperson from './distributionSalesperson';
 import distributionSales from './distributionSales';
 import role from './role';
+import checkInActivity from './checkInActivity';
 
 export {
     common,
@@ -33,5 +34,6 @@ export {
     distributionGoodsRule,
     distributionSalesperson,
     distributionSales,
-    role
+    role,
+    checkInActivity
 };

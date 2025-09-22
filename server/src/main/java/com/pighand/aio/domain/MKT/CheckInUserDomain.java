@@ -13,7 +13,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 营销 - 打卡用户参与信息
@@ -40,5 +40,5 @@ public class CheckInUserDomain extends BaseDomainRecord<CheckInUserDomain> imple
     private Long userId;
 
     @Schema(description = "截止时间")
-    private Date endTime;
+    private LocalDateTime endTime;
 }

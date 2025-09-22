@@ -184,6 +184,15 @@ const routes = [
                     icon: shallowRef(Local)
                 },
                 component: () => import('@/pages/MKT/CheckInLocation.vue')
+            },
+            {
+                path: 'checkInActivity',
+                name: 'checkInActivity',
+                title: '打卡活动管理',
+                meta: {
+                    icon: shallowRef(GoldMedal)
+                },
+                component: () => import('@/pages/MKT/CheckInActivity.vue')
             }
         ]
     },

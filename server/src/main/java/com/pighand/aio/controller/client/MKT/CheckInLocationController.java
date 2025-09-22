@@ -2,8 +2,10 @@ package com.pighand.aio.controller.client.MKT;
 
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.common.interfaces.Authorization;
+import com.pighand.aio.domain.MKT.CheckInActivityDomain;
 import com.pighand.aio.domain.MKT.CheckInRecordDomain;
 import com.pighand.aio.domain.MKT.CheckInUserDomain;
+import com.pighand.aio.service.MKT.CheckInActivityService;
 import com.pighand.aio.service.MKT.CheckInLocationService;
 import com.pighand.aio.service.MKT.CheckInRecordService;
 import com.pighand.aio.service.MKT.CheckInUserService;
@@ -18,13 +20,15 @@ import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.response.Result;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 营销 - 打卡地点（小程序端）
@@ -39,6 +43,8 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
     private final CheckInUserService checkInUserService;
 
     private final CheckInRecordService checkInRecordService;
+
+    private final CheckInActivityService checkInActivityService;
 
     /**
      * 查询打卡地点列表
@@ -55,13 +61,17 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
     /**
      * 参加打卡活动（扫码进入）
      *
-     * @param fromQrCode 是否来自扫码
      * @return
      */
     @Authorization
     @Post(path = "join", docSummary = "参加打卡活动")
-    public Result<CheckInUserDomain> joinActivity(@RequestParam(required = false) Boolean fromQrCode) {
+    public Result<CheckInUserDomain> joinActivity(@RequestBody CheckInLocationVO checkInLocationVO) {
         LoginUser loginUser = Context.loginUser();
+
+        CheckInActivityDomain activityDomain = checkInActivityService.find(checkInLocationVO.getId());
+        if (activityDomain == null) {
+            throw new ThrowPrompt("活动不存在");
+        }
 
         // 检查是否已经参加过活动
         CheckInUserDomain existingUser = checkInUserService.findByUser(loginUser.getId());
@@ -69,18 +79,32 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
         if (existingUser != null) {
             // 已参加活动的用户，检查剩余时间
             Date now = new Date();
-            long remainingTime = existingUser.getEndTime().getTime() - now.getTime();
+
+            long remainingTime =
+                Date.from(existingUser.getEndTime().atZone(ZoneId.systemDefault()).toInstant()).getTime()
+                    - now.getTime();
             long halfHourInMillis = 30 * 60 * 1000; // 半小时毫秒数
 
             if (remainingTime > 0 && remainingTime <= halfHourInMillis) {
                 // 距离结束还剩半小时，追加2.5小时
-                long extendTime = (long)(2.5 * 60 * 60 * 1000);
-                Date newEndTime = new Date(existingUser.getEndTime().getTime() + extendTime);
+                long extendTime = activityDomain.getTime() * 60 * 1000;
+                Date newEndTime = new Date(
+                    Date.from(existingUser.getEndTime().atZone(ZoneId.systemDefault()).toInstant()).getTime()
+                        + extendTime);
                 checkInUserService.extendEndTime(loginUser.getId(),
                     LocalDateTime.ofInstant(newEndTime.toInstant(), ZoneId.systemDefault()));
 
                 // 更新existingUser的结束时间
-                existingUser.setEndTime(newEndTime);
+                existingUser.setEndTime(newEndTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+
+                return new Result<>(existingUser);
+            } else if (remainingTime <= 0) {
+                Date newEndTime = new Date(System.currentTimeMillis() + (activityDomain.getTime() * 60 * 1000));
+                checkInUserService.extendEndTime(loginUser.getId(),
+                    LocalDateTime.ofInstant(newEndTime.toInstant(), ZoneId.systemDefault()));
+
+                // 更新existingUser的结束时间
+                existingUser.setEndTime(newEndTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
                 return new Result<>(existingUser);
             } else {
@@ -92,7 +116,9 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
         // 未参加的直接参加活动，默认2.5小时
         com.pighand.aio.vo.MKT.CheckInUserVO checkInUserVO = new com.pighand.aio.vo.MKT.CheckInUserVO();
         checkInUserVO.setUserId(loginUser.getId());
-        checkInUserVO.setEndTime(new Date(System.currentTimeMillis() + (long)(2.5 * 60 * 60 * 1000))); // 默认2.5小时
+        checkInUserVO.setEndTime(
+            new Date(System.currentTimeMillis() + (activityDomain.getTime() * 60 * 1000)).toInstant()
+                .atZone(ZoneId.systemDefault()).toLocalDateTime()); // 默认2.5小时
 
         CheckInUserDomain newUser = checkInUserService.create(checkInUserVO);
 
@@ -132,7 +158,7 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
         }
 
         // 检查活动是否已结束
-        if (new Date().after(checkInUser.getEndTime())) {
+        if (LocalDateTime.now().isAfter(checkInUser.getEndTime())) {
             throw new ThrowPrompt("打卡活动已结束");
         }
 
@@ -169,7 +195,9 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
         LocalDate today = LocalDate.now();
         List<CheckInRecordDomain> todayRecords = checkInRecordService.findTodayRecords(loginUser.getId(), today);
 
-        return new Result<>(java.util.Map.of("joined", true, "endTime", checkInUser.getEndTime(), "isExpired",
-            new Date().after(checkInUser.getEndTime()), "todayRecords", todayRecords));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        return new Result<>(Map.of("joined", true, "endTime", checkInUser.getEndTime().format(formatter), "isExpired",
+            LocalDateTime.now().isAfter(checkInUser.getEndTime()), "todayRecords", todayRecords));
     }
 }

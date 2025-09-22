@@ -18,8 +18,8 @@ export default {
      * 参加打卡活动
      * @param fromQrCode 是否来自扫码
      */
-    join: async (fromQrCode?: boolean) => {
-        const params = fromQrCode ? { fromQrCode } : {};
+    join: async (id?: string) => {
+        const params = { id };
         return await request.post(`check-in/join`, params);
     },
 

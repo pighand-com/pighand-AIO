@@ -38,7 +38,8 @@ public class Utils {
      */
     public String getAppletEnv() {
         return switch (env) {
-            case "dev" -> "developer";
+            //            case "dev" -> "developer";
+            case "dev" -> "trial";
             case "test" -> "trial";
             default -> "formal";
         };

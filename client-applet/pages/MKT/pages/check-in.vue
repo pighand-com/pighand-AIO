@@ -204,11 +204,10 @@ onLoad(async (options) => {
 	
 	// 检查是否从二维码进入
 	const { scene = '' } = options;
-	const fromQrCode = scene && decodeURIComponent(scene).includes('fromQrCode=true')
 	
-	if (fromQrCode) {
+	if (scene) {
 		// 只有扫码进入才参加活动，需要先检查登录状态
-		await handleJoinActivity()
+		await handleJoinActivity(decodeURIComponent(scene).split('=')[1])
 	}
 	
 	// 加载页面数据
@@ -221,7 +220,7 @@ onLoad(async (options) => {
 /**
  * 处理参加活动（包含登录检查）
  */
-const handleJoinActivity = async () => {
+const handleJoinActivity = async (activityId) => {
 	// 检查登录状态
 	const token = getToken()
 	if (!token) {
@@ -240,7 +239,7 @@ const handleJoinActivity = async () => {
 	}
 	
 	// 已登录，直接参加活动
-	await joinActivity()
+	await joinActivity(activityId)
 }
 
 // 页面卸载
@@ -266,10 +265,10 @@ onUnmounted(() => {
 /**
  * 参加活动
  */
-const joinActivity = async () => {
+const joinActivity = async (activityId) => {
 	try {
 		loading.value = true
-		const result = await checkInLocationApi.join(true)
+		const result = await checkInLocationApi.join(activityId)
 		
 		// 新的返回格式：直接返回CheckInUserDomain对象
 		if (result && result.id) {
@@ -327,7 +326,7 @@ const loadPageData = async () => {
 		const statusResult = await checkInLocationApi.getActivityStatus()
 		
 		// 根据状态判断是否已参加活动
-		if (statusResult && statusResult.joined) {
+		if (statusResult && statusResult.joined && statusResult.isExpired == false) {
 			isParticipated.value = true
 			userStatus.value = statusResult
 			endTime.value = statusResult.endTime

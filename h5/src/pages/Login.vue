@@ -131,7 +131,8 @@ const login = async () => {
             setUserInfo({
                 id: result.id,
                 username: result.username,
-                role: result.role
+                role: result.role,
+                extension: result.extension
             });
 
             setApplicationInfo(result.application);

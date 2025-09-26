@@ -104,9 +104,8 @@ public class UserExtensionServiceImpl extends BaseServiceImpl<UserExtensionMappe
      */
     @Override
     public UserExtensionDomain find(Long id) {
-        //        UserExtensionDomain userExtensionDomain = super.mapper.selectById(id);
-        //        return userExtensionDomain;
-        return null;
+        UserExtensionDomain userExtensionDomain = super.mapper.find(id);
+        return userExtensionDomain;
     }
 
     /**

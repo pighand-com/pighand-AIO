@@ -17,21 +17,21 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * CMS - 素材 - 收藏
+ * CMS - 素材 - 下载记录
  *
  * @author wangshuli
- * @createDate 2025-09-03 17:16:47
+ * @createDate 2025-01-25 10:00:00
  */
-@Table(value = "cms_assets_favourite")
+@Table(value = "cms_assets_download")
 @Data
-public class AssetsFavouriteDomain extends BaseDomainRecord<AssetsFavouriteDomain> implements Serializable {
+public class AssetsDownloadDomain extends BaseDomainRecord<AssetsDownloadDomain> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)
-    @RequestFieldException("cmsAssetsFavouriteCreate")
-    @RequestFieldException("cmsAssetsFavouriteUpdate")
+    @RequestFieldException("cmsAssetsDownloadCreate")
+    @RequestFieldException("cmsAssetsDownloadUpdate")
     private Long id;
 
     @NotNull(groups = {ValidationGroup.Create.class})
@@ -44,9 +44,12 @@ public class AssetsFavouriteDomain extends BaseDomainRecord<AssetsFavouriteDomai
     @JsonSerialize(using = ToStringSerializer.class)
     private Long assetsId;
 
-    @Schema(description = "创建人")
+    @Schema(description = "下载用户ID")
     private Long createdBy;
 
-    @Schema(description = "创建时间")
+    @Schema(description = "首次下载时间")
     private Date createdAt;
+
+    @Schema(description = "最后下载时间")
+    private Date updatedAt;
 }

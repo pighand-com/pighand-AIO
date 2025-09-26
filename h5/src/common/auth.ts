@@ -112,7 +112,7 @@ export const isAdmin = (): boolean => {
  * @param permission 权限
  */
 export const requirePermission = (permission: Permission) => {
-    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+    return (_target: any, _propertyKey: string, descriptor: PropertyDescriptor) => {
         const originalMethod = descriptor.value;
         
         descriptor.value = function (...args: any[]) {

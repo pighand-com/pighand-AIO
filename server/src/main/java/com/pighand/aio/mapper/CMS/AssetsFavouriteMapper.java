@@ -16,7 +16,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.pighand.aio.domain.CMS.table.AssetsDocTableDef.ASSETS_DOC;
 import static com.pighand.aio.domain.CMS.table.AssetsFavouriteTableDef.ASSETS_FAVOURITE;
+import static com.pighand.aio.domain.CMS.table.AssetsImageTableDef.ASSETS_IMAGE;
+import static com.pighand.aio.domain.CMS.table.AssetsVideoTableDef.ASSETS_VIDEO;
 
 /**
  * CMS - 素材 - 收藏
@@ -114,19 +117,96 @@ public interface AssetsFavouriteMapper extends BaseMapper<AssetsFavouriteDomain>
     }
 
     /**
-     * 分页或列表
+     * 分页或列表查询
      *
-     * @param cmsAssetsFavouriteDomain
+     * @param assetsFavouriteDomain
+     * @param queryWrapper
      * @return
      */
-    default PageOrList<AssetsFavouriteVO> query(AssetsFavouriteDomain cmsAssetsFavouriteDomain,
+    default PageOrList<AssetsFavouriteVO> query(AssetsFavouriteDomain assetsFavouriteDomain,
         QueryWrapper queryWrapper) {
-        QueryWrapper finalQueryWrapper = this.relationOne(cmsAssetsFavouriteDomain.getJoinTables(), queryWrapper);
+        QueryWrapper finalQueryWrapper = this.relationOne(assetsFavouriteDomain.getJoinTables(), queryWrapper);
 
         PageOrList<AssetsFavouriteVO> result =
-            this.page(cmsAssetsFavouriteDomain, finalQueryWrapper, AssetsFavouriteVO.class);
-        this.relationMany(cmsAssetsFavouriteDomain.getJoinTables(), result.getRecords());
+            this.page(assetsFavouriteDomain, finalQueryWrapper, AssetsFavouriteVO.class);
+        this.relationMany(assetsFavouriteDomain.getJoinTables(), result.getRecords());
 
         return result;
+    }
+
+    /**
+     * 查询收藏列表，包含关联的素材详细信息
+     *
+     * @param assetsFavouriteDomain
+     * @param queryWrapper
+     * @return
+     */
+    default PageOrList<AssetsFavouriteVO> queryWithAssetDetails(AssetsFavouriteDomain assetsFavouriteDomain,
+        QueryWrapper queryWrapper) {
+        
+        // 获取素材类型过滤条件
+        Integer assetsType = assetsFavouriteDomain.getAssetsType();
+        
+        // 构建图片素材查询
+        QueryWrapper imageQuery = QueryWrapper.create()
+            .select(ASSETS_FAVOURITE.ID, ASSETS_FAVOURITE.ASSETS_TYPE, ASSETS_FAVOURITE.ASSETS_ID,
+                ASSETS_FAVOURITE.CREATED_BY, ASSETS_FAVOURITE.CREATED_AT, ASSETS_IMAGE.TITLE, ASSETS_IMAGE.DESCRIPTION,
+                ASSETS_IMAGE.URL, ASSETS_IMAGE.URL.as("coverUrl"), // 图片素材没有单独的coverUrl，使用url
+                ASSETS_IMAGE.FILE_FORMAT, ASSETS_IMAGE.FILE_SIZE, ASSETS_IMAGE.VIEW_COUNT, ASSETS_IMAGE.DOWNLOAD_COUNT,
+                ASSETS_IMAGE.HANDPICK, ASSETS_IMAGE.STATUS).from(ASSETS_FAVOURITE).join(ASSETS_IMAGE)
+            .on(ASSETS_FAVOURITE.ASSETS_ID.eq(ASSETS_IMAGE.ID)).where(ASSETS_FAVOURITE.ASSETS_TYPE.eq(10));
+
+        // 构建视频素材查询
+        QueryWrapper videoQuery = QueryWrapper.create()
+            .select(ASSETS_FAVOURITE.ID, ASSETS_FAVOURITE.ASSETS_TYPE, ASSETS_FAVOURITE.ASSETS_ID,
+                ASSETS_FAVOURITE.CREATED_BY, ASSETS_FAVOURITE.CREATED_AT, ASSETS_VIDEO.TITLE, ASSETS_VIDEO.DESCRIPTION,
+                ASSETS_VIDEO.URL, ASSETS_VIDEO.COVER_URL, ASSETS_VIDEO.FILE_FORMAT, ASSETS_VIDEO.FILE_SIZE,
+                ASSETS_VIDEO.VIEW_COUNT, ASSETS_VIDEO.DOWNLOAD_COUNT, ASSETS_VIDEO.HANDPICK, ASSETS_VIDEO.STATUS)
+            .from(ASSETS_FAVOURITE).join(ASSETS_VIDEO).on(ASSETS_FAVOURITE.ASSETS_ID.eq(ASSETS_VIDEO.ID))
+            .where(ASSETS_FAVOURITE.ASSETS_TYPE.eq(20));
+
+        // 构建文档素材查询
+        QueryWrapper docQuery = QueryWrapper.create()
+            .select(ASSETS_FAVOURITE.ID, ASSETS_FAVOURITE.ASSETS_TYPE, ASSETS_FAVOURITE.ASSETS_ID,
+                ASSETS_FAVOURITE.CREATED_BY, ASSETS_FAVOURITE.CREATED_AT, ASSETS_DOC.TITLE, ASSETS_DOC.DESCRIPTION,
+                ASSETS_DOC.URL, ASSETS_DOC.COVER_URL, ASSETS_DOC.FILE_FORMAT, ASSETS_DOC.FILE_SIZE,
+                ASSETS_DOC.VIEW_COUNT, ASSETS_DOC.DOWNLOAD_COUNT, ASSETS_DOC.HANDPICK, ASSETS_DOC.STATUS)
+            .from(ASSETS_FAVOURITE).join(ASSETS_DOC).on(ASSETS_FAVOURITE.ASSETS_ID.eq(ASSETS_DOC.ID))
+            .where(ASSETS_FAVOURITE.ASSETS_TYPE.eq(30));
+
+        // 应用额外的查询条件到每个子查询
+        if (assetsFavouriteDomain.getCreatedBy() != null) {
+            imageQuery.and(ASSETS_FAVOURITE.CREATED_BY.eq(assetsFavouriteDomain.getCreatedBy()));
+            videoQuery.and(ASSETS_FAVOURITE.CREATED_BY.eq(assetsFavouriteDomain.getCreatedBy()));
+            docQuery.and(ASSETS_FAVOURITE.CREATED_BY.eq(assetsFavouriteDomain.getCreatedBy()));
+        }
+
+        // 根据assetsType参数构建联合查询
+        QueryWrapper unionQuery;
+        if (assetsType != null) {
+            // 如果指定了素材类型，只查询对应类型的素材
+            switch (assetsType) {
+                case 10: // 图片
+                    unionQuery = imageQuery;
+                    break;
+                case 20: // 视频
+                    unionQuery = videoQuery;
+                    break;
+                case 30: // 文档
+                    unionQuery = docQuery;
+                    break;
+                default:
+                    // 如果是未知类型，返回空结果
+                    unionQuery = QueryWrapper.create().where("1 = 0");
+                    break;
+            }
+        } else {
+            // 如果没有指定素材类型，查询所有类型的素材
+            unionQuery = imageQuery.union(videoQuery).union(docQuery);
+        }
+        
+        unionQuery.orderBy(ASSETS_FAVOURITE.CREATED_AT.desc());
+
+        return this.page(assetsFavouriteDomain, unionQuery, AssetsFavouriteVO.class);
     }
 }

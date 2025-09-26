@@ -1,5 +1,5 @@
 <template>
-    <div class="favorite-list-page">
+    <div class="download-list-page">
         <!-- 统一的头部区域 -->
         <div class="header-section">
             <!-- 导航条 -->
@@ -12,7 +12,7 @@
                     </div>
                 </div>
                 <div class="nav-center">
-                    <h1 class="nav-title">我的收藏</h1>
+                    <h1 class="nav-title">我的下载</h1>
                 </div>
                 <div class="nav-right">
                     <!-- 预留右侧操作区域 -->
@@ -38,19 +38,19 @@
             </div>
         </div>
 
-        <!-- 收藏列表 -->
-        <div class="favorite-content">
+        <!-- 下载列表 -->
+        <div class="download-content">
             <div v-if="loading" class="loading-container">
                 <el-loading :loading="true" />
             </div>
             
-            <div v-else-if="favoriteList.length === 0" class="empty-container">
-                <p class="empty-text">暂无收藏记录</p>
+            <div v-else-if="downloadList.length === 0" class="empty-container">
+                <p class="empty-text">暂无下载记录</p>
             </div>
             
             <div v-else class="assets-grid">
                 <div 
-                    v-for="item in favoriteList" 
+                    v-for="item in downloadList" 
                     :key="item.id"
                     class="asset-item"
                     @click="goToAssetDetail(item)"
@@ -91,8 +91,8 @@
                     
                     <div class="asset-info">
                         <p class="asset-title">{{ item.title }}</p>
-                        <div class="favorite-time">
-                            收藏：{{ formatDate(item.createdAt) }}
+                        <div class="download-time">
+                            下载：{{ formatDate(item.createdAt) }}
                         </div>
                     </div>
                 </div>
@@ -101,7 +101,7 @@
             <!-- 加载状态和提示 -->
             <div class="load-status">
                 <!-- 加载更多按钮 -->
-                <div v-if="hasMore && !loading && favoriteList.length > 0" class="load-more">
+                <div v-if="hasMore && !loading && downloadList.length > 0" class="load-more">
                     <el-button @click="loadMore" :loading="loadingMore">
                         {{ loadingMore ? '加载中...' : '加载更多' }}
                     </el-button>
@@ -114,7 +114,7 @@
                 </div>
                 
                 <!-- 没有更多内容提示 -->
-                <div v-if="!hasMore && favoriteList.length > 0" class="no-more">
+                <div v-if="!hasMore && downloadList.length > 0" class="no-more">
                     <span>没有更多内容了</span>
                 </div>
             </div>
@@ -133,7 +133,7 @@ const router = useRouter();
 // 响应式数据
 const loading = ref(false);
 const loadingMore = ref(false);
-const favoriteList = ref([]);
+const downloadList = ref([]);
 const hasMore = ref(true);
 const currentPage = ref(1);
 
@@ -222,9 +222,9 @@ const goBack = () => {
  */
 const resetAndSearch = () => {
     currentPage.value = 1;
-    favoriteList.value = [];
+    downloadList.value = [];
     hasMore.value = true;
-    loadFavoriteList();
+    loadDownloadList();
 };
 
 /**
@@ -233,7 +233,7 @@ const resetAndSearch = () => {
 const loadMore = () => {
     if (hasMore.value && !loadingMore.value) {
         currentPage.value++;
-        loadFavoriteList(true);
+        loadDownloadList(true);
     }
 };
 
@@ -256,7 +256,7 @@ const handleScroll = () => {
 
 /**
  * 跳转到素材详情
- * @param item 收藏记录项
+ * @param item 下载记录项
  */
 const goToAssetDetail = (item: any) => {
     router.push({
@@ -287,10 +287,10 @@ const getCoverImage = (item: any) => {
 };
 
 /**
- * 加载收藏列表
+ * 加载下载列表
  * @param isLoadMore 是否为加载更多
  */
-const loadFavoriteList = async (isLoadMore = false) => {
+const loadDownloadList = async (isLoadMore = false) => {
     try {
         if (isLoadMore) {
             loadingMore.value = true;
@@ -308,15 +308,15 @@ const loadFavoriteList = async (isLoadMore = false) => {
             params.assetsType = searchForm.assetsType;
         }
 
-        // 调用收藏列表API
-        const response = await API.assetsFavourite.getFavoriteList(params);
+        // 调用下载列表API
+        const response = await API.assetsDownload.getDownloadList(params);
 
         const newItems = response.records || [];
         
         if (isLoadMore) {
-            favoriteList.value.push(...newItems);
+            downloadList.value.push(...newItems);
         } else {
-            favoriteList.value = newItems;
+            downloadList.value = newItems;
         }
 
         // 更新分页信息
@@ -329,7 +329,7 @@ const loadFavoriteList = async (isLoadMore = false) => {
         }
 
     } catch (error) {
-        console.error('加载收藏列表失败:', error);
+        console.error('加载下载列表失败:', error);
     } finally {
         loading.value = false;
         loadingMore.value = false;
@@ -344,7 +344,7 @@ const initData = () => {
     window.scrollTo(0, 0);
     
     // 加载数据
-    loadFavoriteList();
+    loadDownloadList();
 };
 
 onMounted(() => {
@@ -360,7 +360,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.favorite-list-page {
+.download-list-page {
     background-color: #f5f5f5;
     min-height: 100vh;
     padding-bottom: 80px;
@@ -494,7 +494,7 @@ onUnmounted(() => {
 }
 
 /* 内容区域 */
-.favorite-content {
+.download-content {
     padding: 20px 16px;
     background: linear-gradient(135deg, #f8fffe 0%, #f5f5f5 100%);
     min-height: calc(100vh - 200px);
@@ -627,7 +627,7 @@ onUnmounted(() => {
     overflow: hidden;
 }
 
-.favorite-time {
+.download-time {
     font-size: 12px;
     color: #999;
     margin-top: 4px;

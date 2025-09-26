@@ -3,9 +3,13 @@ package com.pighand.aio.service.CMS;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.update.UpdateChain;
 import com.pighand.aio.domain.CMS.AssetsDocDomain;
+import com.pighand.aio.domain.base.UserExtensionDomain;
 import com.pighand.aio.mapper.CMS.AssetsDocMapper;
+import com.pighand.aio.service.base.OrgDepartmentService;
+import com.pighand.aio.service.base.UserExtensionService;
 import com.pighand.aio.vo.CMS.AssetsCollectionRelevanceVO;
 import com.pighand.aio.vo.CMS.AssetsDocVO;
+import com.pighand.aio.vo.base.OrgDepartmentSimpleVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;
@@ -31,10 +35,8 @@ import static com.pighand.aio.domain.CMS.table.AssetsDocTableDef.ASSETS_DOC;
 public class AssetsDocService extends BaseServiceImpl<AssetsDocMapper, AssetsDocDomain> {
 
     private final AssetsCollectionRelevanceService assetsCollectionRelevanceService;
-
-
-
-
+    private final UserExtensionService userExtensionService;
+    private final OrgDepartmentService orgDepartmentService;
 
     /**
      * 创建
@@ -51,6 +53,8 @@ public class AssetsDocService extends BaseServiceImpl<AssetsDocMapper, AssetsDoc
             cmsAssetsDocVO.setStatus(20);
         }
 
+        cmsAssetsDocVO.setViewCount(0);
+        cmsAssetsDocVO.setDownloadCount(0);
         super.mapper.insert(cmsAssetsDocVO);
 
         // 处理专辑关联
@@ -64,12 +68,55 @@ public class AssetsDocService extends BaseServiceImpl<AssetsDocMapper, AssetsDoc
 
     /**
      * 详情
+     * 查看详情时自动增加浏览次数
      *
      * @param id
      * @return
      */
-    public AssetsDocDomain find(Long id) {
-        return super.mapper.find(id, null);
+    public AssetsDocVO find(Long id) {
+        // 先增加浏览次数
+        UpdateChain updateChain = this.updateChain().where(ASSETS_DOC.ID.eq(id));
+        updateChain.set(ASSETS_DOC.VIEW_COUNT, ASSETS_DOC.VIEW_COUNT.add(1));
+        updateChain.update();
+        
+        // 然后返回详情
+        AssetsDocDomain domain = super.mapper.find(id);
+        if (domain == null) {
+            return null;
+        }
+        
+        // 转换为VO
+        AssetsDocVO vo = new AssetsDocVO();
+        // 复制基础属性
+        vo.setId(domain.getId());
+        vo.setApplicationId(domain.getApplicationId());
+        vo.setClassificationId(domain.getClassificationId());
+        vo.setTitle(domain.getTitle());
+        vo.setDescription(domain.getDescription());
+        vo.setCoverUrl(domain.getCoverUrl());
+        vo.setUrl(domain.getUrl());
+        vo.setFileFormat(domain.getFileFormat());
+        vo.setFileSize(domain.getFileSize());
+        vo.setViewCount(domain.getViewCount());
+        vo.setDownloadCount(domain.getDownloadCount());
+        vo.setHandpick(domain.getHandpick());
+        vo.setStatus(domain.getStatus());
+        vo.setCreatedBy(domain.getCreatedBy());
+        vo.setCreatedAt(domain.getCreatedAt());
+        vo.setUpdatedAt(domain.getUpdatedAt());
+        vo.setDeleted(domain.getDeleted());
+        
+        // 获取创建人信息
+        if (domain.getCreatedBy() != null) {
+            UserExtensionDomain creator = userExtensionService.find(domain.getCreatedBy());
+            vo.setCreator(creator);
+            
+            // 获取创建人组织架构（简化版）
+            OrgDepartmentSimpleVO creatorDepartment = orgDepartmentService.getUserDepartmentSimple(domain.getCreatedBy());
+            vo.setCreatorDepartment(creatorDepartment);
+        }
+        
+        return vo;
     }
 
     /**

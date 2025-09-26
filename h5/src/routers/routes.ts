@@ -54,15 +54,15 @@ const routes = [
         component: () => import('@/pages/Home.vue')
     },
     {
-        path: '/category',
-        name: 'category',
+        path: '/classification',
+        name: 'classification',
         title: '分类',
         icon: shallowRef(Folder),
         meta: {
             requiresAuth: true,
             pageType: 'mobile'
         },
-        component: () => import('@/pages/Category.vue')
+        component: () => import('@/pages/Classification.vue')
     },
     {
         path: '/profile',
@@ -106,6 +106,16 @@ const routes = [
         component: () => import('@/pages/RecordsList.vue')
     },
     {
+        path: '/download-list',
+        name: 'downloadList',
+        title: '我的下载',
+        meta: {
+            requiresAuth: true,
+            pageType: 'mobile'
+        },
+        component: () => import('@/pages/DownloadList.vue')
+    },
+    {
         path: '/favorite-list',
         name: 'favoriteList',
         title: '我的收藏',
@@ -114,6 +124,16 @@ const routes = [
             pageType: 'mobile'
         },
         component: () => import('@/pages/FavoriteList.vue')
+    },
+    {
+        path: '/settings',
+        name: 'settings',
+        title: '设置',
+        meta: {
+            requiresAuth: true,
+            pageType: 'mobile'
+        },
+        component: () => import('@/pages/Settings.vue')
     }
 ];
 

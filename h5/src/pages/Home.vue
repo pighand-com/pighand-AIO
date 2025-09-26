@@ -4,19 +4,18 @@
         <div class="search-bar">
             <div class="search-container">
                 <h2 class="site-title">科普资料库</h2>
-                <el-input
-                    v-model="searchKeyword"
-                    placeholder="请输入关键词搜索"
-                    class="search-input"
-                    @click="goToSearch"
-                    readonly
-                >
-                    <template #suffix>
-                        <el-button type="primary" @click="goToSearch" class="search-btn">
-                            搜索
-                        </el-button>
-                    </template>
-                </el-input>
+                <div class="search-input-wrapper">
+                    <el-input
+                        v-model="searchKeyword"
+                        placeholder="请输入关键词搜索"
+                        class="search-input"
+                        @keyup.enter="goToSearch"
+                        clearable
+                    />
+                    <el-button type="primary" @click="goToSearch" class="search-btn">
+                        搜索
+                    </el-button>
+                </div>
             </div>
         </div>
 
@@ -25,7 +24,7 @@
             <div class="top-icons-grid">
                 <div 
                     class="top-icon-item"
-                    @click="goToAssetsList({ id: 1, type: 'image' })"
+                    @click="goToAssetsList({ type: '1' })"
                 >
                     <div class="top-icon">
                         <Picture />
@@ -34,7 +33,7 @@
                 </div>
                 <div 
                     class="top-icon-item"
-                    @click="goToAssetsList({ id: 2, type: 'video' })"
+                    @click="goToAssetsList({ type: '2' })"
                 >
                     <div class="top-icon">
                         <Video />
@@ -43,7 +42,7 @@
                 </div>
                 <div 
                     class="top-icon-item"
-                    @click="goToAssetsList({ id: 3, type: 'doc' })"
+                    @click="goToAssetsList({ type: '3' })"
                 >
                     <div class="top-icon">
                         <FileDoc />
@@ -79,14 +78,14 @@
         <div class="section">
             <div class="section-header">
                 <h3>图片精选</h3>
-                <span class="more-btn" @click="goToAssetsList({ type: 'image' })">查看更多 >></span>
+                <span class="more-btn" @click="goToAssetsList({ type: '1' })">查看更多 >></span>
             </div>
             <div class="assets-grid">
                 <div 
                     v-for="image in featuredImages" 
                     :key="image.id"
                     class="asset-item"
-                    @click="goToAssetDetail(image)"
+                    @click="goToAssetDetail(image, 'image')"
                 >
                     <img :src="image.url" :alt="image.title" />
                     <p class="asset-title">{{ image.title }}</p>
@@ -98,14 +97,14 @@
         <div class="section">
             <div class="section-header">
                 <h3>视频精选</h3>
-                <span class="more-btn" @click="goToAssetsList({ type: 'video' })">查看更多 >></span>
+                <span class="more-btn" @click="goToAssetsList({ type: '2' })">查看更多 >></span>
             </div>
             <div class="assets-grid">
                 <div 
                     v-for="video in featuredVideos" 
                     :key="video.id"
                     class="asset-item"
-                    @click="goToAssetDetail(video)"
+                    @click="goToAssetDetail(video, 'video')"
                 >
                     <div class="video-thumbnail">
                         <img :src="video.coverUrl" :alt="video.title" />
@@ -119,14 +118,14 @@
         <div class="section">
             <div class="section-header">
                 <h3>课件精选</h3>
-                <span class="more-btn" @click="goToAssetsList({ type: 'doc' })">查看更多 >></span>
+                <span class="more-btn" @click="goToAssetsList({ type: '3' })">查看更多 >></span>
             </div>
             <div class="assets-grid">
                 <div 
                     v-for="doc in featuredDocs" 
                     :key="doc.id"
                     class="asset-item"
-                    @click="goToAssetDetail(doc)"
+                    @click="goToAssetDetail(doc, 'doc')"
                 >
                     <div class="doc-thumbnail">
                         <img v-if="doc.coverUrl" :src="doc.coverUrl" :alt="doc.title" />
@@ -160,9 +159,6 @@ const featuredDocs = ref([]);
  * 跳转到搜索页面
  */
 const goToSearch = () => {
-    if (!checkPermission(Permission.ASSET_VIEW)) {
-        return;
-    }
     router.push({
         name: 'assetsList',
         query: { keyword: searchKeyword.value }
@@ -174,9 +170,6 @@ const goToSearch = () => {
  * @param params 查询参数
  */
 const goToAssetsList = (params: any) => {
-    if (!checkPermission(Permission.ASSET_VIEW)) {
-        return;
-    }
     router.push({
         name: 'assetsList',
         query: params
@@ -198,13 +191,10 @@ const goToCollectionDetail = (collection: any) => {
  * 跳转到素材详情页面
  * @param asset 素材信息
  */
-const goToAssetDetail = (asset: any) => {
-    if (!checkPermission(Permission.ASSET_VIEW)) {
-        return;
-    }
+const goToAssetDetail = (asset: any, type?: string) => {
     router.push({
         name: 'assetDetail',
-        params: { id: asset.id, type: asset.type || 'image' }
+        params: { id: asset.id, type }
     });
 };
 
@@ -287,10 +277,10 @@ onMounted(() => {
 .search-bar {
     width: 100%;
     margin: 0 0 20px 0;
-    background: white;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fffe 100%);
     padding: 20px 16px;
     border-radius: 0 0 24px 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(94, 189, 49, 0.1);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -311,26 +301,63 @@ onMounted(() => {
     flex-shrink: 0;
 }
 
-.search-input {
-    border-radius: 30px;
+.search-input-wrapper {
     flex: 1;
+    display: flex;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 2px solid rgba(94, 189, 49, 0.2);
+    background: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(94, 189, 49, 0.1);
+    align-items: center;
+}
+
+.search-input-wrapper:focus-within {
+    border-color: var(--p-color-green-primary);
+    box-shadow: 0 4px 16px rgba(94, 189, 49, 0.2);
+    transform: translateY(-1px);
+}
+
+.search-input {
+    flex: 1;
+    min-width: 0; /* 防止flex子项溢出 */
 }
 
 .search-input :deep(.el-input__wrapper) {
-    border-radius: 30px;
-    padding-right: 0;
+    border: none;
+    border-radius: 0;
+    height: 44px;
+    box-shadow: none;
+    background: transparent;
+    padding: 0 16px;
+}
+
+.search-input :deep(.el-input__wrapper):focus-within {
+    border: none;
+    box-shadow: none;
+}
+
+.search-input :deep(.el-input__inner) {
+    font-size: 15px;
 }
 
 .search-btn {
-    border-radius: 0 30px 30px 0;
-    border-left: none;
-    background-color: var(--p-color-green-primary);
-    border-color: var(--p-color-green-primary);
+    border-radius: 22px;
+    background: linear-gradient(135deg, var(--p-color-green-primary) 0%, #4ade80 100%);
+    border: none;
+    height: 40px;
+    padding: 0 24px;
+    margin-right: 2px;
+    white-space: nowrap;
+    flex-shrink: 0; /* 防止按钮被压缩 */
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .search-btn:hover {
-    background-color: var(--p-color-green-hover);
-    border-color: var(--p-color-green-hover);
+    background: linear-gradient(135deg, var(--p-color-green-hover) 0%, #22c55e 100%);
+    transform: translateX(2px);
 }
 
 /* 顶部图标样式 */
@@ -344,9 +371,10 @@ onMounted(() => {
     grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     padding: 20px;
-    background: white;
+    background: linear-gradient(135deg, #f8fffe 0%, #ffffff 100%);
     border-radius: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 16px rgba(94, 189, 49, 0.08);
+    border: 2px solid rgba(94, 189, 49, 0.1);
 }
 
 .top-icon-item {
@@ -354,18 +382,22 @@ onMounted(() => {
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: all 0.3s ease;
+}
+
+.top-icon-item:hover {
+    transform: translateY(-2px);
 }
 
 .top-icon-item:active {
-    transform: scale(0.95);
+    transform: translateY(0) scale(0.98);
 }
 
 .top-icon {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--p-color-green-light) 0%, var(--p-color-green-primary) 30%, var(--p-color-green-hover) 70%, var(--p-color-green-dark) 100%);
+    background: linear-gradient(135deg, var(--p-color-green-primary) 0%, #4ade80 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -373,6 +405,13 @@ onMounted(() => {
     color: white;
     margin-bottom: 10px;
     box-shadow: 0 4px 12px rgba(94, 189, 49, 0.3);
+    transition: all 0.3s ease;
+}
+
+.top-icon-item:hover .top-icon {
+    background: linear-gradient(135deg, var(--p-color-green-hover) 0%, #22c55e 100%);
+    box-shadow: 0 6px 16px rgba(94, 189, 49, 0.4);
+    transform: scale(1.05);
 }
 
 .top-icon-name {

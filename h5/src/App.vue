@@ -52,8 +52,9 @@ const route = useRoute();
  * 是否显示TabBar
  */
 const shouldShowTabBar = computed(() => {
-    // 在登录页面不显示TabBar
-    return route.name !== 'login';
+    // 只在首页、分类、我的页面显示TabBar
+    const tabBarPages = ['home', 'classification', 'profile'];
+    return tabBarPages.includes(route.name as string);
 });
 
 // 初始化应用信息

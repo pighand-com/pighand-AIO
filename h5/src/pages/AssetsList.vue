@@ -1,48 +1,73 @@
 <template>
     <div class="assets-list-page">
-        <!-- 搜索栏 -->
-        <div v-if="!isFromCollection" class="search-bar">
-            <el-input
-                v-model="searchForm.keyword"
-                placeholder="请输入关键词搜索"
-                :prefix-icon="Search"
-                @keyup.enter="handleSearch"
-                clearable
-            >
-                <template #suffix>
-                    <el-button type="primary" @click="handleSearch" class="search-btn">
-                        搜索
-                    </el-button>
-                </template>
-            </el-input>
-        </div>
-
-        <!-- 筛选条件 -->
-        <div class="filter-bar">
-            <div class="filter-tabs">
-                <div 
-                    v-for="tab in filterTabs" 
-                    :key="tab.value"
-                    class="filter-tab"
-                    :class="{ active: searchForm.type === tab.value }"
-                    @click="selectFilterTab(tab.value)"
-                >
-                    {{ tab.label }}
+        <!-- 统一的头部区域 -->
+        <div class="header-section">
+            <!-- 导航条 -->
+            <div class="nav-bar">
+                <div class="nav-left">
+                    <div class="back-btn" @click="goBack">
+                        <svg class="back-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="nav-center">
+                    <h1 class="nav-title">{{ pageTitle }}</h1>
+                </div>
+                <div class="nav-right">
+                    <!-- 预留右侧操作区域 -->
                 </div>
             </div>
-        </div>
 
-        <!-- 排序条件（仅专辑页面显示） -->
-        <div v-if="isFromCollection" class="sort-bar">
-            <div class="sort-tabs">
-                <div 
-                    v-for="sort in sortOptions" 
-                    :key="sort.value"
-                    class="sort-tab"
-                    :class="{ active: searchForm.sortBy === sort.value }"
-                    @click="selectSortOption(sort.value)"
-                >
-                    {{ sort.label }}
+            <!-- 搜索栏（非专辑页面显示） -->
+            <div v-if="!isFromCollection" class="search-section">
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <el-input
+                            v-model="searchForm.keyword"
+                            placeholder="请输入关键词搜索"
+                            :prefix-icon="Search"
+                            @keyup.enter="handleSearch"
+                            clearable
+                            class="search-input"
+                        />
+                        <el-button type="primary" @click="handleSearch" class="search-btn">
+                            搜索
+                        </el-button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 筛选和排序区域 -->
+            <div class="filter-section">
+                <!-- 筛选条件 -->
+                <div class="filter-container">
+                    <div class="filter-tabs">
+                        <div 
+                            v-for="tab in filterTabs" 
+                            :key="tab.value"
+                            class="filter-tab"
+                            :class="{ active: searchForm.type === tab.value }"
+                            @click="selectFilterTab(tab.value)"
+                        >
+                            {{ tab.label }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 排序条件（仅专辑页面显示） -->
+                <div v-if="isFromCollection" class="sort-container">
+                    <div class="sort-tabs">
+                        <div 
+                            v-for="sort in sortOptions" 
+                            :key="sort.value"
+                            class="sort-tab"
+                            :class="{ active: searchForm.sortBy === sort.value }"
+                            @click="selectSortOption(sort.value)"
+                        >
+                            {{ sort.label }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -54,10 +79,7 @@
             </div>
             
             <div v-else-if="assetsList.length === 0" class="empty-container">
-                <div class="empty-icon">
-                    <Picture />
-                </div>
-                <p class="empty-text">暂无素材</p>
+                <p class="empty-text">没有更多内容了</p>
             </div>
             
             <div v-else class="assets-grid">
@@ -68,52 +90,73 @@
                     @click="goToAssetDetail(asset)"
                 >
                     <!-- 图片素材 -->
-                    <div v-if="asset.type === 'image'" class="asset-thumbnail">
-                        <img :src="asset.thumbnailUrl || asset.imageUrl" :alt="asset.title" />
+                    <div v-if="asset.assetType === 'image'" class="asset-thumbnail">
+                        <img :src="asset.coverUrl" :alt="asset.title" />
+                        <!-- 文件类型标签 -->
+                        <div class="file-type-badge">
+                            <component :is="getAssetTypeIcon(asset.assetType)" class="type-icon" />
+                            <span class="file-format">{{ getFileFormat(asset.fileFormat) }}</span>
+                        </div>
                     </div>
                     
                     <!-- 视频素材 -->
-                    <div v-else-if="asset.type === 'video'" class="asset-thumbnail video-thumbnail">
-                        <img :src="asset.thumbnailUrl" :alt="asset.title" />
-                        <div class="play-icon">
-                            <Play />
-                        </div>
+                    <div v-else-if="asset.assetType === 'video'" class="asset-thumbnail video-thumbnail">
+                        <img :src="asset.coverUrl" :alt="asset.title" />
                         <div v-if="asset.duration" class="duration">
                             {{ formatDuration(asset.duration) }}
+                        </div>
+                        <!-- 文件类型标签 -->
+                        <div class="file-type-badge">
+                            <component :is="getAssetTypeIcon(asset.assetType)" class="type-icon" />
+                            <span class="file-format">{{ getFileFormat(asset.fileFormat) }}</span>
                         </div>
                     </div>
                     
                     <!-- 文档素材 -->
                     <div v-else class="asset-thumbnail doc-thumbnail">
-                        <FileDoc class="doc-icon" />
+                        <img v-if="asset.coverUrl" :src="asset.coverUrl" :alt="asset.title" />
+                        <FileDoc v-else class="doc-icon" />
+                        <!-- 文件类型标签 -->
+                        <div class="file-type-badge">
+                            <component :is="getAssetTypeIcon(asset.assetType)" class="type-icon" />
+                            <span class="file-format">{{ getFileFormat(asset.fileFormat) }}</span>
+                        </div>
                     </div>
                     
                     <div class="asset-info">
                         <p class="asset-title">{{ asset.title }}</p>
-                        <div class="asset-meta">
-                            <span class="asset-type">{{ getAssetTypeLabel(asset.type) }}</span>
-                            <span v-if="asset.downloadCount" class="download-count">
-                                {{ asset.downloadCount }}次下载
-                            </span>
-                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 加载更多 -->
-            <div v-if="hasMore && !loading" class="load-more">
-                <el-button @click="loadMore" :loading="loadingMore">
-                    {{ loadingMore ? '加载中...' : '加载更多' }}
-                </el-button>
+            <!-- 加载状态和提示 -->
+            <div class="load-status">
+                <!-- 加载更多按钮 -->
+                <div v-if="hasMore && !loading && assetsList.length > 0" class="load-more">
+                    <el-button @click="loadMore" :loading="loadingMore">
+                        {{ loadingMore ? '加载中...' : '加载更多' }}
+                    </el-button>
+                </div>
+                
+                <!-- 加载中状态 -->
+                <div v-if="loadingMore" class="loading-more">
+                    <div class="loading-spinner"></div>
+                    <span>正在加载更多...</span>
+                </div>
+                
+                <!-- 没有更多内容提示 -->
+                <div v-if="!hasMore && assetsList.length > 0" class="no-more">
+                    <span>没有更多内容了</span>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, computed, onMounted, watch } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { Search, Picture, Video, FileDoc, Play } from '@icon-park/vue-next';
+import { Search, Picture, Video, FileDoc, Play, ArrowLeft } from '@icon-park/vue-next';
 import * as API from '@/api';
 
 const router = useRouter();
@@ -125,6 +168,8 @@ const loadingMore = ref(false);
 const assetsList = ref([]);
 const hasMore = ref(true);
 const currentPage = ref(1);
+const totalRow = ref(0); // 总数量
+const totalPage = ref(0); // 总页数
 
 // 搜索表单
 const searchForm = reactive({
@@ -132,7 +177,8 @@ const searchForm = reactive({
     type: 'all',
     categoryId: null,
     collectionId: null,
-    sortBy: 'comprehensive'
+    sortBy: 'comprehensive',
+    classificationId: null // 新增分类ID字段
 });
 
 // 筛选选项
@@ -157,11 +203,55 @@ const isFromCollection = computed(() => {
 });
 
 /**
+ * 页面标题
+ */
+const pageTitle = computed(() => {
+    if (isFromCollection.value) {
+        // 如果有专辑名称，显示专辑名称，否则显示默认的"专辑素材"
+        const collectionName = route.query.collectionName as string;
+        return collectionName || '专辑素材';
+    }
+    return '素材库';
+});
+
+/**
+ * 获取素材类型图标
+ * @param type 素材类型
+ */
+const getAssetTypeIcon = (type: string) => {
+    const iconMap = {
+        image: Picture,
+        video: Video,
+        doc: FileDoc
+    };
+    return iconMap[type] || FileDoc;
+};
+
+/**
+ * 获取文件格式显示文本
+ * @param fileFormat 文件格式
+ */
+const getFileFormat = (fileFormat: string) => {
+    if (!fileFormat) return '';
+    return fileFormat.toUpperCase();
+};
+
+/**
  * 选择筛选标签
  * @param type 素材类型
  */
 const selectFilterTab = (type: string) => {
     searchForm.type = type;
+    // 根据类型设置 classificationId
+    if (type === 'image') {
+        searchForm.classificationId = 1;
+    } else if (type === 'video') {
+        searchForm.classificationId = 2;
+    } else if (type === 'doc') {
+        searchForm.classificationId = 3;
+    } else {
+        searchForm.classificationId = null; // 全部类型
+    }
     resetAndSearch();
 };
 
@@ -172,6 +262,13 @@ const selectFilterTab = (type: string) => {
 const selectSortOption = (sortBy: string) => {
     searchForm.sortBy = sortBy;
     resetAndSearch();
+};
+
+/**
+ * 返回上一页
+ */
+const goBack = () => {
+    router.back();
 };
 
 /**
@@ -202,6 +299,23 @@ const loadMore = () => {
 };
 
 /**
+ * 滚动监听函数
+ */
+const handleScroll = () => {
+    // 防抖处理
+    if (loadingMore.value || !hasMore.value) return;
+    
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    
+    // 当滚动到距离底部100px时触发加载更多
+    if (scrollTop + windowHeight >= documentHeight - 100) {
+        loadMore();
+    }
+};
+
+/**
  * 跳转到素材详情
  * @param asset 素材信息
  */
@@ -210,22 +324,9 @@ const goToAssetDetail = (asset: any) => {
         name: 'assetDetail',
         params: { 
             id: asset.id, 
-            type: asset.type 
+            type: asset.assetType || 'image' // 直接传递 assetType 值
         }
     });
-};
-
-/**
- * 获取素材类型标签
- * @param type 素材类型
- */
-const getAssetTypeLabel = (type: string) => {
-    const typeMap = {
-        image: '图片',
-        video: '视频',
-        doc: '课件'
-    };
-    return typeMap[type] || '未知';
 };
 
 /**
@@ -250,43 +351,25 @@ const loadAssets = async (isLoadMore = false) => {
             loading.value = true;
         }
 
-        const params = {
-            current: currentPage.value,
-            size: 20,
-            ...searchForm
+        const params: any = {
+            pageNumber: currentPage.value,
+            pageSize: 20,
+            keyword: searchForm.keyword || undefined,
+            classificationId: searchForm.classificationId || undefined,
+            collectionId: searchForm.collectionId || undefined,
+            categoryId: searchForm.categoryId || undefined,
         };
 
-        // 根据类型调用不同的API
-        let response;
-        if (searchForm.type === 'image') {
-            response = await API.assetsImage.query(params);
-        } else if (searchForm.type === 'video') {
-            response = await API.assetsVideo.query(params);
-        } else if (searchForm.type === 'doc') {
-            response = await API.assetsDoc.query(params);
-        } else {
-            // 全部类型，需要合并多个API的结果
-            const [imageRes, videoRes, docRes] = await Promise.all([
-                API.assetsImage.query(params),
-                API.assetsVideo.query(params),
-                API.assetsDoc.query(params)
-            ]);
-            
-            const allAssets = [
-                ...(imageRes.data?.records || imageRes.data || []).map(item => ({ ...item, type: 'image' })),
-                ...(videoRes.data?.records || videoRes.data || []).map(item => ({ ...item, type: 'video' })),
-                ...(docRes.data?.records || docRes.data || []).map(item => ({ ...item, type: 'doc' }))
-            ];
-            
-            response = {
-                data: {
-                    records: allAssets,
-                    total: allAssets.length
-                }
-            };
+        // 根据排序选项决定是否传递sort参数
+        // 热门下载时传sort=download，综合排序时不传
+        if (searchForm.sortBy === 'download') {
+            params.sort = 'download';
         }
 
-        const newAssets = response.data?.records || response.data || [];
+        // 使用新的聚合接口
+        const response = await API.assets.aggregate(params);
+
+        const newAssets = response.records || [];
         
         if (isLoadMore) {
             assetsList.value.push(...newAssets);
@@ -294,8 +377,16 @@ const loadAssets = async (isLoadMore = false) => {
             assetsList.value = newAssets;
         }
 
-        // 判断是否还有更多数据
-        hasMore.value = newAssets.length >= 20;
+        // 更新分页信息
+        if (response.page) {
+            totalRow.value = response.page.totalRow || 0;
+            totalPage.value = response.page.totalPage || 0;
+            // 判断是否还有更多数据
+            hasMore.value = currentPage.value < totalPage.value;
+        } else {
+            // 兼容旧的判断方式
+            hasMore.value = newAssets.length >= 20;
+        }
 
     } catch (error) {
         console.error('加载素材列表失败:', error);
@@ -309,11 +400,39 @@ const loadAssets = async (isLoadMore = false) => {
  * 初始化页面数据
  */
 const initData = () => {
+    // 重置滚动位置到顶部
+    window.scrollTo(0, 0);
+    
     // 从路由参数获取搜索条件
     searchForm.keyword = route.query.keyword as string || '';
-    searchForm.type = route.query.type as string || 'all';
-    searchForm.categoryId = route.query.categoryId as string || null;
     searchForm.collectionId = route.query.collectionId as string || null;
+
+    const typeParam = route.query.type as string || 'all';
+    const classificationId = route.query.classificationId as string || null;
+    
+    if (typeParam === '1') {
+        searchForm.type = 'image';
+    } else if (typeParam === '2') {
+        searchForm.type = 'video';
+    } else if (typeParam === '3') {
+        searchForm.type = 'doc';
+    } else {
+        searchForm.type = 'all';
+    }
+
+    // 根据type参数设置对应的classificationId
+    const type = searchForm.type;
+    if(classificationId) {
+        searchForm.classificationId = classificationId;
+    } else if (type === 'image') {
+        searchForm.classificationId = 1;
+    } else if (type === 'video') {
+        searchForm.classificationId = 2;
+    } else if (type === 'doc') {
+        searchForm.classificationId = 3;
+    } else {
+        searchForm.classificationId = null; // 全部类型
+    }
     
     // 加载数据
     loadAssets();
@@ -326,6 +445,13 @@ watch(() => route.query, () => {
 
 onMounted(() => {
     initData();
+    // 添加滚动监听
+    window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+    // 清理滚动监听
+    window.removeEventListener('scroll', handleScroll);
 });
 </script>
 
@@ -336,65 +462,215 @@ onMounted(() => {
     padding-bottom: 80px;
 }
 
-/* 搜索栏样式 */
-.search-bar {
-    padding: 16px;
+/* 统一的头部区域样式 */
+.header-section {
     background: white;
-    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 0 0 16px 16px;
+    overflow: hidden;
+}
+
+/* 导航条样式 */
+.nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 16px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fffe 100%);
+}
+
+.nav-left {
+    flex: 0 0 40px; /* 固定宽度与返回按钮一致，确保左右等宽占位 */
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-right {
+    flex: 0 0 40px; /* 与左侧保持一致宽度用于占位，标题即可居中 */
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+
+.back-btn:hover {
+    transform: scale(1.1);
+}
+
+.back-btn:active {
+    transform: scale(0.9);
+}
+
+.back-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--p-color-green-primary);
+}
+
+.nav-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+}
+
+/* 搜索区域样式 */
+.search-section {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #f8fffe 0%, #f0fdf4 100%);
+    border-top: 1px solid rgba(94, 189, 49, 0.1);
+}
+
+.search-container {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+}
+
+.search-input-wrapper {
+    flex: 1;
+    display: flex;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 2px solid rgba(94, 189, 49, 0.2);
+    background: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(94, 189, 49, 0.1);
+    align-items: center;
+}
+
+.search-input-wrapper:focus-within {
+    border-color: var(--p-color-green-primary);
+    box-shadow: 0 4px 16px rgba(94, 189, 49, 0.2);
+    transform: translateY(-1px);
 }
 
 .search-input {
-    border-radius: 25px;
+    flex: 1;
+    min-width: 0;
 }
 
 .search-input :deep(.el-input__wrapper) {
-    border-radius: 25px;
-    padding-right: 0;
+    border: none;
+    border-radius: 0;
+    height: 44px;
+    box-shadow: none;
+    background: transparent;
+    padding: 0 16px;
+}
+
+.search-input :deep(.el-input__wrapper):focus-within {
+    border: none;
+    box-shadow: none;
+}
+
+.search-input :deep(.el-input__inner) {
+    font-size: 15px;
 }
 
 .search-btn {
-    border-radius: 0 25px 25px 0;
-    border-left: none;
+    border-radius: 22px;
+    background: linear-gradient(135deg, var(--p-color-green-primary) 0%, #4ade80 100%);
+    border: none;
+    height: 40px;
+    padding: 0 24px;
+    margin-right: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
-/* 筛选条件样式 */
-.filter-bar, .sort-bar {
-    background: white;
-    padding: 12px 16px;
-    border-bottom: 1px solid #eee;
+.search-btn:hover {
+    background: linear-gradient(135deg, var(--p-color-green-hover) 0%, #22c55e 100%);
+    transform: translateX(2px);
+}
+
+/* 筛选和排序区域样式 */
+.filter-section {
+    padding: 12px 16px 16px;
+    background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+}
+
+.filter-container {
+    margin-bottom: 8px;
+}
+
+.sort-container {
+    border-top: 1px solid rgba(94, 189, 49, 0.1);
+    padding-top: 12px;
 }
 
 .filter-tabs, .sort-tabs {
     display: flex;
     gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .filter-tab, .sort-tab {
     padding: 8px 16px;
     border-radius: 20px;
-    background: #f5f5f5;
-    color: #666;
+    background: rgba(94, 189, 49, 0.1);
+    color: var(--p-color-green-primary);
     font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    min-width: 60px;
+    text-align: center;
 }
 
 .filter-tab.active, .sort-tab.active {
-    background: #409eff;
+    background: linear-gradient(135deg, var(--p-color-green-primary) 0%, #4ade80 100%);
     color: white;
+    border-color: var(--p-color-green-primary);
+    box-shadow: 0 4px 12px rgba(94, 189, 49, 0.3);
+    transform: translateY(-2px);
 }
 
 .filter-tab:hover, .sort-tab:hover {
-    background: #e3f2fd;
+    background: rgba(94, 189, 49, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(94, 189, 49, 0.2);
 }
 
 .filter-tab.active:hover, .sort-tab.active:hover {
-    background: #409eff;
+    background: linear-gradient(135deg, var(--p-color-green-hover) 0%, #22c55e 100%);
+    transform: translateY(-2px);
 }
 
 /* 内容区域 */
 .assets-content {
-    padding: 16px;
+    padding: 20px 16px;
+    background: linear-gradient(135deg, #f8fffe 0%, #f5f5f5 100%);
+    min-height: calc(100vh - 200px);
 }
 
 .loading-container {
@@ -402,17 +678,14 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .empty-container {
     text-align: center;
     padding: 60px 20px;
-}
-
-.empty-icon {
-    font-size: 64px;
-    color: #ddd;
-    margin-bottom: 16px;
 }
 
 .empty-text {
@@ -425,20 +698,27 @@ onMounted(() => {
 .assets-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    gap: 16px;
 }
 
 .asset-item {
     background: white;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.asset-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(94, 189, 49, 0.15);
+    border-color: rgba(94, 189, 49, 0.2);
 }
 
 .asset-item:active {
-    transform: scale(0.95);
+    transform: translateY(-2px) scale(0.98);
 }
 
 .asset-thumbnail {
@@ -454,22 +734,38 @@ onMounted(() => {
     object-fit: cover;
 }
 
-.video-thumbnail .play-icon {
+/* 文件类型标签样式 */
+.file-type-badge {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 8px;
+    right: 8px;
+    background: rgba(94, 189, 49, 0.5);
     color: white;
-    font-size: 24px;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 50%;
-    padding: 8px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 3;
+}
+
+.type-icon {
+    font-size: 12px;
+}
+
+.file-format {
+    font-size: 10px;
+    font-weight: 600;
 }
 
 .duration {
     position: absolute;
     bottom: 8px;
-    right: 8px;
+    left: 8px;
     background: rgba(0, 0, 0, 0.7);
     color: white;
     padding: 2px 6px;
@@ -494,7 +790,7 @@ onMounted(() => {
 }
 
 .asset-title {
-    margin: 0 0 8px 0;
+    margin: 0 0 4px 0;
     font-size: 14px;
     color: #333;
     line-height: 1.4;
@@ -506,27 +802,87 @@ onMounted(() => {
 
 .asset-meta {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     font-size: 12px;
     color: #999;
 }
 
-.asset-type {
-    background: #f0f8ff;
-    color: #409eff;
-    padding: 2px 6px;
-    border-radius: 4px;
+.download-count {
+    color: var(--p-color-green-primary);
+    font-weight: 500;
 }
 
-/* 加载更多 */
-.load-more {
+/* 加载状态容器 */
+.load-status {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 24px;
+    padding: 24px;
+}
+
+/* 加载更多按钮 */
+.load-more {
+    margin-bottom: 12px;
 }
 
 .load-more .el-button {
     width: 200px;
-    border-radius: 20px;
+    height: 44px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, var(--p-color-green-primary) 0%, #4ade80 100%);
+    border: none;
+    color: white;
+    font-weight: 500;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(94, 189, 49, 0.3);
+}
+
+.load-more .el-button:hover {
+    background: linear-gradient(135deg, var(--p-color-green-hover) 0%, #22c55e 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(94, 189, 49, 0.4);
+}
+
+.load-more .el-button:active {
+    transform: translateY(0);
+}
+
+/* 加载中状态 */
+.loading-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--p-color-green-primary);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 16px;
+    background: rgba(94, 189, 49, 0.1);
+    border-radius: 12px;
+    margin: 0 auto;
+    max-width: 200px;
+}
+
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(94, 189, 49, 0.2);
+    border-top: 3px solid var(--p-color-green-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 没有更多内容提示 */
+.no-more {
+    color: #999;
+    font-size: 15px;
+    padding: 20px 0;
+    text-align: center;
 }
 </style>

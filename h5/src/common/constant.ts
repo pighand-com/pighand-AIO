@@ -1,7 +1,7 @@
 export default {
     api: {
         development: 'http://127.0.0.1:9080/client/',
-        production: 'http://127.0.0.1:9080/client/'
+        production: 'https://aio.pighand.com/client/'
     },
     local_storage_token: 'token',
     local_storage_user_info: 'user_info',

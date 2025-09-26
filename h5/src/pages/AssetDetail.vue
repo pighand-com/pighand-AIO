@@ -1,116 +1,133 @@
 <template>
     <div class="asset-detail-page">
+        <!-- 统一的头部区域 -->
+        <div class="header-section">
+            <!-- 导航条 -->
+            <div class="nav-bar">
+                <div class="nav-left">
+                    <div class="back-btn" @click="goBack">
+                        <svg class="back-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="nav-center">
+                    <h1 class="nav-title">{{ assetDetail.title }}</h1>
+                </div>
+                <div class="nav-right">
+                    <!-- 预留右侧操作区域 -->
+                </div>
+            </div>
+        </div>
+
         <!-- 素材展示区域 -->
-        <div class="asset-media">
+        <div class="asset-media-section">
             <!-- 图片素材 -->
-            <div v-if="assetDetail.type === 'image'" class="image-container">
-                <img :src="assetDetail.imageUrl" :alt="assetDetail.title" @click="previewImage" />
+            <div v-if="getAssetType() === 'image'" class="media-container image-container">
+                <img :src="assetDetail.url" :alt="assetDetail.title" class="cover-image" />
+                <div class="media-overlay">
+                    <div class="file-type-badge">
+                        <Picture class="type-icon" />
+                        <span class="file-format">{{ assetDetail.fileFormat?.toUpperCase() }}</span>
+                    </div>
+                </div>
             </div>
             
             <!-- 视频素材 -->
-            <div v-else-if="assetDetail.type === 'video'" class="video-container">
-                <video 
-                    :src="assetDetail.videoUrl" 
-                    :poster="assetDetail.thumbnailUrl"
-                    controls
-                    preload="metadata"
-                    @loadedmetadata="onVideoLoaded"
-                >
-                    您的浏览器不支持视频播放
-                </video>
+            <div v-else-if="getAssetType() === 'video'" class="media-container video-container">
+                <div class="video-wrapper" @click="toggleVideoPlay">
+                    <video 
+                        v-if="assetDetail.url"
+                        ref="videoPlayer"
+                        :src="assetDetail.url" 
+                        :poster="assetDetail.coverUrl"
+                        preload="metadata"
+                        @loadedmetadata="onVideoLoaded"
+                        @play="isVideoPlaying = true"
+                        @pause="isVideoPlaying = false"
+                        class="video-player cover-image"
+                    >
+                        您的浏览器不支持视频播放
+                    </video>
+                    <img v-else-if="assetDetail.coverUrl" :src="assetDetail.coverUrl" :alt="assetDetail.title" class="cover-image" />
+                    
+                    <!-- 播放按钮覆盖层 -->
+                    <div v-if="!isVideoPlaying" class="play-overlay">
+                        <div class="play-button">
+                            <Play class="play-icon" />
+                        </div>
+                    </div>
+                </div>
+                <div class="media-overlay">
+                    <div class="file-type-badge">
+                        <Video class="type-icon" />
+                        <span class="file-format">{{ assetDetail.fileFormat?.toUpperCase() }}</span>
+                    </div>
+                </div>
             </div>
             
             <!-- 文档素材 -->
-            <div v-else class="doc-container">
-                <div class="doc-preview">
-                    <FileDoc class="doc-icon" />
-                    <p class="doc-name">{{ assetDetail.title }}</p>
-                    <p class="doc-size">{{ formatFileSize(assetDetail.fileSize) }}</p>
+            <div v-else class="media-container doc-container">
+                <img :src="assetDetail.coverUrl" :alt="assetDetail.title" class="cover-image" />
+                <div class="media-overlay">
+                    <div class="file-type-badge">
+                        <Picture class="type-icon" />
+                        <span class="file-format">{{ assetDetail.fileFormat?.toUpperCase() }}</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 素材信息 -->
-        <div class="asset-info">
+        <!-- 素材信息卡片 -->
+        <div class="info-card">
             <h1 class="asset-title">{{ assetDetail.title }}</h1>
             
             <div class="asset-meta">
-                <div class="meta-item">
-                    <span class="meta-label">类型：</span>
-                    <span class="meta-value">{{ getAssetTypeLabel(assetDetail.type) }}</span>
+                <div class="meta-row">
+                    <div class="meta-item">
+                        <span class="meta-label">大小</span>
+                        <span class="meta-value">{{ formatFileSize(assetDetail.fileSize) }}</span>
+                    </div>
+                    <div v-if="assetDetail.resolutionRatio" class="meta-item">
+                        <span class="meta-label">分辨率</span>
+                        <span class="meta-value">{{ assetDetail.resolutionRatio }}</span>
+                    </div>
                 </div>
-                <div class="meta-item">
-                    <span class="meta-label">大小：</span>
-                    <span class="meta-value">{{ formatFileSize(assetDetail.fileSize) }}</span>
+                
+                <div class="meta-row">
+                    <div class="meta-item">
+                        <span class="meta-label">浏览次数</span>
+                        <span class="meta-value">{{ assetDetail.viewCount || 0 }}次</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">下载次数</span>
+                        <span class="meta-value">{{ assetDetail.downloadCount || 0 }}次</span>
+                    </div>
                 </div>
-                <div v-if="assetDetail.duration" class="meta-item">
-                    <span class="meta-label">时长：</span>
-                    <span class="meta-value">{{ formatDuration(assetDetail.duration) }}</span>
+                <div class="meta-row">
+                    <div class="meta-item">
+                        <span class="meta-label">上传时间</span>
+                        <span class="meta-value">{{ formatDate(assetDetail.createdAt) }}</span>
+                    </div>
+                    <div v-if="assetDetail.updatedAt !== assetDetail.createdAt" class="meta-item">
+                        <span class="meta-label">更新时间</span>
+                        <span class="meta-value">{{ formatDate(assetDetail.updatedAt) }}</span>
+                    </div>
                 </div>
-                <div class="meta-item">
-                    <span class="meta-label">下载次数：</span>
-                    <span class="meta-value">{{ assetDetail.downloadCount || 0 }}次</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">上传时间：</span>
-                    <span class="meta-value">{{ formatDate(assetDetail.createTime) }}</span>
+                <div v-if="getAuthorName()" class="meta-row">
+                    <div class="meta-item">
+                        <span class="meta-label">作者</span>
+                        <span class="meta-value">{{ getAuthorName() }}</span>
+                    </div>
                 </div>
             </div>
-
-            <!-- 素材描述 -->
+            
+            <!-- 分隔线 -->
+            <div v-if="assetDetail.description" class="divider"></div>
+            
+            <!-- 作品简介 -->
             <div v-if="assetDetail.description" class="asset-description">
-                <h3>素材介绍</h3>
-                <p>{{ assetDetail.description }}</p>
-            </div>
-
-            <!-- 标签 -->
-            <div v-if="assetDetail.tags && assetDetail.tags.length" class="asset-tags">
-                <h3>标签</h3>
-                <div class="tags-list">
-                    <span v-for="tag in assetDetail.tags" :key="tag" class="tag">
-                        {{ tag }}
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <!-- 作者信息 -->
-        <div v-if="assetDetail.author" class="author-info">
-            <h3>作者信息</h3>
-            <div class="author-card">
-                <div class="author-avatar">
-                    <img v-if="assetDetail.author.avatar" :src="assetDetail.author.avatar" :alt="assetDetail.author.name" />
-                    <div v-else class="default-avatar">
-                        <User />
-                    </div>
-                </div>
-                <div class="author-details">
-                    <p class="author-name">{{ assetDetail.author.name }}</p>
-                    <p v-if="assetDetail.author.department" class="author-department">{{ assetDetail.author.department }}</p>
-                    <p v-if="assetDetail.author.description" class="author-description">{{ assetDetail.author.description }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 相关推荐 -->
-        <div v-if="relatedAssets.length" class="related-assets">
-            <h3>相关推荐</h3>
-            <div class="related-list">
-                <div 
-                    v-for="asset in relatedAssets" 
-                    :key="asset.id"
-                    class="related-item"
-                    @click="goToAssetDetail(asset)"
-                >
-                    <div class="related-thumbnail">
-                        <img v-if="asset.type === 'image'" :src="asset.thumbnailUrl || asset.imageUrl" :alt="asset.title" />
-                        <img v-else-if="asset.type === 'video'" :src="asset.thumbnailUrl" :alt="asset.title" />
-                        <div v-else class="doc-thumb">
-                            <FileDoc />
-                        </div>
-                    </div>
-                    <p class="related-title">{{ asset.title }}</p>
-                </div>
+                作品简介：{{ assetDetail.description }}
             </div>
         </div>
 
@@ -118,45 +135,42 @@
         <div class="bottom-actions">
             <div class="action-left">
                 <div class="action-btn" @click="goHome">
-                    <Home />
+                    <Home class="action-icon" />
                     <span>首页</span>
                 </div>
-                <div class="action-btn" :class="{ active: isFavorited }" @click="toggleFavorite">
-                    <Heart v-if="isFavorited" theme="filled" />
-                    <Heart v-else />
-                    <span>{{ isFavorited ? '已收藏' : '收藏' }}</span>
+                <div class="action-btn" :class="{ active: isFavourited }" @click="toggleFavorite">
+                    <Star v-if="isFavourited" theme="filled" class="action-icon" />
+                    <Star v-else class="action-icon" />
+                    <span>{{ isFavourited ? '已收藏' : '收藏' }}</span>
                 </div>
             </div>
             <div class="action-right">
-                <el-button type="primary" @click="downloadAsset" :loading="downloading">
-                    <Download />
+                <el-button type="primary" @click="downloadAsset" :loading="downloading" class="download-btn">
+                    <Download class="btn-icon" />
                     {{ downloading ? '下载中...' : '立即下载' }}
                 </el-button>
-                <el-button @click="shareAsset">
-                    <Share />
+                <el-button @click="shareAsset" class="share-btn">
+                    <Share class="btn-icon" />
                     分享
                 </el-button>
             </div>
         </div>
 
-        <!-- 图片预览 -->
-        <el-image-viewer
-            v-if="showImageViewer"
-            :url-list="[assetDetail.imageUrl]"
-            @close="showImageViewer = false"
-        />
+
     </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted, nextTick } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { ElMessage, ElImageViewer } from 'element-plus';
+import { ElMessage } from 'element-plus';
 import { 
     FileDoc, 
-    User, 
+    Picture,
+    Video,
+    Play,
     Home, 
-    Heart, 
+    Star,
     Download, 
     Share 
 } from '@icon-park/vue-next';
@@ -171,21 +185,54 @@ const { checkPermission } = useAuth();
 const loading = ref(false);
 const downloading = ref(false);
 const assetDetail = ref<any>({});
-const relatedAssets = ref([]);
-const isFavorited = ref(false);
-const showImageViewer = ref(false);
+const isFavourited = ref(false);
+
+const isVideoPlaying = ref(false);
+const videoPlayer = ref<HTMLVideoElement | null>(null);
 
 /**
- * 获取素材类型标签
+ * 返回上一页
+ */
+const goBack = () => {
+    router.back();
+};
+
+/**
+ * 获取素材类型
+ */
+const getAssetType = () => {
+    // 直接从路由参数获取 assetType
+    const assetType = route.params.type as string;
+    return assetType || 'image'; // 默认为图片
+};
+
+/**
+ * 将字符串类型转换为数字类型
+ * @param assetsType 素材类型字符串
+ * @returns 素材类型数字
+ */
+const getAssetsTypeNumber = (assetsType: string): number => {
+    const typeMap: { [key: string]: number } = {
+        'image': 10,
+        'video': 20,
+        'doc': 30
+    };
+    return typeMap[assetsType] || 10;
+};
+
+
+
+/**
+ * 获取素材类型图标
  * @param type 素材类型
  */
-const getAssetTypeLabel = (type: string) => {
-    const typeMap = {
-        image: '图片',
-        video: '视频',
-        doc: '课件'
+const getAssetTypeIcon = (type: string) => {
+    const iconMap = {
+        image: Picture,
+        video: Video,
+        doc: FileDoc
     };
-    return typeMap[type] || '未知';
+    return iconMap[type] || FileDoc;
 };
 
 /**
@@ -193,7 +240,7 @@ const getAssetTypeLabel = (type: string) => {
  * @param size 文件大小（字节）
  */
 const formatFileSize = (size: number) => {
-    if (!size) return '未知';
+    if (!size || size === 0) return '0 B';
     
     const units = ['B', 'KB', 'MB', 'GB'];
     let index = 0;
@@ -204,7 +251,12 @@ const formatFileSize = (size: number) => {
         index++;
     }
     
-    return `${fileSize.toFixed(1)} ${units[index]}`;
+    // 对于字节，显示整数；其他单位显示一位小数
+    if (index === 0) {
+        return `${Math.round(fileSize)} ${units[index]}`;
+    } else {
+        return `${fileSize.toFixed(1)} ${units[index]}`;
+    }
 };
 
 /**
@@ -226,18 +278,50 @@ const formatDuration = (duration: number) => {
 
 /**
  * 格式化日期
- * @param date 日期字符串
+ * @param timestamp 时间戳（毫秒）
  */
-const formatDate = (date: string) => {
-    if (!date) return '未知';
-    return new Date(date).toLocaleDateString('zh-CN');
+const formatDate = (timestamp: number) => {
+    if (!timestamp) return '未知';
+    return new Date(timestamp).toLocaleDateString('zh-CN');
 };
 
 /**
- * 预览图片
+ * 获取作者名称（creatorDepartment第3级的name）
+ * @returns 作者名称
  */
-const previewImage = () => {
-    showImageViewer.value = true;
+const getAuthorName = () => {
+    if (!assetDetail.value.creatorDepartment) return '';
+    
+    let current = assetDetail.value.creatorDepartment;
+    let level = 1;
+    
+    // 遍历到第3级
+    while (current && level < 3) {
+        if (current.child) {
+            current = current.child;
+            level++;
+        } else {
+            break;
+        }
+    }
+    
+    // 如果到达第3级，返回name，否则返回空字符串
+    return level === 3 && current ? current.name : '';
+};
+
+
+
+/**
+ * 切换视频播放状态
+ */
+const toggleVideoPlay = () => {
+    if (videoPlayer.value) {
+        if (isVideoPlaying.value) {
+            videoPlayer.value.pause();
+        } else {
+            videoPlayer.value.play();
+        }
+    }
 };
 
 /**
@@ -261,27 +345,20 @@ const goHome = () => {
  * 切换收藏状态
  */
 const toggleFavorite = async () => {
-    // 检查收藏权限
-    if (!checkPermission(Permission.ASSET_FAVORITE)) {
-        return;
-    }
-    
     try {
         const assetId = route.params.id as string;
-        const assetType = route.params.type as string;
+        const assetType = getAssetType();
+        const assetsTypeNumber = getAssetsTypeNumber(assetType);
         
-        if (isFavorited.value) {
+        if (isFavourited.value) {
             // 取消收藏
-            await API.assetsFavourite.del(assetId);
-            isFavorited.value = false;
+            await API.assetsFavourite.removeFavorite(assetId, assetsTypeNumber);
+            isFavourited.value = false;
             ElMessage.success('已取消收藏');
         } else {
             // 添加收藏
-            await API.assetsFavourite.create({
-                assetId,
-                assetType
-            });
-            isFavorited.value = true;
+            await API.assetsFavourite.addFavorite(assetId, assetsTypeNumber);
+            isFavourited.value = true;
             ElMessage.success('收藏成功');
         }
     } catch (error) {
@@ -294,43 +371,75 @@ const toggleFavorite = async () => {
  * 下载素材
  */
 const downloadAsset = async () => {
-    // 检查下载权限
-    if (!checkPermission(Permission.ASSET_DOWNLOAD)) {
-        return;
-    }
-    
     try {
         downloading.value = true;
         
         const assetId = route.params.id as string;
-        const assetType = route.params.type as string;
+        const assetType = getAssetType();
         
-        // 调用下载API
-        let downloadResponse;
-        if (assetType === 'image') {
-            downloadResponse = await API.assetsImage.download(assetId);
-        } else if (assetType === 'video') {
-            downloadResponse = await API.assetsVideo.download(assetId);
-        } else {
-            downloadResponse = await API.assetsDoc.download(assetId);
+        // 获取素材类型对应的数字编码
+        const getAssetTypeCode = () => {
+            switch (assetType) {
+                case 'image': return 10;
+                case 'video': return 20;
+                case 'doc': return 30;
+                default: return 10;
+            }
+        };
+        
+        // 1. 创建下载记录（失败不影响实际下载）
+        try {
+            await API.assetsDownload.createDownloadRecord(assetId, getAssetTypeCode());
+        } catch (recordError) {
+            console.warn('创建下载记录失败:', recordError);
         }
         
-        if (downloadResponse && downloadResponse.downloadUrl) {
-            // 创建下载链接
-            const link = document.createElement('a');
-            link.href = downloadResponse.downloadUrl;
-            link.download = assetDetail.value.title || 'download';
-            link.target = '_blank';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        // 2. 下载文件
+        if (assetDetail.value.url) {
+            // 从URL中提取文件扩展名
+            const getFileExtension = (url: string) => {
+                try {
+                    const cleanUrl = url.split('?')[0].split('#')[0];
+                    const lastDotIndex = cleanUrl.lastIndexOf('.');
+                    if (lastDotIndex > -1) {
+                        return cleanUrl.substring(lastDotIndex);
+                    }
+                    return '';
+                } catch {
+                    return '';
+                }
+            };
             
-            // 更新下载次数
-            assetDetail.value.downloadCount = (assetDetail.value.downloadCount || 0) + 1;
+            // 构建下载文件名：title + 扩展名
+            const fileExtension = getFileExtension(assetDetail.value.url);
+            const fileName = assetDetail.value.title 
+                ? `${assetDetail.value.title}${fileExtension}` 
+                : `download${fileExtension}`;
             
-            ElMessage.success('下载开始');
+            try {
+                // 用 fetch + blob 下载，避免服务端强制文件名
+                const res = await fetch(assetDetail.value.url, { mode: 'cors' });
+                const blob = await res.blob();
+                const blobUrl = URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = fileName;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                URL.revokeObjectURL(blobUrl);
+
+                // 更新下载次数
+                assetDetail.value.downloadCount = (assetDetail.value.downloadCount || 0) + 1;
+                ElMessage.success('下载开始');
+            } catch (fetchErr) {
+                console.error('文件下载失败:', fetchErr);
+                ElMessage.error('下载失败，请重试');
+            }
         } else {
-            ElMessage.error('下载链接不存在');
+            ElMessage.error('素材文件不存在');
         }
     } catch (error) {
         console.error('下载失败:', error);
@@ -340,21 +449,60 @@ const downloadAsset = async () => {
     }
 };
 
+
 /**
  * 加载收藏状态
  */
 const loadFavoriteStatus = async () => {
     try {
         const assetId = route.params.id as string;
+        const assetType = getAssetType();
+        const assetsTypeNumber = getAssetsTypeNumber(assetType);
         
-        const response = await API.assetsFavourite.query({
-            assetId: assetId
-        });
+        const response = await API.assetsFavourite.checkFavorite(assetId, assetsTypeNumber);
         
-        isFavorited.value = response.data && response.data.length > 0;
+        // 新接口返回 { isFavourited: boolean } 格式
+        isFavourited.value = response.isFavourited || false;
     } catch (error) {
         console.error('加载收藏状态失败:', error);
+        // 出错时默认为未收藏状态
+        isFavourited.value = false;
     }
+};
+
+/**
+ * 复制文本到剪贴板
+ * @param text 要复制的文本
+ */
+const copyToClipboard = (text: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text)
+                .then(() => resolve())
+                .catch(err => reject(err));
+        } else {
+            // Fallback for older browsers or non-secure contexts
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            textArea.style.top = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    resolve();
+                } else {
+                    reject(new Error('Fallback: Copying text command was unsuccessful'));
+                }
+            } catch (err) {
+                reject(err);
+            }
+            document.body.removeChild(textArea);
+        }
+    });
 };
 
 /**
@@ -363,38 +511,15 @@ const loadFavoriteStatus = async () => {
 const shareAsset = async () => {
     try {
         const shareUrl = window.location.href;
-        
-        if (navigator.share) {
-            // 使用原生分享API
-            await navigator.share({
-                title: assetDetail.value.title,
-                text: assetDetail.value.description || '分享一个素材',
-                url: shareUrl
-            });
-        } else {
-            // 复制链接到剪贴板
-            await navigator.clipboard.writeText(shareUrl);
-            ElMessage.success('链接已复制到剪贴板');
-        }
+        await copyToClipboard(shareUrl);
+        ElMessage.success('链接已复制到剪贴板');
     } catch (error) {
         console.error('分享失败:', error);
-        ElMessage.success('链接已复制到剪贴板');
+        ElMessage.error('复制失败，请重试');
     }
 };
 
-/**
- * 跳转到素材详情
- * @param asset 素材信息
- */
-const goToAssetDetail = (asset: any) => {
-    router.push({
-        name: 'assetDetail',
-        params: { 
-            id: asset.id, 
-            type: asset.type 
-        }
-    });
-};
+
 
 /**
  * 加载素材详情
@@ -404,25 +529,24 @@ const loadAssetDetail = async () => {
         loading.value = true;
         
         const assetId = route.params.id as string;
-        const assetType = route.params.type as string;
+        const assetType = getAssetType();
         
-        // 根据类型调用不同的API
         let response;
+        // 根据类型调用不同的接口
         if (assetType === 'image') {
             response = await API.assetsImage.find(assetId);
         } else if (assetType === 'video') {
             response = await API.assetsVideo.find(assetId);
-        } else {
+        } else if (assetType === 'doc') {
             response = await API.assetsDoc.find(assetId);
+        } else {
+            throw new Error('未知的素材类型');
         }
         
-        assetDetail.value = { ...response.data, type: assetType };
+        assetDetail.value = response.data || response;
         
         // 加载收藏状态
         await loadFavoriteStatus();
-        
-        // 加载相关推荐
-        await loadRelatedAssets();
         
     } catch (error) {
         console.error('加载素材详情失败:', error);
@@ -432,33 +556,7 @@ const loadAssetDetail = async () => {
     }
 };
 
-/**
- * 加载相关推荐
- */
-const loadRelatedAssets = async () => {
-    try {
-        const assetType = route.params.type as string;
-        
-        // 根据类型获取相关素材
-        let response;
-        if (assetType === 'image') {
-            response = await API.assetsImage.query({ size: 6 });
-        } else if (assetType === 'video') {
-            response = await API.assetsVideo.query({ size: 6 });
-        } else {
-            response = await API.assetsDoc.query({ size: 6 });
-        }
-        
-        const assets = response.data?.records || response.data || [];
-        relatedAssets.value = assets
-            .filter(asset => asset.id !== route.params.id)
-            .slice(0, 5)
-            .map(asset => ({ ...asset, type: assetType }));
-            
-    } catch (error) {
-        console.error('加载相关推荐失败:', error);
-    }
-};
+
 
 onMounted(() => {
     loadAssetDetail();
@@ -466,10 +564,179 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 页面容器 */
 .asset-detail-page {
-    background-color: #f5f5f5;
     min-height: 100vh;
-    padding-bottom: 80px;
+    background-color: #f5f5f5;
+    padding-bottom: 100px; /* 为底部操作栏留出空间 */
+}
+
+/* 头部区域 */
+.header-section {
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    border-radius: 0 0 16px 16px;
+    overflow: hidden;
+}
+
+/* 导航条样式 */
+.nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 16px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fffe 100%);
+}
+
+.nav-left, .nav-right {
+    flex: 0 0 40px; /* 固定等宽占位，保证标题居中 */
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.back-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+
+.back-btn:hover {
+    transform: scale(1.1);
+}
+
+.back-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--p-color-green-primary);
+}
+
+.nav-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+}
+
+/* 素材展示区域 */
+.asset-media-section {
+    margin: 16px;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.media-container {
+    position: relative;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+}
+
+.media-overlay {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.file-type-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.type-icon {
+    font-size: 14px;
+}
+
+/* 信息卡片 */
+.info-card {
+    margin: 16px;
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.asset-title {
+    margin: 0 0 16px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.3;
+}
+
+.divider {
+    height: 1px;
+    background-color: #e5e5e5;
+    margin: 12px 0 12px 0;
+}
+
+.asset-description {
+    margin: 12px 0 0 0;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+}
+
+.asset-meta {
+    padding-top: 12px;
+}
+
+.meta-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 8px;
+}
+
+.meta-row:last-child {
+    margin-bottom: 0;
+}
+
+.meta-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.meta-label {
+    font-size: 12px;
+    color: #999;
+    font-weight: 500;
+}
+
+.meta-value {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
 }
 
 /* 素材展示区域 */
@@ -483,25 +750,75 @@ onMounted(() => {
 }
 
 .image-container img {
-    max-width: 100%;
-    max-height: 300px;
     border-radius: 8px;
     cursor: pointer;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .video-container {
     text-align: center;
 }
 
-.video-container video {
+.video-wrapper {
+    position: relative;
     width: 100%;
-    max-height: 300px;
-    border-radius: 8px;
+    height: 100%;
+    cursor: pointer;
+}
+
+.video-player {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.play-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    transition: opacity 0.3s;
+}
+
+.play-button {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.play-button:hover {
+    background: white;
+    transform: scale(1.1);
+}
+
+.play-icon {
+    font-size: 24px;
+    color: #333;
+    margin-left: 2px; /* 视觉居中调整 */
+}
+
+.doc-container img {
+    width: 100%;
+    height: 100%;
 }
 
 .doc-container {
     text-align: center;
-    padding: 40px 20px;
 }
 
 .doc-preview {
@@ -539,14 +856,10 @@ onMounted(() => {
 }
 
 .asset-title {
-    margin: 0 0 16px 0;
+    margin: 0;
     font-size: 20px;
     color: #333;
     line-height: 1.4;
-}
-
-.asset-meta {
-    margin-bottom: 20px;
 }
 
 .meta-item {
@@ -728,48 +1041,100 @@ onMounted(() => {
     bottom: 0;
     left: 0;
     right: 0;
-    background: white;
-    padding: 12px 16px;
-    border-top: 1px solid #eee;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 16px 0;
+    border-top: 1px solid #f0f0f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     z-index: 1000;
+    box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
 }
 
 .action-left {
     display: flex;
-    gap: 20px;
+    width: 100%;
+    justify-content: space-evenly;
 }
 
 .action-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
     cursor: pointer;
-    color: #666;
+    color: #333;
     font-size: 12px;
-    transition: color 0.2s;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    color: var(--p-color-green-primary);
+}
+
+.action-btn:hover .action-icon {
+    color: var(--p-color-green-primary);
 }
 
 .action-btn.active {
-    color: #ff4757;
+    color: var(--p-color-green-primary) !important;
 }
 
-.action-btn:active {
-    transform: scale(0.95);
+.action-btn.active .action-icon {
+    color: var(--p-color-green-primary) !important;
+}
+
+.action-btn.active span {
+    color: var(--p-color-green-primary) !important;
+}
+
+.action-icon {
+    font-size: 28px;
+    color: inherit;
+    transition: color 0.2s;
 }
 
 .action-right {
     display: flex;
-    gap: 8px;
+    gap: 12px;
+    padding-right: 16px;
 }
 
 .action-right .el-button {
-    border-radius: 20px;
-    font-size: 14px;
-    padding: 8px 16px;
+    border-radius: 24px;
+    font-size: 15px;
+    height: 48px;
+    padding: 0 24px;
+    font-weight: 500;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.download-btn {
+    background: linear-gradient(135deg, var(--p-color-green-primary) 0%, #4ade80 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(94, 189, 49, 0.3);
+}
+
+.download-btn:hover {
+    background: linear-gradient(135deg, var(--p-color-green-hover) 0%, #22c55e 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(94, 189, 49, 0.4);
+}
+
+.share-btn {
+    background: rgba(94, 189, 49, 0.1);
+    color: var(--p-color-green-primary);
+}
+
+.share-btn:hover {
+    background: rgba(94, 189, 49, 0.2);
+}
+
+.btn-icon {
+    font-size: 16px;
+    margin-right: 6px;
 }
 
 .action-right .el-button .i-icon {

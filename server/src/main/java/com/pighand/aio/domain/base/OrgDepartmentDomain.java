@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.mybatisflex.core.handler.JacksonTypeHandler;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecord;
@@ -13,6 +14,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 组织 - 部门
@@ -35,6 +37,9 @@ public class OrgDepartmentDomain extends BaseDomainRecord<OrgDepartmentDomain> i
     @Column("name")
     @Length(max = 255)
     private String name;
+
+    @Column(typeHandler = JacksonTypeHandler.class)
+    private List<Long> parents;
 
     @Column("parent_id")
     @JsonDeserialize(using = ToLongSerializer.class)

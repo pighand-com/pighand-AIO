@@ -517,10 +517,7 @@ const upload = async (options, prop, domType, path) => {
     if (applicationInfo.uploadType === 'system') {
         // 上传到server
         fileUrls = await common.uploadToServer(
-            options.file,
-            (progress: number) => {
-                uploadProgress.value[prop + '_' + options.file.uid] = progress;
-            }
+            options.file
         );
     } else {
         // 上传到云服务

@@ -7,6 +7,7 @@ import com.pighand.aio.entityMapper.base.UserEntityMapper;
 import com.pighand.aio.service.base.ApplicationService;
 import com.pighand.aio.service.base.AuthorizationService;
 import com.pighand.aio.service.base.LoginService;
+import com.pighand.aio.service.base.UserExtensionService;
 import com.pighand.aio.service.base.UserService;
 import com.pighand.aio.vo.base.UserVO;
 import com.pighand.framework.spring.exception.ThrowPrompt;
@@ -36,6 +37,8 @@ public class LoginServiceImpl implements LoginService {
     private final ApplicationService applicationService;
 
     private final UserService userService;
+
+    private final UserExtensionService userExtensionService;
 
     private final AuthorizationService authorizationService;
 
@@ -158,6 +161,17 @@ public class LoginServiceImpl implements LoginService {
                 getRelevanceApplications(users, relevanceUsers, firstMatchUser);
 
             firstMatchUser.setRelevanceApplications(relevanceApplications);
+        }
+
+        // 查询并获取用户扩展信息（包含profile头像信息）
+        try {
+            var userExtension = userExtensionService.find(firstMatchUser.getId());
+            if (userExtension != null) {
+                firstMatchUser.setExtension(userExtension);
+            }
+        } catch (Exception e) {
+            // 如果查询扩展信息失败，不影响登录流程，只记录日志
+            // 可以根据需要添加日志记录
         }
 
         return authorizationService.generateToken(firstMatchUser);

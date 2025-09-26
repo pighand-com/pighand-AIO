@@ -254,12 +254,12 @@ const removeFromFavorite = async (record: any) => {
             }
         );
 
-        await API.user.update({
-            id: 'current',
-            action: 'removeFavorite',
-            assetId: record.asset.id,
-            assetType: record.asset.type
-        });
+        // await API.user.update({
+        //     id: 'current',
+        //     action: 'removeFavorite',
+        //     assetId: record.asset.id,
+        //     assetType: record.asset.type
+        // });
 
         // 从列表中移除
         recordsList.value = recordsList.value.filter(item => item.id !== record.id);
@@ -292,17 +292,17 @@ const loadRecords = async (isLoadMore = false) => {
             action: recordType.value === 'favorite' ? 'getFavorites' : 'getDownloads'
         };
 
-        const response = await API.user.query(params);
-        const newRecords = response.data?.records || response.data || [];
+        // const response = await API.user.query(params);
+        // const newRecords = response.data?.records || response.data || [];
         
-        if (isLoadMore) {
-            recordsList.value.push(...newRecords);
-        } else {
-            recordsList.value = newRecords;
-        }
+        // if (isLoadMore) {
+        //     recordsList.value.push(...newRecords);
+        // } else {
+        //     recordsList.value = newRecords;
+        // }
 
         // 判断是否还有更多数据
-        hasMore.value = newRecords.length >= 20;
+        // hasMore.value = newRecords.length >= 20;
 
     } catch (error) {
         console.error('加载记录列表失败:', error);

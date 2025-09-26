@@ -87,51 +87,51 @@ provideForm([
             }
         ]
     },
-    {
-        label: '角色',
-        prop: 'roleIds',
-        isTable: true,
-        isDetail: true,
-        domType: 'select',
-        domData: async (key) => {
-            const result = await role.query({ name: key });
-            return result.records.map((item) => ({
-                label: item.name,
-                value: item.id
-            }));
-        },
-        componentProps: {
-            multiple: true
-        },
-        tableFormat: (_value, _row, _item) => {
-            if (!_row?.roles || _row.roles.length === 0) {
-                return '-';
-            }
-            return h(
-                'div',
-                { style: 'display: flex; flex-wrap: wrap; gap: 4px;' },
-                _row.roles.map((role) =>
-                    h(
-                        ElTag,
-                        {
-                            size: 'small',
-                            type: 'info',
-                            effect: 'plain',
-                            round: true
-                        },
-                        role.name
-                    )
-                )
-            );
-        },
-        rules: [
-            {
-                required: true,
-                message: '角色必填',
-                trigger: 'blur'
-            }
-        ]
-    }
+    // {
+    //     label: '角色',
+    //     prop: 'roleIds',
+    //     isTable: true,
+    //     isDetail: true,
+    //     domType: 'select',
+    //     domData: async (key) => {
+    //         const result = await role.query({ name: key });
+    //         return result.records.map((item) => ({
+    //             label: item.name,
+    //             value: item.id
+    //         }));
+    //     },
+    //     componentProps: {
+    //         multiple: true
+    //     },
+    //     tableFormat: (_value, _row, _item) => {
+    //         if (!_row?.roles || _row.roles.length === 0) {
+    //             return '-';
+    //         }
+    //         return h(
+    //             'div',
+    //             { style: 'display: flex; flex-wrap: wrap; gap: 4px;' },
+    //             _row.roles.map((role) =>
+    //                 h(
+    //                     ElTag,
+    //                     {
+    //                         size: 'small',
+    //                         type: 'info',
+    //                         effect: 'plain',
+    //                         round: true
+    //                     },
+    //                     role.name
+    //                 )
+    //             )
+    //         );
+    //     },
+    //     rules: [
+    //         {
+    //             required: true,
+    //             message: '角色必填',
+    //             trigger: 'blur'
+    //         }
+    //     ]
+    // }
 ]);
 
 const find = async (id: any) => {

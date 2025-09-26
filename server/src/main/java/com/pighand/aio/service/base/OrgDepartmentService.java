@@ -8,6 +8,7 @@ import com.pighand.aio.mapper.base.OrgDepartmentMapper;
 import com.pighand.aio.service.base.OrgDepartmentUserRelevanceService;
 import com.pighand.aio.service.base.UserService;
 import com.pighand.aio.vo.base.OrgDepartmentVO;
+import com.pighand.aio.vo.base.OrgDepartmentSimpleVO;
 import com.pighand.aio.vo.base.OrgDepartmentUserRelevanceVO;
 import com.pighand.aio.vo.base.UserVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 import static com.pighand.aio.domain.base.table.OrgDepartmentTableDef.ORG_DEPARTMENT;
@@ -45,6 +48,12 @@ public class OrgDepartmentService extends BaseServiceImpl<OrgDepartmentMapper, O
      * @return
      */
     public OrgDepartmentVO create(OrgDepartmentVO baseOrgDepartmentVO) {
+        // 如果有父节点ID，构建父节点链
+        if (baseOrgDepartmentVO.getParentId() != null) {
+            List<Long> parents = buildParentsChain(baseOrgDepartmentVO.getParentId());
+            baseOrgDepartmentVO.setParents(parents);
+        }
+        
         super.mapper.insert(baseOrgDepartmentVO);
 
         return baseOrgDepartmentVO;
@@ -122,11 +131,26 @@ public class OrgDepartmentService extends BaseServiceImpl<OrgDepartmentMapper, O
      * @param baseOrgDepartmentVO
      */
     public void update(OrgDepartmentVO baseOrgDepartmentVO) {
-        UpdateChain updateChain = this.updateChain().where(ORG_DEPARTMENT.ID.eq(baseOrgDepartmentVO.getId()));
+        // 检查parentId是否发生变化
+        boolean parentIdChanged = false;
+        if (baseOrgDepartmentVO.getParentId() != null) {
+            // 查询当前记录的parentId
+            OrgDepartmentDomain currentDepartment = super.mapper.selectOneById(baseOrgDepartmentVO.getId());
+            if (currentDepartment != null) {
+                Long currentParentId = currentDepartment.getParentId();
+                // 判断parentId是否发生变化
+                parentIdChanged = !baseOrgDepartmentVO.getParentId().equals(currentParentId);
+            }
+        }
+        
+        // 如果parentId发生变化，重新构建并设置parents字段
+        if (parentIdChanged) {
+            List<Long> parents = buildParentsChain(baseOrgDepartmentVO.getParentId());
+            baseOrgDepartmentVO.setParents(parents);
+        }
 
-        updateChain.set(ORG_DEPARTMENT.ID, baseOrgDepartmentVO.getId(), VerifyUtils::isNotEmpty);
-
-        updateChain.update();
+        // 使用mapper的update方法来更新整个对象，包括parents字段
+        super.mapper.update(baseOrgDepartmentVO);
     }
 
     /**
@@ -250,5 +274,260 @@ public class OrgDepartmentService extends BaseServiceImpl<OrgDepartmentMapper, O
         }
         
         return query.listAs(UserVO.class);
+    }
+
+    /**
+     * 根据用户ID获取组织结构
+     *
+     * @param userId 用户ID
+     * @return 用户所属的组织结构树
+     */
+    public List<OrgDepartmentVO> getUserDepartmentTree(Long userId) {
+        if (userId == null) {
+            return List.of();
+        }
+        return buildUserDepartmentTree(List.of(userId));
+    }
+
+    /**
+     * 根据用户ID列表获取组织结构
+     *
+     * @param userIds 用户ID列表
+     * @return 用户所属的组织结构树
+     */
+    public List<OrgDepartmentVO> getUserDepartmentTree(List<Long> userIds) {
+        return buildUserDepartmentTree(userIds);
+    }
+
+    /**
+     * 根据用户ID列表构建组织结构树
+     *
+     * @param userIds 用户ID列表
+     * @return 用户所属的组织结构树
+     */
+    private List<OrgDepartmentVO> buildUserDepartmentTree(List<Long> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return List.of();
+        }
+
+        // 1. 查询用户关联的部门ID
+        QueryWrapper relevanceQuery = QueryWrapper.create()
+                .where(ORG_DEPARTMENT_USER_RELEVANCE.USER_ID.in(userIds));
+        
+        List<OrgDepartmentUserRelevanceDomain> relevanceList = 
+                orgDepartmentUserRelevanceService.queryChain()
+                        .where(ORG_DEPARTMENT_USER_RELEVANCE.USER_ID.in(userIds))
+                        .list();
+
+        if (relevanceList.isEmpty()) {
+            return List.of();
+        }
+
+        // 2. 获取用户直接关联的部门ID
+        Set<Long> directDepartmentIds = relevanceList.stream()
+                .map(OrgDepartmentUserRelevanceDomain::getDepartmentId)
+                .collect(Collectors.toSet());
+
+        // 3. 获取所有相关的部门ID（包括父级部门）
+        Set<Long> allDepartmentIds = new HashSet<>(directDepartmentIds);
+        for (Long departmentId : directDepartmentIds) {
+            // 查询部门信息获取parentId
+            OrgDepartmentDomain department = super.mapper.selectOneById(departmentId);
+            if (department != null && department.getParentId() != null) {
+                // 添加所有父级部门ID
+                List<Long> parentIds = buildParentsChain(department.getParentId());
+                allDepartmentIds.addAll(parentIds);
+                allDepartmentIds.add(department.getParentId()); // 添加直接父级
+            }
+        }
+
+        // 4. 查询所有相关部门的详细信息
+        if (allDepartmentIds.isEmpty()) {
+            return List.of();
+        }
+
+        QueryWrapper departmentQuery = QueryWrapper.create()
+                .where(ORG_DEPARTMENT.ID.in(allDepartmentIds));
+        
+        PageOrList<OrgDepartmentVO> allDepartments = super.mapper.query(new OrgDepartmentVO(), departmentQuery);
+        
+        // 5. 构建树形结构
+        return buildDepartmentTree(allDepartments.getRecords());
+    }
+
+    /**
+     * 构建父级链条
+     *
+     * @param parentId 父级ID
+     * @return 父级ID列表，从根节点到直接父级
+     */
+    private List<Long> buildParentsChain(Long parentId) {
+        List<Long> parents = new ArrayList<>();
+        
+        if (parentId == null) {
+            return parents;
+        }
+        
+        Long currentParentId = parentId;
+        
+        // 防止无限循环，最多查询10层
+        int maxDepth = 10;
+        int currentDepth = 0;
+        
+        while (currentParentId != null && currentDepth < maxDepth) {
+            // 查询当前父节点
+            OrgDepartmentDomain parentDepartment = super.mapper.selectOneById(currentParentId);
+            
+            if (parentDepartment == null) {
+                break;
+            }
+            
+            // 将当前父节点ID添加到链的开头（保证从根到叶的顺序）
+            parents.add(0, currentParentId);
+            
+            // 继续查询上一级父节点
+            currentParentId = parentDepartment.getParentId();
+            currentDepth++;
+        }
+        
+        return parents;
+    }
+
+    /**
+     * 根据用户ID获取简化的组织结构（单个对象）
+     *
+     * @param userId 用户ID
+     * @return 用户所属的组织结构（简化版）
+     */
+    public OrgDepartmentSimpleVO getUserDepartmentSimple(Long userId) {
+        if (userId == null) {
+            return null;
+        }
+
+        // 1. 查询用户关联的部门ID
+        List<OrgDepartmentUserRelevanceDomain> relevanceList = 
+                orgDepartmentUserRelevanceService.queryChain()
+                        .where(ORG_DEPARTMENT_USER_RELEVANCE.USER_ID.eq(userId))
+                        .list();
+
+        if (relevanceList.isEmpty()) {
+            return null;
+        }
+
+        // 2. 获取用户直接关联的第一个部门
+        Long departmentId = relevanceList.get(0).getDepartmentId();
+        OrgDepartmentDomain department = super.mapper.selectOneById(departmentId);
+        
+        if (department == null) {
+            return null;
+        }
+
+        // 3. 找到最顶级部门
+        OrgDepartmentDomain topDepartment = findTopDepartment(department);
+        
+        // 4. 从顶级部门开始构建链式结构到用户所在部门
+        return buildSimpleDepartmentChainFromTop(topDepartment, departmentId);
+    }
+
+    /**
+     * 找到最顶级部门
+     *
+     * @param department 当前部门
+     * @return 最顶级部门
+     */
+    private OrgDepartmentDomain findTopDepartment(OrgDepartmentDomain department) {
+        if (department.getParentId() == null) {
+            return department;
+        }
+        
+        OrgDepartmentDomain parentDepartment = super.mapper.selectOneById(department.getParentId());
+        if (parentDepartment == null) {
+            return department;
+        }
+        
+        return findTopDepartment(parentDepartment);
+    }
+
+    /**
+     * 从顶级部门开始构建简化的部门链到目标部门
+     *
+     * @param currentDepartment 当前部门
+     * @param targetDepartmentId 目标部门ID
+     * @return 简化的部门对象
+     */
+    private OrgDepartmentSimpleVO buildSimpleDepartmentChainFromTop(OrgDepartmentDomain currentDepartment, Long targetDepartmentId) {
+        OrgDepartmentSimpleVO simpleVO = new OrgDepartmentSimpleVO();
+        simpleVO.setId(currentDepartment.getId());
+        simpleVO.setName(currentDepartment.getName());
+
+        // 如果当前部门就是目标部门，直接返回
+        if (currentDepartment.getId().equals(targetDepartmentId)) {
+            return simpleVO;
+        }
+
+        // 查找子部门中通往目标部门的路径
+        List<OrgDepartmentDomain> childDepartments = super.mapper.selectListByQuery(
+            QueryWrapper.create()
+                .where(ORG_DEPARTMENT.PARENT_ID.eq(currentDepartment.getId()))
+        );
+
+        for (OrgDepartmentDomain childDepartment : childDepartments) {
+            // 检查这个子部门是否在通往目标部门的路径上
+            if (isOnPathToTarget(childDepartment, targetDepartmentId)) {
+                simpleVO.setChild(buildSimpleDepartmentChainFromTop(childDepartment, targetDepartmentId));
+                break;
+            }
+        }
+
+        return simpleVO;
+    }
+
+    /**
+     * 检查部门是否在通往目标部门的路径上
+     *
+     * @param department 当前部门
+     * @param targetDepartmentId 目标部门ID
+     * @return 是否在路径上
+     */
+    private boolean isOnPathToTarget(OrgDepartmentDomain department, Long targetDepartmentId) {
+        if (department.getId().equals(targetDepartmentId)) {
+            return true;
+        }
+
+        // 递归检查子部门
+        List<OrgDepartmentDomain> childDepartments = super.mapper.selectListByQuery(
+            QueryWrapper.create()
+                .where(ORG_DEPARTMENT.PARENT_ID.eq(department.getId()))
+        );
+
+        for (OrgDepartmentDomain childDepartment : childDepartments) {
+            if (isOnPathToTarget(childDepartment, targetDepartmentId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 获取当前用户的组织架构（完整树形结构）
+     * 返回用户所属的完整组织架构，包含所有父级部门
+     *
+     * @param currentUserId 当前用户ID
+     * @return 用户所属的组织架构树
+     */
+    public List<OrgDepartmentVO> getMyDepartmentTree(Long currentUserId) {
+        return getUserDepartmentTree(currentUserId);
+    }
+
+    /**
+     * 获取当前用户的组织架构（简化链式结构）
+     * 返回从根部门到用户所在部门的链式结构
+     *
+     * @param currentUserId 当前用户ID
+     * @return 用户所属的组织架构（简化版）
+     */
+    public OrgDepartmentSimpleVO getMyDepartmentSimple(Long currentUserId) {
+        return getUserDepartmentSimple(currentUserId);
     }
 }

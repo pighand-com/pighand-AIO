@@ -3,13 +3,18 @@ package com.pighand.aio.service.CMS;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.update.UpdateChain;
 import com.pighand.aio.domain.CMS.AssetsImageDomain;
+import com.pighand.aio.domain.base.UserExtensionDomain;
 import com.pighand.aio.mapper.CMS.AssetsImageMapper;
+import com.pighand.aio.service.base.OrgDepartmentService;
+import com.pighand.aio.service.base.UserExtensionService;
 import com.pighand.aio.vo.CMS.AssetsCollectionRelevanceVO;
 import com.pighand.aio.vo.CMS.AssetsImageVO;
+import com.pighand.aio.vo.base.OrgDepartmentSimpleVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -25,13 +30,14 @@ import static com.pighand.aio.domain.CMS.table.AssetsImageTableDef.ASSETS_IMAGE;
  *
  * @author wangshuli
  * @createDate 2025-09-03 17:16:47
- */@Service
+ */
+@Service
 @RequiredArgsConstructor
 public class AssetsImageService extends BaseServiceImpl<AssetsImageMapper, AssetsImageDomain> {
 
     private final AssetsCollectionRelevanceService assetsCollectionRelevanceService;
-
-
+    private final UserExtensionService userExtensionService;
+    private final OrgDepartmentService orgDepartmentService;
 
     /**
      * 创建
@@ -49,6 +55,8 @@ public class AssetsImageService extends BaseServiceImpl<AssetsImageMapper, Asset
             cmsAssetsImageVO.setStatus(10);
         }
 
+        cmsAssetsImageVO.setViewCount(0);
+        cmsAssetsImageVO.setDownloadCount(0);
         super.mapper.insert(cmsAssetsImageVO);
 
         // 如果传了collectionIds，创建专辑关联信息
@@ -62,12 +70,35 @@ public class AssetsImageService extends BaseServiceImpl<AssetsImageMapper, Asset
 
     /**
      * 详情
+     * 查看详情时自动增加浏览次数
      *
      * @param id
      * @return
      */
-    public AssetsImageDomain find(Long id) {
-        return super.mapper.find(id);
+    public AssetsImageVO find(Long id) {
+        // 先增加浏览次数
+        UpdateChain updateChain = this.updateChain().where(ASSETS_IMAGE.ID.eq(id));
+        updateChain.set(ASSETS_IMAGE.VIEW_COUNT, ASSETS_IMAGE.VIEW_COUNT.add(1));
+        updateChain.update();
+
+        // 然后返回详情
+        AssetsImageDomain domain = super.mapper.find(id);
+        
+        // 构建VO对象
+        AssetsImageVO vo = new AssetsImageVO();
+        BeanUtils.copyProperties(domain, vo);
+        
+        // 获取创建人信息
+        if (domain.getCreatedBy() != null) {
+            UserExtensionDomain creator = userExtensionService.find(domain.getCreatedBy());
+            vo.setCreator(creator);
+            
+            // 获取创建人的组织架构信息（简化版）
+            OrgDepartmentSimpleVO creatorDepartment = orgDepartmentService.getUserDepartmentSimple(domain.getCreatedBy());
+            vo.setCreatorDepartment(creatorDepartment);
+        }
+        
+        return vo;
     }
 
     /**

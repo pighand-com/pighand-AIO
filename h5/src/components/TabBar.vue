@@ -35,7 +35,7 @@ const tabs = [
         name: 'category',
         label: '分类',
         icon: ApplicationTwo,
-        path: '/category'
+        path: '/classification'
     },
     {
         name: 'profile',

@@ -11,15 +11,13 @@ const getCAPTCHACode = async (key: string) => {
 
 /**
  * 获取上传URL
- * @param fileNames 文件名数组
+ * @param files 文件信息数组，包含path和extension
  * @returns 上传URL信息
  */
-const getUploadUrls = async (fileNames: string[]) => {
+const getUploadUrls = async (files: Array<{path: string, extension: string}>) => {
     try {
-        const response = await request.post('/api/common/upload-urls', {
-            fileNames
-        });
-        return response.data;
+        const response = await request.post('upload/url', files);
+        return response;
     } catch (error) {
         console.error('获取上传URL失败:', error);
         throw error;
@@ -38,7 +36,7 @@ const uploadToServer = async (files: File[]) => {
             formData.append(`file${index}`, file);
         });
 
-        const response = await request.post('/api/common/upload', formData, {
+        const response = await request.post('upload', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }

@@ -174,14 +174,6 @@ const { detailFormModel } = provideForm([
                 trigger: 'blur'
             }
         ],
-        uploadAcceptMap: {
-            key: 'type',
-            map: {
-                10: 'image/*',
-                20: 'video/*',
-                30: '*'
-            }
-        }
     },
     {
         label: '内容简介',

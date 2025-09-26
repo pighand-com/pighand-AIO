@@ -1,16 +1,16 @@
 package com.pighand.aio.vo.CMS;
 
-import com.pighand.aio.domain.CMS.AssetsFavouriteDomain;
+import com.pighand.aio.domain.CMS.AssetsDownloadDomain;
 import lombok.Data;
 
 /**
- * CMS - 素材 - 收藏
+ * CMS - 素材 - 下载记录
  *
  * @author wangshuli
- * @createDate 2025-09-03 17:16:47
+ * @createDate 2025-01-25 10:00:00
  */
 @Data
-public class AssetsFavouriteVO extends AssetsFavouriteDomain {
+public class AssetsDownloadVO extends AssetsDownloadDomain {
 
     // relation table: begin
     

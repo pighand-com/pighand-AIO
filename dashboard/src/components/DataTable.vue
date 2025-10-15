@@ -400,9 +400,17 @@ const dataFormat = (row, item) => {
         ['dateTimePicker', 'dateTimePickerRange'].includes(domType) &&
         value
     ) {
-        value = moment(value).format('YYYY-MM-DD HH:mm:ss');
+        if(Array.isArray(value)) {
+            value = moment([value[0], value[1] - 1, value[2] || 0, value[3] || 0, value[4] || 0, value[5] || 0]).format('YYYY-MM-DD HH:mm:ss');
+        } else {
+            value = moment(value).format('YYYY-MM-DD HH:mm:ss');
+        }
     } else if (['datePicker', 'datePickerRange'].includes(domType) && value) {
-        value = moment(value).format('YYYY-MM-DD');
+        if(Array.isArray(value)) {
+            value = moment([value[0], value[1] - 1, value[2] || 0, value[3] || 0, value[4] || 0, value[5] || 0]).format('YYYY-MM-DD');
+        } else {
+            value = moment(value).format('YYYY-MM-DD');
+        }
     } else if (domData && Array.isArray(domData)) {
         const data = domData.find((item) => item.value == value);
         value = data ? data.label : value;

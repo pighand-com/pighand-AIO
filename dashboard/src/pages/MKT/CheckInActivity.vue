@@ -7,7 +7,11 @@
         :handle-update="checkInActivity.update"
         :drawer-props="{
             size: '70%'
-        }">
+        }"
+        :data-table-props="{
+            tableOperation: ['delete']
+        }"
+        >
         
         <!-- 自定义操作按钮插槽 -->
         <template #table-column-operation="{ row }">
@@ -73,20 +77,21 @@ provideForm(
             isTable: true,
             isDetail: true,
             domType: 'number',
-            suffix: '分钟',
-            rules: [
-                {
-                    required: true,
-                    message: '活动时长必填',
-                    trigger: 'blur'
-                },
-                {
-                    type: 'number',
-                    min: 1,
-                    message: '活动时长必须大于0分钟',
-                    trigger: 'blur'
-                }
-            ]
+            suffix: '分钟'
+        },
+        {
+            label: '开始时间',
+            prop: 'beginTime',
+            isTable: true,
+            isDetail: true,
+            domType: 'dateTimePicker'
+        },
+        {
+            label: '结束时间',
+            prop: 'endTime',
+            isTable: true,
+            isDetail: true,
+            domType: 'dateTimePicker'
         }
     ]
 );

@@ -10,11 +10,18 @@
 		<view class="activity-status-section">
 			<view class="activity-status-card">
 				<view v-if="isParticipated" class="activity-status">
-				<view v-if="isAllLocationsCompleted" class="status-title">打卡已完成</view>
-				<view v-else class="status-title">打卡进行中</view>
-				<view v-if="!isAllLocationsCompleted && countdown > 0" class="countdown-time">{{ countdownDisplay }}</view>
-				<view v-else-if="!isAllLocationsCompleted" class="status-ended">打卡已结束</view>
-			</view>
+					<!-- 如果有beginTime且还没到开始时间 -->
+					<view v-if="beginTime && !isActivityStarted" class="status-title">活动未开始</view>
+					<!-- 如果活动已开始 -->
+					<view v-else-if="isAllLocationsCompleted" class="status-title">打卡已完成</view>
+					<view v-else class="status-title">打卡进行中</view>
+					
+					<!-- 活动未开始时显示开始时间 -->
+					<view v-if="beginTime && !isActivityStarted" class="begin-time">开始时间：{{ formatBeginTime(beginTime) }}</view>
+					<!-- 活动进行中显示倒计时 -->
+					<view v-else-if="!isAllLocationsCompleted && countdown > 0" class="countdown-time">{{ countdownDisplay }}</view>
+					<view v-else-if="!isAllLocationsCompleted" class="status-ended">打卡已结束</view>
+				</view>
 				<view v-else class="activity-status">
 					<view class="status-title">请前台扫码参加活动</view>
 				</view>
@@ -97,6 +104,7 @@ const refreshTimer = ref(null)
 const qrcodeSize = ref(200)
 const isParticipated = ref(false)
 const endTime = ref(null)
+const beginTime = ref(null) // 添加开始时间字段
 const showLoginModal = ref(false) // 控制登录弹窗显示
 
 // 监听登录状态变化
@@ -165,6 +173,14 @@ const countdownDisplay = computed(() => {
 	const seconds = countdown.value % 60
 	
 	return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+})
+
+// 判断活动是否已开始
+const isActivityStarted = computed(() => {
+	if (!beginTime.value) return true // 如果没有开始时间，认为已开始
+	const now = new Date()
+	const startTime = new Date(beginTime.value)
+	return now >= startTime
 })
 
 // 是否已完成
@@ -274,10 +290,11 @@ const joinActivity = async (activityId) => {
 		if (result && result.id) {
 			isParticipated.value = true
 			endTime.value = result.endTime
+			beginTime.value = result.beginTime // 设置开始时间
 			userStatus.value = result
 			
-			// 开始倒计时
-			if (endTime.value) {
+			// 开始倒计时（支持开始时间和结束时间）
+			if (beginTime.value || endTime.value) {
 				startCountdown()
 			}
 			
@@ -330,9 +347,10 @@ const loadPageData = async () => {
 			isParticipated.value = true
 			userStatus.value = statusResult
 			endTime.value = statusResult.endTime
+			beginTime.value = statusResult.beginTime // 设置开始时间
 			
-			// 如果已参加，开始倒计时
-			if (endTime.value) {
+			// 如果已参加，开始倒计时（支持开始时间和结束时间）
+			if (beginTime.value || endTime.value) {
 				startCountdown()
 			}
 			
@@ -342,9 +360,6 @@ const loadPageData = async () => {
 			// 加载打卡地点数据
 			const locationsResult = await checkInLocationApi.getLocations()
 			allLocations.value = locationsResult.records || []
-			
-			// 加载今日打卡记录
-			await loadTodayRecords()
 		} else {
 			// 未参加活动，只加载地点数据用于展示
 			isParticipated.value = false
@@ -353,6 +368,9 @@ const loadPageData = async () => {
 			todayRecords.value = []
 		}
 		
+			
+		// 加载今日打卡记录
+		await loadTodayRecords()
 	} catch (error) {
 		console.error('加载数据失败:', error)
 		uni.showToast({
@@ -406,13 +424,25 @@ const loadTodayRecords = async () => {
 const startCountdown = () => {
 	clearCountdownTimer()
 	
-	if (!endTime.value) return
+	// 如果既没有开始时间也没有结束时间，则不启动倒计时
+	if (!beginTime.value && !endTime.value) return
 	
 	const updateCountdown = () => {
 		const now = new Date().getTime()
-		const targetTime = new Date(endTime.value).getTime()
-		const diff = Math.max(0, Math.floor((targetTime - now) / 1000))
+		let targetTime
 		
+		// 如果有开始时间且活动还未开始，倒计时到开始时间
+		if (beginTime.value && !isActivityStarted.value) {
+			targetTime = new Date(beginTime.value).getTime()
+		} 
+		// 否则倒计时到结束时间
+		else if (endTime.value) {
+			targetTime = new Date(endTime.value).getTime()
+		} else {
+			return // 没有可倒计时的时间
+		}
+		
+		const diff = Math.max(0, Math.floor((targetTime - now) / 1000))
 		countdown.value = diff
 		
 		if (diff > 0) {
@@ -533,11 +563,11 @@ const getLocationIconClass = (locationId) => {
 
 /**
  * 判断是否显示二维码
- * 条件：已参加活动且未到期且未全部打完
+ * 条件：已参加活动且活动已开始且未到期且未全部打完
  */
 const shouldShowQrCode = () => {
-	// 已参加活动且倒计时未结束且未全部打完时显示二维码
-	if (!isParticipated.value || countdown.value <= 0) {
+	// 已参加活动且活动已开始且倒计时未结束且未全部打完时显示二维码
+	if (!isParticipated.value || !isActivityStarted.value || countdown.value <= 0) {
 		return false
 	}
 	
@@ -560,6 +590,23 @@ const formatDateTime = (timeStr) => {
 	const minutes = String(date.getMinutes()).padStart(2, '0')
 	
 	return `${month}-${day} ${hours}:${minutes}`
+}
+
+/**
+ * 格式化开始时间显示
+ * @param {string} timeStr 时间字符串
+ */
+const formatBeginTime = (timeStr) => {
+	if (!timeStr) return ''
+	
+	const date = new Date(timeStr)
+	const year = date.getFullYear()
+	const month = String(date.getMonth() + 1).padStart(2, '0')
+	const day = String(date.getDate()).padStart(2, '0')
+	const hours = String(date.getHours()).padStart(2, '0')
+	const minutes = String(date.getMinutes()).padStart(2, '0')
+	
+	return `${year}-${month}-${day} ${hours}:${minutes}`
 }
 </script>
 
@@ -614,6 +661,13 @@ const formatDateTime = (timeStr) => {
 	font-weight: bold;
 	color: #ff6b00;
 	font-family: 'Courier New', monospace;
+}
+
+.begin-time {
+	font-size: 32rpx;
+	font-weight: 600;
+	color: #666;
+	line-height: 1.4;
 }
 
 .status-ended {

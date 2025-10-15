@@ -5,17 +5,11 @@ import com.pighand.aio.common.enums.*;
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.common.utils.IDGenerator;
 import com.pighand.aio.domain.ECommerce.*;
-import com.pighand.aio.domain.base.ApplicationPlatformKeyDomain;
-import com.pighand.aio.domain.base.ApplicationPlatformPayDomain;
-import com.pighand.aio.domain.base.UserDomain;
-import com.pighand.aio.domain.base.UserWechatDomain;
+import com.pighand.aio.domain.base.*;
 import com.pighand.aio.mapper.ECommerce.OrderMapper;
 import com.pighand.aio.service.ECommerce.*;
 import com.pighand.aio.service.ECommerce.payments.Wechat;
-import com.pighand.aio.service.base.ApplicationPlatformKeyService;
-import com.pighand.aio.service.base.ApplicationPlatformPayService;
-import com.pighand.aio.service.base.UserService;
-import com.pighand.aio.service.base.UserWechatService;
+import com.pighand.aio.service.base.*;
 import com.pighand.aio.service.distribution.DistributionSalesService;
 import com.pighand.aio.vo.ECommerce.*;
 import com.pighand.aio.vo.base.LoginUser;
@@ -95,6 +89,8 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
     private final DistributionSalesService distributionSalesService;
 
     private final UserService userService;
+
+    private final StoreService storeService;
 
     /**
      * 价格计算
@@ -346,13 +342,16 @@ public class OrderServiceImpl extends BaseServiceImpl<OrderMapper, OrderDomain> 
             PayVO payVO = new PayVO();
             payVO.setOrderIds(orderTrade.getOrderIds().stream().map(String::valueOf).collect(Collectors.toList()));
 
+            OrderDomain order = this.getById(orderTrade.getOrderIds().get(0));
+            StoreDomain store = storeService.getById(order.getStoreId());
+
             String prepay_id =
                 wechat.pay(projectPlatformKeyDomain.getAppid(), projectPlatformPayDomain.getWechatMerchantId(),
                     projectPlatformPayDomain.getWechatMerchantCertificate(),
                     projectPlatformPayDomain.getWechatMerchantCertificateSerial(),
                     projectPlatformPayDomain.getWechatMerchantPublicKey(),
                     projectPlatformPayDomain.getWechatMerchantPublicKeyId(),
-                    projectPlatformPayDomain.getWechatMerchantV3(), userWechatDomain.getOpenid(), "商品",
+                    projectPlatformPayDomain.getWechatMerchantV3(), userWechatDomain.getOpenid(), store.getName(),
                     orderTrade.getSn(), Integer.valueOf(orderTrade.getAmountPaid().toString()));
             payVO.setPrepayId(prepay_id);
 

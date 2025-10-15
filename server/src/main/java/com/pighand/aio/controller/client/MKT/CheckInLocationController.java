@@ -10,6 +10,7 @@ import com.pighand.aio.service.MKT.CheckInLocationService;
 import com.pighand.aio.service.MKT.CheckInRecordService;
 import com.pighand.aio.service.MKT.CheckInUserService;
 import com.pighand.aio.vo.MKT.CheckInLocationVO;
+import com.pighand.aio.vo.MKT.CheckInUserVO;
 import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.framework.spring.api.annotation.Get;
 import com.pighand.framework.spring.api.annotation.Post;
@@ -74,41 +75,50 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
         }
 
         // 检查是否已经参加过活动
-        CheckInUserDomain existingUser = checkInUserService.findByUser(loginUser.getId());
+        CheckInUserVO existingUser = checkInUserService.findByUser(loginUser.getId());
 
         if (existingUser != null) {
-            // 已参加活动的用户，检查剩余时间
-            Date now = new Date();
+            if (activityDomain.getTime() != null) {
+                // 已参加活动的用户，检查剩余时间
+                Date now = new Date();
 
-            long remainingTime =
-                Date.from(existingUser.getEndTime().atZone(ZoneId.systemDefault()).toInstant()).getTime()
-                    - now.getTime();
-            long halfHourInMillis = 30 * 60 * 1000; // 半小时毫秒数
-
-            if (remainingTime > 0 && remainingTime <= halfHourInMillis) {
-                // 距离结束还剩半小时，追加2.5小时
-                long extendTime = activityDomain.getTime() * 60 * 1000;
-                Date newEndTime = new Date(
+                long remainingTime =
                     Date.from(existingUser.getEndTime().atZone(ZoneId.systemDefault()).toInstant()).getTime()
-                        + extendTime);
-                checkInUserService.extendEndTime(loginUser.getId(),
-                    LocalDateTime.ofInstant(newEndTime.toInstant(), ZoneId.systemDefault()));
+                        - now.getTime();
+                long halfHourInMillis = 30 * 60 * 1000; // 半小时毫秒数
 
-                // 更新existingUser的结束时间
-                existingUser.setEndTime(newEndTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+                if (remainingTime > 0 && remainingTime <= halfHourInMillis) {
+                    // 距离结束还剩半小时，追加2.5小时
+                    long extendTime = activityDomain.getTime() * 60 * 1000;
+                    Date newEndTime = new Date(
+                        Date.from(existingUser.getEndTime().atZone(ZoneId.systemDefault()).toInstant()).getTime()
+                            + extendTime);
+                    checkInUserService.extendEndTime(loginUser.getId(),
+                        LocalDateTime.ofInstant(newEndTime.toInstant(), ZoneId.systemDefault()));
 
-                return new Result<>(existingUser);
-            } else if (remainingTime <= 0) {
-                Date newEndTime = new Date(System.currentTimeMillis() + (activityDomain.getTime() * 60 * 1000));
-                checkInUserService.extendEndTime(loginUser.getId(),
-                    LocalDateTime.ofInstant(newEndTime.toInstant(), ZoneId.systemDefault()));
+                    // 更新existingUser的结束时间
+                    existingUser.setEndTime(newEndTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
-                // 更新existingUser的结束时间
-                existingUser.setEndTime(newEndTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+                    return new Result<>(existingUser);
+                } else if (remainingTime <= 0) {
+                    Date newEndTime = new Date(System.currentTimeMillis() + (activityDomain.getTime() * 60 * 1000));
+                    checkInUserService.extendEndTime(loginUser.getId(),
+                        LocalDateTime.ofInstant(newEndTime.toInstant(), ZoneId.systemDefault()));
 
-                return new Result<>(existingUser);
+                    // 更新existingUser的结束时间
+                    existingUser.setEndTime(newEndTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+
+                    return new Result<>(existingUser);
+                } else {
+                    // 大于半小时的，时间不变，直接返回成功
+                    return new Result<>(existingUser);
+                }
             } else {
-                // 大于半小时的，时间不变，直接返回成功
+                existingUser.setBeginTime(activityDomain.getBeginTime());
+                existingUser.setEndTime(activityDomain.getEndTime());
+
+                checkInUserService.update(existingUser);
+
                 return new Result<>(existingUser);
             }
         }
@@ -116,9 +126,14 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
         // 未参加的直接参加活动，默认2.5小时
         com.pighand.aio.vo.MKT.CheckInUserVO checkInUserVO = new com.pighand.aio.vo.MKT.CheckInUserVO();
         checkInUserVO.setUserId(loginUser.getId());
-        checkInUserVO.setEndTime(
-            new Date(System.currentTimeMillis() + (activityDomain.getTime() * 60 * 1000)).toInstant()
-                .atZone(ZoneId.systemDefault()).toLocalDateTime()); // 默认2.5小时
+        if (activityDomain.getTime() != null) {
+            checkInUserVO.setEndTime(
+                new Date(System.currentTimeMillis() + (activityDomain.getTime() * 60 * 1000)).toInstant()
+                    .atZone(ZoneId.systemDefault()).toLocalDateTime());
+        } else {
+            checkInUserVO.setBeginTime(activityDomain.getBeginTime());
+            checkInUserVO.setEndTime(activityDomain.getEndTime());
+        }
 
         CheckInUserDomain newUser = checkInUserService.create(checkInUserVO);
 
@@ -137,7 +152,7 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
 
         // 获取今天0点的时间
         LocalDate today = LocalDate.now();
-        List<CheckInRecordDomain> todayRecords = checkInRecordService.findTodayRecords(loginUser.getId(), today);
+        List<CheckInRecordDomain> todayRecords = checkInRecordService.findTodayRecords(loginUser.getId());
 
         return new Result<>(todayRecords);
     }
@@ -192,12 +207,13 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
         }
 
         // 获取今日打卡记录
-        LocalDate today = LocalDate.now();
-        List<CheckInRecordDomain> todayRecords = checkInRecordService.findTodayRecords(loginUser.getId(), today);
+        List<CheckInRecordDomain> todayRecords = checkInRecordService.findTodayRecords(loginUser.getId());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        return new Result<>(Map.of("joined", true, "endTime", checkInUser.getEndTime().format(formatter), "isExpired",
+        return new Result<>(Map.of("joined", true, "beginTime",
+            checkInUser.getBeginTime() != null ? checkInUser.getBeginTime().format(formatter) : "", "endTime",
+            checkInUser.getEndTime() != null ? checkInUser.getEndTime().format(formatter) : "", "isExpired",
             LocalDateTime.now().isAfter(checkInUser.getEndTime()), "todayRecords", todayRecords));
     }
 }

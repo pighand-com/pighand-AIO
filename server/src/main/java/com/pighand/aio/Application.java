@@ -42,6 +42,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -167,7 +168,10 @@ public class Application {
          */
         @Bean
         public Jackson2ObjectMapperBuilderCustomizer customizer() {
-            return builder -> builder.deserializerByType(Date.class, new MultiDateDeserializer());
+            return builder -> {
+                builder.deserializerByType(Date.class, new MultiDateDeserializer());
+                builder.deserializerByType(LocalDateTime.class, new MultiLocalDateTimeDeserializer());
+            };
         }
     }
 

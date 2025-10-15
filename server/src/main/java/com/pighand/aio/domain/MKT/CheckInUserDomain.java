@@ -39,6 +39,8 @@ public class CheckInUserDomain extends BaseDomainRecord<CheckInUserDomain> imple
     @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
 
+    private LocalDateTime beginTime;
+
     @Schema(description = "截止时间")
     private LocalDateTime endTime;
 }

@@ -2,7 +2,7 @@ export default {
     api: {
         release: 'https://lubanqihuanleyuan.com/api/client/',
         trial: 'https://lubanqihuanleyuan.com/api/client/',
-        develop: 'http://127.0.0.1:3091/client/',
+        develop: 'https://lubanqihuanleyuan.com/api/client/',
     },
 	
 	APPLICATION_ID: '1',

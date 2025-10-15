@@ -14,6 +14,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * 营销 - 打卡活动
@@ -49,5 +50,19 @@ public class CheckInActivityDomain extends BaseDomainRecord<CheckInActivityDomai
      */
     @Schema(description = "时长，单位分")
     private Long time;
+
+    /**
+     * 活动开始时间
+     */
+    @JsonDeserialize(using = com.pighand.aio.MultiLocalDateTimeDeserializer.class)
+    @Schema(description = "活动开始时间")
+    private LocalDateTime beginTime;
+
+    /**
+     * 活动结束时间
+     */
+    @JsonDeserialize(using = com.pighand.aio.MultiLocalDateTimeDeserializer.class)
+    @Schema(description = "活动结束时间")
+    private LocalDateTime endTime;
 
 }

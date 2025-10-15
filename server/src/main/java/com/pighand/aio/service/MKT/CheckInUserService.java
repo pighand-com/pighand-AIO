@@ -53,7 +53,7 @@ public class CheckInUserService extends BaseServiceImpl<CheckInUserMapper, Check
     public PageOrList<CheckInUserVO> query(CheckInUserVO checkInUserVO) {
         QueryWrapper queryWrapper = QueryWrapper.create().select(CHECK_IN_USER.DEFAULT_COLUMNS)
             .and(CHECK_IN_USER.USER_ID.eq(checkInUserVO.getUserId()));
-        
+
         return super.mapper.query(checkInUserVO, queryWrapper);
     }
 
@@ -81,7 +81,7 @@ public class CheckInUserService extends BaseServiceImpl<CheckInUserMapper, Check
      * 查询用户在指定地点的参与信息（已废弃，使用findByUser代替）
      *
      * @param locationId 地点ID
-     * @param userId 用户ID
+     * @param userId     用户ID
      * @return
      */
     @Deprecated
@@ -95,18 +95,16 @@ public class CheckInUserService extends BaseServiceImpl<CheckInUserMapper, Check
      * @param userId 用户ID
      * @return
      */
-    public CheckInUserDomain findByUser(Long userId) {
-        return super.queryChain()
-            .where(CHECK_IN_USER.USER_ID.eq(userId))
-            .one();
+    public CheckInUserVO findByUser(Long userId) {
+        return super.queryChain().where(CHECK_IN_USER.USER_ID.eq(userId)).oneAs(CheckInUserVO.class);
     }
 
     /**
      * 延长用户打卡截止时间（已废弃，使用单参数版本代替）
      *
      * @param locationId 地点ID
-     * @param userId 用户ID
-     * @param endTime 新的截止时间
+     * @param userId     用户ID
+     * @param endTime    新的截止时间
      */
     @Deprecated
     public void extendEndTime(Long locationId, Long userId, LocalDateTime endTime) {
@@ -116,13 +114,10 @@ public class CheckInUserService extends BaseServiceImpl<CheckInUserMapper, Check
     /**
      * 延长用户打卡截止时间（不限地点）
      *
-     * @param userId 用户ID
+     * @param userId  用户ID
      * @param endTime 新的截止时间
      */
     public void extendEndTime(Long userId, LocalDateTime endTime) {
-        super.updateChain()
-            .set(CHECK_IN_USER.END_TIME, endTime)
-            .where(CHECK_IN_USER.USER_ID.eq(userId))
-            .update();
+        super.updateChain().set(CHECK_IN_USER.END_TIME, endTime).where(CHECK_IN_USER.USER_ID.eq(userId)).update();
     }
 }

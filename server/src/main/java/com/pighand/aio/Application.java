@@ -211,7 +211,8 @@ public class Application {
             FlexGlobalConfig config = FlexGlobalConfig.getDefaultConfig();
 
             config.registerInsertListener(PHInsertListener, DomainTimeStampAware.class);
-            config.registerUpdateListener(PHUpdateListener, DomainTimeStampAware.class);
+            // TODO: 跟DialectDisposeSelect冲突
+            //            config.registerUpdateListener(PHUpdateListener, DomainTimeStampAware.class);
 
             // 注册查询权限监听方言
             new DialectRegister();

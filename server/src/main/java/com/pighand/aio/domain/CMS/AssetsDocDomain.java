@@ -43,7 +43,7 @@ public class AssetsDocDomain extends BaseDomainRecordTs<AssetsDocDomain> impleme
     @Schema(description = "分类id")
     private Long classificationId;
 
-    @Length(max = 32)
+    @Length(max = 64)
     @Schema(description = "标题")
     private String title;
 

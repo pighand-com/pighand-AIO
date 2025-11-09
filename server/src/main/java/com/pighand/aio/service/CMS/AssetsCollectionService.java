@@ -10,6 +10,8 @@ import com.pighand.framework.spring.page.PageOrList;
 import com.pighand.framework.spring.util.VerifyUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 import static com.pighand.aio.domain.CMS.table.AssetsCollectionTableDef.ASSETS_COLLECTION;
 
 /**
@@ -72,10 +74,9 @@ public class AssetsCollectionService extends BaseServiceImpl<AssetsCollectionMap
     public void update(AssetsCollectionVO cmsAssetsCollectionVO) {
         UpdateChain updateChain = this.updateChain().where(ASSETS_COLLECTION.ID.eq(cmsAssetsCollectionVO.getId()));
 
-        updateChain.set(ASSETS_COLLECTION.ID, cmsAssetsCollectionVO.getId(), VerifyUtils::isNotEmpty);
-        updateChain.set(ASSETS_COLLECTION.CREATED_AT, cmsAssetsCollectionVO.getCreatedAt(), VerifyUtils::isNotEmpty);
-        updateChain.set(ASSETS_COLLECTION.UPDATED_AT, cmsAssetsCollectionVO.getUpdatedAt(), VerifyUtils::isNotEmpty);
-        updateChain.set(ASSETS_COLLECTION.DELETED, cmsAssetsCollectionVO.getDeleted(), VerifyUtils::isNotEmpty);
+        updateChain.set(ASSETS_COLLECTION.NAME, cmsAssetsCollectionVO.getName(), VerifyUtils::isNotEmpty);
+        updateChain.set(ASSETS_COLLECTION.UPDATED_AT, new Date());
+        updateChain.set(ASSETS_COLLECTION.COVER_URL, cmsAssetsCollectionVO.getCoverUrl(), VerifyUtils::isNotEmpty);
 
         updateChain.update();
     }

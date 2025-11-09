@@ -19,10 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.pighand.aio.domain.CMS.table.AssetsCollectionTableDef.ASSETS_COLLECTION;
 import static com.pighand.aio.domain.CMS.table.AssetsImageTableDef.ASSETS_IMAGE;
 
 /**
@@ -36,7 +38,9 @@ import static com.pighand.aio.domain.CMS.table.AssetsImageTableDef.ASSETS_IMAGE;
 public class AssetsImageService extends BaseServiceImpl<AssetsImageMapper, AssetsImageDomain> {
 
     private final AssetsCollectionRelevanceService assetsCollectionRelevanceService;
+
     private final UserExtensionService userExtensionService;
+
     private final OrgDepartmentService orgDepartmentService;
 
     /**
@@ -83,21 +87,22 @@ public class AssetsImageService extends BaseServiceImpl<AssetsImageMapper, Asset
 
         // 然后返回详情
         AssetsImageDomain domain = super.mapper.find(id);
-        
+
         // 构建VO对象
         AssetsImageVO vo = new AssetsImageVO();
         BeanUtils.copyProperties(domain, vo);
-        
+
         // 获取创建人信息
         if (domain.getCreatedBy() != null) {
             UserExtensionDomain creator = userExtensionService.find(domain.getCreatedBy());
             vo.setCreator(creator);
-            
+
             // 获取创建人的组织架构信息（简化版）
-            OrgDepartmentSimpleVO creatorDepartment = orgDepartmentService.getUserDepartmentSimple(domain.getCreatedBy());
+            OrgDepartmentSimpleVO creatorDepartment =
+                orgDepartmentService.getUserDepartmentSimple(domain.getCreatedBy());
             vo.setCreatorDepartment(creatorDepartment);
         }
-        
+
         return vo;
     }
 
@@ -165,6 +170,8 @@ public class AssetsImageService extends BaseServiceImpl<AssetsImageMapper, Asset
         updateChain.set(ASSETS_IMAGE.FILE_SIZE, cmsAssetsImageVO.getFileSize(), VerifyUtils::isNotEmpty);
         updateChain.set(ASSETS_IMAGE.HANDPICK, cmsAssetsImageVO.getHandpick(), VerifyUtils::isNotEmpty);
         updateChain.set(ASSETS_IMAGE.STATUS, cmsAssetsImageVO.getStatus(), VerifyUtils::isNotEmpty);
+
+        updateChain.set(ASSETS_COLLECTION.UPDATED_AT, new Date());
 
         updateChain.set(ASSETS_IMAGE.CLASSIFICATION_ID, cmsAssetsImageVO.getClassificationId());
 

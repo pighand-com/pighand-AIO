@@ -85,4 +85,13 @@ public class OrgDepartmentUserRelevanceService
     public void delete(Long id) {
         super.mapper.deleteById(id);
     }
+
+    /**
+     * 删除部门下的所有用户关系
+     *
+     * @param departmentId
+     */
+    public void deleteByDepartmentId(Long departmentId) {
+        this.remove(QueryWrapper.create().where(ORG_DEPARTMENT_USER_RELEVANCE.DEPARTMENT_ID.eq(departmentId)));
+    }
 }

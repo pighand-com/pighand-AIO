@@ -1,7 +1,7 @@
 package com.pighand.aio.common.CAPTCHA.cache;
 
 import com.pighand.aio.common.CAPTCHA.CodeData;
-import com.pighand.aio.common.CAPTCHA.image.Flicker;
+import com.pighand.aio.common.CAPTCHA.image.Static;
 import com.pighand.aio.common.enums.CacheConfigEnum;
 import com.pighand.framework.spring.util.VerifyUtils;
 import lombok.AllArgsConstructor;
@@ -86,7 +86,9 @@ public class VerificationCache {
      * @return
      */
     public CodeData getNewCode(String cacheKey) {
-        CodeData codeData = new Flicker().getCodeData();
+        // TODO 支持配置
+        //        CodeData codeData = new Flicker().getCodeData();
+        CodeData codeData = new Static().getCodeData();
 
         String uuid = UUID.randomUUID().toString();
         codeData.setCaptchaId(uuid);

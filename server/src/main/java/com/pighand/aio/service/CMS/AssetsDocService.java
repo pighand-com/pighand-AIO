@@ -18,10 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.pighand.aio.domain.CMS.table.AssetsCollectionTableDef.ASSETS_COLLECTION;
 import static com.pighand.aio.domain.CMS.table.AssetsDocTableDef.ASSETS_DOC;
 
 /**
@@ -35,7 +37,9 @@ import static com.pighand.aio.domain.CMS.table.AssetsDocTableDef.ASSETS_DOC;
 public class AssetsDocService extends BaseServiceImpl<AssetsDocMapper, AssetsDocDomain> {
 
     private final AssetsCollectionRelevanceService assetsCollectionRelevanceService;
+
     private final UserExtensionService userExtensionService;
+
     private final OrgDepartmentService orgDepartmentService;
 
     /**
@@ -78,13 +82,13 @@ public class AssetsDocService extends BaseServiceImpl<AssetsDocMapper, AssetsDoc
         UpdateChain updateChain = this.updateChain().where(ASSETS_DOC.ID.eq(id));
         updateChain.set(ASSETS_DOC.VIEW_COUNT, ASSETS_DOC.VIEW_COUNT.add(1));
         updateChain.update();
-        
+
         // 然后返回详情
         AssetsDocDomain domain = super.mapper.find(id);
         if (domain == null) {
             return null;
         }
-        
+
         // 转换为VO
         AssetsDocVO vo = new AssetsDocVO();
         // 复制基础属性
@@ -105,17 +109,18 @@ public class AssetsDocService extends BaseServiceImpl<AssetsDocMapper, AssetsDoc
         vo.setCreatedAt(domain.getCreatedAt());
         vo.setUpdatedAt(domain.getUpdatedAt());
         vo.setDeleted(domain.getDeleted());
-        
+
         // 获取创建人信息
         if (domain.getCreatedBy() != null) {
             UserExtensionDomain creator = userExtensionService.find(domain.getCreatedBy());
             vo.setCreator(creator);
-            
+
             // 获取创建人组织架构（简化版）
-            OrgDepartmentSimpleVO creatorDepartment = orgDepartmentService.getUserDepartmentSimple(domain.getCreatedBy());
+            OrgDepartmentSimpleVO creatorDepartment =
+                orgDepartmentService.getUserDepartmentSimple(domain.getCreatedBy());
             vo.setCreatorDepartment(creatorDepartment);
         }
-        
+
         return vo;
     }
 
@@ -178,6 +183,7 @@ public class AssetsDocService extends BaseServiceImpl<AssetsDocMapper, AssetsDoc
         updateChain.set(ASSETS_DOC.DESCRIPTION, cmsAssetsDocVO.getDescription(), VerifyUtils::isNotEmpty);
         updateChain.set(ASSETS_DOC.FILE_FORMAT, cmsAssetsDocVO.getFileFormat(), VerifyUtils::isNotEmpty);
         updateChain.set(ASSETS_DOC.FILE_SIZE, cmsAssetsDocVO.getFileSize(), VerifyUtils::isNotEmpty);
+        updateChain.set(ASSETS_COLLECTION.UPDATED_AT, new Date());
 
         updateChain.update();
 

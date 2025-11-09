@@ -84,7 +84,7 @@ const fetchOrgStructure = async () => {
             }
             
             // 根据层级显示组织架构信息
-            const orgLabels = ['所属区县', '所属街道', '所属单位', '所属科室'];
+            const orgLabels = ['所属城市', '所属单位', '所属科室'];
             const result: Array<{ label: string; value: string }> = [];
             
             departments.forEach((dept: any, index: number) => {

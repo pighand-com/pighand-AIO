@@ -43,7 +43,7 @@ public class AssetsVideoDomain extends BaseDomainRecordTs<AssetsVideoDomain> imp
     @Schema(description = "分类id")
     private Long classificationId;
 
-    @Length(max = 32)
+    @Length(max = 64)
     @Schema(description = "标题")
     private String title;
 

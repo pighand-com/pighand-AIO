@@ -9,7 +9,7 @@
                 </div>
             </div>
             <div class="user-details">
-                <h3 class="user-name">{{ userInfo.nickname || userInfo.username || '未知用户' }}</h3>
+                <h3 class="user-name">{{ userInfo?.extension?.name || userInfo.username || '未知用户' }}</h3>
                 <p class="user-department">{{ departmentInfo }}</p>
             </div>
         </div>

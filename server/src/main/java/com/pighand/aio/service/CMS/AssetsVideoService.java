@@ -19,10 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.pighand.aio.domain.CMS.table.AssetsCollectionTableDef.ASSETS_COLLECTION;
 import static com.pighand.aio.domain.CMS.table.AssetsVideoTableDef.ASSETS_VIDEO;
 
 /**
@@ -36,7 +38,9 @@ import static com.pighand.aio.domain.CMS.table.AssetsVideoTableDef.ASSETS_VIDEO;
 public class AssetsVideoService extends BaseServiceImpl<AssetsVideoMapper, AssetsVideoDomain> {
 
     private final AssetsCollectionRelevanceService assetsCollectionRelevanceService;
+
     private final UserExtensionService userExtensionService;
+
     private final OrgDepartmentService orgDepartmentService;
 
     /**
@@ -81,24 +85,25 @@ public class AssetsVideoService extends BaseServiceImpl<AssetsVideoMapper, Asset
         UpdateChain updateChain = this.updateChain().where(ASSETS_VIDEO.ID.eq(id));
         updateChain.set(ASSETS_VIDEO.VIEW_COUNT, ASSETS_VIDEO.VIEW_COUNT.add(1));
         updateChain.update();
-        
+
         // 然后返回详情
         AssetsVideoDomain domain = super.mapper.find(id);
-        
+
         // 构建VO对象
         AssetsVideoVO vo = new AssetsVideoVO();
         BeanUtils.copyProperties(domain, vo);
-        
+
         // 获取创建人信息
         if (domain.getCreatedBy() != null) {
             UserExtensionDomain creator = userExtensionService.find(domain.getCreatedBy());
             vo.setCreator(creator);
-            
+
             // 获取创建人的组织架构信息（简化版）
-            OrgDepartmentSimpleVO creatorDepartment = orgDepartmentService.getUserDepartmentSimple(domain.getCreatedBy());
+            OrgDepartmentSimpleVO creatorDepartment =
+                orgDepartmentService.getUserDepartmentSimple(domain.getCreatedBy());
             vo.setCreatorDepartment(creatorDepartment);
         }
-        
+
         return vo;
     }
 
@@ -164,6 +169,8 @@ public class AssetsVideoService extends BaseServiceImpl<AssetsVideoMapper, Asset
         updateChain.set(ASSETS_VIDEO.FILE_SIZE, cmsAssetsVideoVO.getFileSize(), VerifyUtils::isNotEmpty);
         updateChain.set(ASSETS_VIDEO.RESOLUTION_RATIO, cmsAssetsVideoVO.getResolutionRatio(), VerifyUtils::isNotEmpty);
         updateChain.set(ASSETS_VIDEO.CLASSIFICATION_ID, cmsAssetsVideoVO.getClassificationId());
+
+        updateChain.set(ASSETS_COLLECTION.UPDATED_AT, new Date());
 
         updateChain.update();
 

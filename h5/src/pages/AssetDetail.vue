@@ -156,6 +156,19 @@
             </div>
         </div>
 
+        <!-- 微信浏览器引导遮罩层 -->
+        <div v-if="showWeChatGuide" class="wechat-guide-overlay" @click.self="closeWeChatGuide">
+            <!-- 顶部右上角仅显示箭头（不显示“...”气泡） -->
+            <div class="guide-arrow"></div>
+
+            <div class="guide-content">
+                <div class="guide-step">1、点击右上角 “...”</div>
+                <div class="guide-step">2、选择 “在浏览器中打开”</div>
+                <div class="guide-tip">由于微信内置浏览器的限制，请在系统浏览器中打开后再进行下载。</div>
+                <el-button class="guide-ok" type="primary" @click="closeWeChatGuide">知道了</el-button>
+            </div>
+        </div>
+
 
     </div>
 </template>
@@ -163,7 +176,7 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted, nextTick } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { 
     FileDoc, 
     Picture,
@@ -186,6 +199,9 @@ const loading = ref(false);
 const downloading = ref(false);
 const assetDetail = ref<any>({});
 const isFavourited = ref(false);
+
+// 是否展示微信引导遮罩层
+const showWeChatGuide = ref(false);
 
 const isVideoPlaying = ref(false);
 const videoPlayer = ref<HTMLVideoElement | null>(null);
@@ -372,6 +388,12 @@ const toggleFavorite = async () => {
  */
 const downloadAsset = async () => {
     try {
+        // 如果在微信内置浏览器内打开，则提示用户在系统浏览器中打开
+        if (isWeChatBrowser()) {
+            showWeChatGuide.value = true;
+            return; // 不继续执行下载逻辑
+        }
+
         downloading.value = true;
         
         const assetId = route.params.id as string;
@@ -449,6 +471,21 @@ const downloadAsset = async () => {
     }
 };
 
+/**
+ * 检测是否在微信浏览器中
+ */
+const isWeChatBrowser = () => {
+    if (typeof navigator === 'undefined') return false;
+    return /MicroMessenger/i.test(navigator.userAgent || '');
+};
+
+/**
+ * 关闭微信引导遮罩层
+ */
+const closeWeChatGuide = () => {
+    showWeChatGuide.value = false;
+};
+
 
 /**
  * 加载收藏状态
@@ -512,7 +549,12 @@ const shareAsset = async () => {
     try {
         const shareUrl = window.location.href;
         await copyToClipboard(shareUrl);
-        ElMessage.success('链接已复制到剪贴板');
+        await ElMessageBox.alert('链接已复制到剪贴板', '复制成功', {
+            confirmButtonText: '确定',
+            customClass: 'asset-share-alert',
+            showClose: false,
+            center: true
+        });
     } catch (error) {
         console.error('分享失败:', error);
         ElMessage.error('复制失败，请重试');
@@ -747,6 +789,79 @@ onMounted(() => {
 
 .image-container {
     text-align: center;
+}
+
+/* 微信浏览器引导遮罩层样式 */
+.wechat-guide-overlay {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+}
+
+.wechat-guide-overlay .guide-arrow {
+    position: absolute;
+    right: 0px;
+    top: 100px;
+    width: 180px;
+    height: 0;
+    border-top: 2px dashed #fff;
+    transform: rotate(-60deg);
+}
+.wechat-guide-overlay .guide-arrow::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: -6px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 14px solid #fff;
+    /* 让箭头三角与线段保持垂直（视觉上更正）；与线段同角度旋转，使三角底边垂直于线段 */
+    transform: rotate(30deg);
+}
+
+.wechat-guide-overlay .guide-content {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 88%;
+    max-width: 480px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.wechat-guide-overlay .guide-step {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.wechat-guide-overlay .guide-tip {
+    background: #f2f3f5;
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 14px;
+    color: #555;
+    margin: 12px 0 16px 0;
+}
+
+.wechat-guide-overlay .guide-ok {
+    width: 140px;
+    background: linear-gradient(135deg, var(--p-color-green-primary) 0%, #4ade80 100%) !important;
+    border-color: var(--p-color-green-primary) !important;
+    color: #fff !important;
+}
+.wechat-guide-overlay .guide-ok:hover {
+    background: linear-gradient(135deg, var(--p-color-green-hover) 0%, #22c55e 100%) !important;
 }
 
 .image-container img {

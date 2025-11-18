@@ -50,4 +50,6 @@ public interface UserWechatService extends BaseService<UserWechatDomain> {
      * @param id
      */
     void delete(Long id);
+
+    void deleteByUserId(Long userId);
 }

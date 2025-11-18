@@ -114,8 +114,11 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
                     return new Result<>(existingUser);
                 }
             } else {
-                existingUser.setBeginTime(activityDomain.getBeginTime());
-                existingUser.setEndTime(activityDomain.getEndTime());
+                LocalDateTime begin = LocalDateTime.now().with(activityDomain.getBeginTime());
+                LocalDateTime end = LocalDateTime.now().with(activityDomain.getEndTime());
+
+                existingUser.setBeginTime(begin);
+                existingUser.setEndTime(end);
 
                 checkInUserService.update(existingUser);
 
@@ -131,8 +134,10 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
                 new Date(System.currentTimeMillis() + (activityDomain.getTime() * 60 * 1000)).toInstant()
                     .atZone(ZoneId.systemDefault()).toLocalDateTime());
         } else {
-            checkInUserVO.setBeginTime(activityDomain.getBeginTime());
-            checkInUserVO.setEndTime(activityDomain.getEndTime());
+            LocalDateTime begin = LocalDateTime.now().with(activityDomain.getBeginTime());
+            LocalDateTime end = LocalDateTime.now().with(activityDomain.getEndTime());
+            checkInUserVO.setBeginTime(begin);
+            checkInUserVO.setEndTime(end);
         }
 
         CheckInUserDomain newUser = checkInUserService.create(checkInUserVO);

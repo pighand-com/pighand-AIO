@@ -14,6 +14,7 @@ import com.pighand.aio.mapper.base.UserMapper;
 import com.pighand.aio.service.base.UserExtensionService;
 import com.pighand.aio.service.base.UserRoleService;
 import com.pighand.aio.service.base.UserService;
+import com.pighand.aio.service.base.UserWechatService;
 import com.pighand.aio.service.common.UploadService;
 import com.pighand.aio.vo.base.CheckUserExist;
 import com.pighand.aio.vo.base.UserRoleVO;
@@ -46,6 +47,8 @@ import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> implements UserService {
 
     private final UserExtensionService userExtensionService;
+
+    private final UserWechatService userWechatService;
 
     private final UploadService uploadService;
 
@@ -330,7 +333,8 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
     @Override
     public void delete(Long id) {
         super.mapper.deleteById(id);
-
+        userExtensionService.delete(id);
+        userWechatService.deleteByUserId(id);
         userRoleService.delUserRoles(id, null);
     }
 

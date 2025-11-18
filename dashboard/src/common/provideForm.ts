@@ -51,6 +51,7 @@ export interface FormColumnsInterface {
         | 'number'
         | 'select'
         | 'checkbox'
+        | 'timePicker'
         | 'datePicker'
         | 'dateTimePicker'
         | 'datePickerRange'

@@ -10,9 +10,7 @@
         }"
         :data-table-props="{
             tableOperation: ['delete']
-        }"
-        >
-        
+        }">
         <!-- 自定义操作按钮插槽 -->
         <template #table-column-operation="{ row }">
             <el-button
@@ -24,10 +22,7 @@
                 下载小程序码
             </el-button>
         </template>
-
     </PDataManager>
-
-
 </template>
 
 <script setup lang="ts">
@@ -41,60 +36,58 @@ import provideForm from '@/common/provideForm';
 const qrcodeLoading = reactive<Record<string, boolean>>({});
 
 // 使用provideForm配置表单字段
-provideForm(
-    [
-        {
-            label: 'ID',
-            prop: 'id',
-            isDetail: true,
-            isPrimaryKey: true,
-            hidden: true,
-            isTable: true
-        },
-        {
-            label: '活动名称',
-            prop: 'name',
-            isTable: true,
-            isDetail: true,
-            isSearch: true,
-            domType: 'input',
-            rules: [
-                {
-                    required: true,
-                    message: '活动名称必填',
-                    trigger: 'blur'
-                },
-                {
-                    max: 100,
-                    message: '最大长度100个字符',
-                    trigger: 'blur'
-                }
-            ]
-        },
-        {
-            label: '活动时长（分钟）',
-            prop: 'time',
-            isTable: true,
-            isDetail: true,
-            domType: 'number',
-            suffix: '分钟'
-        },
-        {
-            label: '开始时间',
-            prop: 'beginTime',
-            isTable: true,
-            isDetail: true,
-            domType: 'dateTimePicker'
-        },
-        {
-            label: '结束时间',
-            prop: 'endTime',
-            isTable: true,
-            isDetail: true,
-            domType: 'dateTimePicker'
-        }
-    ]
-);
+provideForm([
+    {
+        label: 'ID',
+        prop: 'id',
+        isDetail: true,
+        isPrimaryKey: true,
+        hidden: true,
+        isTable: true
+    },
+    {
+        label: '活动名称',
+        prop: 'name',
+        isTable: true,
+        isDetail: true,
+        isSearch: true,
+        domType: 'input',
+        rules: [
+            {
+                required: true,
+                message: '活动名称必填',
+                trigger: 'blur'
+            },
+            {
+                max: 100,
+                message: '最大长度100个字符',
+                trigger: 'blur'
+            }
+        ]
+    },
+    {
+        label: '活动时长（分钟）',
+        prop: 'time',
+        isTable: true,
+        isDetail: true,
+        domType: 'number',
+        suffix: '分钟'
+    },
+    {
+        label: '开始时间 ',
+        prop: 'beginTime',
+        isTable: true,
+        isDetail: true,
+        domType: 'timePicker'
+    },
+    {
+        label: '结束时间',
+        prop: 'endTime',
+        isTable: true,
+        isDetail: true,
+        domType: 'timePicker'
+    }
+]);
 
 /**
  * 下载活动小程序码
@@ -136,5 +129,4 @@ const handleGenerateQrcode = async (row: any) => {
         qrcodeLoading[row.id] = false;
     }
 };
-
 </script>

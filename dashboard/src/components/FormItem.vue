@@ -172,6 +172,21 @@
             clearable>
         </el-date-picker>
 
+        <el-time-picker
+            v-if="formColumnItem.domType === 'timePicker'"
+            v-bind="formColumnItem.componentProps || {}"
+            v-model="formModel[formColumnItem.prop]"
+            :type="
+                formColumnItem.domType === 'timePicker' ? 'time' : 'timerange'
+            "
+            range-separator="-"
+            :value-format="
+                formColumnItem.domType === 'timePicker' ? 'HH:mm:ss' : 'HH:mm'
+            "
+            :placeholder="formColumnItem.placeholder"
+            clearable>
+        </el-time-picker>
+
         <div
             v-for="(imageItem, imageIndex) in (
                 (formColumnItem.domType === 'uploadImage'

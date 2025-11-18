@@ -34,14 +34,14 @@ public class Utils {
     /**
      * 根据环境变量获取微信小程序环境
      *
-     * @return formal, trial, developer
+     * @return release, trial, developer
      */
     public String getAppletEnv() {
         return switch (env) {
             //            case "dev" -> "developer";
             case "dev" -> "trial";
             case "test" -> "trial";
-            default -> "formal";
+            default -> "release";
         };
     }
 }

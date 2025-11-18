@@ -1,5 +1,6 @@
 package com.pighand.aio.service.base.impl;
 
+import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.common.enums.UserStatusEnum;
 import com.pighand.aio.domain.base.UserWechatDomain;
 import com.pighand.aio.mapper.base.UserWechatMapper;
@@ -8,6 +9,8 @@ import com.pighand.aio.vo.base.UserWechatVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import org.springframework.stereotype.Service;
+
+import static com.pighand.aio.domain.base.table.UserWechatTableDef.USER_WECHAT;
 
 /**
  * 用户微信信息表 同一个用户，不同来源，可能存在多个身份，使用unionid关联。所以本表与用户多对一
@@ -76,5 +79,11 @@ public class UserWechatServiceImpl extends BaseServiceImpl<UserWechatMapper, Use
     @Override
     public void delete(Long id) {
         super.mapper.deleteById(id);
+    }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+        QueryWrapper queryWrapper = QueryWrapper.create().and(USER_WECHAT.USER_ID.eq(userId));
+        super.mapper.deleteByQuery(queryWrapper);
     }
 }

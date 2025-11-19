@@ -8,13 +8,16 @@ import com.pighand.aio.domain.MKT.CheckInActivityDomain;
 import com.pighand.aio.domain.base.ApplicationPlatformKeyDomain;
 import com.pighand.aio.mapper.MKT.CheckInActivityMapper;
 import com.pighand.aio.service.base.ApplicationPlatformKeyService;
+import com.pighand.aio.vo.MKT.ActivityStatsVO;
 import com.pighand.aio.vo.MKT.CheckInActivityVO;
+import com.pighand.aio.vo.MKT.LocationStatVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.Base64;
 import java.util.HashMap;
 
@@ -29,6 +32,9 @@ import java.util.HashMap;
 public class CheckInActivityService extends BaseServiceImpl<CheckInActivityMapper, CheckInActivityDomain> {
 
     private final ApplicationPlatformKeyService applicationPlatformKeyService;
+
+    private final CheckInRecordService checkInRecordService;
+    private final CheckInUserService checkInUserService;
 
     /**
      * 创建打卡活动
@@ -127,5 +133,18 @@ public class CheckInActivityService extends BaseServiceImpl<CheckInActivityMappe
 
         // 返回Base64编码的图片
         return Base64.getEncoder().encodeToString(images);
+    }
+
+    public ActivityStatsVO getStats(Long activityId, LocalDate date) {
+        ActivityStatsVO vo = new ActivityStatsVO();
+        vo.setDate(date);
+
+        Long total = checkInUserService.countParticipants(activityId, date);
+        vo.setTotalParticipants(total);
+
+        java.util.List<LocationStatVO> locations = checkInRecordService.countByLocation(date, activityId);
+        vo.setLocations(locations);
+
+        return vo;
     }
 }

@@ -10,8 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import static com.pighand.aio.domain.MKT.table.CheckInUserTableDef.CHECK_IN_USER;
+import static com.mybatisflex.core.query.QueryMethods.distinct;
 
 /**
  * 营销 - 打卡用户参与信息
@@ -119,5 +121,22 @@ public class CheckInUserService extends BaseServiceImpl<CheckInUserMapper, Check
      */
     public void extendEndTime(Long userId, LocalDateTime endTime) {
         super.updateChain().set(CHECK_IN_USER.END_TIME, endTime).where(CHECK_IN_USER.USER_ID.eq(userId)).update();
+    }
+
+    /**
+     * 统计指定活动在某一天的参与唯一用户数
+     */
+    public long countParticipants(Long activityId, LocalDate date) {
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+
+        java.util.List<Long> userIds = this.queryChain()
+            .select(distinct(CHECK_IN_USER.USER_ID))
+            .where(CHECK_IN_USER.ACTIVITY_ID.eq(activityId))
+            .and(CHECK_IN_USER.BEGIN_TIME.le(endOfDay))
+            .and(CHECK_IN_USER.END_TIME.ge(startOfDay))
+            .listAs(Long.class);
+
+        return userIds == null ? 0 : userIds.size();
     }
 }

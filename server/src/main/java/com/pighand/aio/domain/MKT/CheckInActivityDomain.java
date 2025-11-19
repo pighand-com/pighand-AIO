@@ -54,14 +54,14 @@ public class CheckInActivityDomain extends BaseDomainRecord<CheckInActivityDomai
     /**
      * 活动开始时间
      */
-    @JsonDeserialize(using = com.pighand.aio.MultiLocalDateTimeDeserializer.class)
+    //    @JsonDeserialize(using = com.pighand.aio.MultiLocalDateTimeDeserializer.class)
     @Schema(description = "活动开始时间")
     private LocalTime beginTime;
 
     /**
      * 活动结束时间
      */
-    @JsonDeserialize(using = com.pighand.aio.MultiLocalDateTimeDeserializer.class)
+    //    @JsonDeserialize(using = com.pighand.aio.MultiLocalDateTimeDeserializer.class)
     @Schema(description = "活动结束时间")
     private LocalTime endTime;
 

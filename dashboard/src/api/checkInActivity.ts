@@ -67,5 +67,9 @@ export default {
      */
     generateQRCode: (id: number) => {
         return request.get(`${baseUrl}/${id}/qrcode`);
+    },
+
+    getStats: (id: number, date: string) => {
+        return request.get(`${baseUrl}/${id}/stats`, { date });
     }
 };

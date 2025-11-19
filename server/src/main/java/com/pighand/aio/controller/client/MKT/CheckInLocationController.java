@@ -78,6 +78,11 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
         CheckInUserVO existingUser = checkInUserService.findByUser(loginUser.getId());
 
         if (existingUser != null) {
+            if (existingUser.getActivityId() != null && !existingUser.getActivityId().equals(activityDomain.getId())
+                && existingUser.getEndTime().isAfter(LocalDateTime.now())) {
+                throw new ThrowPrompt("您已参加其他活动");
+            }
+
             if (activityDomain.getTime() != null) {
                 // 已参加活动的用户，检查剩余时间
                 Date now = new Date();
@@ -98,6 +103,7 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
 
                     // 更新existingUser的结束时间
                     existingUser.setEndTime(newEndTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+                    existingUser.setActivityId(activityDomain.getId());
 
                     return new Result<>(existingUser);
                 } else if (remainingTime <= 0) {
@@ -107,10 +113,12 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
 
                     // 更新existingUser的结束时间
                     existingUser.setEndTime(newEndTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+                    existingUser.setActivityId(activityDomain.getId());
 
                     return new Result<>(existingUser);
                 } else {
                     // 大于半小时的，时间不变，直接返回成功
+                    existingUser.setActivityId(activityDomain.getId());
                     return new Result<>(existingUser);
                 }
             } else {
@@ -119,6 +127,7 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
 
                 existingUser.setBeginTime(begin);
                 existingUser.setEndTime(end);
+                existingUser.setActivityId(activityDomain.getId());
 
                 checkInUserService.update(existingUser);
 
@@ -129,7 +138,9 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
         // 未参加的直接参加活动，默认2.5小时
         com.pighand.aio.vo.MKT.CheckInUserVO checkInUserVO = new com.pighand.aio.vo.MKT.CheckInUserVO();
         checkInUserVO.setUserId(loginUser.getId());
+        checkInUserVO.setActivityId(activityDomain.getId());
         if (activityDomain.getTime() != null) {
+            checkInUserVO.setBeginTime(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
             checkInUserVO.setEndTime(
                 new Date(System.currentTimeMillis() + (activityDomain.getTime() * 60 * 1000)).toInstant()
                     .atZone(ZoneId.systemDefault()).toLocalDateTime());
@@ -190,7 +201,7 @@ public class CheckInLocationController extends BaseController<CheckInLocationSer
         }
 
         // 创建打卡记录
-        checkInRecordService.createCheckInRecord(userId, locationId, today);
+        checkInRecordService.createCheckInRecord(userId, checkInUser.getActivityId(), locationId, today);
 
         return new Result().success();
     }

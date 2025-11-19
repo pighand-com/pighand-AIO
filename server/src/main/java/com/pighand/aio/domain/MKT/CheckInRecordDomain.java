@@ -39,6 +39,10 @@ public class CheckInRecordDomain extends BaseDomainRecord<CheckInRecordDomain> i
     @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
 
+    @JsonDeserialize(using = ToLongSerializer.class)
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long activityId;
+
     @Schema(description = "打卡地点id")
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)

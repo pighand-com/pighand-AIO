@@ -55,7 +55,7 @@
 			</view>
 			
 			<!-- 排队设置区域 -->
-			<view class="queue-section" v-if="isStaff">
+			<view class="queue-section" v-if="showQueueSection">
 				<user-check :item="['login']">
 					<view class="queue-box" @click="goToQueueSettings">
 						<text class="queue-text">排队设置</text>
@@ -65,7 +65,7 @@
 			</view>
 			
 			<!-- 核销区域 -->
-			<view class="verification-section" v-if="isStaff">
+			<view class="verification-section" v-if="showVerificationSection">
 				<user-check :item="['login']">
 					<view class="verification-box" @click="goToVerification">
 						<text class="verification-text">核销</text>
@@ -75,7 +75,7 @@
 			</view>
 			
 			<!-- 打卡确认区域 -->
-			<view class="checkin-section" v-if="isStaff">
+			<view class="checkin-section" v-if="showCheckInSection">
 				<user-check :item="['login']">
 					<view class="checkin-box" @click="goToCheckIn">
 						<text class="checkin-text">打卡确认</text>
@@ -85,7 +85,7 @@
 			</view>
 			
 			<!-- 订单区域 -->
-			<view class="order-section">
+			<view class="order-section" v-if="showDefaultButtons">
 				<user-check :item="['login']">
 					<view class="order-box" @click="goToOrder">
 						<text class="order-text">我的订单</text>
@@ -95,7 +95,7 @@
 			</view>
 			
 			<!-- 票务区域 -->
-			<view class="ticket-section">
+			<view class="ticket-section" v-if="showDefaultButtons">
 				<user-check :item="['login']">
 					<view class="ticket-box" @click="goToTicket">
 						<text class="ticket-text">我的票务</text>
@@ -206,7 +206,6 @@ const isQrModalVisible = ref(false)
 const distributionQrCode = ref('')
 const isSettingsModalVisible = ref(false)
 const isContactModalVisible = ref(false)
-const isStaff = ref(false)
 
 // 打卡相关变量
 const isCheckInModalVisible = ref(false)
@@ -214,14 +213,16 @@ const checkInLocations = ref([])
 const selectedLocationId = ref('')
 const scanUserId = ref('') // 保存扫码得到的userId
 
-// 检查用户是否为工作人员（roleId=9000）
-const checkIsStaff = async () => {
-    const user = userInfo.value
-
-	isStaff.value = user?.roles
-		&& Array.isArray(user.roles)
-		&& user.roles.some(role => role.roleId == 9000)
-}
+const roleIds = computed(() => {
+    const roles = userInfo.value?.roles
+    return Array.isArray(roles) ? roles.map(r => r.roleId) : []
+})
+const isReceptionist = computed(() => roleIds.value.includes('9000'))
+const isFrontDesk = computed(() => roleIds.value.includes('9010'))
+const showQueueSection = computed(() => isReceptionist.value)
+const showCheckInSection = computed(() => isReceptionist.value)
+const showVerificationSection = computed(() => isFrontDesk.value)
+const showDefaultButtons = computed(() => !isReceptionist.value && !isFrontDesk.value)
 
 // 检查并设置salespersonId
 const checkAndSetSalespersonId = async () => {
@@ -251,9 +252,7 @@ const checkAndSetSalespersonId = async () => {
 // 监听storage变化
 const handleStorageChange = () => {
     userInfo.value = getUserInfo()
-	isLogin.value = !!getToken()
-
-	checkIsStaff()
+    isLogin.value = !!getToken()
 
     checkAndSetSalespersonId()
 }

@@ -2,6 +2,7 @@ package com.pighand.aio.controller.dashboard.MKT;
 
 import com.pighand.aio.service.MKT.CheckInActivityService;
 import com.pighand.aio.vo.MKT.CheckInActivityVO;
+import com.pighand.aio.vo.MKT.ActivityStatsVO;
 import com.pighand.framework.spring.api.annotation.*;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
 import com.pighand.framework.spring.base.BaseController;
@@ -10,7 +11,9 @@ import com.pighand.framework.spring.response.Result;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
 /**
  * MKT - 打卡活动
  *
@@ -103,5 +106,12 @@ public class CheckInActivityController extends BaseController<CheckInActivitySer
         String qrcode = super.service.getWechatAppletQrcode(id);
 
         return new Result(qrcode);
+    }
+
+    @Get(path = "{id}/stats", docSummary = "活动按日期统计")
+    public Result<ActivityStatsVO> stats(@PathVariable(name = "id") Long id,
+        @RequestParam(name = "date") LocalDate date) {
+        ActivityStatsVO vo = super.service.getStats(id, date);
+        return new Result(vo);
     }
 }

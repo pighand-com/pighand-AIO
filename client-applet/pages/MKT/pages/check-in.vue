@@ -312,7 +312,7 @@ const joinActivity = async (activityId) => {
 	} catch (error) {
 		console.error('参加活动失败:', error)
 		uni.showToast({
-			title: '参加失败，请重试',
+			title: error,
 			icon: 'error'
 		})
 	} finally {

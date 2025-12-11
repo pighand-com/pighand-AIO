@@ -2,6 +2,7 @@ package com.pighand.aio.controller.client.base;
 
 import com.pighand.aio.common.interceptor.Context;
 import com.pighand.aio.common.interfaces.ApplicationId;
+import com.pighand.aio.service.base.LoginService;
 import com.pighand.aio.service.base.UserService;
 import com.pighand.aio.service.base.tripartite.wechat.AppletImpl;
 import com.pighand.aio.vo.base.Login;
@@ -26,11 +27,20 @@ public class LoginController extends BaseController<UserService> {
 
     private final AppletImpl wechatAppletService;
 
+    private final LoginService loginService;
+
     @ApplicationId
     @Post(value = "wechat/applet", docDescription = "微信小程序登录")
     public Result wechatAppletLogin(@RequestBody Login login) {
         Long applicationId = Context.applicationId();
         UserVO userVO = wechatAppletService.loginInByCode(applicationId, login.getCode());
         return new Result(userVO);
+    }
+
+    @Post(docDescription = "密码登录")
+    //    @CAPTCHA(key = "username")
+    public Result<UserVO> passwordLogin(@RequestBody Login login) {
+        UserVO user = loginService.loginByPassword(login.getUsername(), login.getPassword());
+        return new Result(user);
     }
 }

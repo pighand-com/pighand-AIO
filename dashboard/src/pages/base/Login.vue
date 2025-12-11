@@ -11,20 +11,31 @@
         </div>
         <el-form class="form" @keyup.enter="login">
             <h1>登录</h1>
-            <el-input :disabled="isLoading" :class="errorFields.has('username') ? 'el-input-error' : ''"
-                v-model="loginForm.username" placeholder="" :prefix-icon="User" @input="handleInput('username')"
+            <el-input
+                :disabled="isLoading"
+                :class="errorFields.has('username') ? 'el-input-error' : ''"
+                v-model="loginForm.username"
+                placeholder=""
+                :prefix-icon="User"
+                @input="handleInput('username')"
                 @blur="handleBlur('username')" />
-            <el-input :disabled="isLoading" :class="errorFields.has('password') ? 'el-input-error' : ''" type="password"
-                v-model="loginForm.password" placeholder="" :prefix-icon="Lock" show-password
-                @input="handleInput('password')" @blur="handleBlur('password')" />
-            <div v-if="showCaptcha" class="captcha-container">
-                <el-input ref="captchaInputRef" :disabled="isLoading"
-                    :class="errorFields.has('captcha') ? 'el-input-error' : ''" v-model="loginForm.captcha"
-                    placeholder="请输入验证码" @input="handleInput('captcha')" @blur="handleBlur('captcha')" />
-                <img :src="captchaImage" alt="验证码" @click="refreshCaptcha(true)" class="captcha-image" />
-            </div>
-            <el-button @click="login" plain :loading="isLoading" :disabled="isLoading">{{ isLoading ? '登录中...' : '登录'
-                }}</el-button>
+            <el-input
+                :disabled="isLoading"
+                :class="errorFields.has('password') ? 'el-input-error' : ''"
+                type="password"
+                v-model="loginForm.password"
+                placeholder=""
+                :prefix-icon="Lock"
+                show-password
+                @input="handleInput('password')"
+                @blur="handleBlur('password')" />
+            <el-button
+                @click="login"
+                plain
+                :loading="isLoading"
+                :disabled="isLoading"
+                >{{ isLoading ? '登录中...' : '登录' }}</el-button
+            >
         </el-form>
     </div>
 </template>
@@ -33,21 +44,20 @@
 import { ref, reactive, onBeforeMount } from 'vue';
 import { User, Lock } from '@icon-park/vue-next';
 import * as API from '@/api';
-import { setToken, setUserInfo, getToken, setApplicationInfo } from '@/common/storage';
+import {
+    setToken,
+    setUserInfo,
+    getToken,
+    setApplicationInfo
+} from '@/common/storage';
 import { getDefaultRouterPath } from '@/routers/routes';
 import router from '@/routers/index';
 
 const errorFields = ref(new Set());
 const loginForm = reactive({
     username: '',
-    password: '',
-    captcha: '',
-    captchaId: ''
+    password: ''
 });
-
-const captchaImage = ref('');
-const captchaInputRef = ref(null);
-const showCaptcha = ref(false);
 
 const isLoading = ref(false);
 
@@ -55,50 +65,15 @@ onBeforeMount(() => {
     if (getToken()) {
         router.push(getDefaultRouterPath());
     }
-
-    refreshCaptcha();
 });
 
 const handleInput = (key: string) => {
     errorFields.value.delete(key);
-
-    if (
-        loginForm.captcha &&
-        loginForm.captcha.length === 4 &&
-        loginForm.username &&
-        loginForm.password
-    ) {
-        login();
-    }
 };
 
 const handleBlur = (key: string) => {
     if (!loginForm[key]) {
         errorFields.value.add(key);
-    }
-
-    if (key === 'username') {
-        if (loginForm.username) {
-            showCaptcha.value = true;
-            refreshCaptcha();
-        } else {
-            showCaptcha.value = false;
-        }
-    }
-};
-
-const refreshCaptcha = async (force?: boolean) => {
-    if (!force && (!loginForm.username || captchaImage.value)) return;
-
-    const result = await API.common.getCAPTCHACode(loginForm.username);
-    if (result && result.base64) {
-        captchaImage.value = result.base64;
-        loginForm.captchaId = result.captchaId;
-        if (force) {
-            setTimeout(() => {
-                captchaInputRef.value?.input?.focus();
-            }, 0);
-        }
     }
 };
 
@@ -127,9 +102,6 @@ const login = async () => {
 
             const defaultPath = getDefaultRouterPath();
             router.replace(defaultPath);
-        } else {
-            loginForm.captcha = '';
-            refreshCaptcha(true);
         }
 
         isLoading.value = false;
@@ -172,9 +144,12 @@ const login = async () => {
 
     .g1 {
         position: absolute;
-        background: radial-gradient(circle at center,
+        background: radial-gradient(
+                circle at center,
                 rgba(var(--color1), 0.8) 0,
-                rgba(var(--color1), 0) 50%) no-repeat;
+                rgba(var(--color1), 0) 50%
+            )
+            no-repeat;
         mix-blend-mode: var(--blending);
 
         width: var(--circle-size);
@@ -190,9 +165,12 @@ const login = async () => {
 
     .g2 {
         position: absolute;
-        background: radial-gradient(circle at center,
+        background: radial-gradient(
+                circle at center,
                 rgba(var(--color2), 0.8) 0,
-                rgba(var(--color2), 0) 50%) no-repeat;
+                rgba(var(--color2), 0) 50%
+            )
+            no-repeat;
         mix-blend-mode: var(--blending);
 
         width: var(--circle-size);
@@ -208,9 +186,12 @@ const login = async () => {
 
     .g3 {
         position: absolute;
-        background: radial-gradient(circle at center,
+        background: radial-gradient(
+                circle at center,
                 rgba(var(--color3), 0.8) 0,
-                rgba(var(--color3), 0) 50%) no-repeat;
+                rgba(var(--color3), 0) 50%
+            )
+            no-repeat;
         mix-blend-mode: var(--blending);
 
         width: var(--circle-size);
@@ -226,9 +207,12 @@ const login = async () => {
 
     .g4 {
         position: absolute;
-        background: radial-gradient(circle at center,
+        background: radial-gradient(
+                circle at center,
                 rgba(var(--color4), 0.8) 0,
-                rgba(var(--color4), 0) 50%) no-repeat;
+                rgba(var(--color4), 0) 50%
+            )
+            no-repeat;
         mix-blend-mode: var(--blending);
 
         width: var(--circle-size);
@@ -244,9 +228,12 @@ const login = async () => {
 
     .g5 {
         position: absolute;
-        background: radial-gradient(circle at center,
+        background: radial-gradient(
+                circle at center,
                 rgba(var(--color5), 0.8) 0,
-                rgba(var(--color5), 0) 50%) no-repeat;
+                rgba(var(--color5), 0) 50%
+            )
+            no-repeat;
         mix-blend-mode: var(--blending);
 
         width: calc(var(--circle-size) * 2);
@@ -303,23 +290,6 @@ const login = async () => {
         &:hover {
             color: var(--p-color-white);
             background-color: var(--p-color-dark);
-        }
-    }
-
-    .captcha-container {
-        display: flex;
-        align-items: flex-start;
-        margin-bottom: 18px;
-
-        .el-input {
-            flex: 1;
-            margin-right: 10px;
-        }
-
-        .captcha-image {
-            cursor: pointer;
-            height: 34px;
-            border-radius: 4px;
         }
     }
 }

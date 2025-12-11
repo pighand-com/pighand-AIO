@@ -13,7 +13,6 @@ declare module 'vue' {
     Dialog: typeof import('./src/components/Dialog.vue')['default']
     Divider: typeof import('./src/components/Divider.vue')['default']
     Drawer: typeof import('./src/components/Drawer.vue')['default']
-    ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElButtonGroup: typeof import('element-plus/es')['ElButtonGroup']

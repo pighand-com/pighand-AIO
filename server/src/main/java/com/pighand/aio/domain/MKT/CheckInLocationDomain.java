@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.mybatisflex.core.handler.JacksonTypeHandler;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecordTs;
@@ -14,6 +15,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 营销 - 打卡地点
@@ -33,6 +35,9 @@ public class CheckInLocationDomain extends BaseDomainRecordTs<CheckInLocationDom
     @RequestFieldException("checkInLocationCreate")
     @RequestFieldException("checkInLocationUpdate")
     private Long id;
+
+    @Column(typeHandler = JacksonTypeHandler.class)
+    private List<Long> parents;
 
     @Schema(description = "应用id")
     @JsonDeserialize(using = ToLongSerializer.class)

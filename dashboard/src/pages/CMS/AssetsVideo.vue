@@ -12,140 +12,238 @@
 
         <!-- 卡片列表 -->
         <div class="card-grid" v-loading="loading">
-            <div
-                v-for="item in videoList"
-                :key="item.id"
-                class="video-card">
+            <div v-for="item in videoList" :key="item.id" class="video-card">
                 <!-- 视频区域 -->
                 <div class="video-container">
                     <video
                         v-if="item.url"
-                        :src="item.url"
                         :poster="item.coverUrl"
-                        controls
-                        preload="metadata"
-                        class="card-video">
+                        :controls="isVideoLoaded(item.id)"
+                        preload="none"
+                        class="card-video"
+                        :ref="(el: HTMLVideoElement) => setVideoRef(el, item.id)">
                         您的浏览器不支持视频播放。
                     </video>
-                    <div v-else class="video-placeholder">
+                    <div
+                        v-if="item.url && !isVideoLoaded(item.id)"
+                        class="video-overlay"
+                        @click="loadAndPlay(item.id)">
+                        <el-icon size="48"><Play /></el-icon>
+                        <span>点击播放</span>
+                    </div>
+                    <div v-else-if="!item.url" class="video-placeholder">
                         <el-icon size="48"><Play /></el-icon>
                         <span>暂无视频</span>
                     </div>
-                    <!-- 文件格式标签 -->
                     <div class="format-tag" v-if="item.fileFormat">
                         {{ item.fileFormat.toUpperCase() }}
                     </div>
+                    <el-button
+                        v-if="item.url && isVideoLoaded(item.id)"
+                        type="text"
+                        class="fullscreen-btn"
+                        @click="toggleFullscreen(item.id)">
+                        <FullScreen theme="outline" size="16" />
+                    </el-button>
                 </div>
-                
+
                 <!-- 内容区域 -->
                 <div class="card-content">
                     <!-- 标题和操作按钮 -->
                     <div class="title-actions">
-                        <h3 class="card-title" :class="{ 'disabled-title': item.status === 20 || item.status === null, 'featured-title': item.handpick === true }">
-                            <Star v-if="(item.status === 10) && item.handpick === true" theme="filled" size="12" fill="#f7ba2a" class="featured-icon" />
-                            <Forbid v-if="item.status === 20 || item.status === null" theme="outline" size="12" fill="#909399" class="disabled-icon" />
-                            <el-tooltip :content="item.title" placement="top" effect="light" :disabled="!isTitleOverflow(item.title)">
+                        <h3
+                            class="card-title"
+                            :class="{
+                                'disabled-title':
+                                    item.status === 20 || item.status === null,
+                                'featured-title': item.handpick === true
+                            }">
+                            <Star
+                                v-if="
+                                    item.status === 10 && item.handpick === true
+                                "
+                                theme="filled"
+                                size="12"
+                                fill="#f7ba2a"
+                                class="featured-icon" />
+                            <Forbid
+                                v-if="
+                                    item.status === 20 || item.status === null
+                                "
+                                theme="outline"
+                                size="12"
+                                fill="#909399"
+                                class="disabled-icon" />
+                            <el-tooltip
+                                :content="item.title"
+                                placement="top"
+                                effect="light"
+                                :disabled="!isTitleOverflow(item.title)">
                                 <span class="title-text">{{ item.title }}</span>
                             </el-tooltip>
                         </h3>
                         <div class="action-buttons">
                             <!-- 编辑按钮 -->
-                            <el-tooltip content="编辑" placement="top" effect="light">
-                                <el-button 
-                                    type="text" 
-                                    size="small" 
+                            <el-tooltip
+                                content="编辑"
+                                placement="top"
+                                effect="light">
+                                <el-button
+                                    type="text"
+                                    size="small"
                                     @click="handleEdit(item)"
                                     class="action-btn edit-btn">
-                                    <Edit theme="outline" size="16" fill="#409eff" />
+                                    <Edit
+                                        theme="outline"
+                                        size="16"
+                                        fill="#409eff" />
                                 </el-button>
                             </el-tooltip>
-                            
+
                             <!-- 精选按钮 -->
-                            <el-tooltip v-if="item.status === 10 && (item.handpick === false || item.handpick === null)" content="精选" placement="top" effect="light">
-                                <el-button 
-                                    type="text" 
-                                    size="small" 
+                            <el-tooltip
+                                v-if="
+                                    item.status === 10 &&
+                                    (item.handpick === false ||
+                                        item.handpick === null)
+                                "
+                                content="精选"
+                                placement="top"
+                                effect="light">
+                                <el-button
+                                    type="text"
+                                    size="small"
                                     @click="handleSetHandpick(item, true)"
                                     class="action-btn handpick-btn">
-                                    <Star theme="outline" size="16" fill="#f7ba2a" strokeLinejoin="bevel" />
+                                    <Star
+                                        theme="outline"
+                                        size="16"
+                                        fill="#f7ba2a"
+                                        strokeLinejoin="bevel" />
                                 </el-button>
                             </el-tooltip>
-                            <el-tooltip v-if="item.status === 10 && item.handpick === true" content="取消精选" placement="top" effect="light">
-                                <el-button 
-                                    type="text" 
-                                    size="small" 
+                            <el-tooltip
+                                v-if="
+                                    item.status === 10 && item.handpick === true
+                                "
+                                content="取消精选"
+                                placement="top"
+                                effect="light">
+                                <el-button
+                                    type="text"
+                                    size="small"
                                     @click="handleSetHandpick(item, false)"
                                     class="action-btn cancel-handpick-btn">
-                                    <Star theme="filled" size="16" fill="#f7ba2a" strokeLinejoin="bevel" />
+                                    <Star
+                                        theme="filled"
+                                        size="16"
+                                        fill="#f7ba2a"
+                                        strokeLinejoin="bevel" />
                                 </el-button>
                             </el-tooltip>
-                            
+
                             <!-- 上下架按钮 -->
-                            <el-tooltip v-if="item.status === 10" content="下架" placement="top" effect="light">
-                                <el-button 
-                                    type="text" 
-                                    size="small" 
+                            <el-tooltip
+                                v-if="item.status === 10"
+                                content="下架"
+                                placement="top"
+                                effect="light">
+                                <el-button
+                                    type="text"
+                                    size="small"
                                     @click="handleOffShelf(item)"
                                     class="action-btn off-shelf-btn">
-                                    <Download theme="outline" size="16" fill="#8b5cf6" />
+                                    <Download
+                                        theme="outline"
+                                        size="16"
+                                        fill="#8b5cf6" />
                                 </el-button>
                             </el-tooltip>
-                            <el-tooltip v-if="item.status === 20 || item.status === null" content="上架" placement="top" effect="light">
-                                <el-button 
-                                    type="text" 
-                                    size="small" 
+                            <el-tooltip
+                                v-if="
+                                    item.status === 20 || item.status === null
+                                "
+                                content="上架"
+                                placement="top"
+                                effect="light">
+                                <el-button
+                                    type="text"
+                                    size="small"
                                     @click="handleOnShelf(item)"
                                     class="action-btn on-shelf-btn">
-                                    <Upload theme="outline" size="16" fill="#10b981" />
+                                    <Upload
+                                        theme="outline"
+                                        size="16"
+                                        fill="#10b981" />
                                 </el-button>
                             </el-tooltip>
-                            
+
                             <!-- 删除按钮 -->
-                            <el-tooltip content="删除" placement="top" effect="light">
-                                <el-button 
-                                    type="text" 
-                                    size="small" 
+                            <el-tooltip
+                                content="删除"
+                                placement="top"
+                                effect="light">
+                                <el-button
+                                    type="text"
+                                    size="small"
                                     @click="handleDelete(item)"
                                     class="action-btn delete-btn">
-                                    <Delete theme="outline" size="16" fill="#f56c6c" />
+                                    <Delete
+                                        theme="outline"
+                                        size="16"
+                                        fill="#f56c6c" />
                                 </el-button>
                             </el-tooltip>
                         </div>
                     </div>
-                    
+
                     <!-- 展开按钮 -->
-                    <div v-if="!expandedCards.includes(item.id)" class="expand-section">
+                    <div
+                        v-if="!expandedCards.includes(item.id)"
+                        class="expand-section">
                         <el-button
                             type="text"
                             @click="toggleExpand(item.id)"
                             class="expand-btn">
-                            <Down 
-                                 class="expand-icon"
-                                 theme="outline" 
-                                 size="16" />
+                            <Down
+                                class="expand-icon"
+                                theme="outline"
+                                size="16" />
                         </el-button>
                     </div>
-                    
+
                     <!-- 详细信息 -->
-                    <div v-if="expandedCards.includes(item.id)" class="detail-info">
+                    <div
+                        v-if="expandedCards.includes(item.id)"
+                        class="detail-info">
                         <!-- 描述信息（如果有的话，单独一行） -->
-                        <div class="info-item full-width" v-if="item.description">
+                        <div
+                            class="info-item full-width"
+                            v-if="item.description">
                             <span class="label">描述：</span>
                             <span class="value">{{ item.description }}</span>
                         </div>
 
                         <!-- 分类信息（如果有的话，单独一行） -->
-                        <div class="info-item full-width" v-if="item.classification">
+                        <div
+                            class="info-item full-width"
+                            v-if="item.classification">
                             <span class="label">分类：</span>
-                            <span class="value">{{ item.classification.name }}</span>
+                            <span class="value">{{
+                                item.classification.name
+                            }}</span>
                         </div>
 
                         <!-- 专辑信息（如果有的话，单独一行） -->
-                        <div class="info-item full-width" v-if="item.collections && item.collections.length > 0">
+                        <div
+                            class="info-item full-width"
+                            v-if="
+                                item.collections && item.collections.length > 0
+                            ">
                             <span class="label">专辑：</span>
                             <div class="collections-container">
-                                <el-tag 
-                                    v-for="collection in item.collections" 
+                                <el-tag
+                                    v-for="collection in item.collections"
                                     :key="collection.id"
                                     size="small"
                                     type="info"
@@ -159,24 +257,34 @@
                         <div class="info-grid">
                             <div class="info-item">
                                 <span class="label">文件大小：</span>
-                                <span class="value">{{ formatFileSize(item.fileSize) }}</span>
+                                <span class="value">{{
+                                    formatFileSize(item.fileSize)
+                                }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">分辨率：</span>
-                                <span class="value">{{ item.resolutionRatio || '-' }}</span>
+                                <span class="value">{{
+                                    item.resolutionRatio || '-'
+                                }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">浏览量：</span>
-                                <span class="value">{{ item.viewCount || 0 }}</span>
+                                <span class="value">{{
+                                    item.viewCount || 0
+                                }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">下载量：</span>
-                                <span class="value">{{ item.downloadCount || 0 }}</span>
+                                <span class="value">{{
+                                    item.downloadCount || 0
+                                }}</span>
                             </div>
 
                             <div class="info-item" v-if="item.creator">
                                 <span class="label">创建人：</span>
-                                <span class="value">{{ item.creator.name }}</span>
+                                <span class="value">{{
+                                    item.creator.name
+                                }}</span>
                             </div>
                         </div>
 
@@ -184,11 +292,15 @@
                         <div class="info-grid">
                             <div class="info-item">
                                 <span class="label">创建时间：</span>
-                                <span class="value">{{ formatDateTime(item.createdAt) }}</span>
+                                <span class="value">{{
+                                    formatDateTime(item.createdAt)
+                                }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="label">更新时间：</span>
-                                <span class="value">{{ formatDateTime(item.updatedAt) }}</span>
+                                <span class="value">{{
+                                    formatDateTime(item.updatedAt)
+                                }}</span>
                             </div>
                         </div>
 
@@ -196,33 +308,36 @@
                         <div class="info-item full-width" v-if="item.url">
                             <span class="label">文件链接：</span>
                             <div class="url-container">
-                                <el-button 
-                                    type="text" 
-                                    size="small" 
+                                <el-button
+                                    type="text"
+                                    size="small"
                                     @click="copyUrl(item.url)"
                                     class="copy-btn">
-                                    <Copy theme="outline" size="14" fill="#409eff" />
+                                    <Copy
+                                        theme="outline"
+                                        size="14"
+                                        fill="#409eff" />
                                 </el-button>
-                                <a 
-                                    :href="item.url" 
-                                    target="_blank" 
+                                <a
+                                    :href="item.url"
+                                    target="_blank"
                                     class="url-link"
                                     :title="item.url">
                                     {{ item.url }}
                                 </a>
                             </div>
                         </div>
-                        
+
                         <!-- 收起按钮 -->
                         <div class="collapse-section">
                             <el-button
                                 type="text"
                                 @click="toggleExpand(item.id)"
                                 class="collapse-btn">
-                                <Up 
-                                     class="collapse-icon"
-                                     theme="outline" 
-                                     size="16" />
+                                <Up
+                                    class="collapse-icon"
+                                    theme="outline"
+                                    size="16" />
                             </el-button>
                         </div>
                     </div>
@@ -231,7 +346,9 @@
         </div>
 
         <!-- 空状态 -->
-        <el-empty v-if="!loading && videoList.length === 0" description="暂无数据" />
+        <el-empty
+            v-if="!loading && videoList.length === 0"
+            description="暂无数据" />
 
         <!-- 分页 -->
         <div class="pagination-section" v-if="total > 0">
@@ -247,16 +364,20 @@
 
         <!-- Drawer组件 -->
         <PDrawer
-            :title="getDetailOperation(detailFormModel).op === 'create' ? '添加视频' : '编辑视频'"
+            :title="
+                getDetailOperation(detailFormModel).op === 'create'
+                    ? '添加视频'
+                    : '编辑视频'
+            "
             :handle-create="handleCreate"
             :handle-update="handleUpdate"
             :handle-query="queryData"
             :handle-format-data="handleFormatData"
             size="60%" />
-        
+
         <!-- 分类和专辑数据插槽 -->
         <template v-if="isOpenDetail">
-            <div style="display: none;">
+            <div style="display: none">
                 {{ loadVideoClassifications() }}
                 {{ loadCollections() }}
             </div>
@@ -267,14 +388,37 @@
 <script lang="ts" setup>
 import { ref, onMounted, reactive } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Plus, Edit, Delete, Down, Copy, Forbid, Up, Upload, Download, Star, Play } from '@icon-park/vue-next';
-import { assetsVideo, assetsClassification, assetsCollection } from '@/api/index.ts';
+import {
+    Plus,
+    Edit,
+    Delete,
+    Down,
+    Copy,
+    Forbid,
+    Up,
+    Upload,
+    Download,
+    Star,
+    Play,
+    FullScreen
+} from '@icon-park/vue-next';
+import {
+    assetsVideo,
+    assetsClassification,
+    assetsCollection
+} from '@/api/index.ts';
 import provideForm from '@/common/provideForm';
 import { formatFileSize } from '@/common/utils';
 import moment from 'moment';
 
 // 配置provideForm
-const { searchFormModel, isOpenDetail, detailFormModel, getDetailOperation, watchDetailForm } = provideForm([
+const {
+    searchFormModel,
+    isOpenDetail,
+    detailFormModel,
+    getDetailOperation,
+    watchDetailForm
+} = provideForm([
     {
         label: 'id',
         prop: 'id',
@@ -305,12 +449,10 @@ const { searchFormModel, isOpenDetail, detailFormModel, getDetailOperation, watc
         isUpdate: true,
         domType: 'uploadFile',
         uploadPath: 'assets/video',
-        rules: [
-            { required: true, message: '视频文件必填', trigger: 'blur' }
-        ],
+        rules: [{ required: true, message: '视频文件必填', trigger: 'blur' }],
         componentProps: {
             accept: 'video/*'
-        },
+        }
     },
     {
         label: '视频封面',
@@ -320,9 +462,7 @@ const { searchFormModel, isOpenDetail, detailFormModel, getDetailOperation, watc
         isUpdate: true,
         domType: 'uploadImage',
         uploadPath: 'assets/video/cover',
-        rules: [
-            { required: true, message: '视频封面必填', trigger: 'blur' }
-        ]
+        rules: [{ required: true, message: '视频封面必填', trigger: 'blur' }]
     },
     {
         label: '描述',
@@ -335,9 +475,7 @@ const { searchFormModel, isOpenDetail, detailFormModel, getDetailOperation, watc
             rows: 3,
             placeholder: '请输入描述'
         },
-        rules: [
-            { max: 500, message: '最大长度为500', trigger: 'blur' }
-        ]
+        rules: [{ max: 500, message: '最大长度为500', trigger: 'blur' }]
     },
     {
         label: '分类',
@@ -347,7 +485,10 @@ const { searchFormModel, isOpenDetail, detailFormModel, getDetailOperation, watc
         isUpdate: true,
         domType: 'select',
         domData: async (key) => {
-            const result = await assetsClassification.query({ parentId: 2, name: key });
+            const result = await assetsClassification.query({
+                parentId: 2,
+                name: key
+            });
             return result.records.map((item) => ({
                 label: item.name,
                 value: item.id
@@ -357,9 +498,7 @@ const { searchFormModel, isOpenDetail, detailFormModel, getDetailOperation, watc
             clearable: true,
             placeholder: '请选择分类'
         },
-        rules: [
-            { required: true, message: '分类必填', trigger: 'blur' }
-        ]
+        rules: [{ required: true, message: '分类必填', trigger: 'blur' }]
     },
     {
         label: '专辑',
@@ -369,7 +508,10 @@ const { searchFormModel, isOpenDetail, detailFormModel, getDetailOperation, watc
         isUpdate: true,
         domType: 'select',
         domData: async (key) => {
-            const result = await assetsCollection.query({ status: 1, name: key });
+            const result = await assetsCollection.query({
+                status: 1,
+                name: key
+            });
             return result.records.map((item) => ({
                 label: item.name,
                 value: item.id
@@ -407,7 +549,7 @@ const { searchFormModel, isOpenDetail, detailFormModel, getDetailOperation, watc
         prop: 'fileSize',
         isDetail: true,
         hidden: true,
-        domType: 'input',
+        domType: 'input'
     },
     {
         label: '文件大小',
@@ -443,9 +585,7 @@ const { searchFormModel, isOpenDetail, detailFormModel, getDetailOperation, watc
                 value: 20
             }
         ],
-        rules: [
-            { required: true, message: '状态必填', trigger: 'blur' }
-        ]
+        rules: [{ required: true, message: '状态必填', trigger: 'blur' }]
     },
     {
         label: '创建时间',
@@ -458,12 +598,16 @@ const { searchFormModel, isOpenDetail, detailFormModel, getDetailOperation, watc
 
 // 回填文件属性
 watchDetailForm((newVal) => {
-    detailFormModel['fileFormat'] = newVal['fileFormat'] || newVal['url_fileFormat'];
+    detailFormModel['fileFormat'] =
+        newVal['fileFormat'] || newVal['url_fileFormat'];
     detailFormModel['fileSize'] = newVal['fileSize'] || newVal['url_fileSize'];
-    detailFormModel['resolutionRatio'] = newVal['resolutionRatio'] || newVal['url_resolutionRatio'];
+    detailFormModel['resolutionRatio'] =
+        newVal['resolutionRatio'] || newVal['url_resolutionRatio'];
 
-    detailFormModel['fileSizeFormat'] = formatFileSize(newVal['fileSize'] || newVal['url_fileSize']);
-})
+    detailFormModel['fileSizeFormat'] = formatFileSize(
+        newVal['fileSize'] || newVal['url_fileSize']
+    );
+});
 
 // 响应式数据
 const total = ref(0);
@@ -472,6 +616,50 @@ const videoClassifications = ref([]);
 const allCollections = ref([]);
 const videoList = ref([]);
 const expandedCards = ref([]);
+
+const videoMap = new Map<number, HTMLVideoElement>();
+
+const loadedVideos = reactive<Record<number, boolean>>({});
+
+const isVideoLoaded = (id: number) => !!loadedVideos[id];
+
+const loadAndPlay = (id: number) => {
+    const el = videoMap.get(id);
+    if (!el) return;
+    const item = (videoList.value || []).find((i: any) => i.id === id);
+    if (!item || !item.url) return;
+    if (!loadedVideos[id]) {
+        el.src = item.url;
+        el.preload = 'none';
+        loadedVideos[id] = true;
+    }
+    el.play();
+};
+
+const setVideoRef = (el: HTMLVideoElement | null, id: number) => {
+    if (el) {
+        videoMap.set(id, el);
+    } else {
+        videoMap.delete(id);
+    }
+};
+
+const toggleFullscreen = (id: number) => {
+    const el = videoMap.get(id);
+    if (!el) return;
+    if (document.fullscreenElement) {
+        if (document.exitFullscreen) document.exitFullscreen();
+        return;
+    }
+    const anyEl: any = el as any;
+    if (el.requestFullscreen) {
+        el.requestFullscreen();
+    } else if (anyEl.webkitRequestFullscreen) {
+        anyEl.webkitRequestFullscreen();
+    } else if (anyEl.msRequestFullscreen) {
+        anyEl.msRequestFullscreen();
+    }
+};
 
 // 分页信息
 const pagination = reactive({
@@ -485,7 +673,7 @@ function convertToTreeFormat(data) {
     if (!Array.isArray(data) || data.length === 0) {
         return [];
     }
-    
+
     const idMap = new Map();
     const result = [];
 
@@ -515,7 +703,9 @@ function convertToTreeFormat(data) {
 // 加载视频分类数据
 const loadVideoClassifications = async () => {
     const classifications = await assetsClassification.query({ parentId: 2 });
-    videoClassifications.value = convertToTreeFormat(classifications.records || []);
+    videoClassifications.value = convertToTreeFormat(
+        classifications.records || []
+    );
 };
 
 // 加载专辑数据
@@ -566,7 +756,7 @@ const queryData = async () => {
             pageNumber: pagination.pageNumber,
             pageSize: pagination.pageSize
         };
-        
+
         const result = await assetsVideo.query(params);
         videoList.value = result.records || [];
         total.value = result.page?.totalRow || 0;
@@ -602,8 +792,8 @@ const handleAdd = () => {
 const handleEdit = (item) => {
     const detail = {
         ...item,
-        collectionIds: (item.collections || []).map(item => item.collectionId)
-    }
+        collectionIds: (item.collections || []).map((item) => item.collectionId)
+    };
     Object.assign(detailFormModel, detail);
     isOpenDetail.value = true;
 };
@@ -621,7 +811,7 @@ const handleSetHandpick = async (item, handpick) => {
                 type: 'info'
             }
         );
-        
+
         if (handpick === true) {
             await assetsVideo.setHandpick(item.id);
         } else {
@@ -649,7 +839,7 @@ const handleOffShelf = async (item) => {
                 type: 'warning'
             }
         );
-        
+
         await assetsVideo.offShelf(item.id);
         ElMessage.success('下架成功');
         queryData();
@@ -672,7 +862,7 @@ const handleOnShelf = async (item) => {
                 type: 'info'
             }
         );
-        
+
         await assetsVideo.onShelf(item.id);
         ElMessage.success('上架成功');
         queryData();
@@ -695,7 +885,7 @@ const handleDelete = async (item) => {
                 type: 'warning'
             }
         );
-        
+
         await assetsVideo.del(item.id);
         ElMessage.success('删除成功');
         queryData();
@@ -736,7 +926,7 @@ const handleUpdate = async (data) => {
 const handleFormatData = (data) => {
     // 处理专辑数据
     if (data.collectionIds && Array.isArray(data.collectionIds)) {
-        data.collectionIds = data.collectionIds.map(id => parseInt(id));
+        data.collectionIds = data.collectionIds.map((id) => parseInt(id));
     }
     return data;
 };
@@ -789,9 +979,11 @@ onMounted(() => {
 }
 
 .video-card {
-    background: linear-gradient(135deg,
-            rgba(255, 255, 255, 0.9) 0%,
-            rgba(255, 255, 255, 0.6) 100%);
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(255, 255, 255, 0.6) 100%
+    );
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: 24px;
@@ -821,6 +1013,28 @@ onMounted(() => {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
+.video-overlay {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    bottom: 8px;
+    left: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.35);
+    color: #fff;
+    gap: 8px;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.video-overlay:hover {
+    background: rgba(0, 0, 0, 0.5);
+}
+
 .video-placeholder {
     display: flex;
     flex-direction: column;
@@ -847,6 +1061,19 @@ onMounted(() => {
     letter-spacing: 0.5px;
     z-index: 1;
     backdrop-filter: blur(4px);
+}
+
+.fullscreen-btn {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    z-index: 2;
+}
+
+.fullscreen-btn:hover svg {
+    fill: #409eff !important;
 }
 
 .card-content {
@@ -1116,7 +1343,7 @@ onMounted(() => {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
         gap: 16px;
     }
-    
+
     .info-grid {
         grid-template-columns: 1fr;
     }

@@ -302,11 +302,19 @@ const getDefaultRouterPath = () => {
     let firstSinglePath = '';
     routes.forEach((item) => {
         if (item?.meta?.default) {
-            defaultPath = item.path;
+            if (Array.isArray(item.children) && item.children.length > 0) {
+                defaultPath = item.path + '/' + item.children[0].path;
+            } else {
+                defaultPath = item.path;
+            }
         }
 
         if (!defaultPath && item.meta?.pageType === constant.page_type_single) {
-            firstSinglePath = item.path;
+            if (Array.isArray(item.children) && item.children.length > 0) {
+                firstSinglePath = item.path + '/' + item.children[0].path;
+            } else {
+                firstSinglePath = item.path;
+            }
         }
     });
 

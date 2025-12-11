@@ -24,7 +24,7 @@
         <el-input
             v-if="!formColumnItem.domType || formColumnItem.domType === 'input'"
             v-bind="formColumnItem.componentProps || {}"
-            v-model="formModel[formColumnItem.prop]"
+            v-model="modelValue"
             :type="formColumnItem.inputType || 'text'"
             :show-password="formColumnItem.inputType === 'password'"
             :placeholder="formColumnItem.placeholder"
@@ -34,13 +34,13 @@
         <el-input-number
             v-if="formColumnItem.domType === 'number'"
             v-bind="formColumnItem.componentProps || {}"
-            v-model="formModel[formColumnItem.prop]"
+            v-model="modelValue"
             clearable />
 
         <el-select
             v-if="formColumnItem.domType === 'select'"
             v-bind="formColumnItem.componentProps || {}"
-            v-model="formModel[formColumnItem.prop]"
+            v-model="modelValue"
             :placeholder="formColumnItem.placeholder"
             :remote-method="
                 getDomData[formColumnItem.label + formColumnItem.prop]
@@ -125,7 +125,7 @@
         <el-tree-select
             v-if="formColumnItem.domType === 'treeSelect'"
             v-bind="formColumnItem.componentProps || {}"
-            v-model="formModel[formColumnItem.prop]"
+            v-model="modelValue"
             :data="domDataSet[formColumnItem.prop] || []"
             :placeholder="formColumnItem.placeholder"
             :loading="
@@ -178,7 +178,7 @@
         <el-radio-group
             v-if="formColumnItem.domType === 'radio'"
             v-bind="formColumnItem.componentProps || {}"
-            v-model="formModel[formColumnItem.prop]">
+            v-model="modelValue">
             <el-radio
                 v-for="domDataItem in domDataSet[formColumnItem.prop]"
                 :key="domDataItem.value"
@@ -198,7 +198,7 @@
                 ].includes(formColumnItem.domType)
             "
             v-bind="formColumnItem.componentProps || {}"
-            v-model="formModel[formColumnItem.prop]"
+            v-model="modelValue"
             :type="
                 formColumnItem.domType === 'datePicker'
                     ? 'date'
@@ -228,9 +228,9 @@
         <div
             v-for="(imageItem, imageIndex) in (
                 (formColumnItem.domType === 'uploadImage'
-                    ? [formModel[formColumnItem.prop]]
+                    ? [modelValue]
                     : formColumnItem.domType === 'uploadImageList'
-                    ? formModel[formColumnItem.prop]
+                    ? modelValue
                     : []) || []
             ).filter((formImageItem) => formImageItem)"
             :key="'image_' + imageIndex"
@@ -286,8 +286,7 @@
         <!-- 自定义图片上传 -->
         <el-upload
             v-if="
-                (formColumnItem.domType === 'uploadImage' &&
-                    !formModel[formColumnItem.prop]) ||
+                (formColumnItem.domType === 'uploadImage' && !modelValue) ||
                 formColumnItem.domType === 'uploadImageList'
             "
             v-bind="formColumnItem.componentProps || {}"
@@ -399,7 +398,7 @@
         </el-upload>
 
         <PEditor
-            v-model="formModel[formColumnItem.prop]"
+            v-model="modelValue"
             v-if="formColumnItem.domType === 'editor'"
             :upload-path="formColumnItem.uploadPath" />
 
@@ -416,7 +415,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, inject, watch, onUnmounted } from 'vue';
+import { ref, inject, watch, onUnmounted, computed } from 'vue';
 import {
     FormColumnsInterface,
     ProvideFormInterface
@@ -447,6 +446,36 @@ const props = defineProps<{
     onWhere: 'search' | 'detail';
 }>();
 
+const getByPath = (obj, path) => {
+    if (!obj || !path) return undefined;
+    return path
+        .split('.')
+        .reduce((o, k) => (o == null ? undefined : o[k]), obj);
+};
+
+const setByPath = (obj, path, value) => {
+    if (!obj || !path) return;
+    const keys = path.split('.');
+    let cur = obj;
+    for (let i = 0; i < keys.length - 1; i++) {
+        const k = keys[i];
+        if (cur[k] == null || typeof cur[k] !== 'object') {
+            cur[k] = {};
+        }
+        cur = cur[k];
+    }
+    cur[keys[keys.length - 1]] = value;
+};
+
+const modelValue = computed({
+    get() {
+        return getByPath(props.formModel, props.formColumnItem.prop);
+    },
+    set(v) {
+        setByPath(props.formModel, props.formColumnItem.prop, v);
+    }
+});
+
 const dialogImageUrl = ref('');
 const dialogVisible = ref(false);
 const uploadImageLoading = ref({});
@@ -462,7 +491,7 @@ const { domDataSet, getDomData, domDataSetLoading, clearDomDataCache } =
 
 // 监听 formModel 变化，当表单数据被清空时，清空上传相关状态
 watch(
-    () => props.formModel[props.formColumnItem.prop],
+    () => getByPath(props.formModel, props.formColumnItem.prop),
     (newValue) => {
         if (
             !newValue &&
@@ -484,7 +513,7 @@ watch(
 
 if (props.formColumnItem.domType === 'uploadFile') {
     watch(
-        () => props.formModel[props.formColumnItem.prop],
+        () => getByPath(props.formModel, props.formColumnItem.prop),
         (value) => {
             if (value) {
                 const uploadFileRef = uploadFile.value;
@@ -568,11 +597,10 @@ const upload = async (options, prop, domType, path) => {
     }
 
     if (['uploadImageList', 'uploadFileList'].includes(domType)) {
-        // eslint-disable-next-line vue/no-mutating-props
-        props.formModel[prop] = [...(props.formModel[prop] || []), ...fileUrls];
+        const current = getByPath(props.formModel, prop) || [];
+        setByPath(props.formModel, prop, [...current, ...fileUrls]);
     } else {
-        // eslint-disable-next-line vue/no-mutating-props
-        props.formModel[prop] = fileUrls[0];
+        setByPath(props.formModel, prop, fileUrls[0]);
     }
 
     // 自动设置文件格式和文件大小
@@ -580,28 +608,32 @@ const upload = async (options, prop, domType, path) => {
         // 设置文件格式
         // eslint-disable-next-line vue/no-mutating-props
         props.formModel[prop + '_fileFormat'] = getFileExtension(options.file);
-        
+
         // 设置文件大小
-            // eslint-disable-next-line vue/no-mutating-props
-            const fileSizeKB = options.file.size;
-            props.formModel[prop + '_fileSize'] = Math.round(fileSizeKB);
-        
+        // eslint-disable-next-line vue/no-mutating-props
+        const fileSizeKB = options.file.size;
+        props.formModel[prop + '_fileSize'] = Math.round(fileSizeKB);
+
         // 如果是图片，自动获取图片尺寸
         if (options.file.type.startsWith('image/')) {
             const img = new Image();
-            img.onload = function() {
+            img.onload = function () {
                 // eslint-disable-next-line vue/no-mutating-props
-                props.formModel[prop + '_resolutionRatio'] = `${img.height} x ${img.width}`;
+                props.formModel[
+                    prop + '_resolutionRatio'
+                ] = `${img.height} x ${img.width}`;
             };
             img.src = URL.createObjectURL(options.file);
         }
-        
+
         // 如果是视频，自动获取视频分辨率
         if (options.file.type.startsWith('video/')) {
             const video = document.createElement('video');
-            video.onloadedmetadata = function() {
+            video.onloadedmetadata = function () {
                 // eslint-disable-next-line vue/no-mutating-props
-                props.formModel[prop + '_resolutionRatio'] = `${video.videoHeight} x ${video.videoWidth}`;
+                props.formModel[
+                    prop + '_resolutionRatio'
+                ] = `${video.videoHeight} x ${video.videoWidth}`;
                 // 释放对象URL以避免内存泄漏
                 URL.revokeObjectURL(video.src);
             };
@@ -614,32 +646,31 @@ const upload = async (options, prop, domType, path) => {
 
 const handlePictureCardPreview = (prop, index, domType) => {
     if (domType === 'uploadImageList') {
-        dialogImageUrl.value = props.formModel[prop][index];
+        const arr = getByPath(props.formModel, prop) || [];
+        dialogImageUrl.value = arr[index];
     } else {
-        dialogImageUrl.value = props.formModel[prop];
+        dialogImageUrl.value = getByPath(props.formModel, prop);
     }
     dialogVisible.value = true;
 };
 
 const handleRemove = (prop, index, domType) => {
     if (domType === 'uploadImageList') {
-        const newData = props.formModel[prop];
+        const newData = (getByPath(props.formModel, prop) || []).slice();
         newData.splice(index, 1);
-
-        // eslint-disable-next-line vue/no-mutating-props
-        props.formModel[prop] = newData;
+        setByPath(props.formModel, prop, newData);
     } else {
-        // eslint-disable-next-line vue/no-mutating-props
-        props.formModel[prop] = '';
+        setByPath(props.formModel, prop, '');
     }
 };
 
 const handleDownload = (prop, index, domType) => {
     let fileUrl;
     if (domType === 'uploadImageList') {
-        fileUrl = props.formModel[prop][index];
+        const arr = getByPath(props.formModel, prop) || [];
+        fileUrl = arr[index];
     } else {
-        fileUrl = props.formModel[prop];
+        fileUrl = getByPath(props.formModel, prop);
     }
 
     const fileName = fileUrl.substring(fileUrl.lastIndexOf('/') + 1);

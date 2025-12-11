@@ -28,12 +28,6 @@
             <el-input :disabled="isLoading" :class="errorFields.has('password') ? 'el-input-error' : ''" type="password"
                 v-model="loginForm.password" placeholder="" :prefix-icon="Lock" show-password
                 @input="handleInput('password')" @blur="handleBlur('password')" />
-            <div v-if="showCaptcha" class="captcha-container">
-                <el-input ref="captchaInputRef" :disabled="isLoading"
-                    :class="errorFields.has('captcha') ? 'el-input-error' : ''" v-model="loginForm.captcha"
-                    placeholder="请输入验证码" @input="handleInput('captcha')" @blur="handleBlur('captcha')" />
-                <img :src="captchaImage" alt="验证码" @click="refreshCaptcha(true)" class="captcha-image" />
-            </div>
             <el-button @click="login" plain :loading="isLoading" :disabled="isLoading">{{ isLoading ? '登录中...' : '登录'
                 }}</el-button>
         </el-form>
@@ -51,14 +45,8 @@ import router from '@/routers/index';
 const errorFields = ref(new Set());
 const loginForm = reactive({
     username: '',
-    password: '',
-    captcha: '',
-    captchaId: ''
+    password: ''
 });
-
-const captchaImage = ref('');
-const captchaInputRef = ref(null);
-const showCaptcha = ref(false);
 
 const isLoading = ref(false);
 
@@ -66,50 +54,15 @@ onBeforeMount(() => {
     if (getToken()) {
         router.push(getDefaultRouterPath());
     }
-
-    refreshCaptcha();
 });
 
 const handleInput = (key: string) => {
     errorFields.value.delete(key);
-
-    if (
-        loginForm.captcha &&
-        loginForm.captcha.length === 4 &&
-        loginForm.username &&
-        loginForm.password
-    ) {
-        login();
-    }
 };
 
 const handleBlur = (key: string) => {
     if (!loginForm[key]) {
         errorFields.value.add(key);
-    }
-
-    if (key === 'username') {
-        if (loginForm.username) {
-            showCaptcha.value = true;
-            refreshCaptcha();
-        } else {
-            showCaptcha.value = false;
-        }
-    }
-};
-
-const refreshCaptcha = async (force?: boolean) => {
-    if (!force && (!loginForm.username || captchaImage.value)) return;
-
-    const result = await API.common.getCAPTCHACode(loginForm.username);
-    if (result && result.base64) {
-        captchaImage.value = result.base64;
-        loginForm.captchaId = result.captchaId;
-        if (force) {
-            setTimeout(() => {
-                captchaInputRef.value?.input?.focus();
-            }, 0);
-        }
     }
 };
 
@@ -139,9 +92,6 @@ const login = async () => {
 
             const defaultPath = getDefaultRouterPath();
             router.replace(defaultPath);
-        } else {
-            loginForm.captcha = '';
-            refreshCaptcha(true);
         }
 
         isLoading.value = false;
@@ -381,38 +331,7 @@ const login = async () => {
     }
 
     .captcha-container {
-        width: 100%;
-        display: flex;
-        align-items: flex-start;
-        gap: 12px; // 使用gap替代margin
-        margin-bottom: 20px;
-
-        .el-input {
-            flex: 1;
-            margin-bottom: 0;
-        }
-
-        .captcha-image {
-            cursor: pointer;
-            height: 48px; // 与输入框高度保持一致
-            min-width: 80px;
-            border-radius: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.15);
-            background-color: rgba(255, 255, 255, 0.9);
-            transition: all 0.3s ease;
-            
-            &:hover, &:active {
-                border-color: var(--p-color-dark);
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            }
-            
-            // 移动端触摸反馈
-            @media (hover: none) {
-                &:active {
-                    transform: scale(0.95);
-                }
-            }
-        }
+        display: none;
     }
 }
 
@@ -441,9 +360,7 @@ const login = async () => {
         }
         
         .captcha-container {
-            .captcha-image {
-                height: 40px;
-            }
+            display: none;
         }
     }
 }

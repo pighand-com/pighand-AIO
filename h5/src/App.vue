@@ -188,7 +188,7 @@ initApplicationInfo();
 /* 移动端布局样式 */
 .mobile-layout {
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     background-color: #f5f5f5;
@@ -212,9 +212,5 @@ initApplicationInfo();
 }
 
 /* 桌面端隐藏移动端布局 */
-@media screen and (min-width: 769px) {
-    .mobile-layout {
-        display: none;
-    }
-}
+
 </style>

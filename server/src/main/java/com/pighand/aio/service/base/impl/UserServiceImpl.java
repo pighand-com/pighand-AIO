@@ -204,10 +204,9 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
      */
     @Override
     public UserVO find(Long id) {
-        UserVO user = this.queryChain()
-            .select(USER.ID, USER.ROLE_ID, USER.USERNAME, USER.PHONE, USER.EMAIL, USER.STATUS, USER_EXTENSION.PROFILE)
-            .leftJoin(USER_EXTENSION).on(USER_EXTENSION.ID.eq(USER.ID))
-            .where(USER.APPLICATION_ID.eq(Context.applicationId())).and(USER.ID.eq(id)).oneAs(UserVO.class);
+        UserVO user =
+            this.queryChain().select(USER.ID, USER.ROLE_ID, USER.USERNAME, USER.PHONE, USER.EMAIL, USER.STATUS)
+                .where(USER.APPLICATION_ID.eq(Context.applicationId())).and(USER.ID.eq(id)).oneAs(UserVO.class);
 
         // 关联角色
         if (user != null && user.getId() != null) {
@@ -216,6 +215,9 @@ public class UserServiceImpl extends BaseServiceImpl<UserMapper, UserDomain> imp
                 user.setRoles(roles);
             }
         }
+
+        // 关联扩展
+        user.setExtension(userExtensionService.find(user.getId()));
 
         return user;
     }

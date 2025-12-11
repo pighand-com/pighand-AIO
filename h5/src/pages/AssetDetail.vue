@@ -39,9 +39,14 @@
                     <video 
                         v-if="assetDetail.url"
                         ref="videoPlayer"
-                        :src="assetDetail.url" 
+                        :src="videoSrc" 
                         :poster="assetDetail.coverUrl"
-                        preload="metadata"
+                        preload="none"
+                        :controls="Boolean(videoSrc)"
+                        playsinline
+                        webkit-playsinline
+                        x5-video-player-type="h5"
+                        @dblclick="enterFullscreen"
                         @loadedmetadata="onVideoLoaded"
                         @play="isVideoPlaying = true"
                         @pause="isVideoPlaying = false"
@@ -205,6 +210,7 @@ const showWeChatGuide = ref(false);
 
 const isVideoPlaying = ref(false);
 const videoPlayer = ref<HTMLVideoElement | null>(null);
+const videoSrc = ref<string>('');
 
 /**
  * 返回上一页
@@ -213,6 +219,24 @@ const goBack = () => {
     router.back();
 };
 
+/**
+ * 进入全屏（双击触发），兼容常见前缀
+ */
+const enterFullscreen = () => {
+    const player = videoPlayer.value as any;
+    if (!player) return;
+
+    if (player.requestFullscreen) {
+        player.requestFullscreen();
+    } else if (player.webkitRequestFullscreen) {
+        player.webkitRequestFullscreen();
+    } else if (player.msRequestFullscreen) {
+        player.msRequestFullscreen();
+    } else if (player.webkitEnterFullscreen) {
+        // iOS Safari 的视频专用方法
+        player.webkitEnterFullscreen();
+    }
+};
 /**
  * 获取素材类型
  */
@@ -331,12 +355,25 @@ const getAuthorName = () => {
  * 切换视频播放状态
  */
 const toggleVideoPlay = () => {
-    if (videoPlayer.value) {
-        if (isVideoPlaying.value) {
-            videoPlayer.value.pause();
-        } else {
+    const player = videoPlayer.value;
+    if (!player) return;
+
+    // 首次点击时设置视频 src 并开始加载播放
+    if (!videoSrc.value) {
+        videoSrc.value = assetDetail.value?.url || '';
+        nextTick(() => {
+            if (!videoPlayer.value) return;
+            // 明确触发加载，随后播放
+            videoPlayer.value.load();
             videoPlayer.value.play();
-        }
+        });
+        return;
+    }
+
+    if (isVideoPlaying.value) {
+        player.pause();
+    } else {
+        player.play();
     }
 };
 

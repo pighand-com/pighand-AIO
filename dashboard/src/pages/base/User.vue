@@ -86,7 +86,7 @@ provideForm([
                 trigger: 'blur'
             }
         ]
-    },
+    }
     // {
     //     label: '角色',
     //     prop: 'roleIds',

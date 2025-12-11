@@ -552,35 +552,47 @@ const handlePreview = (item) => {
 };
 
 // 查询数据
-const queryData = async () => {
+const queryData = async (params: any = {}) => {
     loading.value = true;
     try {
-        const params = {
-            ...searchFormModel,
+        const queryParams: any = {
             pageNumber: pagination.pageNumber,
-            pageSize: pagination.pageSize
+            pageSize: pagination.pageSize,
+            ...searchFormModel,
+            ...params
         };
-        
-        const result = await assetsDoc.query(params);
+
+        // 处理时间范围参数（与图片页一致）
+        if (queryParams.createdAt && Array.isArray(queryParams.createdAt) && queryParams.createdAt.length === 2) {
+            queryParams.createdAtStart = queryParams.createdAt[0];
+            queryParams.createdAtEnd = queryParams.createdAt[1];
+            delete queryParams.createdAt;
+        }
+
+        const result = await assetsDoc.query(queryParams);
         docList.value = result.records || [];
-        total.value = result.total || 0;
+        // 从分页信息中获取总数（与图片页一致）
+        total.value = result.page?.totalRow || 0;
+
+        return result;
     } catch (error) {
         ElMessage.error('查询失败');
         console.error('查询文档数据失败:', error);
+        return { records: [], page: { totalRow: 0 } };
     } finally {
         loading.value = false;
     }
 };
 
 // 处理分页大小变化
-const handleSizeChange = (val) => {
+const handleSizeChange = (val: number) => {
     pagination.pageSize = val;
     pagination.pageNumber = 1;
     queryData();
 };
 
 // 处理当前页变化
-const handleCurrentChange = (val) => {
+const handleCurrentChange = (val: number) => {
     pagination.pageNumber = val;
     queryData();
 };

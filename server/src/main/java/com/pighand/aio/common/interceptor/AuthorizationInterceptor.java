@@ -6,7 +6,6 @@ import com.pighand.aio.service.base.AuthorizationService;
 import com.pighand.aio.vo.base.LoginUser;
 import com.pighand.framework.spring.interceptor.RequestInterceptor;
 import com.pighand.framework.spring.util.VerifyUtils;
-import io.netty.util.concurrent.FastThreadLocal;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,11 +27,11 @@ public class AuthorizationInterceptor extends RequestInterceptor {
 
     public static final String HEADER_STORE_ID = "X-Store-Id";
 
-    private static final FastThreadLocal<LoginUser> authorizationInfoLocal = new FastThreadLocal<>();
+    private static final ScopedValue<LoginUser> authorizationInfoLocal = ScopedValue.newInstance();
 
-    private static final FastThreadLocal<Long> applicationIdLocal = new FastThreadLocal<>();
+    private static final ScopedValue<Long> applicationIdLocal = ScopedValue.newInstance();
 
-    private static final FastThreadLocal<Long> storeIdLocal = new FastThreadLocal<>();
+    private static final ScopedValue<Long> storeIdLocal = ScopedValue.newInstance();
 
     @Resource
     private AuthorizationService authorizationService;
@@ -71,11 +70,6 @@ public class AuthorizationInterceptor extends RequestInterceptor {
             return true;
         }
 
-        // 先清空，防止线程池复用，导致使用上一个线程的登录信息
-        authorizationInfoLocal.remove();
-        applicationIdLocal.remove();
-        storeIdLocal.remove();
-
         // 判断ApplicationId是否必须
         boolean isApplicationRequired = false;
         // 判断是否必须登录
@@ -97,7 +91,7 @@ public class AuthorizationInterceptor extends RequestInterceptor {
         // 解析ApplicationId
         String applicationId = request.getHeader(HEADER_APPLICATION_ID);
         if (VerifyUtils.isNotEmpty(applicationId)) {
-            applicationIdLocal.set(Long.parseLong(applicationId));
+            ScopedValue.where(applicationIdLocal, Long.parseLong(applicationId));
         } else if (isApplicationRequired) {
             try {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, HEADER_APPLICATION_ID + " is required");
@@ -110,7 +104,7 @@ public class AuthorizationInterceptor extends RequestInterceptor {
         // 解析StoreId
         String storeId = request.getHeader(HEADER_STORE_ID);
         if (VerifyUtils.isNotEmpty(storeId)) {
-            storeIdLocal.set(Long.parseLong(storeId));
+            ScopedValue.where(storeIdLocal, Long.parseLong(storeId));
         }
 
         // 解析token
@@ -131,14 +125,14 @@ public class AuthorizationInterceptor extends RequestInterceptor {
                 }
 
                 if (VerifyUtils.isNotEmpty(userApplicationId) && VerifyUtils.isEmpty(applicationId)) {
-                    applicationIdLocal.set(userApplicationId);
+                    ScopedValue.where(applicationIdLocal, userApplicationId);
                 }
 
                 if (VerifyUtils.isNotEmpty(userStoreId) && VerifyUtils.isEmpty(storeId)) {
-                    storeIdLocal.set(userStoreId);
+                    ScopedValue.where(storeIdLocal, userStoreId);
                 }
 
-                authorizationInfoLocal.set(loginUser);
+                ScopedValue.where(authorizationInfoLocal, loginUser);
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return false;

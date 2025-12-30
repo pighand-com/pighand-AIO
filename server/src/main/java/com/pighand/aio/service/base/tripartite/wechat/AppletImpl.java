@@ -70,7 +70,6 @@ public class AppletImpl extends AbstractWechat<UserInfo> implements TripartitePl
     protected String bindPhone(Long applicationId, EncryptedData encryptedData) {
         ApplicationPlatformKeyDomain key = platformKeyService.findByPlatform(PlatformEnum.WECHAT_APPLET);
 
-        // TODO: 统一管理
         String result = WechatSDK.MINI_APPLET.accessToken(key.getAppid(), key.getSecret(), "client_credential");
 
         String patternString = "\"access_token\":\"(.*?)\"";

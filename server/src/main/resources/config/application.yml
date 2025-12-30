@@ -25,6 +25,9 @@ access-control-allow:
 pighand:
   exception:
     intercept-exception: true
+  # static: 静态验证码；flicker: 动态验证码
+  captcha:
+    type: flicker
 
 server:
   tcp:

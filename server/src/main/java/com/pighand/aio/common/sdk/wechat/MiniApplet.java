@@ -42,7 +42,7 @@ public interface MiniApplet {
         @RequestHeader Map<String, String> headers);
 
     /**
-     * TODO： headers应该不用传，本地没问题，服务器报错，因为微信校验content-length
+     * TODO： headers应该不用传，本地没问题，服务器报错，因为微信校验content-length。改用docker看是否取消此问题
      * 获取不限制的小程序码
      * 该接口用于获取小程序码，适用于需要的码数量极多的业务场景。通过该接口生成的小程序码，永久有效，数量暂无限制。
      *

@@ -1,11 +1,9 @@
 package com.pighand.aio.common.dataPermission.ignore;
 
-import io.netty.util.concurrent.FastThreadLocal;
-
 import java.util.function.Supplier;
 
 public class RunWithIgnore {
-    private static final FastThreadLocal<Boolean> isIgnoreDataPermission = new FastThreadLocal<>();
+    private static final ScopedValue<Boolean> isIgnoreDataPermission = ScopedValue.newInstance();
 
     /**
      * 是否忽略数据权限
@@ -23,7 +21,7 @@ public class RunWithIgnore {
      * @param ignore true 忽略数据权限
      */
     public static void setIgnoreDataPermission(boolean ignore) {
-        isIgnoreDataPermission.set(ignore);
+        ScopedValue.where(isIgnoreDataPermission, ignore);
     }
 
     /**
@@ -61,10 +59,10 @@ public class RunWithIgnore {
     }
 
     private static void before() {
-        isIgnoreDataPermission.set(true);
+        ScopedValue.where(isIgnoreDataPermission, true);
     }
 
     private static void after() {
-        isIgnoreDataPermission.set(null);
+        ScopedValue.where(isIgnoreDataPermission, null);
     }
 }

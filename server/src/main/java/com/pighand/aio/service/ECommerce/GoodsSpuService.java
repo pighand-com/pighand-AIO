@@ -1,9 +1,30 @@
 package com.pighand.aio.service.ECommerce;
 
+import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.core.update.UpdateChain;
+import com.pighand.aio.common.enums.GoodsSpuStatusEnum;
+import com.pighand.aio.common.interceptor.Context;
+import com.pighand.aio.domain.ECommerce.GoodsSkuDomain;
 import com.pighand.aio.domain.ECommerce.GoodsSpuDomain;
+import com.pighand.aio.domain.base.ApplicationDefaultDomain;
+import com.pighand.aio.entityMapper.ECommerce.GoodsSkuEntityMapper;
+import com.pighand.aio.mapper.ECommerce.GoodsSkuMapper;
+import com.pighand.aio.mapper.ECommerce.GoodsSpuMapper;
+import com.pighand.aio.service.base.ApplicationDefaultService;
+import com.pighand.aio.vo.ECommerce.GoodsSkuVO;
 import com.pighand.aio.vo.ECommerce.GoodsSpuVO;
-import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.util.VerifyUtils;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static com.pighand.aio.domain.ECommerce.table.GoodsSkuTableDef.GOODS_SKU;
+import static com.pighand.aio.domain.ECommerce.table.GoodsSpuTableDef.GOODS_SPU;
+import static com.pighand.aio.domain.base.table.ApplicationDefaultTableDef.APPLICATION_DEFAULT;
 
 /**
  * 电商 - SPU
@@ -11,7 +32,15 @@ import com.pighand.framework.spring.page.PageOrList;
  * @author wangshuli
  * @createDate 2024-01-07 19:55:48
  */
-public interface GoodsSpuService extends BaseService<GoodsSpuDomain> {
+@RequiredArgsConstructor
+@Service
+public class GoodsSpuService extends BaseServiceImpl<GoodsSpuMapper, GoodsSpuDomain>  {
+
+    private final GoodsSkuMapper goodsSkuMapper;
+
+    private final GoodsSkuEntityMapper goodsSkuEntityMapper;
+
+    private final ApplicationDefaultService projectDefaultService;
 
     /**
      * 创建
@@ -19,7 +48,23 @@ public interface GoodsSpuService extends BaseService<GoodsSpuDomain> {
      * @param goodsSpuVO
      * @return
      */
-    GoodsSpuVO create(GoodsSpuVO goodsSpuVO);
+    @Transactional(rollbackFor = Exception.class)
+    public GoodsSpuVO create(GoodsSpuVO goodsSpuVO) {
+        goodsSpuVO.setStatus(GoodsSpuStatusEnum.UNLISTED);
+        goodsSpuVO.setDeleted(false);
+        super.mapper.insert(goodsSpuVO);
+
+        List<GoodsSkuVO> goodsSku = goodsSpuVO.getGoodsSku();
+        goodsSku.forEach(goodsSkuVO -> {
+            goodsSkuVO.setSpuId(goodsSpuVO.getId());
+            goodsSkuVO.setDeleted(false);
+        });
+
+        List<GoodsSkuDomain> sku = goodsSkuEntityMapper.toDomainList(goodsSku);
+        goodsSkuMapper.insertBatch(sku);
+
+        return goodsSpuVO;
+    }
 
     /**
      * 详情
@@ -27,7 +72,9 @@ public interface GoodsSpuService extends BaseService<GoodsSpuDomain> {
      * @param id
      * @return
      */
-    GoodsSpuVO find(Long id);
+    public GoodsSpuVO find(Long id) {
+        return super.mapper.find(id, GOODS_SKU.getTableName());
+    }
 
     /**
      * 分页或列表
@@ -35,19 +82,72 @@ public interface GoodsSpuService extends BaseService<GoodsSpuDomain> {
      * @param goodsSpuVO
      * @return PageOrList<GoodsSpuVO>
      */
-    PageOrList<GoodsSpuVO> query(GoodsSpuVO goodsSpuVO);
+    public PageOrList<GoodsSpuVO> query(GoodsSpuVO goodsSpuVO) {
+        ApplicationDefaultDomain projectDefaultDomain =
+            projectDefaultService.queryChain().where(APPLICATION_DEFAULT.ID.eq(Context.applicationId())).one();
+        if (goodsSpuVO.getSystem().equals("ios") && (projectDefaultDomain == null
+            || projectDefaultDomain.getDefaultNickname().equals("1"))) {
+            return null;
+        }
+
+        goodsSpuVO.setJoinTables(GOODS_SKU.getTableName());
+
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.where(GoodsSpuDomain::getApplicationId).eq(Context.applicationId());
+        // like
+        queryWrapper.and(GOODS_SPU.NAME.like(goodsSpuVO.getName(), VerifyUtils::isNotEmpty));
+
+        // equal
+        queryWrapper.and(GOODS_SPU.GOODS_CATEGORY_ID.eq(goodsSpuVO.getGoodsCategoryId(), VerifyUtils::isNotEmpty));
+        queryWrapper.and(GOODS_SPU.STATUS.eq(goodsSpuVO.getStatus(), VerifyUtils::isNotEmpty));
+
+        return super.mapper.query(goodsSpuVO, queryWrapper);
+    }
 
     /**
      * 修改
      *
      * @param goodsSpuVO
      */
-    void update(GoodsSpuVO goodsSpuVO);
+    @Transactional(rollbackFor = Exception.class)
+    public void update(GoodsSpuVO goodsSpuVO) {
+        UpdateChain updateChain = this.updateChain().where(GOODS_SPU.ID.eq(goodsSpuVO.getId()));
+
+        boolean needUpdate = false;
+        if (VerifyUtils.isNotEmpty(goodsSpuVO.getName())) {
+            needUpdate = true;
+            updateChain.set(GOODS_SPU.NAME, goodsSpuVO.getName());
+        }
+        if (VerifyUtils.isNotEmpty(goodsSpuVO.getGoodsCategoryId())) {
+            needUpdate = true;
+            updateChain.set(GOODS_SPU.GOODS_CATEGORY_ID, goodsSpuVO.getGoodsCategoryId());
+        }
+        if (VerifyUtils.isNotEmpty(goodsSpuVO.getImageUrls())) {
+            needUpdate = true;
+            updateChain.set(GOODS_SPU.IMAGE_URLS, goodsSpuVO.getImageUrls());
+        }
+        if (VerifyUtils.isNotEmpty(goodsSpuVO.getStatus())) {
+            needUpdate = true;
+            updateChain.set(GOODS_SPU.STATUS, goodsSpuVO.getStatus());
+        }
+
+        if (needUpdate) {
+            updateChain.update();
+        }
+
+        if (VerifyUtils.isNotEmpty(goodsSpuVO.getGoodsSku())) {
+            goodsSpuVO.getGoodsSku().forEach(goodsSkuVO -> {
+                goodsSkuMapper.update(goodsSkuVO);
+            });
+        }
+    }
 
     /**
      * 删除
      *
      * @param id
      */
-    void delete(Long id);
+    public void delete(Long id) {
+        super.mapper.deleteById(id);
+    }
 }

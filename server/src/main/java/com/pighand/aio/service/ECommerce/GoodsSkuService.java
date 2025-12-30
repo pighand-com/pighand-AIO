@@ -1,9 +1,11 @@
 package com.pighand.aio.service.ECommerce;
 
 import com.pighand.aio.domain.ECommerce.GoodsSkuDomain;
+import com.pighand.aio.mapper.ECommerce.GoodsSkuMapper;
 import com.pighand.aio.vo.ECommerce.GoodsSkuVO;
-import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
+import org.springframework.stereotype.Service;
 
 /**
  * 电商 - SKU
@@ -11,7 +13,8 @@ import com.pighand.framework.spring.page.PageOrList;
  * @author wangshuli
  * @createDate 2024-01-07 19:55:48
  */
-public interface GoodsSkuService extends BaseService<GoodsSkuDomain> {
+@Service
+public class GoodsSkuService extends BaseServiceImpl<GoodsSkuMapper, GoodsSkuDomain>  {
 
     /**
      * 创建
@@ -19,7 +22,11 @@ public interface GoodsSkuService extends BaseService<GoodsSkuDomain> {
      * @param goodsSkuVO
      * @return
      */
-    GoodsSkuVO create(GoodsSkuVO goodsSkuVO);
+    public GoodsSkuVO create(GoodsSkuVO goodsSkuVO) {
+        super.mapper.insert(goodsSkuVO);
+
+        return goodsSkuVO;
+    }
 
     /**
      * 详情
@@ -27,7 +34,9 @@ public interface GoodsSkuService extends BaseService<GoodsSkuDomain> {
      * @param id
      * @return
      */
-    GoodsSkuDomain find(Long id);
+    public GoodsSkuDomain find(Long id) {
+        return super.mapper.find(id);
+    }
 
     /**
      * 分页或列表
@@ -35,19 +44,25 @@ public interface GoodsSkuService extends BaseService<GoodsSkuDomain> {
      * @param goodsSkuVO
      * @return PageOrList<GoodsSkuVO>
      */
-    PageOrList<GoodsSkuVO> query(GoodsSkuVO goodsSkuVO);
+    public PageOrList<GoodsSkuVO> query(GoodsSkuVO goodsSkuVO) {
+        return super.mapper.query(goodsSkuVO, null);
+    }
 
     /**
      * 修改
      *
      * @param goodsSkuVO
      */
-    void update(GoodsSkuVO goodsSkuVO);
+    public void update(GoodsSkuVO goodsSkuVO) {
+        super.mapper.update(goodsSkuVO);
+    }
 
     /**
      * 删除
      *
      * @param id
      */
-    void delete(Long id);
+    public void delete(Long id) {
+        super.mapper.deleteById(id);
+    }
 }

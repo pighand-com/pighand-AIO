@@ -1,9 +1,15 @@
 package com.pighand.aio.service.base;
 
+import com.mybatisflex.core.query.QueryWrapper;
+import com.pighand.aio.common.enums.UserStatusEnum;
 import com.pighand.aio.domain.base.UserWechatDomain;
+import com.pighand.aio.mapper.base.UserWechatMapper;
 import com.pighand.aio.vo.base.UserWechatVO;
-import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
+import org.springframework.stereotype.Service;
+
+import static com.pighand.aio.domain.base.table.UserWechatTableDef.USER_WECHAT;
 
 /**
  * 用户微信信息表 同一个用户，不同来源，可能存在多个身份，使用unionid关联。所以本表与用户多对一
@@ -11,7 +17,9 @@ import com.pighand.framework.spring.page.PageOrList;
  * @author wangshuli
  * @createDate 2023-03-25 18:45:58
  */
-public interface UserWechatService extends BaseService<UserWechatDomain> {
+@Service
+public class UserWechatService extends BaseServiceImpl<UserWechatMapper, UserWechatDomain>
+     {
 
     /**
      * 创建
@@ -19,7 +27,12 @@ public interface UserWechatService extends BaseService<UserWechatDomain> {
      * @param userWechatVO
      * @return
      */
-    UserWechatVO create(UserWechatVO userWechatVO);
+    public UserWechatVO create(UserWechatVO userWechatVO) {
+        userWechatVO.setStatus(UserStatusEnum.NORMAL);
+        super.mapper.insert(userWechatVO);
+
+        return userWechatVO;
+    }
 
     /**
      * 详情
@@ -27,29 +40,43 @@ public interface UserWechatService extends BaseService<UserWechatDomain> {
      * @param id
      * @return
      */
-    UserWechatDomain find(Long id);
+    public UserWechatDomain find(Long id) {
+        //        UserWechatDomain userWechatDomain = super.mapper.selectById(id);
+        //        return userWechatDomain;
+        return null;
+    }
 
     /**
      * 分页或列表
      *
      * @param userWechatVO
-     * @return PageOrList<UserWechatVO>
      */
-    PageOrList<UserWechatVO> query(UserWechatVO userWechatVO);
+    public PageOrList<UserWechatVO> query(UserWechatVO userWechatVO) {
+        //        PageOrList pageInfo = userWechatVO.pageParamOrInit(PageType.NEXT_TOKEN);
+        //        return super.mapper.query(pageInfo, userWechatVO);
+        return null;
+    }
 
     /**
      * 修改
      *
      * @param userWechatVO
      */
-    void update(UserWechatVO userWechatVO);
+    public void update(UserWechatVO userWechatVO) {
+        //        super.mapper.updateById(userWechatVO);
+    }
 
     /**
      * 删除
      *
      * @param id
      */
-    void delete(Long id);
+    public void delete(Long id) {
+        super.mapper.deleteById(id);
+    }
 
-    void deleteByUserId(Long userId);
+    public void deleteByUserId(Long userId) {
+        QueryWrapper queryWrapper = QueryWrapper.create().and(USER_WECHAT.USER_ID.eq(userId));
+        super.mapper.deleteByQuery(queryWrapper);
+    }
 }

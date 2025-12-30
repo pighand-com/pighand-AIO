@@ -1,9 +1,20 @@
 package com.pighand.aio.service.base;
 
+import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.core.update.UpdateChain;
 import com.pighand.aio.domain.base.TenantDomain;
+import com.pighand.aio.domain.base.table.UserTableDef;
+import com.pighand.aio.mapper.base.TenantMapper;
 import com.pighand.aio.vo.base.TenantVO;
-import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
+import com.pighand.framework.spring.util.VerifyUtils;
+import org.springframework.stereotype.Service;
+
+import static com.pighand.aio.domain.base.table.ApplicationTableDef.APPLICATION;
+import static com.pighand.aio.domain.base.table.TenantTableDef.TENANT;
+import static com.pighand.aio.domain.base.table.UserExtensionTableDef.USER_EXTENSION;
+import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 
 /**
  * 租户
@@ -11,7 +22,12 @@ import com.pighand.framework.spring.page.PageOrList;
  * @author wangshuli
  * @createDate 2024-12-31 19:04:50
  */
-public interface TenantService extends BaseService<TenantDomain> {
+@Service
+public class TenantService extends BaseServiceImpl<TenantMapper, TenantDomain>  {
+
+    private static UserTableDef getUser() {
+        return USER;
+    }
 
     /**
      * 创建
@@ -19,7 +35,11 @@ public interface TenantService extends BaseService<TenantDomain> {
      * @param baseTenantVO
      * @return
      */
-    TenantVO create(TenantVO baseTenantVO);
+    public TenantVO create(TenantVO baseTenantVO) {
+        super.mapper.insert(baseTenantVO);
+
+        return baseTenantVO;
+    }
 
     /**
      * 详情
@@ -27,7 +47,9 @@ public interface TenantService extends BaseService<TenantDomain> {
      * @param id
      * @return
      */
-    TenantDomain find(Long id);
+    public TenantDomain find(Long id) {
+        return super.mapper.find(id);
+    }
 
     /**
      * 分页或列表
@@ -35,19 +57,42 @@ public interface TenantService extends BaseService<TenantDomain> {
      * @param baseTenantVO
      * @return PageOrList<BaseTenantVO>
      */
-    PageOrList<TenantVO> query(TenantVO baseTenantVO);
+    public PageOrList<TenantVO> query(TenantVO baseTenantVO) {
+        baseTenantVO.setJoinTables(APPLICATION.getName(), USER_EXTENSION.getName());
+
+        QueryWrapper queryWrapper = QueryWrapper.create().select(TENANT.DEFAULT_COLUMNS)
+
+            // like
+            .and(TENANT.NAME.like(baseTenantVO.getName()))
+
+            // equal
+            .and(TENANT.APPLICATION_ID.eq(baseTenantVO.getApplicationId()))
+
+            // between
+            .and(TENANT.CREATED_AT.between(baseTenantVO.getCreatedAtRange()));
+
+        return super.mapper.query(baseTenantVO, queryWrapper);
+    }
 
     /**
      * 修改
      *
      * @param baseTenantVO
      */
-    void update(TenantVO baseTenantVO);
+    public void update(TenantVO baseTenantVO) {
+        UpdateChain updateChain = this.updateChain().where(TENANT.ID.eq(baseTenantVO.getId()));
+
+        updateChain.set(TENANT.ID, baseTenantVO.getId(), VerifyUtils::isNotEmpty);
+
+        updateChain.update();
+    }
 
     /**
      * 删除
      *
      * @param id
      */
-    void delete(Long id);
+    public void delete(Long id) {
+        super.mapper.deleteById(id);
+    }
 }

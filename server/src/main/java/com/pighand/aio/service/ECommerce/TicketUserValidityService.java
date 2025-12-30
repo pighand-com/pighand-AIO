@@ -1,9 +1,14 @@
 package com.pighand.aio.service.ECommerce;
 
+import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.ECommerce.TicketUserValidityDomain;
+import com.pighand.aio.mapper.ECommerce.TicketUserValidityMapper;
 import com.pighand.aio.vo.ECommerce.TicketUserValidityVO;
-import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
+import org.springframework.stereotype.Service;
+
+import static com.pighand.aio.domain.ECommerce.table.TicketUserValidityTableDef.TICKET_USER_VALIDITY;
 
 /**
  * 电商 - 票务 - 已购票使用范围
@@ -11,7 +16,9 @@ import com.pighand.framework.spring.page.PageOrList;
  * @author wangshuli
  * @createDate 2024-04-28 11:36:03
  */
-public interface TicketUserValidityService extends BaseService<TicketUserValidityDomain> {
+@Service
+public class TicketUserValidityService extends BaseServiceImpl<TicketUserValidityMapper, TicketUserValidityDomain>
+     {
 
     /**
      * 创建
@@ -19,7 +26,11 @@ public interface TicketUserValidityService extends BaseService<TicketUserValidit
      * @param ticketUserValidityVO
      * @return
      */
-    TicketUserValidityVO create(TicketUserValidityVO ticketUserValidityVO);
+    public TicketUserValidityVO create(TicketUserValidityVO ticketUserValidityVO) {
+        super.mapper.insert(ticketUserValidityVO);
+
+        return ticketUserValidityVO;
+    }
 
     /**
      * 详情
@@ -27,7 +38,9 @@ public interface TicketUserValidityService extends BaseService<TicketUserValidit
      * @param id
      * @return
      */
-    TicketUserValidityDomain find(Long id);
+    public TicketUserValidityDomain find(Long id) {
+        return super.mapper.find(id);
+    }
 
     /**
      * 分页或列表
@@ -35,19 +48,33 @@ public interface TicketUserValidityService extends BaseService<TicketUserValidit
      * @param ticketUserValidityVO
      * @return PageOrList<TicketUserValidityVO>
      */
-    PageOrList<TicketUserValidityVO> query(TicketUserValidityVO ticketUserValidityVO);
+    public PageOrList<TicketUserValidityVO> query(TicketUserValidityVO ticketUserValidityVO) {
+
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // equal
+            .and(TICKET_USER_VALIDITY.TICKET_ID.eq(ticketUserValidityVO.getTicketId()))
+            .and(TICKET_USER_VALIDITY.TICKET_USER_ID.eq(ticketUserValidityVO.getTicketUserId()))
+            .and(TICKET_USER_VALIDITY.TICKET_VALIDITY_ID.eq(ticketUserValidityVO.getTicketValidityId()))
+            .and(TICKET_USER_VALIDITY.VALIDATION_COUNT.eq(ticketUserValidityVO.getValidationCount()));
+
+        return super.mapper.query(ticketUserValidityVO, queryWrapper);
+    }
 
     /**
      * 修改
      *
      * @param ticketUserValidityVO
      */
-    void update(TicketUserValidityVO ticketUserValidityVO);
+    public void update(TicketUserValidityVO ticketUserValidityVO) {
+        super.mapper.update(ticketUserValidityVO);
+    }
 
     /**
      * 删除
      *
      * @param id
      */
-    void delete(Long id);
+    public void delete(Long id) {
+        super.mapper.deleteById(id);
+    }
 }

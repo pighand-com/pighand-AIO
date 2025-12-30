@@ -1,9 +1,19 @@
 package com.pighand.aio.service.ECommerce;
 
+import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.ECommerce.OrderTradeDomain;
+import com.pighand.aio.mapper.ECommerce.OrderTradeMapper;
 import com.pighand.aio.vo.ECommerce.OrderTradeVO;
-import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
+import org.springframework.stereotype.Service;
+
+import java.util.Set;
+
+import static com.pighand.aio.domain.ECommerce.table.BillTableDef.BILL;
+import static com.pighand.aio.domain.ECommerce.table.OrderSkuTableDef.ORDER_SKU;
+import static com.pighand.aio.domain.ECommerce.table.OrderTableDef.ORDER;
+import static com.pighand.aio.domain.ECommerce.table.OrderTradeTableDef.ORDER_TRADE;
 
 /**
  * 电商 - 订单 - 交易单
@@ -11,7 +21,9 @@ import com.pighand.framework.spring.page.PageOrList;
  * @author wangshuli
  * @createDate 2024-04-18 14:35:34
  */
-public interface OrderTradeService extends BaseService<OrderTradeDomain> {
+@Service
+public class OrderTradeService extends BaseServiceImpl<OrderTradeMapper, OrderTradeDomain>
+     {
 
     /**
      * 创建
@@ -19,7 +31,11 @@ public interface OrderTradeService extends BaseService<OrderTradeDomain> {
      * @param orderTradeVO
      * @return
      */
-    OrderTradeVO create(OrderTradeVO orderTradeVO);
+    public OrderTradeVO create(OrderTradeVO orderTradeVO) {
+        super.mapper.insert(orderTradeVO);
+
+        return orderTradeVO;
+    }
 
     /**
      * 详情
@@ -27,7 +43,11 @@ public interface OrderTradeService extends BaseService<OrderTradeDomain> {
      * @param id
      * @return
      */
-    OrderTradeDomain find(Long id);
+    public OrderTradeDomain find(Long id) {
+        Set<String> joinTables = Set.of();
+
+        return super.mapper.find(id, ORDER.getTableName(), ORDER_SKU.getTableName(), BILL.getTableName());
+    }
 
     /**
      * 分页或列表
@@ -35,19 +55,39 @@ public interface OrderTradeService extends BaseService<OrderTradeDomain> {
      * @param orderTradeVO
      * @return PageOrList<OrderTradeVO>
      */
-    PageOrList<OrderTradeVO> query(OrderTradeVO orderTradeVO);
+    public PageOrList<OrderTradeVO> query(OrderTradeVO orderTradeVO) {
+        orderTradeVO.setJoinTables(ORDER.getTableName(), ORDER_SKU.getTableName(), BILL.getTableName());
+
+        QueryWrapper queryWrapper = QueryWrapper.create()
+
+            // like
+            .and(ORDER_TRADE.SN.like(orderTradeVO.getSn()))
+            .and(ORDER_TRADE.CREATOR_ID.like(orderTradeVO.getCreatorId()))
+
+            // equal
+            .and(ORDER_TRADE.AMOUNT_PAYABLE.eq(orderTradeVO.getAmountPayable()))
+            .and(ORDER_TRADE.AMOUNT_PAID.eq(orderTradeVO.getAmountPaid()))
+
+            .orderBy(ORDER_TRADE.ID.desc());
+
+        return super.mapper.query(orderTradeVO, queryWrapper);
+    }
 
     /**
      * 修改
      *
      * @param orderTradeVO
      */
-    void update(OrderTradeVO orderTradeVO);
+    public void update(OrderTradeVO orderTradeVO) {
+        super.mapper.update(orderTradeVO);
+    }
 
     /**
      * 删除
      *
      * @param id
      */
-    void delete(Long id);
+    public void delete(Long id) {
+        super.mapper.deleteById(id);
+    }
 }

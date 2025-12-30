@@ -1,9 +1,16 @@
 package com.pighand.aio.service.ECommerce;
 
+import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.ECommerce.SessionUserCycleDomain;
+import com.pighand.aio.mapper.ECommerce.SessionUserCycleMapper;
 import com.pighand.aio.vo.ECommerce.SessionUserCycleVO;
-import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
+import org.springframework.stereotype.Service;
+
+import static com.pighand.aio.domain.ECommerce.table.SessionTableDef.SESSION;
+import static com.pighand.aio.domain.ECommerce.table.SessionUserCycleTableDef.SESSION_USER_CYCLE;
+import static com.pighand.aio.domain.base.table.UserTableDef.USER;
 
 /**
  * 电商 - 场次 - 用户周期
@@ -11,7 +18,9 @@ import com.pighand.framework.spring.page.PageOrList;
  * @author wangshuli
  * @createDate 2024-05-23 15:01:58
  */
-public interface SessionUserCycleService extends BaseService<SessionUserCycleDomain> {
+@Service
+public class SessionUserCycleService extends BaseServiceImpl<SessionUserCycleMapper, SessionUserCycleDomain>
+     {
 
     /**
      * 创建
@@ -19,7 +28,11 @@ public interface SessionUserCycleService extends BaseService<SessionUserCycleDom
      * @param sessionUserCycleVO
      * @return
      */
-    SessionUserCycleVO create(SessionUserCycleVO sessionUserCycleVO);
+    public SessionUserCycleVO create(SessionUserCycleVO sessionUserCycleVO) {
+        super.mapper.insert(sessionUserCycleVO);
+
+        return sessionUserCycleVO;
+    }
 
     /**
      * 详情
@@ -27,7 +40,9 @@ public interface SessionUserCycleService extends BaseService<SessionUserCycleDom
      * @param id
      * @return
      */
-    SessionUserCycleDomain find(Long id);
+    public SessionUserCycleDomain find(Long id) {
+        return super.mapper.find(id, SESSION.getTableName(), USER.getTableName());
+    }
 
     /**
      * 分页或列表
@@ -35,19 +50,34 @@ public interface SessionUserCycleService extends BaseService<SessionUserCycleDom
      * @param sessionUserCycleVO
      * @return PageOrList<SessionUserCycleVO>
      */
-    PageOrList<SessionUserCycleVO> query(SessionUserCycleVO sessionUserCycleVO);
+    public PageOrList<SessionUserCycleVO> query(SessionUserCycleVO sessionUserCycleVO) {
+        sessionUserCycleVO.setJoinTables(SESSION.getTableName(), USER.getTableName());
+
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // equal
+            .and(SESSION_USER_CYCLE.SESSION_ID.eq(sessionUserCycleVO.getSessionId()))
+            .and(SESSION_USER_CYCLE.SESSION_TEMPLATE_CYCLE_ID.eq(sessionUserCycleVO.getSessionTemplateCycleId()))
+            .and(SESSION_USER_CYCLE.ORDER_ID.eq(sessionUserCycleVO.getOrderId()))
+            .and(SESSION_USER_CYCLE.USER_ID.eq(sessionUserCycleVO.getUserId()));
+
+        return super.mapper.query(sessionUserCycleVO, queryWrapper);
+    }
 
     /**
      * 修改
      *
      * @param sessionUserCycleVO
      */
-    void update(SessionUserCycleVO sessionUserCycleVO);
+    public void update(SessionUserCycleVO sessionUserCycleVO) {
+        super.mapper.update(sessionUserCycleVO);
+    }
 
     /**
      * 删除
      *
      * @param id
      */
-    void delete(Long id);
+    public void delete(Long id) {
+        super.mapper.deleteById(id);
+    }
 }

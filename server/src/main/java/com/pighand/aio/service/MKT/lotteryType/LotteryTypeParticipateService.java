@@ -30,57 +30,47 @@ public class LotteryTypeParticipateService extends BaseServiceImpl<LotteryPartic
 
     private final LotteryCommonUserMapper lotteryCommonUserMapper;
 
-    @Override
     public LotteryParticipateVO getLotteryObject(LotteryVO lotteryVO) {
         return Optional.ofNullable(lotteryVO.getParticipate()).orElse(new LotteryParticipateVO());
     }
 
-    @Override
     public void setLotteryObject(LotteryVO lotteryVO, LotteryParticipateVO lotteryObject) {
         lotteryVO.setParticipate(lotteryObject);
     }
 
-    @Override
     public List<LotteryParticipatePrizeDomain> getLotteryPrizes(LotteryParticipateVO lotteryObject) {
         return lotteryObject.getPrizes();
     }
 
-    @Override
     public void setLotteryPrizes(LotteryParticipateVO lotteryObject,
         List<LotteryParticipatePrizeDomain> lotteryPrizes) {
         lotteryObject.setPrizes(lotteryPrizes);
     }
 
-    @Override
     public Long getPrizeId(LotteryParticipatePrizeDomain prize) {
         return prize.getId();
     }
 
-    @Override
     public void create(Long lotteryId, LotteryParticipateVO lotteryObject) {
         lotteryObject.setId(lotteryId);
         super.mapper.insert(lotteryObject);
     }
 
-    @Override
     public LotteryParticipateVO find(Long lotteryId) {
         LotteryParticipateVO participate = super.mapper.find(lotteryId);
 
         return participate;
     }
 
-    @Override
     public void update(LotteryParticipateVO lotteryObject) {
         super.updateById(lotteryObject, false);
     }
 
-    @Override
     public void createPrizes(Long lotteryId, List<LotteryParticipatePrizeDomain> prizes) {
         prizes.forEach(prize -> prize.setLotteryParticipateId(lotteryId));
         lotteryParticipatePrizeMapper.insertBatch(prizes);
     }
 
-    @Override
     public List<LotteryParticipatePrizeDomain> queryPrizes(Long lotteryId) {
         QueryWrapper queryWrapper =
             QueryWrapper.create().where(LOTTERY_PARTICIPATE_PRIZE.LOTTERY_PARTICIPATE_ID.eq(lotteryId));
@@ -88,7 +78,6 @@ public class LotteryTypeParticipateService extends BaseServiceImpl<LotteryPartic
         return lotteryParticipatePrizeMapper.selectListByQuery(queryWrapper);
     }
 
-    @Override
     public List<LotteryParticipatePrizeDomain> queryPrizes(List<Long> ids) {
         if (ids.isEmpty()) {
             return new ArrayList<>(0);
@@ -99,7 +88,6 @@ public class LotteryTypeParticipateService extends BaseServiceImpl<LotteryPartic
         return lotteryParticipatePrizeMapper.selectListByQuery(queryWrapper);
     }
 
-    @Override
     public void createOrUpdatePrize(LotteryParticipateVO lotteryObject, LotteryParticipatePrizeDomain prize) {
         if (prize.getId() != null) {
             lotteryParticipatePrizeMapper.update(prize);
@@ -109,7 +97,6 @@ public class LotteryTypeParticipateService extends BaseServiceImpl<LotteryPartic
         }
     }
 
-    @Override
     public void deletePrize(Long prizeId) {
         lotteryParticipatePrizeMapper.deleteById(prizeId);
     }
@@ -130,7 +117,6 @@ public class LotteryTypeParticipateService extends BaseServiceImpl<LotteryPartic
      * @param lotteryUserIds 所有参与抽奖的用户列表
      */
     @Transactional(rollbackFor = Exception.class)
-    @Override
     public void draw(Long lotteryId, List<Long> lotteryUserIds) {
         List<LotteryParticipatePrizeDomain> prizes = this.queryPrizes(lotteryId);
 

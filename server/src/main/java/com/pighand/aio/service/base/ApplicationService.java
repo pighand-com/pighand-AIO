@@ -1,9 +1,11 @@
 package com.pighand.aio.service.base;
 
 import com.pighand.aio.domain.base.ApplicationDomain;
+import com.pighand.aio.mapper.base.ApplicationMapper;
 import com.pighand.aio.vo.base.ApplicationVO;
-import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
+import org.springframework.stereotype.Service;
 
 /**
  * 项目
@@ -11,7 +13,9 @@ import com.pighand.framework.spring.page.PageOrList;
  * @author wangshuli
  * @createDate 2023-03-25 18:45:58
  */
-public interface ApplicationService extends BaseService<ApplicationDomain> {
+@Service
+public class ApplicationService extends BaseServiceImpl<ApplicationMapper, ApplicationDomain>
+     {
 
     /**
      * 创建
@@ -19,7 +23,11 @@ public interface ApplicationService extends BaseService<ApplicationDomain> {
      * @param projectVO
      * @return
      */
-    ApplicationVO create(ApplicationVO projectVO);
+    public ApplicationVO create(ApplicationVO projectVO) {
+        super.mapper.insert(projectVO);
+
+        return projectVO;
+    }
 
     /**
      * 详情
@@ -27,27 +35,37 @@ public interface ApplicationService extends BaseService<ApplicationDomain> {
      * @param id
      * @return
      */
-    ApplicationDomain find(Long id);
+    public ApplicationDomain find(Long id) {
+        ApplicationDomain projectDomain = super.mapper.selectOneById(id);
+        return projectDomain;
+    }
 
     /**
      * 分页或列表
      *
      * @param projectVO
-     * @return PageOrList<ApplicationVO>
      */
-    PageOrList<ApplicationVO> query(ApplicationVO projectVO);
+    public PageOrList<ApplicationVO> query(ApplicationVO projectVO) {
+        //        PageOrList pageInfo = projectVO.pageParamOrInit(PageType.NEXT_TOKEN);
+        //        return super.mapper.query(pageInfo, projectVO);
+        return null;
+    }
 
     /**
      * 修改
      *
      * @param projectVO
      */
-    void update(ApplicationVO projectVO);
+    public void update(ApplicationVO projectVO) {
+        //        super.mapper.updateById(projectVO);
+    }
 
     /**
      * 删除
      *
      * @param id
      */
-    void delete(Long id);
+    public void delete(Long id) {
+        super.mapper.deleteById(id);
+    }
 }

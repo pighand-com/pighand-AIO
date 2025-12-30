@@ -1,9 +1,11 @@
 package com.pighand.aio.service.ECommerce;
 
 import com.pighand.aio.domain.ECommerce.SessionTemplateDomain;
+import com.pighand.aio.mapper.ECommerce.SessionTemplateMapper;
 import com.pighand.aio.vo.ECommerce.SessionTemplateVO;
-import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
+import org.springframework.stereotype.Service;
 
 /**
  * 电商 - 场次模板。根据模板生成场次
@@ -11,7 +13,9 @@ import com.pighand.framework.spring.page.PageOrList;
  * @author wangshuli
  * @createDate 2023-12-05 16:13:27
  */
-public interface SessionTemplateService extends BaseService<SessionTemplateDomain> {
+@Service
+public class SessionTemplateService extends BaseServiceImpl<SessionTemplateMapper, SessionTemplateDomain>
+     {
 
     /**
      * 创建
@@ -19,7 +23,11 @@ public interface SessionTemplateService extends BaseService<SessionTemplateDomai
      * @param sessionTemplateVO
      * @return
      */
-    SessionTemplateVO create(SessionTemplateVO sessionTemplateVO);
+    public SessionTemplateVO create(SessionTemplateVO sessionTemplateVO) {
+        super.mapper.insert(sessionTemplateVO);
+
+        return sessionTemplateVO;
+    }
 
     /**
      * 详情
@@ -27,7 +35,9 @@ public interface SessionTemplateService extends BaseService<SessionTemplateDomai
      * @param id
      * @return
      */
-    SessionTemplateDomain find(Long id);
+    public SessionTemplateDomain find(Long id) {
+        return super.mapper.find(id);
+    }
 
     /**
      * 分页或列表
@@ -35,19 +45,26 @@ public interface SessionTemplateService extends BaseService<SessionTemplateDomai
      * @param sessionTemplateVO
      * @return PageOrList<SessionTemplateVO>
      */
-    PageOrList<SessionTemplateVO> query(SessionTemplateVO sessionTemplateVO);
+    public PageOrList<SessionTemplateVO> query(SessionTemplateVO sessionTemplateVO) {
+
+        return super.mapper.query(sessionTemplateVO, null);
+    }
 
     /**
      * 修改
      *
      * @param sessionTemplateVO
      */
-    void update(SessionTemplateVO sessionTemplateVO);
+    public void update(SessionTemplateVO sessionTemplateVO) {
+        super.mapper.update(sessionTemplateVO);
+    }
 
     /**
      * 删除
      *
      * @param id
      */
-    void delete(Long id);
+    public void delete(Long id) {
+        super.mapper.deleteById(id);
+    }
 }

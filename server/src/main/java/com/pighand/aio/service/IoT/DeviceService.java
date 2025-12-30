@@ -1,9 +1,16 @@
 package com.pighand.aio.service.IoT;
 
+import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.IoT.DeviceDomain;
+import com.pighand.aio.mapper.IoT.DeviceMapper;
+import com.pighand.aio.mapper.IoT.DeviceTaskMapper;
 import com.pighand.aio.vo.IoT.DeviceVO;
-import com.pighand.framework.spring.base.BaseService;
+import com.pighand.framework.spring.base.BaseServiceImpl;
 import com.pighand.framework.spring.page.PageOrList;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import static com.pighand.aio.domain.IoT.table.DeviceTableDef.DEVICE;
 
 /**
  * IoT - 设备
@@ -11,7 +18,11 @@ import com.pighand.framework.spring.page.PageOrList;
  * @author wangshuli
  * @createDate 2024-04-10 23:45:23
  */
-public interface DeviceService extends BaseService<DeviceDomain> {
+@Service
+@AllArgsConstructor
+public class DeviceService extends BaseServiceImpl<DeviceMapper, DeviceDomain>  {
+
+    private final DeviceTaskMapper deviceTaskMapper;
 
     /**
      * 创建
@@ -19,7 +30,11 @@ public interface DeviceService extends BaseService<DeviceDomain> {
      * @param deviceVO
      * @return
      */
-    DeviceVO create(DeviceVO deviceVO);
+    public DeviceVO create(DeviceVO deviceVO) {
+        super.mapper.insert(deviceVO);
+
+        return deviceVO;
+    }
 
     /**
      * 详情
@@ -27,7 +42,11 @@ public interface DeviceService extends BaseService<DeviceDomain> {
      * @param id
      * @return
      */
-    DeviceDomain find(Long id);
+    public DeviceDomain find(Long id) {
+        //        Set<String> joinTables = List.of(DEVICE_TASK.getTableName());
+
+        return super.mapper.find(id);
+    }
 
     /**
      * 分页或列表
@@ -35,30 +54,68 @@ public interface DeviceService extends BaseService<DeviceDomain> {
      * @param deviceVO
      * @return PageOrList<DeviceVO>
      */
-    PageOrList<DeviceVO> query(DeviceVO deviceVO);
+    public PageOrList<DeviceVO> query(DeviceVO deviceVO) {
+        //        deviceVO.setJoinTables(DEVICE_TASK.getTableName());
+
+        QueryWrapper queryWrapper = QueryWrapper.create()
+            // like
+            .and(DEVICE.SN.like(deviceVO.getSn()))
+            // equal
+            .and(DEVICE.GROUP.eq(deviceVO.getGroup())).and(DEVICE.LINK_STATUS.eq(deviceVO.getLinkStatus()))
+            .and(DEVICE.RUNNING_STATUS.eq(deviceVO.getRunningStatus()));
+
+        PageOrList<DeviceVO> result = super.mapper.query(deviceVO, queryWrapper);
+
+        //        // 获取当前时间的前3天
+        //        Calendar calendar = Calendar.getInstance();
+        //        calendar.add(Calendar.DAY_OF_MONTH, -3);
+        //        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+        //        String threeDaysAgo = dateFormat.format(calendar.getTime());
+        //
+        //        // 查询3天内是否已打卡
+        //
+        //        List<DeviceTaskDomain> tasks = deviceTaskMapper.selectListByQuery(
+        //            QueryWrapper.create().select(DEVICE_TASK.DEVICE_ID)
+        //                .where(DEVICE_TASK.CREATOR_ID.eq(Context.loginUser().getId()))
+        //                .and(DEVICE_TASK.CREATED_AT.ge(threeDaysAgo)));
+        //
+        //        Set<Long> deviceIds = tasks.stream().map(DeviceTaskDomain::getDeviceId).collect(Collectors.toSet());
+        //
+        //        result.getRecords().forEach(device -> {
+        //            device.setClockIn(deviceIds.contains(device.getId()));
+        //        });
+
+        return result;
+    }
 
     /**
      * 修改
      *
      * @param deviceVO
      */
-    void update(DeviceVO deviceVO);
+    public void update(DeviceVO deviceVO) {
+        super.mapper.update(deviceVO);
+    }
 
     /**
      * 删除
      *
      * @param id
      */
-    void delete(Long id);
+    public void delete(Long id) {
+        super.mapper.deleteById(id);
+    }
 
     /**
      * 设备连接
-     * 设置客户端id，更新连接状态为已连接，运行状态为未运行
+     * 设置客户端id，更新连接状态为已连接
      *
      * @param sn
      * @param clientId
      */
-    void link(String sn, String clientId);
+    public void link(String sn, String clientId) {
+        this.updateChain().set(DEVICE.LINK_STATUS, 30).set(DEVICE.CLIENT_ID, clientId).where(DEVICE.SN.eq(sn)).update();
+    }
 
     /**
      * 设备断开连接
@@ -66,7 +123,17 @@ public interface DeviceService extends BaseService<DeviceDomain> {
      *
      * @param clientId
      */
-    void unlink(String clientId);
+    public void unlink(String clientId) {
+        this.updateChain().set(DEVICE.LINK_STATUS, 10).set(DEVICE.RUNNING_STATUS, 10).set(DEVICE.CLIENT_ID, null)
+            .where(DEVICE.CLIENT_ID.eq(clientId)).update();
+    }
 
-    void leisure(String sn);
+    /**
+     * 设置为空闲
+     *
+     * @param sn
+     */
+    public void leisure(String sn) {
+        this.updateChain().set(DEVICE.RUNNING_STATUS, 10).where(DEVICE.SN.eq(sn)).update();
+    }
 }

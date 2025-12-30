@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * 系统 - 站内信配置
@@ -43,5 +43,5 @@ public class UserStationLetterDomain extends BaseDomainRecord<UserStationLetterD
     private String content;
 
     @Schema(description = "创建时间")
-    private Date createdAt;
+    private Long createdAt;
 }

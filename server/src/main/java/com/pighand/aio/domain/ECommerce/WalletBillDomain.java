@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+
 
 /**
  * 电商 - 钱包账单
@@ -53,7 +53,7 @@ public class WalletBillDomain extends BaseDomainRecord<WalletBillDomain> impleme
     private BigDecimal amount;
 
     @Schema(description = "账单时间")
-    private Date createdAt;
+    private Long createdAt;
 
     @Schema(description = "type=11,20时，相关订单id")
     @JsonDeserialize(using = ToLongSerializer.class)

@@ -86,10 +86,10 @@ public class AssetsVideoDomain extends BaseDomainRecordTs<AssetsVideoDomain> imp
     private Long createdBy;
 
     @Schema(description = "创建时间")
-    private Date createdAt;
+    private Long createdAt;
 
     @Schema(description = "更新时间")
-    private Date updatedAt;
+    private Long updatedAt;
 
     @Schema(description = "是否删除")
     private Boolean deleted;

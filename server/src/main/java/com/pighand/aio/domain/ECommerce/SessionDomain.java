@@ -49,10 +49,10 @@ public class SessionDomain extends BaseDomainRecord<SessionDomain> implements Se
     @JsonSerialize(using = ToStringSerializer.class)
     private Long sessionTemplateId;
 
-    private Date beginTime;
+    private Long beginTime;
 
-    private Date endTime;
+    private Long endTime;
 
-    private Date createdAt;
+    private Long createdAt;
 
 }

@@ -16,7 +16,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * IoT - 设备任务
@@ -51,13 +51,13 @@ public class DeviceTaskDomain extends BaseDomainRecord<DeviceTaskDomain> impleme
     private Long creatorId;
 
     @Schema(description = "任务创建时间")
-    private Date createdAt;
+    private Long createdAt;
 
     @Schema(description = "任务开始时间")
-    private Date runningAt;
+    private Long runningAt;
 
     @Schema(description = "任务完成时间")
-    private Date completedAt;
+    private Long completedAt;
 
     @JsonDeserialize(using = ToLongSerializer.class)
     @JsonSerialize(using = ToStringSerializer.class)

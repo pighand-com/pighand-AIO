@@ -58,17 +58,14 @@ public class LotteryCommonConfigDomain extends BaseDomainRecord<LotteryCommonCon
     @Schema(description = "封面图")
     private String coverUrl;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Schema(description = "开始时间")
-    private Date beginTime;
+    private Long beginTime;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Schema(description = "结束时间")
-    private Date endTime;
+    private Long endTime;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Schema(description = "开奖时间")
-    private Date drawTime;
+    private Long drawTime;
 
     @Schema(description = "开奖状态 10未开奖 20开奖中 30开奖完成")
     private Integer drawStatus;

@@ -48,11 +48,11 @@ public class TicketUserDomain extends BaseDomainRecord<TicketUserDomain> impleme
     private Integer status;
 
     @Schema(description = "创建时间")
-    private Date createdAt;
+    private Long createdAt;
 
     @Schema(description = "创建人")
     private Long creatorId;
 
     @Schema(description = "核销时间")
-    private Date validationAt;
+    private Long validationAt;
 }

@@ -13,7 +13,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * 营销 - 打卡签到记录
@@ -49,5 +49,5 @@ public class CheckInRecordDomain extends BaseDomainRecord<CheckInRecordDomain> i
     private Long localtionId;
 
     @Schema(description = "签到时间")
-    private Date checkInAt;
+    private Long checkInAt;
 }

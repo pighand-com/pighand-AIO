@@ -48,5 +48,5 @@ public class AssetsFavouriteDomain extends BaseDomainRecord<AssetsFavouriteDomai
     private Long createdBy;
 
     @Schema(description = "创建时间")
-    private Date createdAt;
+    private Long createdAt;
 }

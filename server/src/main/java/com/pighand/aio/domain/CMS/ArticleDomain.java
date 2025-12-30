@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * CMS - 文章
@@ -63,7 +63,7 @@ public class ArticleDomain extends BaseDomainRecord<ArticleDomain> implements Se
 
     private Long creatorId;
 
-    private Date createdAt;
+    private Long createdAt;
 
     @Schema(description = "浏览量")
     private Integer viewCount;

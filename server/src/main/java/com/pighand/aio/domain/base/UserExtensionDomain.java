@@ -72,10 +72,10 @@ public class UserExtensionDomain extends BaseDomainRecord<UserExtensionDomain> i
     private Date birthday;
 
     @Schema(description = "注册时间")
-    private Date registerAt;
+    private Long registerAt;
 
     @Schema(description = "最后登录时间")
-    private Date lastSignInAt;
+    private Long lastSignInAt;
 
     @Schema(description = "是否实人认证")
     private Integer realPersonCertification;

@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * 用户 - 绑定信息
@@ -45,5 +45,5 @@ public class UserBindDomain extends BaseDomainRecord<UserBindDomain> implements 
     @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
 
-    private Date createdAt;
+    private Long createdAt;
 }

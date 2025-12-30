@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * 电商 - 场次 - 用户周期
@@ -41,5 +41,5 @@ public class SessionUserCycleDomain extends BaseDomainRecord<SessionUserCycleDom
 
     private Long userId;
 
-    private Date createdAt;
+    private Long createdAt;
 }

@@ -48,5 +48,5 @@ public class LotteryCommonUserDomain extends BaseDomainRecord<LotteryCommonUserD
     @Schema(description = "剩余参与次数")
     private Integer remainingParticipations;
 
-    private Date createdAt;
+    private Long createdAt;
 }

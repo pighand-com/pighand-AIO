@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * 用户 - 消息
@@ -58,7 +58,7 @@ public class UserMessageDomain extends BaseDomainRecord<UserMessageDomain> imple
     private String content;
 
     @Schema(description = "发送时间")
-    private Date sendAt;
+    private Long sendAt;
 
     @Schema(description = "是否已读")
     private Boolean read;

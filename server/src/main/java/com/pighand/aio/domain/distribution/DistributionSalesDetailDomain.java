@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+
 
 /**
  * 分销 - 销售明细记录
@@ -61,6 +61,6 @@ public class DistributionSalesDetailDomain extends BaseDomainRecord<Distribution
     private Integer status;
 
     @Schema(description = "可结算时间")
-    private Date settlementTime;
+    private Long settlementTime;
 
 }

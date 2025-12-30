@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * 电商 - 订单 - 交易单
@@ -53,7 +53,7 @@ public class OrderTradeDomain extends BaseDomainRecord<OrderTradeDomain> impleme
     private Long creatorId;
 
     @Schema(description = "创建时间")
-    private Date createdAt;
+    private Long createdAt;
 
     // 分销ID
     @JsonDeserialize(using = ToLongSerializer.class)

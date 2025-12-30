@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * 电商 - 订单
@@ -94,10 +94,10 @@ public class OrderDomain extends BaseDomainRecord<OrderDomain> implements Serial
     private String userPhone;
 
     @Schema(description = "订单超时时间")
-    private Date expiredAt;
+    private Long expiredAt;
 
     @Schema(description = "创建时间")
-    private Date createdAt;
+    private Long createdAt;
 
     @Length(max = 32)
     @Schema(description = "创建人")

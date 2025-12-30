@@ -14,7 +14,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * 电商 - 优惠券 - 用户已领
@@ -48,10 +48,10 @@ public class CouponUserDomain extends BaseDomainRecord<CouponUserDomain> impleme
     private Long usedOrderId;
 
     @Schema(description = "使用时间")
-    private Date usedAt;
+    private Long usedAt;
 
     @Schema(description = "发券时间")
-    private Date createdAt;
+    private Long createdAt;
 
     @Schema(description = "发券人")
     @JsonDeserialize(using = ToLongSerializer.class)

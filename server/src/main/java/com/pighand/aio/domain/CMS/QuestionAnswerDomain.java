@@ -16,7 +16,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
+
 import java.util.List;
 
 /**
@@ -51,5 +51,5 @@ public class QuestionAnswerDomain extends BaseDomainRecord<QuestionAnswerDomain>
 
     private Long creatorId;
 
-    private Date createdAt;
+    private Long createdAt;
 }

@@ -72,5 +72,5 @@ public class DeviceDomain extends BaseDomainRecord<DeviceDomain> implements Seri
     private Object config;
 
     @Schema(description = "最后一次运行时间，用作超时校验")
-    private Date lastRunningAt;
+    private Long lastRunningAt;
 }

@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * 电商 - 优惠券 - 转赠记录
@@ -45,5 +45,5 @@ public class CouponUserTransferDomain extends BaseDomainRecord<CouponUserTransfe
     @JsonSerialize(using = ToStringSerializer.class)
     private Long toUserId;
 
-    private Date createdAt;
+    private Long createdAt;
 }

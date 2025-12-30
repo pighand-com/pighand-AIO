@@ -14,7 +14,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * CMS - 素材 - 下载记录
@@ -48,8 +48,8 @@ public class AssetsDownloadDomain extends BaseDomainRecord<AssetsDownloadDomain>
     private Long createdBy;
 
     @Schema(description = "首次下载时间")
-    private Date createdAt;
+    private Long createdAt;
 
     @Schema(description = "最后下载时间")
-    private Date updatedAt;
+    private Long updatedAt;
 }

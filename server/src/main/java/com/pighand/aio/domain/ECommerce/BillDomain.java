@@ -14,7 +14,7 @@ import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * 商城 - 账单
@@ -69,5 +69,5 @@ public class BillDomain extends BaseDomainRecord<BillDomain> implements Serializ
     private Long creatorId;
 
     @Schema(description = "创建时间")
-    private Date createdAt;
+    private Long createdAt;
 }

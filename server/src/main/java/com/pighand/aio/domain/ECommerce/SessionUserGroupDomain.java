@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
+
 
 /**
  * 电商 - 场次 - 用户分组
@@ -45,5 +45,5 @@ public class SessionUserGroupDomain extends BaseDomainRecord<SessionUserGroupDom
     @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
 
-    private Date createdAt;
+    private Long createdAt;
 }

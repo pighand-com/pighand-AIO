@@ -7,7 +7,6 @@ import com.pighand.aio.common.utils.IDGenerator;
 import com.pighand.aio.domain.ECommerce.*;
 import com.pighand.aio.domain.base.*;
 import com.pighand.aio.mapper.ECommerce.OrderMapper;
-import com.pighand.aio.service.ECommerce.*;
 import com.pighand.aio.service.ECommerce.payments.Wechat;
 import com.pighand.aio.service.base.*;
 import com.pighand.aio.service.distribution.DistributionSalesService;
@@ -117,7 +116,7 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
             orderSkuVO.setAmountPayable(amountPayable.longValue());
             totalAmountPayable = totalAmountPayable.add(amountPayable);
 
-            // 实付金额 = 应付金额（TODO：扣减优惠）
+            // 实付金额 = 应付金额
             BigDecimal amountPaid = amountPayable;
             orderSkuVO.setAmountPaid(amountPaid.longValue());
             totalAmountPaid = totalAmountPaid.add(amountPaid);
@@ -125,11 +124,6 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
             // 是否库存不足
             boolean stockOut = goodsBaseInfo.getStock() != null && orderSkuVO.getQuantity() > goodsBaseInfo.getStock();
             orderSkuVO.setStockOut(stockOut);
-
-            // TODO: 库存不足处理，价格试算不抛异常
-            if (stockOut) {
-                throw new ThrowPrompt("库存不足");
-            }
 
             Long mapStoreId = Optional.ofNullable(goodsBaseInfo.getStoreId()).orElse(0L);
             OrderVO orderVO = storeOrder.get(mapStoreId);
@@ -179,12 +173,12 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
                 .innerJoin(GOODS_SPU).on(GOODS_SKU.SPU_ID.eq(GOODS_SPU.ID)).where(GOODS_SKU.ID.in(ids))
                 .and(GOODS_SPU.STATUS.eq(GoodsSpuStatusEnum.LISTED)).list();
         } else if (orderSKUType.equals(OrderSKUTypeEnum.TICKET)) {
-            // TODO: ticket
+            // ticket
             goodsInfos =
                 ticketService.queryChain().select(TICKET.ID, TICKET.STOCK, TICKET.CURRENT_PRICE, TICKET.STORE_ID)
                     .where(TICKET.ID.in(ids)).list();
         } else if (orderSKUType.equals(OrderSKUTypeEnum.SESSION)) {
-            // TODO: session
+            // session
         }
 
         return goodsInfos;
@@ -241,7 +235,7 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
             skuOrder.getAmountPayable().add(ticketOrder.getAmountPayable()).add(sessionOrder.getAmountPayable())
                 .longValue());
         orderTrade.setCreatorId(loginUser.getId());
-        orderTrade.setCreatedAt(now);
+        orderTrade.setCreatedAt(now.getTime());
         orderTrade.setSalespersonId(salespersonId);
         orderTradeService.save(orderTrade);
 
@@ -250,11 +244,11 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
         List<OrderSkuDomain> saveOrderSku = new ArrayList<>(orderSku.size());
         for (OrderVO orderVO : skuOrder.getOrder()) {
             orderVO.setOrderTradeId(orderTrade.getId());
-            orderVO.setCreatedAt(now);
+            orderVO.setCreatedAt(now.getTime());
             orderVO.setCreatorId(loginUser.getId());
             orderVO.setUserPhone(userDomain.getPhone());
             // 设置订单超时时间（10分钟后）
-            orderVO.setExpiredAt(new Date(now.getTime() + 10 * 60 * 1000));
+            orderVO.setExpiredAt(now.getTime() + 10 * 60 * 1000);
             this.save(orderVO);
 
             orderIds.add(orderVO.getId());
@@ -268,11 +262,11 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
 
         for (OrderVO orderVO : ticketOrder.getOrder()) {
             orderVO.setOrderTradeId(orderTrade.getId());
-            orderVO.setCreatedAt(now);
+            orderVO.setCreatedAt(now.getTime());
             orderVO.setCreatorId(loginUser.getId());
             orderVO.setUserPhone(userDomain.getPhone());
             // 设置订单超时时间（10分钟后）
-            orderVO.setExpiredAt(new Date(now.getTime() + 10 * 60 * 1000));
+            orderVO.setExpiredAt(now.getTime() + 10 * 60 * 1000);
             this.save(orderVO);
 
             orderIds.add(orderVO.getId());
@@ -286,11 +280,11 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
 
         for (OrderVO orderVO : sessionOrder.getOrder()) {
             orderVO.setOrderTradeId(orderTrade.getId());
-            orderVO.setCreatedAt(now);
+            orderVO.setCreatedAt(now.getTime());
             orderVO.setCreatorId(loginUser.getId());
             orderVO.setUserPhone(userDomain.getPhone());
             // 设置订单超时时间（10分钟后）
-            orderVO.setExpiredAt(new Date(now.getTime() + 10 * 60 * 1000));
+            orderVO.setExpiredAt(now.getTime() + 10 * 60 * 1000);
             this.save(orderVO);
 
             orderIds.add(orderVO.getId());
@@ -310,8 +304,6 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
 
     /**
      * 下单并支付
-     * <p>
-     * TODO 解决订单sn、交易单sn不同问题，前台显示订单sn，但在微信商户的是交易单sn，查询起来费劲
      *
      * @param orderVO
      * @return
@@ -412,8 +404,8 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
 
     @Transactional(rollbackFor = Exception.class)
     public void payNotify(HttpServletRequest request) {
-        Date now = new Date();
-        log.info("=============微信支付回调========");
+        Long now = System.currentTimeMillis();
+
         // 初始化map，给微信响应用
         Map<String, String> map = new HashMap<>(2);
         try {
@@ -446,10 +438,8 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
             Transaction decryptObject = parser.parse(requestParam, Transaction.class);
             if (decryptObject != null) {
                 // 支付成功
-                log.info("=============微信支付回调========trade_status:" + decryptObject.getTradeState());
                 if (Transaction.TradeStateEnum.SUCCESS.equals(decryptObject.getTradeState())) {
                     // 处理支付成功逻辑
-                    log.info("进入try catch");
                     try {
                         // 下面就是做支付成功的逻辑
                         String sn = decryptObject.getOutTradeNo();
@@ -458,8 +448,7 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
                             .select(ORDER_TRADE.ID, ORDER_TRADE.CREATOR_ID, ORDER_TRADE.SALESPERSON_ID)
                             .where(ORDER_TRADE.SN.eq(sn)).limit(1).one();
 
-                        // TODO 根据类型判断，票务直接40，商品20
-                        this.updateChain().set(ORDER.TRADE_STATUS, 40).set(ORDER.REFUND_STATUS, 11)
+                        this.updateChain().set(ORDER.TRADE_STATUS, 20).set(ORDER.REFUND_STATUS, 11)
                             .where(ORDER.ORDER_TRADE_ID.eq(orderTradeDomain.getId())).update();
 
                         // 查询票务或场次订单
@@ -487,7 +476,6 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
                                     ticketUserVO.setTicketId(orderSkuDomain.getTicketId());
                                     ticketUserVO.setOrderId(orderSkuDomain.getOrderId());
                                     ticketUserVO.setOrderSkuId(orderSkuDomain.getId());
-                                    // TODO: 创建票务时，如果配置可用范围，核销次数根据可用范围计算总和
                                     ticketUserVO.setRemainingValidationCount(ticketDomain.getValidationCount());
                                     ticketUserVO.setCreatedAt(now);
                                     ticketUserVO.setCreatorId(orderTradeDomain.getCreatorId());
@@ -506,13 +494,12 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
                                 }
 
                                 ticketUserValidityService.saveBatch(userValidities);
+
+                                // 创建分销
+                                distributionSalesService.createTicket(orderTradeDomain.getSalespersonId(),
+                                    orderSkuDomain.getOrderId(), orderSkuDomain.getTicketId(), ticketUserIds);
                             }
                         });
-
-                        // 创建分销
-                        // TODO 支持交易单，多种票
-                        distributionSalesService.createTicket(orderTradeDomain.getSalespersonId(),
-                            orderSkus.get(0).getOrderId(), orderSkus.get(0).getTicketId(), ticketUserIds);
 
                         //响应微信
                         map.put("code", "SUCCESS");
@@ -762,68 +749,106 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
 
     /**
      * 退款
-     * <p>
-     * TODO 重新处理逻辑，有的地方用orderId，有的地方用OrderTradeId，统一下
      *
      * @param orderVO
      */
     @Transactional(rollbackFor = Exception.class)
     public void refund(OrderVO orderVO) {
-        if (orderVO.getOrderTradeId() == null) {
+        if (orderVO.getId() == null && orderVO.getOrderTradeId() == null) {
             return;
         }
 
-        OrderVO order =
-            this.queryChain().select(ORDER_TRADE.SN, ORDER_TRADE.AMOUNT_PAID, ORDER.ID, ORDER.ORDER_TRADE_ID)
-                .innerJoin(ORDER_TRADE).on(ORDER_TRADE.ID.eq(ORDER.ORDER_TRADE_ID))
-                .where(ORDER.ORDER_TRADE_ID.eq(orderVO.getOrderTradeId())).oneAs(OrderVO.class);
+        Long orderTradeId = orderVO.getOrderTradeId();
 
-        // 如果有票务，根据票务状态计算退款金额
-        List<TicketUserDomain> ticketUsers =
-            ticketUserService.queryChain().select(TICKET_USER.ID, TICKET_USER.ORDER_SKU_ID, TICKET_USER.STATUS)
-                .where(TICKET_USER.ORDER_ID.eq(order.getId())).list();
+        List<OrderDomain> orders;
+        if (orderVO.getId() != null) {
+            OrderDomain order =
+                this.queryChain().select(ORDER.ID, ORDER.ORDER_TRADE_ID, ORDER.AMOUNT_PAID).where(ORDER.ID.eq(orderVO.getId()))
+                    .one();
+            if (order == null) {
+                return;
+            }
+            orderTradeId = order.getOrderTradeId();
+            orders = Collections.singletonList(order);
+        } else {
+            orders = this.queryChain().select(ORDER.ID, ORDER.AMOUNT_PAID).where(ORDER.ORDER_TRADE_ID.eq(orderTradeId)).list();
+            if (orders == null || orders.isEmpty()) {
+                return;
+            }
+        }
 
-        // TODO: 支持根据核销次数判断退款
-        Long refundTotal = order.getAmountPaid();
-        Long refundAmount = ticketUsers.size() > 0 ? 0 : order.getAmountPaid();
-        if (ticketUsers.size() > 0) {
-            List<OrderSkuDomain> orderSkus =
-                orderSkuService.queryChain().select(ORDER_SKU.ID, ORDER_SKU.QUANTITY, ORDER_SKU.AMOUNT_PAID)
-                    .where(ORDER_SKU.ORDER_ID.eq(order.getId())).list();
+        OrderTradeDomain orderTrade =
+            orderTradeService.queryChain().select(ORDER_TRADE.ID, ORDER_TRADE.SN, ORDER_TRADE.AMOUNT_PAID)
+                .where(ORDER_TRADE.ID.eq(orderTradeId)).one();
+        if (orderTrade == null) {
+            return;
+        }
 
-            // 未核销的可退款
-            Map<Long, Integer> skuRefundCount = new HashMap<>(orderSkus.size());
-            List<Long> refundTicketIds = new ArrayList<>(orderSkus.size());
-            ticketUsers.forEach(ticketUserDomain -> {
-                Integer refundCount = skuRefundCount.getOrDefault(ticketUserDomain.getOrderSkuId(), 0);
+        long refundTotal = Optional.ofNullable(orderTrade.getAmountPaid()).orElse(0L);
+        long refundAmount = 0L;
 
-                if (ticketUserDomain.getStatus().equals(10)) {
-                    skuRefundCount.put(ticketUserDomain.getOrderSkuId(), ++refundCount);
+        // 一个交易单，多个订单
+        for (OrderDomain order : orders) {
+            Long orderId = order.getId();
+
+            // 如果有票务，根据票务状态计算退款金额
+            List<TicketUserDomain> ticketUsers = ticketUserService.queryChain()
+                .select(TICKET_USER.ID, TICKET_USER.ORDER_SKU_ID, TICKET_USER.STATUS)
+                .where(TICKET_USER.ORDER_ID.eq(orderId)).list();
+
+            long orderRefundAmount = Optional.ofNullable(order.getAmountPaid()).orElse(0L);
+            if (ticketUsers != null && !ticketUsers.isEmpty()) {
+                orderRefundAmount = 0L;
+
+                List<OrderSkuDomain> orderSkus = orderSkuService.queryChain()
+                    .select(ORDER_SKU.ID, ORDER_SKU.QUANTITY, ORDER_SKU.AMOUNT_PAID)
+                    .where(ORDER_SKU.ORDER_ID.eq(orderId)).list();
+                if (orderSkus == null) {
+                    orderSkus = Collections.emptyList();
+                }
+
+                // 未核销的可退款
+                Map<Long, Integer> skuRefundCount = new HashMap<>(orderSkus.size());
+                List<Long> refundTicketIds = new ArrayList<>(ticketUsers.size());
+
+                for (TicketUserDomain ticketUserDomain : ticketUsers) {
+                    if (!Integer.valueOf(10).equals(ticketUserDomain.getStatus())) {
+                        continue;
+                    }
+
+                    Long orderSkuId = ticketUserDomain.getOrderSkuId();
+                    Integer count = skuRefundCount.getOrDefault(orderSkuId, 0);
+                    skuRefundCount.put(orderSkuId, count + 1);
 
                     // 分销扣除
                     distributionSalesService.refundTicket(ticketUserDomain.getId());
-
                     refundTicketIds.add(ticketUserDomain.getId());
                 }
-            });
 
-            if (refundTicketIds.size() > 0) {
-                ticketUserService.updateChain().set(TICKET_USER.STATUS, 99).where(TICKET_USER.ID.in(refundTicketIds))
-                    .update();
-            }
-
-            for (OrderSkuDomain orderSku : orderSkus) {
-                Integer refundCount = skuRefundCount.get(orderSku.getId());
-
-                if (refundCount <= 0) {
-                    continue;
+                if (!refundTicketIds.isEmpty()) {
+                    ticketUserService.updateChain().set(TICKET_USER.STATUS, 99).where(TICKET_USER.ID.in(refundTicketIds))
+                        .update();
                 }
 
-                // 计算退款金额
-                refundAmount += orderSku.getAmountPaid() / orderSku.getQuantity() * refundCount;
+                for (OrderSkuDomain orderSku : orderSkus) {
+                    int refundCount = skuRefundCount.getOrDefault(orderSku.getId(), 0);
+                    if (refundCount <= 0) {
+                        continue;
+                    }
+
+                    // 计算退款金额
+                    orderRefundAmount += orderSku.getAmountPaid() / orderSku.getQuantity() * refundCount;
+                }
             }
 
+            refundAmount += orderRefundAmount;
+
+            super.updateChain().set(ORDER.TRADE_STATUS, 51).set(ORDER.REFUND_STATUS, 10).set(ORDER.REFUND_AMOUNT, orderRefundAmount)
+                .where(ORDER.ID.eq(orderId)).update();
         }
+
+        orderTradeService.updateChain().set(ORDER_TRADE.REFUND_AMOUNT, refundAmount)
+            .where(ORDER_TRADE.ID.eq(orderTradeId)).update();
 
         // 微信退款
         Long applicationId = Context.applicationId();
@@ -833,15 +858,7 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
             projectPlatformPayDomain.getWechatMerchantCertificateSerial(),
             projectPlatformPayDomain.getWechatMerchantPublicKey(),
             projectPlatformPayDomain.getWechatMerchantPublicKeyId(), projectPlatformPayDomain.getWechatMerchantV3(),
-            refundTotal, refundAmount, order.getSn(), order.getSn());
-
-        // TODO: 支持一个交易单，多个订单情况
-        super.updateChain().set(ORDER.TRADE_STATUS, 51).set(ORDER.REFUND_STATUS, 10)
-            .set(ORDER.REFUND_AMOUNT, refundAmount).where(ORDER.ORDER_TRADE_ID.eq(orderVO.getOrderTradeId())).update();
-
-        orderTradeService.updateChain().set(ORDER_TRADE.REFUND_AMOUNT, refundAmount)
-            .where(ORDER_TRADE.ID.eq(orderVO.getOrderTradeId())).update();
-
+            refundTotal, refundAmount, orderTrade.getSn(), orderTrade.getSn());
     }
 
     /**
@@ -900,7 +917,7 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
         }
 
         // 检查订单是否过期
-        if (order.getExpiredAt() != null && order.getExpiredAt().before(new Date())) {
+        if (order.getExpiredAt() != null && order.getExpiredAt() < System.currentTimeMillis()) {
             throw new ThrowPrompt("订单已过期，无法支付");
         }
 

@@ -62,5 +62,5 @@ public class DistributionSalesDomain extends BaseDomainRecord<DistributionSalesD
     @Schema(description = "类型 10-销售单 20-结算单")
     private Integer type;
 
-    private Date createdAt;
+    private Long createdAt;
 }

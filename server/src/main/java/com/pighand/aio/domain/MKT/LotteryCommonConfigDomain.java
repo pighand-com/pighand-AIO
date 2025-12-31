@@ -109,4 +109,50 @@ public class LotteryCommonConfigDomain extends BaseDomainRecord<LotteryCommonCon
     @Length(max = 255)
     @Schema(description = "结果通知url。小程序页面或url")
     private String resultNotifyUrl;
+
+    /**
+     * 中奖通知-未中奖文案模板
+     *
+     * 支持变量：
+     * - {{lotteryId}} / {{id}}：抽奖ID
+     * - {{lotteryTitle}}：抽奖标题
+     */
+    @Length(max = 255)
+    @Schema(description = "中奖通知-未中奖文案模板")
+    private String notifyPrizeNoWinText;
+
+    /**
+     * 中奖通知-中奖文案模板
+     *
+     * 支持变量：
+     * - {{lotteryId}} / {{id}}：抽奖ID
+     * - {{lotteryTitle}}：抽奖标题
+     * - {{prizeName}}：奖品名称
+     */
+    @Length(max = 255)
+    @Schema(description = "中奖通知-中奖文案模板")
+    private String notifyPrizeWinTemplate;
+
+    /**
+     * 微信小程序模板消息data配置，json数组
+     *
+     * item字段：
+     * - key：模板data字段，如 thing10/thing4
+     * - value：支持变量或固定字符串
+     *
+     * 支持变量：
+     * - {{lotteryId}} / {{id}}：抽奖ID
+     * - {{lotteryTitle}}：抽奖标题
+     * - {{prizeName}}：奖品名称（未中奖为空）
+     * - {{prizeText}}：最终展示文案（根据中奖/未中奖模板计算）
+     */
+    @Schema(description = "微信小程序模板消息data配置", implementation = EmptyObject.class)
+    @Column(typeHandler = JacksonTypeHandler.class)
+    private List<WechatNotifyItem> wechatNotifyData;
+
+    @Data
+    public static class WechatNotifyItem {
+        private String key;
+        private String value;
+    }
 }

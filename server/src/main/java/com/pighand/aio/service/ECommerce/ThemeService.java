@@ -3,6 +3,7 @@ package com.pighand.aio.service.ECommerce;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.pighand.aio.domain.ECommerce.ThemeDomain;
 import com.pighand.aio.mapper.ECommerce.ThemeMapper;
+import com.pighand.aio.service.base.StoreService;
 import com.pighand.aio.service.common.UploadService;
 import com.pighand.aio.vo.ECommerce.ThemeVO;
 import com.pighand.framework.spring.base.BaseServiceImpl;
@@ -29,6 +30,8 @@ public class ThemeService extends BaseServiceImpl<ThemeMapper, ThemeDomain>  {
 
     private final UploadService uploadService;
 
+    private final StoreService storeService;
+
     /**
      * 创建
      *
@@ -52,7 +55,11 @@ public class ThemeService extends BaseServiceImpl<ThemeMapper, ThemeDomain>  {
     public ThemeVO find(Long id) {
         ThemeVO theme = super.mapper.find(id, SESSION.getTableName(), SESSION_TEMPLATE.getTableName());
 
-        // TODO: 无客服二维码，使用门店客服二维码
+        // 无客服二维码，使用门店客服二维码
+        if (theme.getServiceQrUrl() == null) {
+            StoreVO store = storeService.find(theme.getStoreId());
+            theme.setServiceQrUrl(store.getServiceQrUrl());
+        }
 
         return theme;
     }

@@ -26,7 +26,6 @@ import org.springdoc.core.customizers.PropertyCustomizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -42,9 +41,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -59,7 +56,7 @@ import java.util.concurrent.TimeUnit;
 @Import({HttpExchangeRegister.class, JacksonSerializer.class})
 public class Application {
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         // 主键生成器
         FlexGlobalConfig.KeyConfig keyConfig = new FlexGlobalConfig.KeyConfig();
         keyConfig.setKeyType(KeyType.Generator);
@@ -151,27 +148,6 @@ public class Application {
         @Override
         public void addFormatters(FormatterRegistry registry) {
             registry.addConverterFactory(new StringToEnumConverterFactory());
-        }
-    }
-
-    /**
-     * Jackson配置
-     * TODO：现在无效，跟import中重复，合并下。Long转换也统一转换
-     */
-    @Configuration
-    public class JacksonConfig {
-
-        /**
-         * 日期格式转换
-         *
-         * @return
-         */
-        @Bean
-        public Jackson2ObjectMapperBuilderCustomizer customizer() {
-            return builder -> {
-                builder.deserializerByType(Date.class, new MultiDateDeserializer());
-                builder.deserializerByType(LocalDateTime.class, new MultiLocalDateTimeDeserializer());
-            };
         }
     }
 

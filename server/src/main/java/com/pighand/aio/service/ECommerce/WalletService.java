@@ -69,12 +69,6 @@ public class WalletService extends BaseServiceImpl<WalletMapper, WalletDomain>  
         Long fromUserId =
             isFromSystem ? null : Optional.ofNullable(walletTransferVO.getFromUserId()).orElse(loginUser.getId());
 
-        // TODO 测试账号
-        if (fromUserId.equals(21616834167000181L) || fromUserId.equals(21624104966000138L) || fromUserId.equals(
-            21624122354000176L)) {
-            isFromSystem = true;
-        }
-
         if (toUser.getId().equals(fromUserId)) {
             //            throw new ThrowPrompt("不能给自己转账");
             isFromSystem = true;

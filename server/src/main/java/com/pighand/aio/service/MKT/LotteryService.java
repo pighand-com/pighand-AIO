@@ -10,7 +10,6 @@ import com.pighand.aio.domain.MKT.LotteryParticipatePrizeDomain;
 import com.pighand.aio.domain.base.ApplicationPlatformKeyDomain;
 import com.pighand.aio.domain.base.UserWechatDomain;
 import com.pighand.aio.mapper.MKT.LotteryCommonConfigMapper;
-import com.pighand.aio.service.MKT.LotteryCommonUserService;
 import com.pighand.aio.service.MKT.lotteryType.LotteryTypeService;
 import com.pighand.aio.service.base.ApplicationPlatformKeyService;
 import com.pighand.aio.service.base.UserWechatService;
@@ -122,12 +121,11 @@ public class LotteryService extends BaseServiceImpl<LotteryCommonConfigMapper, L
         // 参与人数
         lotteryVO.setParticipateCount(lotteryCommonUserService.count(id));
 
-        Date now = new Date();
-        // TODO: 解决时间问题，库和代码必须时区相同，要不有问题
-        Date localBegin = new Date(lotteryVO.getBeginTime().getTime() - 8 * 60 * 60 * 1000);
-        Date localEnd = new Date(lotteryVO.getEndTime().getTime() - 8 * 60 * 60 * 1000);
-        lotteryVO.setIsBegin(localBegin.before(now));
-        lotteryVO.setIsEnd(localEnd.before(now));
+        long now = System.currentTimeMillis();
+        Long beginTime = lotteryVO.getBeginTime();
+        Long endTime = lotteryVO.getEndTime();
+        lotteryVO.setIsBegin(beginTime != null && beginTime <= now);
+        lotteryVO.setIsEnd(endTime != null && endTime <= now);
 
         return lotteryVO;
     }
@@ -161,11 +159,13 @@ public class LotteryService extends BaseServiceImpl<LotteryCommonConfigMapper, L
 
         // 查询开奖时间是当天之后的
         if (lotteryVO.getIsQueryFinish() != null && lotteryVO.getIsQueryFinish()) {
-            Date nowBegin = new Date();
-            nowBegin.setHours(0);
-            nowBegin.setMinutes(0);
-            nowBegin.setSeconds(0);
-            queryWrapper.and(LOTTERY_COMMON_CONFIG.DRAW_TIME.gt(nowBegin));
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            long todayBegin = calendar.getTimeInMillis();
+            queryWrapper.and(LOTTERY_COMMON_CONFIG.DRAW_TIME.gt(todayBegin));
         }
 
         return super.mapper.query(lotteryVO, queryWrapper);
@@ -230,11 +230,10 @@ public class LotteryService extends BaseServiceImpl<LotteryCommonConfigMapper, L
      * 抽奖所有活动
      */
     public void drawAll() {
-        // TODO: 解决时间问题，库和代码必须时区相同，要不有问题
         List<LotteryCommonConfigDomain> configs =
             this.queryChain().select(LOTTERY_COMMON_CONFIG.ID, LOTTERY_COMMON_CONFIG.LOTTERY_TYPE)
                 .where(LOTTERY_COMMON_CONFIG.DRAW_STATUS.eq(10))
-                .and(LOTTERY_COMMON_CONFIG.DRAW_TIME.le(new Date(new Date().getTime() + 8 * 60 * 60 * 1000))).list();
+                .and(LOTTERY_COMMON_CONFIG.DRAW_TIME.le(System.currentTimeMillis())).list();
 
         configs.forEach(config -> draw(config.getId(), config.getLotteryType()));
     }
@@ -249,8 +248,8 @@ public class LotteryService extends BaseServiceImpl<LotteryCommonConfigMapper, L
             .select(LOTTERY_COMMON_CONFIG.ID, LOTTERY_COMMON_CONFIG.LOTTERY_TYPE, LOTTERY_COMMON_CONFIG.DRAW_TIME)
             .where(LOTTERY_COMMON_CONFIG.ID.eq(id)).one();
 
-        if (config == null || config.getDrawStatus() != 10 || (config.getDrawTime() != null && config.getDrawTime()
-            .before(new Date()))) {
+        if (config == null || config.getDrawStatus() != 10
+            || (config.getDrawTime() != null && config.getDrawTime() < System.currentTimeMillis())) {
             return;
         }
 
@@ -280,7 +279,6 @@ public class LotteryService extends BaseServiceImpl<LotteryCommonConfigMapper, L
     }
 
     public void drawNotifyAll() {
-        // TODO: 解决时间问题，库和代码必须时区相同，要不有问题
         List<LotteryCommonConfigDomain> configs =
             this.queryChain().select(LOTTERY_COMMON_CONFIG.ID, LOTTERY_COMMON_CONFIG.LOTTERY_TYPE)
                 .innerJoin(NOTIFY_CONFIG_WECHAT_APPLET)
@@ -288,15 +286,14 @@ public class LotteryService extends BaseServiceImpl<LotteryCommonConfigMapper, L
                     .and(NOTIFY_CONFIG_WECHAT_APPLET.DATA_TYPE.eq(100))
                     .and(NOTIFY_CONFIG_WECHAT_APPLET.NOTIFIED.eq(false)))
                 .where(LOTTERY_COMMON_CONFIG.DRAW_STATUS.eq(30))
-                .and(LOTTERY_COMMON_CONFIG.DRAW_TIME.le(new Date(new Date().getTime() + 8 * 60 * 60 * 1000)))
-                .and(LOTTERY_COMMON_CONFIG.END_TIME.le(new Date(new Date().getTime() + 8 * 60 * 60 * 1000))).list();
+                .and(LOTTERY_COMMON_CONFIG.DRAW_TIME.le(System.currentTimeMillis()))
+                .and(LOTTERY_COMMON_CONFIG.END_TIME.le(System.currentTimeMillis())).list();
 
         configs.forEach(config -> drawNotify(config.getId()));
     }
 
     /**
      * 开奖通知
-     * TODO: 优化逻辑，字段改为替换方式，不是写死
      *
      * @param lotteryId
      */
@@ -307,10 +304,6 @@ public class LotteryService extends BaseServiceImpl<LotteryCommonConfigMapper, L
         if (notifyConfigWechatApplet == null || notifyConfigWechatApplet.getNotified()) {
             return;
         }
-
-        // TODO: notified 传 true无效，只能是1
-        notifyConfigWechatAppletService.updateChain().set(NOTIFY_CONFIG_WECHAT_APPLET.NOTIFIED, 1)
-            .where(NOTIFY_CONFIG_WECHAT_APPLET.ID.eq(notifyConfigWechatApplet.getId())).update();
 
         ApplicationPlatformKeyDomain key = projectPlatformKeyService.findByPlatform(PlatformEnum.WECHAT_APPLET);
         String accessToken = WechatSDK.MINI_APPLET.accessToken(key.getAppid(), key.getSecret(), "client_credential");
@@ -329,12 +322,16 @@ public class LotteryService extends BaseServiceImpl<LotteryCommonConfigMapper, L
 
         // 查询抽奖详情
         LotteryCommonConfigDomain lottery = super.mapper.find(lotteryId);
+        if (lottery == null || VerifyUtils.isEmpty(lottery.getWechatNotifyData())) {
+            notifyConfigWechatAppletService.updateChain().set(NOTIFY_CONFIG_WECHAT_APPLET.NOTIFIED, 1)
+                .where(NOTIFY_CONFIG_WECHAT_APPLET.ID.eq(notifyConfigWechatApplet.getId())).update();
+            return;
+        }
 
         // 查询用户中奖信息
         LotteryCommonUserVO lotteryCommonUserVO = new LotteryCommonUserVO();
         lotteryCommonUserVO.setLotteryId(lotteryId);
         PageOrList<LotteryCommonUserVO> lotteryUsers = lotteryCommonUserService.query(lotteryCommonUserVO);
-        String prizeName = "很遗憾您本次未中奖";
 
         // 查询奖品信息
         LotteryTypeService typeService = this.getLotteryTypeService(lottery.getLotteryType());
@@ -344,39 +341,76 @@ public class LotteryService extends BaseServiceImpl<LotteryCommonConfigMapper, L
             prizesMap.put(typeService.getPrizeId(prize), prize);
         }
 
+        ObjectMapper objectMapper = new ObjectMapper();
         for (LotteryCommonUserVO record : lotteryUsers.getRecords()) {
-            if (record.getPrizeId() == null) {
-                continue;
+            String prizeName = "";
+            if (record.getPrizeId() != null) {
+                Object prize = prizesMap.get(record.getPrizeId());
+                if (prize instanceof LotteryParticipatePrizeDomain) {
+                    prizeName = ((LotteryParticipatePrizeDomain)prize).getName();
+                }
             }
 
-            Object prize = prizesMap.get(record.getPrizeId());
-            if (prize == null) {
-                continue;
-            }
+            Map<String, String> vars = new HashMap<>(8);
+            vars.put("id", lotteryId.toString());
+            vars.put("lotteryId", lotteryId.toString());
+            vars.put("lotteryTitle", Optional.ofNullable(lottery.getTitle()).orElse(""));
+            vars.put("prizeName", Optional.ofNullable(prizeName).orElse(""));
 
-            if (prize instanceof LotteryParticipatePrizeDomain) {
-                prizeName = "恭喜您获得" + ((LotteryParticipatePrizeDomain)prize).getName();
-            }
+            boolean isWin = VerifyUtils.isNotEmpty(prizeName);
+            String noWinTemplate =
+                Optional.ofNullable(lottery.getNotifyPrizeNoWinText()).orElse("很遗憾您本次未中奖");
+            String winTemplate =
+                Optional.ofNullable(lottery.getNotifyPrizeWinTemplate()).orElse("恭喜您获得{{prizeName}}");
 
-            // 组装data格式
+            String prizeText = isWin ? replaceTemplateVars(winTemplate, vars) : replaceTemplateVars(noWinTemplate, vars);
+            vars.put("prizeText", Optional.ofNullable(prizeText).orElse(""));
+
             HashMap<String, Object> data = new HashMap<>();
-            data.put("thing10", Map.of("value", lottery.getTitle()));
-            data.put("thing4", Map.of("value", prizeName));
-            data.put("thing1", Map.of("value", "鲁小班提示您奖品即将过期请尽快兑换"));
+            for (LotteryCommonConfigDomain.WechatNotifyItem item : lottery.getWechatNotifyData()) {
+                if (item == null || VerifyUtils.isEmpty(item.getKey())) {
+                    continue;
+                }
+                String value = Optional.ofNullable(item.getValue()).orElse("");
+                value = replaceTemplateVars(value, vars);
+                data.put(item.getKey(), Map.of("value", value));
+            }
 
             params.put("data", data);
 
             UserWechatDomain user =
                 userWechatService.queryChain().where(USER_WECHAT.USER_ID.eq(record.getUserId())).one();
+            if (user == null || VerifyUtils.isEmpty(user.getOpenid())) {
+                continue;
+            }
             params.put("touser", user.getOpenid());
 
             // TODO: 不计算body服务器上报412
             HashMap headers = new HashMap<>(1);
-            String body = new ObjectMapper().valueToTree(params).toString();
+            String body = objectMapper.valueToTree(params).toString();
             headers.put("Content-Length", String.valueOf(body.getBytes(StandardCharsets.UTF_8).length));
 
             WechatSDK.MINI_APPLET.sendTemplateMessage(token, params, headers);
         }
 
+        notifyConfigWechatAppletService.updateChain().set(NOTIFY_CONFIG_WECHAT_APPLET.NOTIFIED, 1)
+            .where(NOTIFY_CONFIG_WECHAT_APPLET.ID.eq(notifyConfigWechatApplet.getId())).update();
+    }
+
+    private String replaceTemplateVars(String template, Map<String, String> vars) {
+        if (template == null || vars == null || vars.isEmpty()) {
+            return template;
+        }
+
+        String result = template;
+        for (Map.Entry<String, String> entry : vars.entrySet()) {
+            String key = entry.getKey();
+            if (key == null) {
+                continue;
+            }
+            String value = Optional.ofNullable(entry.getValue()).orElse("");
+            result = result.replace("{{" + key + "}}", value);
+        }
+        return result;
     }
 }

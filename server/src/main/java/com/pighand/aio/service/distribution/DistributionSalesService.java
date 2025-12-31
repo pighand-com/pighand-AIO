@@ -187,7 +187,6 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
 
     /**
      * 查询明细
-     * TODO: 校验用户id
      *
      * @param distributionSalesId
      * @return
@@ -316,8 +315,6 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
 
     /**
      * 计算价格预估
-     * <p>
-     * TODO 票同时只会买1中票，没必要用map
      *
      * @param objectType
      * @param objectIds
@@ -392,7 +389,7 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
         distributionSalesDomain.setOrderId(orderId);
         distributionSalesDomain.setFrozenAmount(amount.multiply(BigDecimal.valueOf(ticketUserIds.size())));
         distributionSalesDomain.setType(10);
-        distributionSalesDomain.setCreatedAt(new Date());
+        distributionSalesDomain.setCreatedAt(System.currentTimeMillis());
         super.mapper.insert(distributionSalesDomain);
 
         for (Long ticketUserId : ticketUserIds) {
@@ -537,7 +534,6 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
         }
 
         // 将明细状态设置为冻结状态
-        // TODO: 移到service中，或者使用updateChain，方式设置其他字段为null
         distributionSalesDetail.setStatus(0);
         distributionSalesDetail.setSettlementTime(null); // 清除结算时间
         distributionSalesDetailMapper.update(distributionSalesDetail, true);

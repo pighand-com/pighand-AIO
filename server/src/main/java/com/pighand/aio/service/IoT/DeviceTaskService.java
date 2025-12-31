@@ -95,7 +95,6 @@ public class DeviceTaskService extends BaseServiceImpl<DeviceTaskMapper, DeviceT
             TcpClient.sendMessage(deviceTask.getClientId(), deviceTask.getMessage());
 
             // 更新任务状态，直接完成
-            // TODO: 可配置直接完成状态
             this.updateChain().set(DEVICE_TASK.RUNNING_STATUS, 30).set(DEVICE_TASK.RUNNING_AT, now)
                 .where(DEVICE_TASK.ID.eq(deviceTask.getId())).update();
         }

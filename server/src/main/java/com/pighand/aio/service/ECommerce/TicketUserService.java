@@ -1,13 +1,11 @@
 package com.pighand.aio.service.ECommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
-import com.mybatisflex.core.update.UpdateChain;
 import com.pighand.aio.domain.ECommerce.OrderDomain;
 import com.pighand.aio.domain.ECommerce.TicketUserDomain;
 import com.pighand.aio.domain.IoT.DeviceDomain;
 import com.pighand.aio.mapper.ECommerce.OrderMapper;
 import com.pighand.aio.mapper.ECommerce.TicketUserMapper;
-import com.pighand.aio.service.ECommerce.TicketUserValidityService;
 import com.pighand.aio.service.IoT.DeviceService;
 import com.pighand.aio.service.IoT.DeviceTaskService;
 import com.pighand.aio.service.distribution.DistributionSalesService;
@@ -107,7 +105,6 @@ public class TicketUserService extends BaseServiceImpl<TicketUserMapper, TicketU
                 queryWrapper.and(TICKET_USER.STATUS.eq(10));
                 queryWrapper.orderBy(TICKET_USER.ID.desc());
             } else {
-                // TODO: 支持查询多次核销。取消核销时候也支持多次的情况
                 queryWrapper.and(TICKET_USER.STATUS.eq(20));
                 queryWrapper.orderBy(TICKET_USER.VALIDATION_AT.desc());
             }
@@ -357,25 +354,52 @@ public class TicketUserService extends BaseServiceImpl<TicketUserMapper, TicketU
      */
     @Transactional(rollbackFor = Exception.class)
     public void cancelValidation(TicketUserVO ticketUserVO) {
-        TicketUserDomain ticketUserDomain = this.getById(ticketUserVO.getId());
-        if (ticketUserDomain == null) {
+        Integer cancelCount = Optional.ofNullable(ticketUserVO.getValidationCount()).orElse(1);
+        if (cancelCount <= 0) {
+            throw new ThrowPrompt("取消核销次数错误");
+        }
+
+        TicketUserVO ticketUser = this.queryChain()
+            .select(TICKET_USER.ID, TICKET_USER.TICKET_ID, TICKET_USER.ORDER_ID, TICKET_USER.STATUS,
+                TICKET_USER.REMAINING_VALIDATION_COUNT, TICKET_USER.VALIDATION_AT, TICKET.VALIDATION_COUNT)
+            .innerJoin(TICKET).on(TICKET.ID.eq(TICKET_USER.TICKET_ID)).where(TICKET_USER.ID.eq(ticketUserVO.getId()))
+            .oneAs(TicketUserVO.class);
+
+        if (ticketUser == null) {
             throw new ThrowPrompt("票务不存在");
         }
 
-        if (!ticketUserDomain.getStatus().equals(20)) {
+        Integer totalValidationCount = ticketUser.getValidationCount();
+        if (totalValidationCount == null || totalValidationCount <= 0) {
+            throw new ThrowPrompt("票务数据异常");
+        }
+
+        Integer remaining = Optional.ofNullable(ticketUser.getRemainingValidationCount()).orElse(0);
+        int usedCount = totalValidationCount - remaining;
+        if (usedCount <= 0) {
             throw new ThrowPrompt("票务未核销");
+        }
+        if (cancelCount > usedCount) {
+            throw new ThrowPrompt("取消核销次数超过已核销次数");
         }
 
         // 处理分销
-        distributionSalesService.freezeTicket(ticketUserDomain.getId());
+        distributionSalesService.freezeTicket(ticketUser.getId());
 
         // 还原票务
-        this.updateChain().set(TICKET_USER.REMAINING_VALIDATION_COUNT, TICKET_USER.REMAINING_VALIDATION_COUNT.add(1))
-            .set(TICKET_USER.VALIDATION_AT, null).set(TICKET_USER.STATUS, 10)
-            .where(TICKET_USER.ID.eq(ticketUserVO.getId())).update();
+        boolean isUpdate = this.updateChain()
+            .set(TICKET_USER.REMAINING_VALIDATION_COUNT, TICKET_USER.REMAINING_VALIDATION_COUNT.add(cancelCount))
+            .set(TICKET_USER.STATUS, 10).where(TICKET_USER.ID.eq(ticketUser.getId()))
+            .and(TICKET_USER.REMAINING_VALIDATION_COUNT.le(totalValidationCount - cancelCount)).update();
+        if (!isUpdate) {
+            throw new ThrowPrompt("取消核销失败");
+        }
+
+        this.updateChain().set(TICKET_USER.VALIDATION_AT, null).where(TICKET_USER.ID.eq(ticketUser.getId()))
+            .and(TICKET_USER.REMAINING_VALIDATION_COUNT.eq(totalValidationCount)).update();
 
         // 更新订单退款状态
-        OrderDomain order = orderMapper.find(ticketUserDomain.getOrderId());
+        OrderDomain order = orderMapper.find(ticketUser.getOrderId());
 
         if (order != null && order.getRefundStatus() == 10) {
             order.setRefundStatus(11);

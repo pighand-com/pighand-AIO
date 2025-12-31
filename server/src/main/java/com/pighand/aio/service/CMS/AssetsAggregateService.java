@@ -36,7 +36,6 @@ public class AssetsAggregateService {
     private final AssetsVideoMapper assetsVideoMapper;
 
     /**
-     * TODO: 优化逻辑，支持单个分类，没必要组合全部
      * 聚合查询素材（文档、图片、视频）
      * 使用UNION ALL查询优化性能，支持数据库级别分页
      *
@@ -93,24 +92,23 @@ public class AssetsAggregateService {
      * @return 处理后的资产类型列表
      */
     private List<String> processSpecialClassificationId(AssetsAggregateVO assetsAggregateVO) {
-        List<String> assetTypes = assetsAggregateVO.getAssetTypes();
-        Long classificationId = assetsAggregateVO.getClassificationId();
+                Long classificationId = assetsAggregateVO.getClassificationId();
         
         // 如果classificationId是特殊值，则转换为对应的资产类型，并清空classificationId
-        if (classificationId != null) {
-            if (classificationId == 1L) {
-                // 1-图片
-                assetTypes = List.of("image");
-                assetsAggregateVO.setClassificationId(null);
-            } else if (classificationId == 2L) {
-                // 2-视频
-                assetTypes = List.of("video");
-                assetsAggregateVO.setClassificationId(null);
-            } else if (classificationId == 3L) {
-                // 3-文档
-                assetTypes = List.of("doc");
-                assetsAggregateVO.setClassificationId(null);
-            }
+        List<String> assetTypes = null;
+        if (classificationId == 1L) {
+            // 1-图片
+            assetTypes = List.of("image");
+            assetsAggregateVO.setClassificationId(null);
+        } else if (classificationId == 2L) {
+            // 2-视频
+            assetTypes = List.of("video");
+            assetsAggregateVO.setClassificationId(null);
+        } else if (classificationId == 3L) {
+            // 3-文档
+            assetTypes = List.of("doc");
+            assetsAggregateVO.setClassificationId(null);
+        } else {
             // 其他值保持原有的classificationId，按表中的classificationId搜索
         }
         

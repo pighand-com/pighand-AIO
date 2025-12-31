@@ -197,11 +197,11 @@ public class QuestionBankService extends BaseServiceImpl<QuestionBankMapper, Que
         LoginUser loginUser = Context.loginUser();
 
         // 检查答题间隙
-        //        QuestionBankDomain questionBankDomain = this.getById(questionBandId);
-        //        this.checkFrequencyGap(questionBankDomain);
-        //
+        QuestionBankDomain questionBankDomain = this.getById(questionBandId);
+        this.checkFrequencyGap(questionBankDomain);
+        
         QuestionAnswerResultVO result = new QuestionAnswerResultVO();
-        //        result.setCoolingTime(System.currentTimeMillis() + questionBankDomain.getFrequencyGap() * 1000);
+        result.setCoolingTime(System.currentTimeMillis() + questionBankDomain.getFrequencyGap() * 1000);
 
         // 查询题目答案
         List<Long> answerIds = answer.stream().map(QuestionAnswerDomain::getQuestionSetId).collect(Collectors.toList());
@@ -240,8 +240,7 @@ public class QuestionBankService extends BaseServiceImpl<QuestionBankMapper, Que
                 correctIds.add(answerDomain.getQuestionSetId());
             } else if (20 == questionSetDomain.getType()) {
                 // 单选
-                // TODO: 改为VerifyUtils.isEmpty
-                if (answerOption == null || answerOption.size() == 0) {
+                if (VerifyUtils.isEmpty(answerOption)) {
                     throw new ThrowPrompt("答案不完整");
                 } else if (answerOption.size() > 1) {
                     throw new ThrowPrompt("答案只能是单选");
@@ -278,27 +277,6 @@ public class QuestionBankService extends BaseServiceImpl<QuestionBankMapper, Que
 
         result.setCorrectIds(correctIds);
         result.setIncorrectIds(incorrectIds);
-
-        // 全部成功，创建任务
-        // TODO 失败不创建
-        if (incorrectIds.size() == 0 || correctIds.size() == 0) {
-            DeviceTaskVO deviceTaskVO = new DeviceTaskVO();
-            deviceTaskVO.setDeviceId(deviceId);
-            deviceTaskVO.setCreatedAt(now);
-            deviceTaskVO.setCreatorId(loginUser.getId());
-            deviceTaskVO.setRunningStatus(0);
-            deviceTaskVO.setMessage("");
-
-            DeviceDomain deviceDomain = deviceService.find(deviceId);
-            if (deviceDomain != null && deviceDomain.getConfig() == null) {
-                deviceTaskVO.setRunningStatus(10);
-                deviceTaskVO.setMessage("AABBCC" + deviceDomain.getSn() + "030301FF");
-            }
-
-            deviceTaskService.create(deviceTaskVO);
-
-            result.setDeviceTaskId(deviceTaskVO.getId());
-        }
 
         return result;
     }

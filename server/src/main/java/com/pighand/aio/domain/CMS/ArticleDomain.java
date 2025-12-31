@@ -6,6 +6,10 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.pighand.aio.common.enums.ArticleTypeEnum;
+import com.pighand.aio.common.enums.AssetsStatusEnum;
+import com.pighand.aio.common.enums.ArticleTypeEnum;
+import com.pighand.aio.common.enums.AssetsStatusEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecord;
@@ -48,7 +52,7 @@ public class ArticleDomain extends BaseDomainRecord<ArticleDomain> implements Se
 
     @Column("type")
     @Schema(description = "类型 10图片 20视频 30文件")
-    private Integer type;
+    private ArticleTypeEnum type;
 
     @Length(max = 65535)
     private String fileUrl;
@@ -59,7 +63,7 @@ public class ArticleDomain extends BaseDomainRecord<ArticleDomain> implements Se
 
     @Column("status")
     @Schema(description = "状态 10上架 20下架")
-    private Integer status;
+    private AssetsStatusEnum status;
 
     private Long creatorId;
 

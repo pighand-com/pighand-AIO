@@ -131,8 +131,8 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
             if (orderVO == null) {
                 orderVO = new OrderVO();
                 orderVO.setSn(IDGenerator.generate(TableIdEnum.ORDER, BillTypeEnum.PAYMENT));
-                orderVO.setTradeStatus(10);
-                orderVO.setRefundStatus(10);
+                orderVO.setTradeStatus(OrderTradeStatusEnum.PENDING_PAYMENT);
+                orderVO.setRefundStatus(OrderRefundStatusEnum.NOT_REFUNDABLE);
                 orderVO.setAmountPaid(0L);
                 orderVO.setAmountPayable(0L);
                 orderVO.setOrderSku(new ArrayList<>(goods.size()));
@@ -448,7 +448,7 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
                             .select(ORDER_TRADE.ID, ORDER_TRADE.CREATOR_ID, ORDER_TRADE.SALESPERSON_ID)
                             .where(ORDER_TRADE.SN.eq(sn)).limit(1).one();
 
-                        this.updateChain().set(ORDER.TRADE_STATUS, 20).set(ORDER.REFUND_STATUS, 11)
+                        this.updateChain().set(ORDER.TRADE_STATUS, OrderTradeStatusEnum.PAID).set(ORDER.REFUND_STATUS, OrderRefundStatusEnum.REFUNDABLE)
                             .where(ORDER.ORDER_TRADE_ID.eq(orderTradeDomain.getId())).update();
 
                         // 查询票务或场次订单
@@ -733,17 +733,17 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
         }
 
         switch (orderDomain.getTradeStatus()) {
-            case 10:
+            case PENDING_PAYMENT:
                 throw new ThrowPrompt("订单未支付");
-            case 40:
+            case RECEIVED:
                 throw new ThrowPrompt("设备已领取");
-            case 50:
+            case CANCELLED:
                 throw new ThrowPrompt("订单已取消");
-            case 51:
+            case REFUNDED:
                 throw new ThrowPrompt("订单已退款");
         }
 
-        this.updateChain().set(ORDER.TRADE_STATUS, 40).set(ORDER.REFUND_STATUS, 11).set(ORDER.EVALUATION_STATUS, 20)
+        this.updateChain().set(ORDER.TRADE_STATUS, OrderTradeStatusEnum.RECEIVED).set(ORDER.REFUND_STATUS, OrderRefundStatusEnum.REFUNDABLE).set(ORDER.EVALUATION_STATUS, OrderEvaluationStatusEnum.PENDING)
             .where(ORDER.ID.eq(id)).update();
     }
 
@@ -812,7 +812,7 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
                 List<Long> refundTicketIds = new ArrayList<>(ticketUsers.size());
 
                 for (TicketUserDomain ticketUserDomain : ticketUsers) {
-                    if (!Integer.valueOf(10).equals(ticketUserDomain.getStatus())) {
+                    if (!TicketUserStatusEnum.UNUSED.equals(ticketUserDomain.getStatus())) {
                         continue;
                     }
 
@@ -826,7 +826,7 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
                 }
 
                 if (!refundTicketIds.isEmpty()) {
-                    ticketUserService.updateChain().set(TICKET_USER.STATUS, 99).where(TICKET_USER.ID.in(refundTicketIds))
+                    ticketUserService.updateChain().set(TICKET_USER.STATUS, TicketUserStatusEnum.REFUNDED).where(TICKET_USER.ID.in(refundTicketIds))
                         .update();
                 }
 
@@ -912,7 +912,7 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
         }
 
         // 检查订单状态
-        if (!Integer.valueOf(10).equals(order.getTradeStatus())) {
+        if (!OrderTradeStatusEnum.PENDING_PAYMENT.equals(order.getTradeStatus())) {
             throw new ThrowPrompt("订单已支付或状态不允许支付");
         }
 

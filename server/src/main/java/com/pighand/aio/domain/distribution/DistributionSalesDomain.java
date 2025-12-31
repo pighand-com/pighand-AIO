@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.pighand.aio.common.enums.DistributionSalesTypeEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
@@ -60,7 +61,7 @@ public class DistributionSalesDomain extends BaseDomainRecord<DistributionSalesD
 
     @Column("type")
     @Schema(description = "类型 10-销售单 20-结算单")
-    private Integer type;
+    private DistributionSalesTypeEnum type;
 
     private Long createdAt;
 }

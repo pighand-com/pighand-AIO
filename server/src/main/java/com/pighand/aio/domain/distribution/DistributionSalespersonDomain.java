@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.pighand.aio.common.enums.DistributionSalespersonStatusEnum;
+import com.pighand.aio.common.enums.DistributionSalespersonStatusEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
@@ -48,5 +50,5 @@ public class DistributionSalespersonDomain extends BaseDomainRecord<Distribution
 
     @Column("status")
     @Schema(description = "状态：10=启用，0=禁用")
-    private Integer status;
+    private DistributionSalespersonStatusEnum status;
 }

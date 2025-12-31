@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.pighand.aio.common.enums.OrderEvaluationStatusEnum;
+import com.pighand.aio.common.enums.OrderRefundStatusEnum;
+import com.pighand.aio.common.enums.OrderTradeStatusEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecord;
@@ -64,13 +67,13 @@ public class OrderDomain extends BaseDomainRecord<OrderDomain> implements Serial
     private String remark;
 
     @Schema(description = "交易状态 10待支付 20已支付/代发货/部分发货 30全部已发货/待收货 40确认收货 50超时取消 51全部退款")
-    private Integer tradeStatus;
+    private OrderTradeStatusEnum tradeStatus;
 
     @Schema(description = "退款状态 10不可退款 11可退款 20退款申请 30退款中 40已退款")
-    private Integer refundStatus;
+    private OrderRefundStatusEnum refundStatus;
 
     @Schema(description = "评价状态 10不可评价 20待评价 30已评价")
-    private Integer evaluationStatus;
+    private OrderEvaluationStatusEnum evaluationStatus;
 
     @Schema(description = "应付金额（分）")
     private Long amountPayable;

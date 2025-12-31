@@ -1,6 +1,8 @@
 package com.pighand.aio.service.ECommerce;
 
 import com.mybatisflex.core.query.QueryWrapper;
+import com.pighand.aio.common.enums.OrderRefundStatusEnum;
+import com.pighand.aio.common.enums.TicketUserStatusEnum;
 import com.pighand.aio.domain.ECommerce.OrderDomain;
 import com.pighand.aio.domain.ECommerce.TicketUserDomain;
 import com.pighand.aio.domain.IoT.DeviceDomain;
@@ -59,7 +61,7 @@ public class TicketUserService extends BaseServiceImpl<TicketUserMapper, TicketU
      * @return
      */
     public TicketUserVO create(TicketUserVO ticketUserVO) {
-        ticketUserVO.setStatus(10);
+        ticketUserVO.setStatus(TicketUserStatusEnum.UNUSED);
         if (ticketUserVO.getValidationCount() == null) {
             ticketUserVO.setValidationCount(1);
         }
@@ -102,14 +104,14 @@ public class TicketUserService extends BaseServiceImpl<TicketUserMapper, TicketU
         // 查询可用票务
         if (ticketUserVO.getUsable() != null) {
             if (ticketUserVO.getUsable()) {
-                queryWrapper.and(TICKET_USER.STATUS.eq(10));
+                queryWrapper.and(TICKET_USER.STATUS.eq(TicketUserStatusEnum.UNUSED));
                 queryWrapper.orderBy(TICKET_USER.ID.desc());
             } else {
-                queryWrapper.and(TICKET_USER.STATUS.eq(20));
+                queryWrapper.and(TICKET_USER.STATUS.eq(TicketUserStatusEnum.USED));
                 queryWrapper.orderBy(TICKET_USER.VALIDATION_AT.desc());
             }
         } else if (ticketUserVO.getUsed() != null && ticketUserVO.getUsed()) {
-            queryWrapper.and(TICKET_USER.STATUS.eq(20));
+            queryWrapper.and(TICKET_USER.STATUS.eq(TicketUserStatusEnum.USED));
             queryWrapper.orderBy(TICKET_USER.ID.desc());
         } else {
             queryWrapper.orderBy(TICKET_USER.STATUS.asc(), TICKET_USER.ID.desc());
@@ -209,7 +211,7 @@ public class TicketUserService extends BaseServiceImpl<TicketUserMapper, TicketU
             tickets.stream().collect(Collectors.toMap(TicketUserVO::getId, TicketUserVO::getValidationCount));
 
         List<TicketUserDomain> ticketUsers =
-            this.queryChain().where(TICKET_USER.ID.in(ticketMap.keySet())).and(TICKET_USER.STATUS.eq(10))
+            this.queryChain().where(TICKET_USER.ID.in(ticketMap.keySet())).and(TICKET_USER.STATUS.eq(TicketUserStatusEnum.UNUSED))
                 .and(TICKET_USER.REMAINING_VALIDATION_COUNT.gt(0)).list();
 
         if (ticketUsers.size() == 0) {
@@ -281,7 +283,7 @@ public class TicketUserService extends BaseServiceImpl<TicketUserMapper, TicketU
 
             // 全部核销，设置核销状态
             if (ticketUserDomain.getRemainingValidationCount().equals(validationCount)) {
-                updateChain.set(TICKET_USER.STATUS, 20);
+                updateChain.set(TICKET_USER.STATUS, TicketUserStatusEnum.USED);
             }
 
             boolean isUpdate = updateChain.update();
@@ -389,7 +391,7 @@ public class TicketUserService extends BaseServiceImpl<TicketUserMapper, TicketU
         // 还原票务
         boolean isUpdate = this.updateChain()
             .set(TICKET_USER.REMAINING_VALIDATION_COUNT, TICKET_USER.REMAINING_VALIDATION_COUNT.add(cancelCount))
-            .set(TICKET_USER.STATUS, 10).where(TICKET_USER.ID.eq(ticketUser.getId()))
+            .set(TICKET_USER.STATUS, TicketUserStatusEnum.UNUSED).where(TICKET_USER.ID.eq(ticketUser.getId()))
             .and(TICKET_USER.REMAINING_VALIDATION_COUNT.le(totalValidationCount - cancelCount)).update();
         if (!isUpdate) {
             throw new ThrowPrompt("取消核销失败");

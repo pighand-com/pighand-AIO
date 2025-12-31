@@ -7,6 +7,8 @@ import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.handler.JacksonTypeHandler;
+import com.pighand.aio.common.enums.NotifyTemplateTypeEnum;
+import com.pighand.aio.common.enums.NotifyTemplateTypeEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.api.annotation.validation.ValidationGroup;
@@ -44,7 +46,7 @@ public class NotifyTemplateWechatAppletDomain extends BaseDomainRecord<NotifyTem
 
     @Column("type")
     @Schema(description = "类型 100抽奖")
-    private Integer type;
+    private NotifyTemplateTypeEnum type;
 
     @NotNull(groups = {ValidationGroup.Create.class})
     @Length(max = 64)

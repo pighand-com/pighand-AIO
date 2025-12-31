@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.pighand.aio.common.enums.DistributionSalesDetailObjectTypeEnum;
+import com.pighand.aio.common.enums.DistributionSalesDetailStatusEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecord;
@@ -49,7 +51,7 @@ public class DistributionSalesDetailDomain extends BaseDomainRecord<Distribution
 
     @Column("object_type")
     @Schema(description = "类型 10-主题 20-票务")
-    private Integer objectType;
+    private DistributionSalesDetailObjectTypeEnum objectType;
 
     @Schema(description = "对象ID")
     private Long objectId;
@@ -58,7 +60,7 @@ public class DistributionSalesDetailDomain extends BaseDomainRecord<Distribution
     private BigDecimal amount;
 
     @Schema(description = "状态：0=冻结中 10=待结算，20=已结算, 90=订单退款")
-    private Integer status;
+    private DistributionSalesDetailStatusEnum status;
 
     @Schema(description = "可结算时间")
     private Long settlementTime;

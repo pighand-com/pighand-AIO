@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.pighand.aio.common.enums.TicketUserStatusEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecord;
@@ -45,7 +46,7 @@ public class TicketUserDomain extends BaseDomainRecord<TicketUserDomain> impleme
     private Integer remainingValidationCount;
 
     @Schema(description = "状态 10-未核销 20-已核销")
-    private Integer status;
+    private TicketUserStatusEnum status;
 
     @Schema(description = "创建时间")
     private Long createdAt;

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.pighand.aio.common.enums.SessionTemplateTypeEnum;
+import com.pighand.aio.common.enums.SessionTemplateTypeEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecord;
@@ -46,7 +48,7 @@ public class SessionTemplateDomain extends BaseDomainRecord<SessionTemplateDomai
     private Long themeId;
 
     @Schema(description = "场次类型 10按用户分组")
-    private Integer type;
+    private SessionTemplateTypeEnum type;
 
     @Schema(description = "最少人数/起玩人数")
     private Integer minPeople;

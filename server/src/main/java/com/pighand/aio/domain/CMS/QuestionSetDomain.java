@@ -7,6 +7,8 @@ import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
 import com.mybatisflex.core.handler.JacksonTypeHandler;
+import com.pighand.aio.common.enums.QuestionSetTypeEnum;
+import com.pighand.aio.common.enums.QuestionSetTypeEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.api.springdoc.dataType.EmptyObject;
@@ -42,7 +44,7 @@ public class QuestionSetDomain extends BaseDomainRecord<QuestionSetDomain> imple
 
     @Column("type")
     @Schema(description = "题目类型 10文本回答 20单选 21多选")
-    private Integer type;
+    private QuestionSetTypeEnum type;
 
     @Schema(description = "所属分页")
     private Integer page;

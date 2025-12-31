@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.pighand.aio.common.enums.BannerStatusEnum;
+import com.pighand.aio.common.enums.BannerStatusEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecord;
@@ -56,5 +58,5 @@ public class BannerDomain extends BaseDomainRecord<BannerDomain> implements Seri
     private String group;
 
     @Schema(description = "状态：0下架，10上架")
-    private Integer status;
+    private BannerStatusEnum status;
 }

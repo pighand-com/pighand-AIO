@@ -3,6 +3,9 @@ package com.pighand.aio.service.distribution;
 import com.mybatisflex.core.query.QueryMethods;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.core.update.UpdateChain;
+import com.pighand.aio.common.enums.DistributionSalesDetailObjectTypeEnum;
+import com.pighand.aio.common.enums.DistributionSalesDetailStatusEnum;
+import com.pighand.aio.common.enums.DistributionSalesTypeEnum;
 import com.pighand.aio.domain.ECommerce.TicketDomain;
 import com.pighand.aio.domain.distribution.DistributionGoodsRuleDomain;
 import com.pighand.aio.domain.distribution.DistributionSalesDetailDomain;
@@ -64,7 +67,7 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
      */
     public DistributionSalesVO create(DistributionSalesVO distDistributionSalesVO) {
         // 如果类型=20（已结算），需要校验金额是否够
-        if (distDistributionSalesVO.getType() != null && distDistributionSalesVO.getType() == 20) {
+        if (distDistributionSalesVO.getType() != null && DistributionSalesTypeEnum.SETTLEMENT_ORDER.equals(distDistributionSalesVO.getType())) {
             validateSettlementAmount(distDistributionSalesVO);
         }
 
@@ -73,7 +76,7 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
 
         DistributionSalesDetailDomain detailDomain = new DistributionSalesDetailDomain();
         detailDomain.setWithdrawDistributionSalesId(distDistributionSalesVO.getId());
-        detailDomain.setStatus(20);
+        detailDomain.setStatus(DistributionSalesDetailStatusEnum.SETTLED);
         distributionSalesDetailMapper.updateByQuery(detailDomain, QueryWrapper.create()
             .where(DISTRIBUTION_SALES_DETAIL.ID.in(distDistributionSalesVO.getSettledDetailIds())));
 
@@ -96,7 +99,7 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
             QueryWrapper.create().select(QueryMethods.sum(DISTRIBUTION_SALES_DETAIL.AMOUNT).as("amount"))
                 .from(DISTRIBUTION_SALES_DETAIL)
                 .where(DISTRIBUTION_SALES_DETAIL.ID.in(distDistributionSalesVO.getSettledDetailIds()))
-                .and(DISTRIBUTION_SALES_DETAIL.STATUS.eq(10))
+                .and(DISTRIBUTION_SALES_DETAIL.STATUS.eq(DistributionSalesDetailStatusEnum.PENDING_SETTLEMENT))
                 .and(DISTRIBUTION_SALES_DETAIL.SETTLEMENT_TIME.le(new Date()));
 
         DistributionSalesDetailDomain distributionSalesDetails =
@@ -251,7 +254,7 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
                     .select(QueryMethods.sum(DISTRIBUTION_SALES.FROZEN_AMOUNT).as("frozenAmount"),
                         QueryMethods.sum(DISTRIBUTION_SALES.REFUND_AMOUNT).as("refundAmount")).from(DISTRIBUTION_SALES)
                     .where(DISTRIBUTION_SALES.SALESPERSON_ID.eq(finalSalespersonId))
-                    .and(DISTRIBUTION_SALES.TYPE.eq(10));
+                    .and(DISTRIBUTION_SALES.TYPE.eq(DistributionSalesTypeEnum.SALES_ORDER));
                 return super.mapper.selectOneByQueryAs(queryWrapper, DistributionSalesVO.class);
             });
 
@@ -259,7 +262,7 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
                 QueryWrapper queryWithdrawWrapper = QueryWrapper.create()
                     .select(QueryMethods.sum(DISTRIBUTION_SALES.SETTLED_AMOUNT).as("settledAmount"))
                     .from(DISTRIBUTION_SALES).where(DISTRIBUTION_SALES.SALESPERSON_ID.eq(finalSalespersonId))
-                    .and(DISTRIBUTION_SALES.TYPE.eq(20));
+                    .and(DISTRIBUTION_SALES.TYPE.eq(DistributionSalesTypeEnum.SETTLEMENT_ORDER));
                 return super.mapper.selectOneByQueryAs(queryWithdrawWrapper, DistributionSalesVO.class);
             });
 
@@ -268,7 +271,7 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
                     .select(DISTRIBUTION_SALES_DETAIL.ID, DISTRIBUTION_SALES_DETAIL.AMOUNT,
                         DISTRIBUTION_SALES_DETAIL.SETTLEMENT_TIME).from(DISTRIBUTION_SALES_DETAIL)
                     .where(DISTRIBUTION_SALES_DETAIL.SALESPERSON_ID.eq(finalSalespersonId))
-                    .and(DISTRIBUTION_SALES_DETAIL.STATUS.eq(10));
+                    .and(DISTRIBUTION_SALES_DETAIL.STATUS.eq(DistributionSalesDetailStatusEnum.PENDING_SETTLEMENT));
                 return distributionSalesDetailMapper.selectListByQuery(queryDetailWrapper);
             });
 
@@ -388,7 +391,7 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
         distributionSalesDomain.setSalespersonId(salespersonId);
         distributionSalesDomain.setOrderId(orderId);
         distributionSalesDomain.setFrozenAmount(amount.multiply(BigDecimal.valueOf(ticketUserIds.size())));
-        distributionSalesDomain.setType(10);
+        distributionSalesDomain.setType(DistributionSalesTypeEnum.SALES_ORDER);
         distributionSalesDomain.setCreatedAt(System.currentTimeMillis());
         super.mapper.insert(distributionSalesDomain);
 
@@ -396,10 +399,10 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
             DistributionSalesDetailDomain distributionSalesDetail = new DistributionSalesDetailDomain();
             distributionSalesDetail.setSalespersonId(salespersonId);
             distributionSalesDetail.setDistributionSalesId(distributionSalesDomain.getId());
-            distributionSalesDetail.setObjectType(20);
+            distributionSalesDetail.setObjectType(DistributionSalesDetailObjectTypeEnum.TICKET);
             distributionSalesDetail.setObjectId(ticketUserId);
             distributionSalesDetail.setAmount(amount);
-            distributionSalesDetail.setStatus(0);
+            distributionSalesDetail.setStatus(DistributionSalesDetailStatusEnum.FROZEN);
             distributionSalesDetailMapper.insert(distributionSalesDetail);
         }
     }
@@ -413,7 +416,7 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
         QueryWrapper queryWrapper = QueryWrapper.create()
             .select(DISTRIBUTION_SALES_DETAIL.ID, DISTRIBUTION_SALES_DETAIL.DISTRIBUTION_SALES_ID,
                 DISTRIBUTION_SALES_DETAIL.STATUS, DISTRIBUTION_SALES_DETAIL.AMOUNT).from(DISTRIBUTION_SALES_DETAIL)
-            .where(DISTRIBUTION_SALES_DETAIL.OBJECT_TYPE.eq(20))
+            .where(DISTRIBUTION_SALES_DETAIL.OBJECT_TYPE.eq(DistributionSalesDetailObjectTypeEnum.TICKET))
             .and(DISTRIBUTION_SALES_DETAIL.OBJECT_ID.eq(ticketUserId));
         DistributionSalesDetailDomain distributionSalesDetail =
             distributionSalesDetailMapper.selectOneByQuery(queryWrapper);
@@ -422,7 +425,7 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
             return;
         }
 
-        distributionSalesDetail.setStatus(10);
+        distributionSalesDetail.setStatus(DistributionSalesDetailStatusEnum.PENDING_SETTLEMENT);
 
         // 可结算为当前时间+24小时
         Calendar calendar = Calendar.getInstance();
@@ -516,7 +519,7 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
         QueryWrapper queryWrapper = QueryWrapper.create()
             .select(DISTRIBUTION_SALES_DETAIL.ID, DISTRIBUTION_SALES_DETAIL.DISTRIBUTION_SALES_ID,
                 DISTRIBUTION_SALES_DETAIL.STATUS, DISTRIBUTION_SALES_DETAIL.AMOUNT).from(DISTRIBUTION_SALES_DETAIL)
-            .where(DISTRIBUTION_SALES_DETAIL.OBJECT_TYPE.eq(20))
+            .where(DISTRIBUTION_SALES_DETAIL.OBJECT_TYPE.eq(DistributionSalesDetailObjectTypeEnum.TICKET))
             .and(DISTRIBUTION_SALES_DETAIL.OBJECT_ID.eq(ticketUserId));
         DistributionSalesDetailDomain distributionSalesDetail =
             distributionSalesDetailMapper.selectOneByQuery(queryWrapper);
@@ -525,16 +528,16 @@ public class DistributionSalesService extends BaseServiceImpl<DistributionSalesM
             return;
         }
 
-        if (distributionSalesDetail.getStatus().equals(90)) {
+        if (distributionSalesDetail.getStatus().equals(DistributionSalesDetailStatusEnum.REFUNDED)) {
             throw new ThrowPrompt("已退款");
-        } else if (distributionSalesDetail.getStatus().equals(20)) {
+        } else if (distributionSalesDetail.getStatus().equals(DistributionSalesDetailStatusEnum.SETTLED)) {
             throw new ThrowPrompt("分销已提现");
-        } else if (!distributionSalesDetail.getStatus().equals(10)) {
+        } else if (!distributionSalesDetail.getStatus().equals(DistributionSalesDetailStatusEnum.PENDING_SETTLEMENT)) {
             throw new ThrowPrompt("分销非结算状态");
         }
 
         // 将明细状态设置为冻结状态
-        distributionSalesDetail.setStatus(0);
+        distributionSalesDetail.setStatus(DistributionSalesDetailStatusEnum.FROZEN);
         distributionSalesDetail.setSettlementTime(null); // 清除结算时间
         distributionSalesDetailMapper.update(distributionSalesDetail, true);
 

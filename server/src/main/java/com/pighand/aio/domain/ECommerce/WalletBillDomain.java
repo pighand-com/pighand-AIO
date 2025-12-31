@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.Table;
+import com.pighand.aio.common.enums.WalletBillTypeEnum;
+import com.pighand.aio.common.enums.WalletBillWalletTypeEnum;
 import com.pighand.framework.spring.api.annotation.field.RequestFieldException;
 import com.pighand.framework.spring.api.annotation.serialization.ToLongSerializer;
 import com.pighand.framework.spring.base.BaseDomainRecord;
@@ -44,10 +46,10 @@ public class WalletBillDomain extends BaseDomainRecord<WalletBillDomain> impleme
     private Long userId;
 
     @Schema(description = "账单类型 10充值 11购物赠送 20消费 31转账-转入 32转账-转出")
-    private Integer type;
+    private WalletBillTypeEnum type;
 
     @Schema(description = "钱包入账类型 10余额 20代币")
-    private Integer walletType;
+    private WalletBillWalletTypeEnum walletType;
 
     @Schema(description = "账单金额。正数-入账；负数-出账")
     private BigDecimal amount;

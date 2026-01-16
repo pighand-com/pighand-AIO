@@ -59,7 +59,7 @@ import static com.pighand.aio.domain.base.table.UserWechatTableDef.USER_WECHAT;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
+public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain> {
 
     private final GoodsSkuService goodsSkuService;
 
@@ -448,7 +448,8 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
                             .select(ORDER_TRADE.ID, ORDER_TRADE.CREATOR_ID, ORDER_TRADE.SALESPERSON_ID)
                             .where(ORDER_TRADE.SN.eq(sn)).limit(1).one();
 
-                        this.updateChain().set(ORDER.TRADE_STATUS, OrderTradeStatusEnum.PAID).set(ORDER.REFUND_STATUS, OrderRefundStatusEnum.REFUNDABLE)
+                        this.updateChain().set(ORDER.TRADE_STATUS, OrderTradeStatusEnum.PAID)
+                            .set(ORDER.REFUND_STATUS, OrderRefundStatusEnum.REFUNDABLE)
                             .where(ORDER.ORDER_TRADE_ID.eq(orderTradeDomain.getId())).update();
 
                         // 查询票务或场次订单
@@ -743,8 +744,9 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
                 throw new ThrowPrompt("订单已退款");
         }
 
-        this.updateChain().set(ORDER.TRADE_STATUS, OrderTradeStatusEnum.RECEIVED).set(ORDER.REFUND_STATUS, OrderRefundStatusEnum.REFUNDABLE).set(ORDER.EVALUATION_STATUS, OrderEvaluationStatusEnum.PENDING)
-            .where(ORDER.ID.eq(id)).update();
+        this.updateChain().set(ORDER.TRADE_STATUS, OrderTradeStatusEnum.RECEIVED)
+            .set(ORDER.REFUND_STATUS, OrderRefundStatusEnum.REFUNDABLE)
+            .set(ORDER.EVALUATION_STATUS, OrderEvaluationStatusEnum.PENDING).where(ORDER.ID.eq(id)).update();
     }
 
     /**
@@ -762,16 +764,16 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
 
         List<OrderDomain> orders;
         if (orderVO.getId() != null) {
-            OrderDomain order =
-                this.queryChain().select(ORDER.ID, ORDER.ORDER_TRADE_ID, ORDER.AMOUNT_PAID).where(ORDER.ID.eq(orderVO.getId()))
-                    .one();
+            OrderDomain order = this.queryChain().select(ORDER.ID, ORDER.ORDER_TRADE_ID, ORDER.AMOUNT_PAID)
+                .where(ORDER.ID.eq(orderVO.getId())).one();
             if (order == null) {
                 return;
             }
             orderTradeId = order.getOrderTradeId();
             orders = Collections.singletonList(order);
         } else {
-            orders = this.queryChain().select(ORDER.ID, ORDER.AMOUNT_PAID).where(ORDER.ORDER_TRADE_ID.eq(orderTradeId)).list();
+            orders = this.queryChain().select(ORDER.ID, ORDER.AMOUNT_PAID).where(ORDER.ORDER_TRADE_ID.eq(orderTradeId))
+                .list();
             if (orders == null || orders.isEmpty()) {
                 return;
             }
@@ -792,17 +794,17 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
             Long orderId = order.getId();
 
             // 如果有票务，根据票务状态计算退款金额
-            List<TicketUserDomain> ticketUsers = ticketUserService.queryChain()
-                .select(TICKET_USER.ID, TICKET_USER.ORDER_SKU_ID, TICKET_USER.STATUS)
-                .where(TICKET_USER.ORDER_ID.eq(orderId)).list();
+            List<TicketUserDomain> ticketUsers =
+                ticketUserService.queryChain().select(TICKET_USER.ID, TICKET_USER.ORDER_SKU_ID, TICKET_USER.STATUS)
+                    .where(TICKET_USER.ORDER_ID.eq(orderId)).list();
 
             long orderRefundAmount = Optional.ofNullable(order.getAmountPaid()).orElse(0L);
             if (ticketUsers != null && !ticketUsers.isEmpty()) {
                 orderRefundAmount = 0L;
 
-                List<OrderSkuDomain> orderSkus = orderSkuService.queryChain()
-                    .select(ORDER_SKU.ID, ORDER_SKU.QUANTITY, ORDER_SKU.AMOUNT_PAID)
-                    .where(ORDER_SKU.ORDER_ID.eq(orderId)).list();
+                List<OrderSkuDomain> orderSkus =
+                    orderSkuService.queryChain().select(ORDER_SKU.ID, ORDER_SKU.QUANTITY, ORDER_SKU.AMOUNT_PAID)
+                        .where(ORDER_SKU.ORDER_ID.eq(orderId)).list();
                 if (orderSkus == null) {
                     orderSkus = Collections.emptyList();
                 }
@@ -826,8 +828,8 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
                 }
 
                 if (!refundTicketIds.isEmpty()) {
-                    ticketUserService.updateChain().set(TICKET_USER.STATUS, TicketUserStatusEnum.REFUNDED).where(TICKET_USER.ID.in(refundTicketIds))
-                        .update();
+                    ticketUserService.updateChain().set(TICKET_USER.STATUS, TicketUserStatusEnum.REFUNDED)
+                        .where(TICKET_USER.ID.in(refundTicketIds)).update();
                 }
 
                 for (OrderSkuDomain orderSku : orderSkus) {
@@ -843,8 +845,8 @@ public class OrderService extends BaseServiceImpl<OrderMapper, OrderDomain>  {
 
             refundAmount += orderRefundAmount;
 
-            super.updateChain().set(ORDER.TRADE_STATUS, 51).set(ORDER.REFUND_STATUS, 10).set(ORDER.REFUND_AMOUNT, orderRefundAmount)
-                .where(ORDER.ID.eq(orderId)).update();
+            super.updateChain().set(ORDER.TRADE_STATUS, 51).set(ORDER.REFUND_STATUS, 10)
+                .set(ORDER.REFUND_AMOUNT, orderRefundAmount).where(ORDER.ID.eq(orderId)).update();
         }
 
         orderTradeService.updateChain().set(ORDER_TRADE.REFUND_AMOUNT, refundAmount)
